@@ -14,6 +14,13 @@
 
 <p>DP - Dave Page<br>
 RC - Rod Childers</p>
+<h4>v7.1.1 Fixes/Updates</h4>
+<ul>
+  <li>(DP) ADO connection objects used by the Migration Wizard now have the UID/PWD
+    set directly *and* in the connection string to ensure they are picked up by
+    ODBC drivers that manage to ignore one or the other (appears to occur with
+    SQL Server and Oracle whilst PostgreSQL, Access and Informix seem OK).</li>
+</ul>
 <h4>v7.1.0 Fixes/Updates</h4>
 <ul>
   <li>(RC) Added 'Migrate Primary Keys' code to the Migration Wizard.</li>
