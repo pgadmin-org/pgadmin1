@@ -109,7 +109,7 @@ On Error GoTo Err_Handler
         szCreateStr = "INSERT INTO " & szView_PostgreSqlTable & " (View_name, View_definition)"
         szCreateStr = szCreateStr & "VALUES ("
         szCreateStr = szCreateStr & "'" & szView_name & "', "
-        szCreateStr = szCreateStr & "'" & szView_definition & "' "
+        szCreateStr = szCreateStr & "'" & Replace(szView_definition, "'", "''") & "' "
         szCreateStr = szCreateStr & ");"
     End If
     
@@ -130,7 +130,6 @@ End Sub
 Function cmp_View_CreateSQL(ByVal szView_name As String, ByVal szView_definition As String) As String
 On Error GoTo Err_Handler
   Dim szQuery As String
-
     szQuery = "CREATE VIEW " & szView_name & vbCrLf & " AS " & szView_definition & "; "
     cmp_View_CreateSQL = szQuery
   Exit Function

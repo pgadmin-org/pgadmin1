@@ -186,10 +186,11 @@ On Error GoTo Err_Handler
     ' Create view
     cmp_View_Create "pgadmin_dev_views", txtName.Text, txtSQL.Text
     
-    ' Refresh view list
-    frmViews.cmdRefresh_Click
-    Unload Me
-
+    If bContinueRebuilding = True Then
+        frmViews.cmdRefresh_Click
+        Unload Me
+    End If
+    
     EndMsg
   Exit Sub
 Err_Handler:
