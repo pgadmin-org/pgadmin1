@@ -1,0 +1,553 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<title>pgAdmin Revision History</title>
+</head>
+
+<body>
+
+<h1>pgAdmin Revision History</h1>
+
+<p>Key to contributors:</p>
+
+<p>DP - Dave Page<br>
+RC - Rod Childers</p>
+<h4>v7.1.0 Fixes/Updates</h4>
+<ul>
+  <li>(RC) Added 'Migrate Primary Keys' code to the Migration Wizard.</li>
+  <li>(DP) Fixed a bug where system comments were migrated from pg_description
+    as well as user comments.</li>
+  <li>(DP) System generated Referential Integrity (foreign key) triggers are now
+    hidden from the Trigger Browser unless 'Show System Triggers' is checked.</li>
+  <li>(DP) Foreign Keys, Primary Keys, Check Constraints and Unique Constraints
+    are now listed in the Table Browser alongside the table columns.</li>
+  <li>(DP) Allow viewing of the ACL on Sequences and Views</li>
+  <li>(DP) Allow Views to be selected in the Privileges Dialogue.</li>
+  <li>(RC) Changed default datatype for VarChar and VarWChar to the PostgreSQL
+    varchar type in the Type Map used by the Migration Wizard.</li>
+  <li>(DP) Added code to auto upgrade Server Side Objects (SSO's) if they have
+    been updated.</li>
+  <li>(DP) Grant All permissions to Public on pgadmin_* views so all users can
+    use them.</li>
+  <li>(RC) Foreign Keys can now be migrated in the Migration Wizard.</li>
+  <li>(DP) Fixed a bug in the scrolling log window which caused a blank line to
+    be shown at the bottom.</li>
+  <li>(DP) Fixed a bug in the Table and Index browsers that could make the info
+    frames appear to flash as objects were selected in the treeview.</li>
+  <li>(DP) Added options to the Database browser to create User and System DSNs
+    for the selected database.</li>
+  <li>(RC) Fixed a bug which could caused indexes to be duplicated or created
+    for non-existent tables in the Migration Wizard.</li>
+  <li>(DP) Rebuilt libpq.dll &amp; psql.exe from the 7.1 source. Used /MD linker
+    flag to prevent psql.exe from dying horribly when redisplaying the prompt
+    after a &lt;CR&gt;.</li>
+  <li>(RC) Fixed a bug where the Migration Wizard would fail if a Date/Time
+    field in Access was being migrated to a Date column in PostgreSQL and only a
+    time was present. This occurs because Access uses Date/Time fields for dates
+    and/*or* times.</li>
+  <li>(DP) Assume all pg_* objects are System Object regardless of their OID.
+    This primarily hides Toast related objects but should also hide other future
+    system objects (assuming the PostgreSQL team continue using a pg_ prefix).</li>
+  <li>(DP) Fixed a bug preventing changes to the Type Map settings being
+    reloaded from the registry on Windows 95.</li>
+  <li>(DP) Added Outer Join support to the SQL wizard.</li>
+  <li>(RC) Allow the Migration Wizard to return to step 1 after Migration has
+    competed.</li>
+  <li>(DP) Removed the DataGrid which would not update data in tables with
+    uppercase characters in column names (caused by ADO). The new Grid is based
+    on the original code but is integrated directly into pgAdmin, and does query
+    based updates as required whilst maintaining the correct data in the grid
+    without refreshing a recordset. Unlike ADO, this code will allow you to drop
+    or&nbsp; update multiple rows if the selected row cannot be uniquely
+    identified. Queries used to select data are parsed to determine whether the
+    data can updated and options are given accordingly.</li>
+  <li>(DP) Updated to check for views with pg_class.relkind = 'v'.</li>
+  <li>(DP) Prevented the Migration Wizard from Migrating varchar fields of
+    excessive size (8088).</li>
+  <li>(DP) Fixed a bug in the CREATE TABLE dialogue which prevented re-adding a
+    serial column if one was deleted, or if a CREATE TABLE operation with a
+    serial column was aborted.</li>
+  <li>(DP) Added code to ensure that only superusers can create or drop Server
+    Side Objects.</li>
+</ul>
+<h4>v7.0.5 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed the 'may not be called in a transaction block' bug which was
+    overlooked in the Change Password dialogue.</li>
+  <li>(DP) Fixed a bug in the new Data Grid which prevented added new records to an
+    empty table or query resultset.</li>
+  <li>(DP) Changed date format used in SQL queries to ISO-8601 format (eg.
+    '2000-12-25 23:59:59-01') rather than Windows 'Long Date' which isn't
+    understood by PostgreSQL in some locales.</li>
+  <li>(DP) Fixed a bug which distorted the splash screen if 'Large Fonts' are in use.</li>
+  <li>(DP) Fixed the label on the About Box which did not show the pgAdmin version
+    number.</li>
+  <li>(DP) Fixed an error message that reported the lowest supported version of
+    PostgreSQL incorrectly.</li>
+  <li>(DP) Fixed Migration of data containing ' characters in the Migration Wizard.</li>
+  <li>(DP) Added options to the Migration Wizard to convert object names to lower
+    case.</li>
+  <li>(DP) Added error handling to the Migration Wizard to allow it to skip tables
+    where permissions do not allow the user to view the column details of the
+    source table.</li>
+  <li>(DP) Fixed a bug where if the save button is pressed on an unchanged record in
+    the data grid control, the control crashed.</li>
+  <li>(DP) User defined column widths are retained between Add/Edit operations in the
+    data grid control.</li>
+  <li>(DP) The data grid no longer refreshes after every update operation. This
+    prevents the grid scrolling back to row 1 after every edit/delete, but a row
+    may only be edited once now without a manual refresh (which does scroll to
+    row 1), for which a button has been added.</li>
+  <li>(DP) Updated the Copyright notices to 1998 - 2001</li>
+  <li>(DP) Fixed the tab order on the Add Column dialogue.</li>
+  <li>(DP) Allow setting of Privileges on Sequences in the Privilege dialogue.</li>
+  <li>(DP) Fixed the code in the Add Column dialogue which failed to set NOT NULL and
+    DEFAULT ??? due to syntax problems.</li>
+  <li>(DP) Removed old 'Open Maximised' code which caused some odd behaviour when
+    opening some dialogues.</li>
+  <li>(DP) Added Context Sensitive menus (right click menus) to most list boxes and
+    treeviews.</li>
+  <li>(DP) Updated the Installer Merge modules to match the current service pack
+    level of Visual Studio. This fixes a problem that prevents the viewing of
+    more than one report without a program restart on some systems.</li>
+  <li>(DP) Overhauled User and Group dialogues to remove the FlexGrid control that
+    was used in them. Group modification is now performed from the Group
+    dialogue.</li>
+  <li>(DP) Removed the vsError control that provided error logging and incorporated a
+    more simple version of the same code directly into pgAdmin which produces
+    slightly smaller logfiles..</li>
+  <li>(DP) Added a DEVELOPMENT flag to denote whether the current version is a
+    Development or Release version.</li>
+  <li>(DP) Completely overhauled the Privileges Dialogue. It is now easier to see
+    existing privileges, and multiple different privileges can now be set on
+    multiple classes for multiple users and or groups in one operation.</li>
+  <li>(DP) Added a VACUUM ANALYZE menu option/button.</li>
+  <li>(DP) Added a check to the Migration Wizard to prevent attempts to create a
+    field defined as varchar(0) or char(0).</li>
+  <li>(DP) Changed the datatype of the record counter in the Migration Wizard to Long
+    from Integer as on 32768 records could be migrated in any one table.</li>
+</ul>
+<h4>v7.0.4 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed the error handling in the MDIForm_Load sub in frmMain which failed
+    to reset the mouse pointer to an arrow if an error occured.</li>
+  <li>(DP) Added self-repair code to fix the data in pgadmin_param if it becomes
+    corrupt.</li>
+  <li>(DP) Updated the installation package to remove unused Crystal Reports DLLs
+    from the distribution.</li>
+  <li>(DP) Added code to correctly handle missing, corrupt or just plain broken
+    Exporter modules.</li>
+  <li>(DP) Combined the view table/view and SQL output datagrid forms and replaced
+    the Microsoft grid with a replacement with improved data editing facilities.</li>
+  <li>(DP) Fixed a bug in the Modify Group dialogue that prevented the data being
+    loaded correctly.&nbsp;</li>
+  <li>(DP) Added an Options dialogue, initially with options for Advanced Logging,
+    Mask Password in Logs and Log path/filename.</li>
+  <li>(DP) Fixed a bug in the CREATE TRIGGER dialogue which caused the second quote
+    around the procedure name to be in the wrong place.</li>
+  <li>(DP) Applied a workaround to the 'may not be called in a transaction block'
+    problem which affected USER and DATABASE queries on PostgreSQL 7.0.x (thanks
+    to Laszlo Kohl).</li>
+  <li>(DP) pgAdmin will only run on PostgreSQL v7.0.x now. This has been the case
+    since v7.0.3 but pgAdmin (and us developers!) only recently became aware of
+    that fact!</li>
+  <li>(DP) Added code to auto scroll the log view window after startup.</li>
+  <li>(DP) Fixed the Excel Exporter which was seriously broken (to the extent that it
+    didn't export at all!).</li>
+</ul>
+<h4>v7.0.3 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Added an ASCII Text exporter with 'Text Substitution' map.</li>
+  <li>(DP) Resized most of the controls in the browser dialogues.</li>
+  <li>(DP) Improved the file handling in the SQL dialogue.</li>
+  <li>(DP) Added 'Show System...' check boxes to browser dialogues that didn't
+    already have one.</li>
+  <li>(DP) pgAdmin database objects are now hidden by default.</li>
+  <li>(DP) Re-wrote the reporting system. Reports are now generated from Views that
+    are created by pgAdmin (rather than the previous local cache system). A
+    report manager allows reports to be browsed and viewed, and allows the end
+    user to add their own reports written using Seagate Crystal Reports v8 or
+    earlier.</li>
+  <li>(DP) Overhauled the Migration Wizard to remove the dependency on the old DAO
+    technology and use ADOX instead. Default value migration is no longer an
+    option, and indexes are only migrated from .MDB files now, but the Wizard
+    seems to be more reliable and a little quicker, and the download size has
+    been reduced!!</li>
+  <li>(DP) Reviewed and tidied all error trapping code.</li>
+  <li>(DP) Overhauled each of the Object Browsers so they now use the views that are
+    created for the Reporting System.</li>
+  <li>(DP) Standardised all internal SQL queries to make use of the pgadmin_* views.</li>
+  <li>(DP) Added a 'Load Query' button to the 'Add View' dialogue.</li>
+  <li>(DP) Removed the Export Wizard.</li>
+  <li>(DP) Added a 'New DSN' option to the login dialogue to allow quick creation of
+    new User and System DSNs</li>
+  <li>(DP) Removed the pgadmin_sys table and replaced it with pgadmin_param which has
+    a much more sensible format.</li>
+  <li>(DP) The Revision Log has moved from pgadmin_log to pgadmin_rev_log which is
+    timestamped by the servernot the client.</li>
+  <li>(DP) Added self repair/upgrade for the server side objects.</li>
+  <li>(DP) The Login Dialogue now only lists PostgreSQL datasources</li>
+  <li>(DP) The Source code is now distributed separately in pgadmin-src-7_0_3.zip
+    which is available from <a href="http://www.greatbridge.org/project/pgadmin/">http://www.greatbridge.org/project/pgadmin/</a></li>
+</ul>
+<h4>v7.0.2 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed a bug in the import wizard that limited the number of imported records to 32767</li>
+  <li>(DP) Fixed a bug in the Import Wizard where tab 2 showed by default.</li>
+  <li>(DP) The Import Wizard Dialogue now only automatically closes after a successful data import.</li>
+  <li>(DP) Fixed a bug in the Import Wizard where when processing quoted and delimited data, if the delimiter appeared within a field, that character would be ignored.</li>
+  <li>(DP) Fixed a bug in the 'View Data' dialogue that prevented addition of a new record to an empty table (Andrea
+    Aime).</li>
+  <li>(DP) Fixed an error with the access keys on the Table Browser.</li>
+  <li>(DP) pgAdmin is now released under Gnu Public License (GPL).</li>
+</ul>
+<h4>v7.0.1 Fixes/Updates</h4>
+<ul>
+  <li>(DP) 
+    <b>Open Source </b>- Yes, pgAdmin is open source as of
+    v7.0.1. Please feel free to criticize my programming style (bearing in mind
+    that I'm not a programmer of course!) and
+    submit patches/changes to <a href="mailto:support@vale-housing.co.uk">support@vale-housing.co.uk</a></li>
+  <li>(DP) Modified the Installer to allow selection of the installation directory
+    (default is now C:\Program Files\pgAdmin).</li>
+  <li>(DP) Altered the datatype of the functions.function field in the report cache
+    database to memo to accommodate large plpgsql functions.</li>
+  <li>(DP) Fixed a bizarre bug in the reports whereby memo fields (comments etc.)
+    didn't print because Jet was defaulting to server side cursors instead of
+    client side!</li>
+  <li>(DP) Updated the Migration Wizard for use with Access 2000 Unicode databases.</li>
+  <li>(DP) Updated the psql launcher to use v7.0.0 options and added a debug switch
+    (equivalent to -E).</li>
+  <li>(DP) Added psql.exe and libpq.dll to the distribution.</li>
+  <li>(DP) Fixed quoting errors in the Create User and Modify User dialogues.</li>
+  <li>(DP) Fixed the Permissions dialogue so Index relations are not listed.</li>
+  <li>(DP) Added the option to specify a group when creating a new user.</li>
+  <li>(DP) Fixed a bug in the Migration Wizard that tried to rollback a transaction
+    in the event of an error, even if a transaction had not been started.</li>
+  <li>(DP) Stopped the Migration Wizard from listing every INSERT query in the log
+    view window. This change equates to a 20x increase in speed of data
+    migration (on my system, with BIBLIO.mdb)!!</li>
+  <li>(DP) Added a 'fallback' datatype of 'text' to the Migration Wizard.</li>
+</ul>
+<h4>v7.0.0 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Updated for use with PostgreSQL v7.0.0 AND v6.5.x</li>
+  <li>(DP) Now tested for use on Windows 2000.</li>
+  <li>(DP) New splash screen and logo courtesy of <a href="mailto:max@lpk-computers.co.uk">Max</a>
+    at <a href="http://www.lpk-computers.co.uk">LPK Design</a>.</li>
+  <li>(DP) Added support for creating a 'pseudo-serial' column on a new table.</li>
+  <li>(DP) Updated the graphical design of the Import, Export and Migration Wizards.</li>
+  <li>(DP) Added a 'Log View' text box next to the 'SQL View' that displays the last
+    32K of log entries.</li>
+  <li>(DP) It is now possible to open multiple SQL dialogues.</li>
+  <li>(DP) Added an 'SQL Wizard' to assist in building SELECT queries in the SQL
+    dialogues.&nbsp;</li>
+  <li>(DP) Fixed bugs in the 'Rename Table' and 'Rename Column' code that attempted
+    to rename even if the same name or a blank name was specified.</li>
+  <li>(DP) Added a 'View Data' button to the View Browser.</li>
+  <li>(DP) Fixed a bug where table data could not be viewed if the table name was
+    mixed case or contained a space.</li>
+  <li>(DP) In the View Data window the data can now be sorted by clicking a column
+    header.</li>
+  <li>(DP) Support for table constraints including UNIQUE, CHECK, PRIMARY KEY &amp;
+    FOREIGN KEY.</li>
+  <li>(DP) Fixed numerous 'bugettes' in the table/index browsers and user manager
+    where it was assumed that the driver 'Bools As Char' option was set.</li>
+  <li>(DP) Removed some irrelevant info fields from the table/index browsers.</li>
+  <li>(DP) The Button Bar can now be 'docked' on either the left or right side of the
+    main window and the SQL Pane at either the top or bottom of the main screen.</li>
+  <li>(DP) Fixed a bug in the table browser where SELECT count(*) was attempted on
+    pg_log, pg_variable and pg_xactlock if selected.</li>
+  <li>(DP) Added Trigger and Function Reports.</li>
+  <li>(DP) Fixed a bug in the Migration Wizard that prevented backslashes in data
+    being migrated.</li>
+  <li>(DP) Updated the vsAdoSelector control as the previous build would not work on
+    a very small number of machines.</li>
+  <li>(DP) Added support for 'Plugin Exporters' to the SQL Output and View Data
+    dialogues:
+    <ul>
+      <li>(DP) Added an Exporter Manager dialogue to add remove and view the
+        installed exporters.</li>
+      <li>(DP) Added 'OLE Link to Excel' and 'Basic HTML' exporters.</li>
+      <li>(DP) Included the source code to the Basic HTML exporter as an example for
+        other developers.</li>
+    </ul>
+  </li>
+  <li>(DP) Altered the Button Bar so that the text colour is the Active Titlebar Text
+    colour and not permanently white.</li>
+  <li>(DP) Fixed the form resize code on numerous dialogues that gave an error if
+    they were maximised.</li>
+</ul>
+<h4>v6.5.5 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed a bug which prevented any data sources being available under Windows
+    NT.</li>
+  <li>(DP) Installation is now handled by the Windows Installer.</li>
+</ul>
+<h4>v6.5.4 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Redesigned the reporting system. Reports are now generated from a local
+    cache database which stores schema data gathered from the database. The
+    local database is designed be easily reported from using any reporting tools
+    that can access a .mdb file (Microsoft Access). There are built in standard
+    reports for each of the main object types (tables, indexes functions etc.)</li>
+  <li>(DP) Object comments are now cached upon first access (and re-cached when
+    updated) to reduce delay when selecting different objects. This caching
+    method also hugely decreases the number of SQL queries sent to the backend.</li>
+  <li>(DP) DSN, username and password can now be specified on the command line.
+    Syntax: <i>pgadmin [datasource username password]</i>
+  If all three are specified, an autologon will be attempted,
+  otherwise, values for DSN and (optionally) username will be used as defaults
+  in the logon dialogue.  <li>(DP) 
+    Rows can now be added, deleted and edited from the table data view window.</li>
+  <li>(DP) Object comments are now migrated on first use to a new
+    pgadmin_desc table which will survive a dump/reload. Comments for system
+    objects are still stored in pg_description.</li>
+  <li>(DP) The DataSource Name is now displayed in the title of the
+    main window (and hence the taskbar button as well).</li>
+  <li>(DP) Added a menu option &amp; button to open the 32Bit ODBC
+    Data Source Manager.</li>
+  <li>(DP) Added a 'Quick SQL' button to the bottom of the main form
+    to open the arbitrary SQL dialogue.</li>
+</ul>
+<h4>v6.5.3 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed the row count in the Table Browser which often read 1000 unless the
+    database was vacuumed.</li>
+  <li>(DP) Increased the allowed rows before a warning is issued when viewing table
+    data to 1000.</li>
+  <li>(DP) Removed all requirements for the pgadmin_version view which was used prior
+    to v6.5.2.</li>
+  <li>(DP) Fixed an error where an attempt to get the revision tracking version was
+    made even if the tracking log table (pgadmin_log) did not exist.</li>
+  <li>(DP) Standardized all custom OCX's and pgAdmin on version 2.1 of Microsoft's
+    ActiveX Data Objects Library (ADO).</li>
+  <li>(DP) Fixed the row count in the Tables report.</li>
+  <li>(DP) Fixed a logging problem in the reports.</li>
+</ul>
+<h4>v6.5.2 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed the brain dead ODBC connection checking that was called after the
+    connection was used!</li>
+  <li>(DP) Fixed the tooltip text on the Add Column button in the table browser.</li>
+  <li>(DP) Fixed a problem where an error was generated when the MDI form was
+    minimised.</li>
+  <li>(DP) Converted the entire project to use ADO instead of DAO (except the source
+    db side of the Migration Wizard). This is a significantly faster data access
+    method.</li>
+  <li>(DP) Fixed a bug in the Revision Tracker which stored the version number as an
+    integer value.</li>
+  <li>(DP) Changed the default type mapping for dbCurrency, dbDecimal, dbNumeric,
+    dbSingle and dbDouble to the numeric data type.</li>
+  <li>(DP) Database originating error messages now include the error from the
+    PostgreSQL backend rather than just saying 'ODBC call failed'.</li>
+  <li>(DP) Removed the Edit/Save/Cancel buttons on the Revision Tracking and Tune db
+    dialogues.</li>
+  <li>(DP) Increased the height of the textboxes displaying object details on the
+    right hand side of the various object browsers.</li>
+  <li>(DP) Added various printed reports (Summary, Tables, Indexes, Sequences).</li>
+  <li>(DP) Added a Change Password dialogue.</li>
+  <li>(DP) Added a Select Printer dialogue.</li>
+  <li>(DP) Corrected some inconsistencies in the date handling of user account expiry
+    data.</li>
+  <li>(DP) Added support for the Numeric data type.</li>
+  <li>(DP) Added support for User Groups.</li>
+</ul>
+<h4>v6.5.1 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Modified the Create Function dialogue so It no longer assumes that only
+    functions written in&nbsp; SQL don't have an object library (e.g. plpgsql).</li>
+  <li>(DP) Added an SQL Pane to display SQL queries as they are built and executed.</li>
+  <li>(DP) Modified the error handling (again!) to display the function in which any
+    error occured.</li>
+</ul>
+<h4>v6.5.0 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Modified the logon dialogue so that it now remembers the last
+          username you used. For the first use, the default is the Windows
+          username shifted to lowercase.</li>
+  <li>(DP) Modified the Create Trigger dialogue to only allow the creation of
+          triggers on tables owned by the current user.</li>
+  <li>(DP) Views can no longer be seen in the Table Browser or anywhere else
+          where table names are listed.</li>
+  <li>(DP) Fixed a bug where Null Descriptions for object could cause an error.</li>
+  <li>(DP) Add View browser and creation dialogues.</li>
+  <li>(DP) Fixed a bug where access to modify/create users could be denied for
+          all accounts if the ODBC driver Bools As Char option was not set.</li>
+  <li>(DP) Changed the Migration Wizard's Type Map defaults for dbNumeric dbSingle, dbDouble to float4, float4 and float8 respectively.</li>
+  <li>(DP) Updated to use PostgreSQL v6.5 system table structure.</li>
+  <li>(DP) Implemented new 'About Box' with links to the Primary Website and
+          the author's email address.</li>
+  <li>(DP) Designed a new splash screen.</li>
+  <li>(DP) The Table &amp; Index browsers now display extra info on the datasource
+    including DBMS, Platform and Compiler.</li>
+  <li>(DP) Improved the error logging (again!) and fixed the kooky logic where the
+    code tried to log some queries after the program had crashed!</li>
+</ul>
+    <h4>v6.4.3 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Added a PRIMARY KEY option to the table creation dialog.</li>
+  <li>(DP) Changed the grid control to individual text boxes for the object
+          details on all object browser dialogues.</li>
+  <li>(DP) Added more sane default sizing to various dialogues.</li>
+  <li>(DP) Added browsers and creation dialogues for Languages,&nbsp; Functions
+          and Triggers (thanks to Vadim Mikheev for pointing me in the right
+          direction with the Triggers).</li>
+  <li>(DP) Added comment/notation facilities to most objects via the relevant
+          browser dialogue (thanks to David Hartwig for that idea).</li>
+  <li>(DP) Improved the error handling in the Tables Browser.</li>
+  <li>(DP) Improved the efficiency of the object detail retrieval code in most
+          of the browser dialogues.</li>
+  <li>(DP) Added 'Number of Triggers' field to Table Details.</li>
+  <li>(DP) Added a 'Logging' option to the File menu, that when selected, logs
+          all SQL queries, form load events etc. to pgAdmin.log which now
+          replaces the old pgErr.log file.</li>
+  <li>(DP) Settings for View ButtonBar and Open Maximised are now store in the
+          registry on a per user basis.</li>
+</ul>
+    <h4>v6.4.2 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Improved the error logging to include details of the database
+          connection and some internal variables in the logfile.</li>
+  <li>(DP) Added a check to prevent use with earlier&nbsp; versions of
+          PostgreSQL than are compatible.</li>
+  <li>(DP) Added checks to warn the user if the ODBC driver settings for the
+          datasource could cause problems with the operation of pgAdmin.</li>
+  <li>(DP) Added a Database browser dialogue with Create and Drop database
+          facilities.</li>
+</ul>
+    <h4>v6.4.1 Fixes/Updates</h4>
+<ul>
+  <li>(DP) SQL statements are now quoted where applicable. This allows the use
+          of upper and lower case class/column names and spaces in class/column
+          names.</li>
+  <li>(DP) Fixed a bug in the import &amp; export wizards where under certain
+          circumstances it was possible to attempt to open 2 files with the same
+          handle.</li>
+  <li>(DP) Re-implemented the Modify User dialogue. Thanks to DeJuan Jackson
+          for kicking my brain into gear on that one!</li>
+  <li>(DP) Updated the Table and Index&nbsp; browsers to get the column length
+          in the same way that 'psql' does.</li>
+  <li>(DP) Updated the privileges dialogue so it refreshes and doesn't close
+          when you apply privileges.</li>
+  <li>(DP) Made major changes to the Migration Wizard:</li>
+  <li>(DP) Options to ignore/include DEFAULT and NOT NULL rules.</li>
+  <li>(DP) Save Log button added to save the status log to file.</li>
+  <li>(DP) Non-alphanumeric characters are now supported in class &amp;
+         attribute names.</li>
+  <li>(DP) Fixed a bug where Migration would fail if an attempt to migrate
+         data from an empty table was made.</li>
+</ul>
+    <h4>v6.4.0 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed a bug in the setup program which failed to install DAO350.dll
+          if the DAO path on a machine was a UNC path.</li>
+  <li>(DP) Modified the global error logging to display the error number and
+          message in the message box. Previously it only stated that an error
+          had occured and it had logged it the error log.</li>
+  <li>(DP) Recompiled all components under VB6.0 to remove any requirement for
+          MSVBVM50.dll.</li>
+  <li>(DP) Updated to use PostgreSQL v6.4 system table structure.</li>
+  <li>(DP) Removed the Modify User options as this functionality no longer
+          seems possible under v6.4 of PostgreSQL due to the permissions on the
+          pg_shadow table.</li>
+  <li>(DP) Fixed a bug which caused the error logging control to log errors
+          with a code of zero raised by some really stupid Microsoft controls.</li>
+</ul>
+    <h4>v6.3.209 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed a bug which missed out the '-' in \CONNECT statements in
+          scripts generated by the revision tracker.</li>
+  <li>(DP) Fixed a bug whereby the Migration Wizard failed to function if the
+          source database was an MS Access .mdb with password protection.</li>
+  <li>(DP) Added the rExec facility. This may be used to execute commands on
+          the remote host such as pg_dump.</li>
+  <li>(DP) Moved the Revision Tracking menu/side bar options to the System
+          menu/side bar.</li>
+  <li>(DP) Vastly improved error handling. All trapable errors should now be
+          either handled as appropriate or logged to C:\pgErr.log for debugging
+          followed by a clean exit from the subroutine or function, not the
+          whole program.</li>
+</ul>
+    <h4>v6.3.208 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Fixed a bug where using the cancel button on the login form caused
+          an error.</li>
+  <li>(DP) Fixed the 'vanishing menu bug' where the main menu vanished whenever
+          the Table Browser form had focus.</li>
+  <li>(DP) We are now compiling under Visual Studio 6.0 which vastly improves
+          the redistribution of MDAC (Microsoft Data Access Components) which
+          should help reduce ODBC version conflict errors.</li>
+</ul>
+    <h4>v6.3.207 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Added Revision Tracking. This feature logs all modifications made to
+          your schema against the last release version number and allows easy
+          production of SQL scripts to upgrade other systems.</li>
+  <li>(DP) Added Sequence browser/creator.</li>
+  <li>(DP) Started adding context sensitive menus to some controls.</li>
+</ul>
+    <h4>v6.3.206 Fixes/Updates</h4>
+<ul>
+  <li>(DP) The textboxes on the login dialog now automatically select their
+          contents when they get focus.</li>
+  <li>(DP) Updated the Import &amp; Migration Wizards so that they will not try
+          to insert null values into columns - each column will only be included
+          in the SQL Insert string if it contains data.</li>
+  <li>(DP) The default Type Map used by the Migration Wizard can now be
+          configured as required, and will be stored in the registry. The Type
+          Map is used to determine what column type to create in PostgreSQL for
+          a given DAO type - eg. dbLongBinary -&gt; lo</li>
+</ul>
+    <h4>v6.3.205 Fixes/Updates</h4>
+<ul>
+  <li>(DP) The Migration Wizard will now automatically skip tables with spaces
+          in their names and data transfers of large binary objects.</li>
+  <li>(DP) Missing tooltips added and tab order fixed on the Migration Wizard.</li>
+</ul>
+    <h4>v6.3.204 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Version numbers synchronised with PostgresSQL. eg. Currently rev 4
+          for PostgreSQL 6.3.2</li>
+  <li>(DP) Added Bug Report/Feature Request Tool.</li>
+  <li>(DP) Added 'Open Maximised' menu item to default all child windows to
+          open maximised.</li>
+  <li>(DP) Changed Add Table/Column tools to allow no size specification for
+          text fields etc.</li>
+  <li>(DP) New splash screen by Robert Page (<a href="mailto:rob@mindzone.demon.co.uk">rob@beta-band.freeserve.co.uk</a>,
+    <a href="http://www.beta-band.freeserve.co.uk" target="_top">http://www.beta-band.freeserve.co.uk</a> 
+          ).</li>
+  <li>(DP) Added menu option to change the current database.</li>
+  <li>(DP) Arbitary SQL queries can now be saved in the registry for each datasource.</li>
+  <li>(DP) Added Access/ODBC Migration Wizard.</li>
+</ul>
+    <h4>v1.0.3 Fixes/Updates</h4>
+<ul>
+  <li>(DP) The MSysConf table is now created if required if it does not already
+          exist, with default values.</li>
+  <li>(DP) A user manager has been added, allowing the creation, maintenance
+          and deletion of users. Note that passwords cannot be set for password
+          lists other than the pg_shadow table.</li>
+  <li>(DP) Added a text box to the Create Table dialog to enable the
+          specification of the column length for varchars etc. (which I somehow
+          forgot!).</li>
+  <li>(DP) The Privileges dialog can now REVOKE as well as GRANT privileges.</li>
+</ul>
+    <h4>v1.0.2 Fixes/Updates</h4>
+<ul>
+  <li>(DP) Default column values are now shown in the Table browser (thanks to
+          Antonio Garcia Mari for working out the SQL for me).</li>
+  <li>(DP) The import wizard now handles columns with CRLF in them EXCEPT if it
+          is the last column in the record, and the data is delimited only
+          without a trailing delimiter. All data is imported where possible,
+          records with errors are discarded and logged to c:\pgAdmin.log with as
+          much information about the error as possible.</li>
+  <li>(DP) Tooltips are now in place for most objects.</li>
+  <li>(DP) The Export wizard will now warn before overwriting a file.</li>
+</ul>
+
+</body>
+
+</html>
