@@ -279,6 +279,53 @@ Err_Handler:
 End Sub
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Dependencies
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Public Sub cmp_View_Dependency_Initialize(ByVal szDependency_table As String, ByVal szView_name As String)
+On Error GoTo Err_Handler
+    Dim szDependencyStr As String
+    Dim rsComp As New Recordset
+    
+    ' Initialize view(child)->view(parent) dependencies
+    szDependencyStr = "SELECT * FROM pgadmin_dev_views WHERE "
+    szDependencyStr = szDependencyStr & " view_definition ~* '[[:<:]]" & szView_name & "[[:>:]]'; "
+  
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szDependencyStr, gConnection, adOpenForwardOnly, adLockReadOnly
+  
+    If Not rsComp.EOF Then
+        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_parent_object, dependency_parent_name, dependency_child_object, dependency_child_name) "
+        szDependencyStr = szDependencyStr & " SELECT 'view' AS dependency_parent_object, '" & szView_name & "' AS dependency_parent_name, 'view' AS dependency_child_object, view_name as dependency_child_name "
+        szDependencyStr = szDependencyStr & " FROM pgadmin_dev_views WHERE "
+        szDependencyStr = szDependencyStr & " view_definition ~* '[[:<:]]" & szView_name & "[[:>:]]'; "
+        
+        LogMsg "Executing: " & szDependencyStr
+        gConnection.Execute szDependencyStr
+    End If
+    
+    ' Initialize function(child)->view(parent) dependencies
+    szDependencyStr = "SELECT * FROM pgadmin_dev_functions WHERE "
+    szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szView_name & "[[:>:]]'; "
+  
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szDependencyStr, gConnection, adOpenForwardOnly, adLockReadOnly
+  
+    If Not rsComp.EOF Then
+        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_parent_object, dependency_parent_name, dependency_child_object, dependency_child_name) "
+        szDependencyStr = szDependencyStr & " SELECT 'view' AS dependency_parent_object, '" & szView_name & "' AS dependency_parent_name, 'function' AS dependency_child_object, function_name as dependency_child_name "
+        szDependencyStr = szDependencyStr & " FROM pgadmin_dev_functions WHERE "
+        szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szView_name & "[[:>:]]'; "
+        
+        LogMsg "Executing: " & szDependencyStr
+        gConnection.Execute szDependencyStr
+    End If
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Dependency_Initialize"
+End Sub
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Tree
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
