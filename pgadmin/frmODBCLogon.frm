@@ -240,7 +240,7 @@ Dim lHenv As Long         'handle to the environment
     Do Until i <> SQL_SUCCESS
       sDSNItem = Space(1024)
       sDRVItem = Space(1024)
-      i = SQLDataSources(lHenv, SQL_FETCH_NEXT, sDSNItem, 1024, iDSNLen, sDRVItem, 1024, iDRVLen)
+      i = SQLDataSources(lHenv, SQL_FD_FETCH_NEXT, sDSNItem, 1024, iDSNLen, sDRVItem, 1024, iDRVLen)
       sDSN = VBA.Left(sDSNItem, iDSNLen)
       sDRV = VBA.Left(sDRVItem, iDRVLen)
       If sDSN <> Space(iDSNLen) And ((sDRV = "PostgreSQL") Or (sDRV = "PostgreSQL ODBC+ Driver")) Then cboDSNList.AddItem sDSN

@@ -556,6 +556,7 @@ Dim cnLocal As New Connection
 Dim catLocal As New Catalog
 Dim bButtonPress As Boolean
 Dim bProgramPress As Boolean
+Dim szQuoteChar As String
 
 Private Sub cmdBrowse_Click()
 On Error GoTo Err_Handler
@@ -586,6 +587,7 @@ Dim tblTemp As Table
     StartMsg "Opening and Examining Source Database..."
     LogMsg "Opening File: " & txtFile.Text
     cnLocal.Open "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & txtFile.Text & ";Persist Security Info=False", txtUID(0).Text, txtPWD(0).Text
+    szQuoteChar = "`"
   Else
     If cboDatasource.Text = "" Then
       MsgBox "You must select a database to migrate!", vbExclamation, "Error"
@@ -595,9 +597,11 @@ Dim tblTemp As Table
     StartMsg "Opening and Examining Source Database..."
     LogMsg "Opening DSN: " & cboDatasource.Text
     cnLocal.Open "DSN=" & cboDatasource.Text & ";UID=" & txtUID(1).Text & ";PWD=" & txtPWD(1).Text, txtUID(1).Text, txtPWD(1).Text
+    szQuoteChar = GetQuoteChar("DSN=" & cboDatasource.Text & ";UID=" & txtUID(1).Text & ";PWD=" & txtPWD(1).Text)
   End If
   LogMsg "Opened connection: " & cnLocal.ConnectionString
   LogMsg "Provider: " & cnLocal.Provider & " v" & cnLocal.Version
+  LogMsg "Quote Character: '" & szQuoteChar & "'"
   Set catLocal.ActiveConnection = cnLocal
   lstTables.Clear
   For Each tblTemp In catLocal.Tables
@@ -639,7 +643,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMigration, cmdDeSelect_Cl
 End Sub
 
 Private Sub cmdMigrate_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   bButtonPress = True
   cmdNext.Visible = False
   cmdPrevious.Visible = False
@@ -766,7 +770,7 @@ On Error GoTo Err_Handler
         Do Until i <> SQL_SUCCESS
             sDSNItem = Space(1024)
             sDRVItem = Space(1024)
-            i = SQLDataSources(lHenv, SQL_FETCH_NEXT, sDSNItem, 1024, iDSNLen, sDRVItem, 1024, iDRVLen)
+            i = SQLDataSources(lHenv, SQL_FD_FETCH_NEXT, sDSNItem, 1024, iDSNLen, sDRVItem, 1024, iDRVLen)
             sDSN = VBA.Left(sDSNItem, iDSNLen)
             sDRV = VBA.Left(sDRVItem, iDRVLen)
                 
@@ -871,8 +875,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMigration, Load_Data"
 End Sub
 
 Private Sub Migrate_Data()
-
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 Dim W As Integer
 Dim X As Integer
@@ -898,6 +901,8 @@ Dim Fields As String
 Dim Values As String
 Dim lTransLevel As Long
 Dim fNum As Integer
+
+
   StartMsg "Migrating database..."
   pbStatus.Max = lstData.ListCount
   pbStatus.Value = 0
@@ -1104,14 +1109,8 @@ Dim fNum As Integer
           Me.Refresh
           LogMsg "Migrating Data from: " & lstData.List(X)
           lTransLevel = gConnection.BeginTrans
-          If rsTemp.State <> adStateClosed Then rsTemp.Close
-          If InStr(1, cnLocal.ConnectionString, "MSDASQL") <> 0 Then
-            LogMsg "Executing: SELECT * FROM " & QUOTE & lstData.List(X) & QUOTE
-            rsTemp.Open "SELECT * FROM " & QUOTE & lstData.List(X) & QUOTE, cnLocal, adOpenForwardOnly
-          Else
-            LogMsg "Executing: SELECT * FROM `" & lstData.List(X) & "`"
-            rsTemp.Open "SELECT * FROM `" & lstData.List(X) & "`", cnLocal, adOpenForwardOnly
-          End If
+          LogMsg "Executing: SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar
+          rsTemp.Open "SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar, cnLocal, adOpenForwardOnly
           While Not rsTemp.EOF
             If chkLCaseTables.Value = 0 Then
               szQryStr = "INSERT INTO " & QUOTE & lstData.List(X) & QUOTE
@@ -1120,7 +1119,7 @@ Dim fNum As Integer
             End If
           
             For Z = 0 To rsTemp.Fields.Count - 1
-              If rsTemp.Fields(Z).Value <> "" Then
+              If rsTemp.Fields(Z).Value & "" <> "" Then
                               
                 If chkLCaseColumns.Value = 0 Then
                   Fields = Fields & QUOTE & rsTemp.Fields(Z).Name & QUOTE & ", "
@@ -1130,13 +1129,13 @@ Dim fNum As Integer
               
                 Select Case rsTemp.Fields(Z).Type
                    ' 04/24/2001 Jean-Michel POURE
-                   ' Usefull tricks to avoid bugs in non-English systems :
+                   ' Useful tricks to avoid bugs in non-English systems :
                    ' replace comma with dots in numerical values
                    ' and get rid of money acronyms (like FF for example)
                     Case adCurrency, adDouble, adSingle, adDecimal
                         Values = Values & "'" & Str(Val(Replace(rsTemp.Fields(Z).Value, ",", "."))) & "', "
                    
-                   ' Another usefull tricks to avoid bugs in non-English systems :
+                   ' Another useful trick to avoid bugs in non-English systems :
                    ' Convert 'True' or 'Vrai' or 'T' into -1
                    ' and 'False' or 'Faux' or 'F' into 0
                    ' In PostgreSQL driver uncheck Bool as Char
@@ -1494,4 +1493,38 @@ Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMigration, txtStatus_Change"
 End Sub
 
+Private Function GetQuoteChar(szConnect As String) As String
+'This may well go wrong :-(
+On Error GoTo Cleanup
+Dim iStatus As Integer
+Dim iSize As Integer
+Dim lEnv As Long
+Dim lDBC As Long
+Dim szResult As String * 8
+
+  'Initialise the ODBC subsystem
+  If SQLAllocEnv(lEnv) <> 0 Then
+    Exit Function
+  End If
+
+  'Allocate space for the connection object
+  If SQLAllocConnect(lEnv, lDBC) <> 0 Then
+    GoTo Cleanup
+  End If
+
+  'Connect
+  SQLDriverConnect lDBC, Me.hWnd, szConnect, Len(szConnect), szResult, Len(szResult), iSize, SQL_DRIVER_NOPROMPT
+
+  'Get the quote char
+  szResult = ""
+  SQLGetInfoString lDBC, SQL_IDENTIFIER_QUOTE_CHAR, szResult, Len(szResult), iSize
+  
+  GetQuoteChar = Left(szResult, iSize)
+  
+Cleanup:
+  On Error Resume Next
+  If lDBC <> 0 Then SQLDisconnect lDBC
+  SQLFreeConnect lDBC
+  If lEnv <> 0 Then SQLFreeEnv lEnv
+End Function
 

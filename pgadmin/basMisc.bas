@@ -362,7 +362,7 @@ Dim lHenv As Long
     Do Until i <> SQL_SUCCESS
       sDSNItem = Space(1024)
       sDRVItem = Space(1024)
-      i = SQLDataSources(lHenv, SQL_FETCH_NEXT, sDSNItem, 1024, iDSNLen, sDRVItem, 1024, iDRVLen)
+      i = SQLDataSources(lHenv, SQL_FD_FETCH_NEXT, sDSNItem, 1024, iDSNLen, sDRVItem, 1024, iDRVLen)
       sDSN = VBA.Left(sDSNItem, iDSNLen)
       sDRV = VBA.Left(sDRVItem, iDRVLen)
       If sDSN = szName Then DSN_Exists = True
