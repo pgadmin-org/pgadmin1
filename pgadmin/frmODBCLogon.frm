@@ -232,6 +232,9 @@ Dim iDSNLen As Integer
 Dim iDRVLen As Integer
 Dim lHenv As Long         'handle to the environment
 
+  'Clear the list (Bug #193)
+  cboDSNList.Clear
+  
   'get the DSNs
   If SQLAllocEnv(lHenv) <> -1 Then
     Do Until i <> SQL_SUCCESS
