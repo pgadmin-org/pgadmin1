@@ -3,15 +3,24 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmTables 
    Caption         =   "Tables"
-   ClientHeight    =   4050
+   ClientHeight    =   4395
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8205
    Icon            =   "frmTables.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4050
+   ScaleHeight     =   4395
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdDefault 
+      Caption         =   "Set Default Value"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   66
+      ToolTipText     =   "Convert this column into a (non primary key) serial column."
+      Top             =   2565
+      Width           =   1380
+   End
    Begin VB.CommandButton cmdSerialize 
       Caption         =   "&Serialize Column"
       Height          =   330
@@ -72,7 +81,7 @@ Begin VB.Form frmTables
       Left            =   45
       TabIndex        =   6
       ToolTipText     =   "Edit the comment for the selected object."
-      Top             =   2565
+      Top             =   2925
       Width           =   1380
    End
    Begin VB.Frame Frame1 
@@ -80,7 +89,7 @@ Begin VB.Form frmTables
       Height          =   705
       Left            =   45
       TabIndex        =   37
-      Top             =   3285
+      Top             =   3645
       Width           =   1380
       Begin VB.CheckBox chkFields 
          Caption         =   "Columns"
@@ -107,7 +116,7 @@ Begin VB.Form frmTables
       Left            =   45
       TabIndex        =   7
       ToolTipText     =   "Reload the table definitions from the database"
-      Top             =   2925
+      Top             =   3285
       Width           =   1380
    End
    Begin VB.CommandButton cmdAddTable 
@@ -162,14 +171,14 @@ Begin VB.Form frmTables
       EndProperty
    End
    Begin MSComctlLib.TreeView trvBrowser 
-      Height          =   4005
+      Height          =   4365
       Left            =   1485
       TabIndex        =   10
       ToolTipText     =   "Browse the table and column definitions"
       Top             =   0
       Width           =   2970
       _ExtentX        =   5239
-      _ExtentY        =   7064
+      _ExtentY        =   7699
       _Version        =   393217
       HideSelection   =   0   'False
       Indentation     =   529
@@ -182,7 +191,7 @@ Begin VB.Form frmTables
    End
    Begin VB.Frame fraTable 
       Caption         =   "Table Details"
-      Height          =   3975
+      Height          =   4380
       Left            =   4500
       TabIndex        =   45
       Top             =   0
@@ -269,13 +278,13 @@ Begin VB.Form frmTables
          Width           =   2400
       End
       Begin HighlightBox.HBX txtComments 
-         Height          =   825
+         Height          =   1275
          Left            =   90
          TabIndex        =   20
          Top             =   3060
          Width           =   3480
          _ExtentX        =   6138
-         _ExtentY        =   1455
+         _ExtentY        =   2249
          BackColor       =   -2147483633
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
@@ -785,6 +794,59 @@ Dim rsChecks As New Recordset
 Dim rsForeign As New Recordset
 Dim rsPrimary As New Recordset
 Dim rsUnique As New Recordset
+
+Private Sub cmdDefault_Click()
+On Error GoTo Err_Handler
+Dim sTableName As String
+Dim sFieldName As String
+Dim sSQL As String
+Dim szDefaultValue As String
+Dim szLocalQuote As String
+
+
+  ' exit for any crap reasons
+  If Left(trvBrowser.SelectedItem.Key, 1) <> "F" Then
+    MsgBox "That object is not a column!", vbExclamation, "Error"
+    Exit Sub
+  End If
+  If Left(trvBrowser.SelectedItem.Parent.Text, 3) = "pg_" Or Left(trvBrowser.SelectedItem.Parent.Text, 8) = "pgadmin_" Then
+    MsgBox "That is a system table!", vbExclamation, "Error"
+    Exit Sub
+  End If
+  
+  szLocalQuote = "'"
+  If Left(txtType.Text, 3) = "int" Or _
+     Left(txtType.Text, 5) = "float" Or _
+     Left(txtType.Text, 7) = "numeric" Then
+     szLocalQuote = ""
+  End If
+  
+  sFieldName = trvBrowser.SelectedItem.Text
+  sTableName = trvBrowser.SelectedItem.Parent.Text
+  
+  'DJP - Confirm action.
+  If MsgBox("Are you sure you wish to set default value of " & sFieldName & "?", vbYesNo + vbQuestion, "Confirm set default value") = vbNo Then Exit Sub
+  
+
+  
+  szDefaultValue = InputBox("Enter Default Value: ", "Default value", "")
+  If szDefaultValue = "" Then Exit Sub
+  
+  StartMsg "Creating Default value..."
+
+  sSQL = "ALTER TABLE " & QUOTE & sTableName & QUOTE
+  sSQL = sSQL & " ALTER COLUMN " & QUOTE & sFieldName & QUOTE
+  sSQL = sSQL & " SET DEFAULT " & szLocalQuote & szDefaultValue & szLocalQuote & ";"
+  LogMsg "Executing: " & sSQL
+  gConnection.Execute sSQL, , adCmdText
+  LogQuery sSQL
+  cmdRefresh_Click
+  EndMsg
+  Exit Sub
+
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "frmTables, cmdDefault_Click"
+End Sub
 
 Private Sub cmdSerialize_Click()
 '-------------------------------------------------------------------------------
