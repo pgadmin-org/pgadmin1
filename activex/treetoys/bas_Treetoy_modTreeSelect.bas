@@ -30,6 +30,28 @@ Private Enum NodeCheck
     nodPartial = 1
 End Enum
 
+Public Function iTreeTextChecked(Tree As TreeView) As String
+Dim nodX As Node
+Dim iCountChecked As Integer
+Dim szDelimiter As String
+
+iTreeTextChecked = ""
+iCountChecked = iTreeCountChecked(Tree)
+
+If iCountChecked < 10 Then
+    szDelimiter = vbCrLf
+Else
+    szDelimiter = ", "
+End If
+
+    For Each nodX In Tree.Nodes
+        If nodX.Checked = True And Not (nodX.Parent Is Nothing) Then
+            If iTreeTextChecked <> "" Then iTreeTextChecked = iTreeTextChecked & szDelimiter
+            iTreeTextChecked = iTreeTextChecked & nodX.Parent.Text & "->" & nodX.Text
+        End If
+    Next
+End Function
+
 Public Function iTreeCountChecked(Tree As TreeView) As Integer
 Dim nodX As Node
 Dim iLoop As Integer

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Begin VB.UserControl TreeToy 
    ClientHeight    =   3600
    ClientLeft      =   0
@@ -162,6 +162,10 @@ Public Sub UnFreezeCtl()
 Attribute UnFreezeCtl.VB_Description = "Unfreezes the Treeview Control."
   iUnFreezeCtl trvMain
 End Sub
+
+Public Function TreeTextChecked() As String
+  TreeTextChecked = iTreeTextChecked(trvMain)
+End Function
 
 Public Function TreeCountChecked() As Integer
 Attribute TreeCountChecked.VB_Description = "Returns the number of Nodes currently checked."
