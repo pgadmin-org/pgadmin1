@@ -416,6 +416,7 @@ End Sub
 
 Public Sub cmdDropdb_Click()
 On Error GoTo Err_Handler
+
   If lstDB.Text = "" Then
     MsgBox "You must select a database to delete!", vbExclamation, "Error"
     Exit Sub
@@ -424,7 +425,7 @@ On Error GoTo Err_Handler
     MsgBox "You cannot delete the template1 database!", vbExclamation, "Error"
     Exit Sub
   End If
-  If MsgBox("Are you sure you wish to delete this database?", vbYesNo + vbQuestion, "Delete Database?") = vbYes Then
+  If MsgBox("Are you sure you wish to delete this database?" & vbCrLf & "Database name: " & lstDB.Text, vbYesNo + vbQuestion, "Delete Database?") = vbYes Then
     StartMsg "Dropping Database..."
     fMainForm.txtSQLPane.Text = "DROP DATABASE " & QUOTE & lstDB.Text & QUOTE
     LogMsg "Executing: DROP DATABASE " & QUOTE & lstDB.Text & QUOTE
