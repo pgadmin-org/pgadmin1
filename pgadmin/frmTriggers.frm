@@ -592,7 +592,11 @@ On Error GoTo Err_Handler
    
     txtName.Text = szTrigger_Name
     txtTable.Text = szTrigger_Table
-    txtFunction.Text = szTrigger_Function & " (" & szTrigger_Arguments & ")"
+    If szTrigger_Function <> "" Then
+        txtFunction.Text = szTrigger_Function & " (" & szTrigger_Arguments & ")"
+    Else
+        txtFunction.Text = ""
+    End If
     txtForEach.Text = szTrigger_Foreach
     txtExecutes.Text = szTrigger_Executes
     txtEvent.Text = szTrigger_Event
