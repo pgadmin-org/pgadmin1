@@ -1,41 +1,55 @@
 VERSION 5.00
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{690E42C6-5198-11D5-834A-0050BACE7D99}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmViews 
    Caption         =   "Views"
-   ClientHeight    =   4440
+   ClientHeight    =   4575
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8205
    Icon            =   "frmViews.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4440
+   ScaleHeight     =   4575
    ScaleWidth      =   8205
-   Begin VB.CommandButton cmdRebuildViews 
-      BackColor       =   &H80000018&
-      Caption         =   "Rebuild Views"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   24
-      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
-      Top             =   3915
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdRebuildProject 
+   Begin VB.CommandButton cmdRebuild 
       BackColor       =   &H80000018&
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
+      TabIndex        =   25
+      ToolTipText     =   "Checks and rebuilds project dependencies."
+      Top             =   3510
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCopyDevToPro 
+      BackColor       =   &H80000018&
+      Caption         =   "Compile unsafe"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   24
+      ToolTipText     =   "Compiles a repository function."
+      Top             =   3870
+      Visible         =   0   'False
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCopyProToDev 
+      BackColor       =   &H80000018&
+      Caption         =   "Load->Developt"
+      Height          =   330
+      Left            =   45
       TabIndex        =   23
-      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
-      Top             =   3555
+      ToolTipText     =   "Compiles a repository function."
+      Top             =   4230
+      Visible         =   0   'False
       Width           =   1410
    End
    Begin VB.CommandButton cmdExportView 
       Caption         =   "Export View"
       Height          =   330
       Left            =   45
-      TabIndex        =   22
+      TabIndex        =   21
       ToolTipText     =   "Modify the selected View."
       Top             =   1125
       Width           =   1410
@@ -44,7 +58,7 @@ Begin VB.Form frmViews
       Caption         =   "&Modify View"
       Height          =   330
       Left            =   45
-      TabIndex        =   21
+      TabIndex        =   20
       ToolTipText     =   "Modify the selected View."
       Top             =   405
       Width           =   1410
@@ -69,9 +83,9 @@ Begin VB.Form frmViews
    End
    Begin VB.Frame fraDetails 
       Caption         =   "View Details"
-      Height          =   4425
+      Height          =   4560
       Left            =   4500
-      TabIndex        =   12
+      TabIndex        =   11
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtName 
@@ -79,7 +93,7 @@ Begin VB.Form frmViews
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   19
+         TabIndex        =   18
          Top             =   540
          Width           =   2670
       End
@@ -88,7 +102,7 @@ Begin VB.Form frmViews
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   1170
          Width           =   2670
       End
@@ -99,7 +113,7 @@ Begin VB.Form frmViews
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   1755
          Width           =   3480
       End
@@ -108,7 +122,7 @@ Begin VB.Form frmViews
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   225
          Width           =   2670
       End
@@ -117,18 +131,18 @@ Begin VB.Form frmViews
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   855
          Width           =   2670
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   1095
+         Height          =   1230
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   3285
          Width           =   3480
       End
@@ -138,7 +152,7 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   20
+         TabIndex        =   19
          Top             =   585
          Width           =   420
       End
@@ -148,7 +162,7 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   18
+         TabIndex        =   17
          Top             =   1215
          Width           =   300
       End
@@ -158,7 +172,7 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   0
          Left            =   90
-         TabIndex        =   16
+         TabIndex        =   15
          Top             =   270
          Width           =   285
       End
@@ -168,7 +182,7 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   15
+         TabIndex        =   14
          Top             =   900
          Width           =   465
       End
@@ -178,7 +192,7 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   14
+         TabIndex        =   13
          Top             =   1530
          Width           =   660
       End
@@ -188,18 +202,10 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   13
+         TabIndex        =   12
          Top             =   3060
          Width           =   735
       End
-   End
-   Begin VB.ListBox lstView 
-      Height          =   4350
-      Left            =   1485
-      MultiSelect     =   2  'Extended
-      TabIndex        =   6
-      Top             =   45
-      Width           =   2985
    End
    Begin VB.CommandButton cmdRefresh 
       Caption         =   "&Refresh"
@@ -232,7 +238,7 @@ Begin VB.Form frmViews
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   17
+      TabIndex        =   16
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -246,13 +252,69 @@ Begin VB.Form frmViews
       End
    End
    Begin MSComDlg.CommonDialog CommonDialog1 
-      Left            =   945
+      Left            =   45
       Top             =   2610
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
       DialogTitle     =   "Select SQL File"
       Filter          =   "All Files (*.*)|*.*"
+   End
+   Begin TreeToys.TreeToy trvBrowser 
+      Height          =   4560
+      Left            =   1485
+      TabIndex        =   22
+      Top             =   0
+      Width           =   2985
+      _ExtentX        =   5265
+      _ExtentY        =   8043
+      NodeTips        =   1
+      BorderStyle     =   1
+      Checkboxes      =   -1  'True
+      FullRowSelect   =   -1  'True
+      Indentation     =   99.78
+      LabelEdit       =   1
+      LineStyle       =   1
+      Sorted          =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+   End
+   Begin MSComctlLib.ImageList ilBrowser 
+      Left            =   540
+      Top             =   2610
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   4
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmViews.frx":030A
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmViews.frx":0624
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmViews.frx":077E
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmViews.frx":08D8
+            Key             =   ""
+         EndProperty
+      EndProperty
    End
 End
 Attribute VB_Name = "frmViews"
@@ -278,70 +340,65 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim rsView As New Recordset
-Dim szView_PostgreSqlTable As String
+Option Compare Text
+
+Public dragNode As Node, dropNode As Node
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Form
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub Form_Load()
+On Error GoTo Err_Handler
+  LogMsg "Loading Form: " & Me.Name
+  Me.Width = 8325
+  Me.Height = 4980
+
+  Set trvBrowser.ImageList = ilBrowser
+  cmdRefresh_Click
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Load"
+End Sub
+
+Private Sub Form_Resize()
+On Error GoTo Err_Handler
+  If Me.WindowState <> 1 Then
+    If Me.WindowState = 0 Then
+      If Me.Width < 8325 Then Me.Width = 8325
+      If Me.Height < 4980 Then Me.Height = 4980
+    End If
+    trvBrowser.Height = Me.ScaleHeight
+    trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
+    fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
+    fraDetails.Height = Me.ScaleHeight
+    txtComments.Height = fraDetails.Height - txtComments.Top - 100
+  End If
+  Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Resize"
+End Sub
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Buttons
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Private Sub cmdExportView_Click()
 On Error GoTo Err_Handler
 
-    Dim iLoop As Long
-    Dim iListCount As Long
-    Dim szExport As String
-    Dim bExport As Boolean
-    Dim szHeader As String
-    
-    Dim lngView_oid As Long
-    Dim szView_name As String
-    Dim szView_owner As String
-    Dim szView_acl As String
-    Dim szView_comments As String
-    Dim szView_definition As String
-    
-    bExport = False
-    szExport = ""
-
-    iListCount = lstView.ListCount
-        
-    For iLoop = 0 To iListCount - 1
-        If lstView.Selected(iLoop) = True Then
-            bExport = True
-            szView_name = lstView.List(iLoop)
-            cmp_View_GetValues szView_PostgreSqlTable, 0, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
-            
-            ' Header
-            szExport = szExport & "/*" & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "View " & szView_name & vbCrLf
-            If szView_comments <> "" Then szExport = szExport & szView_comments & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "*/" & vbCrLf
-            
-            ' Function
-            szExport = szExport & cmp_View_CreateSQL(szView_name, szView_definition) & vbCrLf & vbCrLf
-        End If
-    Next iLoop
-    
-    If bExport Then
-        szHeader = "/*" & vbCrLf
-        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
-        szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
-        szHeader = szHeader & "pgadmin        www.greatbridge.org/project/pgadmin" & vbCrLf
-        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "*/" & vbCrLf & vbCrLf
-        szExport = szHeader & szExport
-        MsgExportToFile CommonDialog1, szExport, "sql", "Export views"
-    End If
+    cmp_view_tree_export trvBrowser, CommonDialog1
     
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdExportView_Click"
 End Sub
 
 Public Sub cmdModifyView_Click()
- On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 
-If lstView.Text <> "" Then
-    gView_Name = lstView.Text
+Dim szview_name As String
+
+szview_name = trvBrowser.SelectedItem.Text & ""
+If szview_name <> "" Then
+    gView_Name = szview_name
     Load frmAddView
     frmAddView.Show
 End If
@@ -350,31 +407,29 @@ Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdModifyView_Click"
 End Sub
 
-Private Sub cmdRebuildProject_click()
+Private Sub cmdRebuild_Click()
 On Error GoTo Err_Handler
     cmp_Project_Rebuild
-    
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildProject_Click"
 End Sub
 
-Private Sub cmdRebuildViews_Click()
+Private Sub cmdCopyDevToPro_Click()
 On Error GoTo Err_Handler
-    cmp_Project_RebuildViews
+    cmp_view_tree_copy_devtopro trvBrowser
+    cmdRefresh_Click
+    
 Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildViews_Click"
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCopyDevToPro_Click"
 End Sub
 
-Private Sub Command1_Click()
-cmp_View_CopyToDev
-End Sub
-
-Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdCopyProToDev_Click()
 On Error GoTo Err_Handler
-  If Button = 2 Then PopupMenu fMainForm.mnuCTXViews
-  
+    cmp_view_tree_copy_protodev trvBrowser
+    cmdRefresh_Click
+    
 Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, lstViews_MouseUp"
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCopyProToDev_Click"
 End Sub
 
 Private Sub chkSystem_Click()
@@ -389,13 +444,18 @@ On Error GoTo Err_Handler
 Dim Response As Integer
 Dim Tuples As Long
 Dim rsQuery As New Recordset
-  If lstView.Text = "" Then
+Dim szview_name As String
+Dim szQuery As String
+
+  szview_name = trvBrowser.SelectedItem.Text & ""
+  If szview_name = "" Then
     MsgBox "You must select a view to view!", vbExclamation, "Error"
     Exit Sub
   End If
   If rsQuery.State <> adStateClosed Then rsQuery.Close
-  LogMsg "Executing: SELECT count(*) As records FROM " & QUOTE & lstView.Text & QUOTE
-  rsQuery.Open "SELECT count(*) As records FROM " & QUOTE & lstView.Text & QUOTE, gConnection, adOpenForwardOnly
+  szQuery = "SELECT count(*) As records FROM " & QUOTE & szview_name & QUOTE
+  LogMsg "Executing: " & szQuery
+  rsQuery.Open szQuery, adOpenForwardOnly
   If Not rsQuery.EOF Then
     Tuples = rsQuery!Records
   Else
@@ -408,8 +468,8 @@ Dim rsQuery As New Recordset
     If Response = vbNo Then Exit Sub
   End If
   Dim DataForm As New frmSQLOutput
-  LogMsg "Executing: SELECT * FROM " & QUOTE & lstView.Text & QUOTE
-  rsQuery.Open "SELECT * FROM " & QUOTE & lstView.Text & QUOTE, gConnection, adOpenForwardOnly, adLockReadOnly
+  LogMsg "Executing: SELECT * FROM " & QUOTE & szview_name & QUOTE
+  rsQuery.Open "SELECT * FROM " & QUOTE & szview_name & QUOTE, gConnection, adOpenForwardOnly, adLockReadOnly
   Load DataForm
   DataForm.Display rsQuery
   DataForm.Show
@@ -418,21 +478,21 @@ Dim rsQuery As New Recordset
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdViewData_Click"
 End Sub
 
-Private Sub Form_Unload(Cancel As Integer)
-On Error Resume Next
-  Set rsView = Nothing
-End Sub
-
 Public Sub cmdComment_Click()
 On Error GoTo Err_Handler
-  If txtOID.Text = "" Then
-    MsgBox "You must select a View to edit the comment for.", vbExclamation, "Error"
-    Exit Sub
-  End If
-  Load frmComments
-  frmComments.Setup "frmViews", QUOTE & lstView.Text & QUOTE, txtOID.Text
-  frmComments.Show
-  Exit Sub
+Dim szview_name As String
+
+    szview_name = trvBrowser.SelectedItem.Text & ""
+    
+    If szview_name = "" Then
+      MsgBox "You must select a View to edit the comment for.", vbExclamation, "Error"
+      Exit Sub
+    End If
+    Load frmComments
+    frmComments.Setup "frmViews", QUOTE & szview_name & QUOTE, txtOID.Text
+    frmComments.Show
+  
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdComment_Click"
 End Sub
 
@@ -447,169 +507,231 @@ End Sub
 
 Public Sub cmdDropView_Click()
 On Error GoTo Err_Handler
-  Dim szTrigger_name As String
-  Dim iListCount As Long
-  Dim iLoop As Long
-  Dim szDropStr As String
-  
+
   If MsgBox("Are you sure you wish to delete Views?", vbYesNo + vbQuestion, _
             "Confirm View(s) Delete") = vbYes Then
         StartMsg "Dropping View..."
         
-        iListCount = lstView.ListCount
-        
-        For iLoop = 0 To iListCount - 1
-           If lstView.Selected(iLoop) = True Then
-            szTrigger_name = lstView.List(iLoop)
-            cmp_View_DropIfExists szView_PostgreSqlTable, 0, szTrigger_name
-            End If
-        Next iLoop
-            
+        cmp_view_tree_drop trvBrowser
         cmdRefresh_Click
-        EndMsg
   End If
   
-  Exit Sub
+Exit Sub
 Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmViews, cmdDropView_Click"
+If Err.Number <> 0 Then LogError Err, "frmViews, cmdDropView_Click"
 End Sub
 
 Public Sub cmdRefresh_Click()
 On Error GoTo Err_Handler
-  Dim iLoop As Long
-  Dim iUbound As Long
-  Dim szView() As Variant
-  Dim szView_name As String
-  Dim szQuery As String
-  
-  StartMsg "Retrieving View Names..."
-  lstView.Clear
-  txtOID.Text = ""
-  txtDefinition.Text = ""
-  txtComments.Text = ""
-  txtOwner.Text = ""
-  If rsView.State <> adStateClosed Then rsView.Close
-  If chkSystem.Value = 1 Then
-    szView_PostgreSqlTable = "pgadmin_views"
-    szQuery = "SELECT view_name FROM " & szView_PostgreSqlTable & " WHERE view_oid < " & LAST_SYSTEM_OID & " OR view_name LIKE 'pgadmin_%'OR view_name LIKE 'pg_%' ORDER BY view_name"
-    LogMsg "Executing: " & szQuery
-    rsView.Open szQuery, gConnection, adOpenDynamic
-  Else
-    szView_PostgreSqlTable = "pgadmin_dev_views"
-    szQuery = "SELECT view_name FROM " & szView_PostgreSqlTable & " WHERE view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
-    LogMsg "Executing: " & szQuery
-    rsView.Open szQuery, gConnection, adOpenDynamic
-  End If
-  
-  If Not (rsView.EOF) Then
-    szView = rsView.GetRows
-    iUbound = UBound(szView, 2)
-    For iLoop = 0 To iUbound
-      szView_name = szView(0, iLoop)
-      lstView.AddItem szView_name
-    Next iLoop
-  End If
-  
-  Erase szView
-  lstView_Click
-  
-  EndMsg
-  Exit Sub
+
+cmp_view_tree_refresh trvBrowser, CBool(chkSystem)
+
+cmdCopyDevToPro.Visible = DevMode
+cmdCopyProToDev.Visible = DevMode
+cmdRebuild.Visible = DevMode
+
+CmdViewButton
+
 Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmViews, cmdRefresh_Click"
-End Sub
-
-Private Sub Form_Load()
-On Error GoTo Err_Handler
-  LogMsg "Loading Form: " & Me.Name
-  Me.Width = 8325
-  Me.Height = 4455
-  cmdRefresh_Click
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Load"
-End Sub
-
-Private Sub Form_Resize()
-On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
-    If Me.WindowState = 0 Then
-      If Me.Width < 8325 Then Me.Width = 8325
-      If Me.Height < 4845 Then Me.Height = 4845
-    End If
-    lstView.Height = Me.ScaleHeight
-    lstView.Width = Me.ScaleWidth - lstView.Left - fraDetails.Width - 25
-    fraDetails.Left = lstView.Left + lstView.Width + 25
-    fraDetails.Height = Me.ScaleHeight
-    txtComments.Height = fraDetails.Height - txtComments.Top - 100
-  End If
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Resize"
-End Sub
-
-Public Sub lstView_dblClick()
-    cmdModifyView_Click
-End Sub
-
-Public Sub lstView_Click()
-On Error GoTo Err_Handler
-    Dim lngView_oid As Long
-    Dim szView_name As String
-    Dim szView_owner As String
-    Dim szView_acl As String
-    Dim szView_comments As String
-    Dim szView_definition As String
-    
-    If lstView.SelCount > 0 Then
-        szView_name = lstView.Text
-    Else
-        szView_name = ""
-    End If
-    
-    StartMsg "Retrieving View Info..."
-    lngView_oid = 0
-    cmp_View_GetValues szView_PostgreSqlTable, lngView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
-    
-    txtOID.Text = Trim(Str(lngView_oid))
-    If txtOID.Text = 0 Then txtOID.Text = ""
-
-    txtName.Text = szView_name
-    txtDefinition.Text = szView_definition
-    txtOwner.Text = szView_owner
-    txtACL.Text = szView_acl
-    txtComments.Text = szView_comments
-        
-    If txtName.Text <> "" Then
-        If txtOID.Text = "" Then txtOID.Text = "N.S."
-        If txtOwner.Text = "" Then txtOwner.Text = "N.S."
-        If txtACL.Text = "" Then txtACL.Text = "N.S."
-        If txtComments.Text = "" Then txtComments.Text = "N.S."
-    End If
-    
-    CmdViewButton
-    EndMsg
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmViews, lstView_Click"
+If Err.Number <> 0 Then LogError Err, "frmViews, cmdRefresh_Click"
 End Sub
 
 Public Sub CmdViewButton()
 On Error GoTo Err_Handler
 
-    Dim bSystem As Boolean
-    bSystem = (chkSystem.Value = 1)
-    'cmdButtonActivate "", lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
+Dim iSelected As Integer
+Dim sz_key As String
 
-    If cmp_Project_IsRebuilt = True Then
-        cmdRebuildProject.Enabled = False
-        cmdRebuildViews.Enabled = False
-    Else
-       cmdRebuildProject.Enabled = True
-       cmdRebuildViews.Enabled = True
-    End If
+cmp_function_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkSystem)
+
+'Check and uncheck buttons
+cmdButtonActivate sz_key, iSelected, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
+
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"
 End Sub
 
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Treeview
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Treeview
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub trvBrowser_NodeCheck(ByVal Node As MSComctlLib.Node)
+On Error GoTo Err_Handler
+
+trvBrowser.FreezeCtl
+trvBrowser.TreeSelectiveCheck Node
+trvBrowser.UnFreezeCtl
+    
+CmdViewButton
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_NodeCheck"
+End Sub
+
+Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
+On Error GoTo Err_Handler
+
+    Dim NodeX As Node
+    Dim lOID As Long
+    Dim x As Long
+    Dim y As Long
+    Dim szHex As String
+    Dim szKey As String
+    
+    Dim szview_table As String
+    Dim szview_oid As Long
+    Dim szview_name As String
+    Dim szview_definition As String
+    Dim szview_owner As String
+    Dim szView_acl As String
+    Dim szview_comments As String
+    
+    Dim iInstr As Integer
+    
+    If (Node.Checked = True) Then
+        Node.Checked = False
+        Node.Selected = False
+    Else
+        Node.Checked = True
+        Node.Selected = True
+    End If
+    '----------------------------------------------------------------------------------
+    ' Retrieve view name and arguments from List
+    '----------------------------------------------------------------------------------
+    Dim szRoot As String
+    If Node.Text <> "" Then
+        szview_name = Node.Text
+        szRoot = Left(Node.Key, 2)
+        If szRoot = "P:" Or szRoot = "S:" Then
+            szview_table = "pgadmin_views"
+        Else
+            szview_table = gDevPostgresqlTables & "_views"
+        End If
+    Else
+        szview_name = ""
+    End If
+    '----------------------------------------------------------------------------------
+    ' Lookup database
+    '----------------------------------------------------------------------------------
+    StartMsg "Retrieving view Info..."
+    cmp_View_GetValues szview_table, 0, szview_name, szview_definition, szview_owner, szView_acl, szview_comments
+    
+    txtOID.Text = Trim(Str(szview_oid))
+    txtOwner.Text = szview_owner
+    
+    If szview_name <> "" Then
+        If txtOID.Text = 0 Then txtOID.Text = "N.S."
+        If txtOwner.Text = "" Then txtOwner.Text = "N.S."
+    Else
+        If txtOID.Text = 0 Then txtOID.Text = ""
+    End If
+    
+    txtName.Text = szview_name
+    txtDefinition.Text = szview_definition
+    txtComments.Text = szview_comments
+    
+    
+    CmdViewButton
+    EndMsg
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_NodeClick"
+End Sub
+
+Private Sub trvBrowser_dblClick()
+On Error GoTo Err_Handler
+
+    If trvBrowser.SelectedItem Is Nothing Then Exit Sub
+    
+    If (cmdModifyView.Enabled = True) Then
+        cmdModifyView_Click
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_dblClick"
+End Sub
+
+Private Sub trvBrowser_OLEStartDrag(Data As MSComctlLib.DataObject, _
+AllowedEffects As Long)
+On Error GoTo Err_Handler
+
+Set dragNode = trvBrowser.SelectedItem
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_OLEStartDrag"
+End Sub
+
+Private Sub trvBrowser_MouseDown(Button As Integer, Shift As Integer, _
+x As Single, y As Single)
+On Error GoTo Err_Handler
+
+    Set dragNode = trvBrowser.HitTest(x, y)
+    Set dropNode = Nothing
+    If Not (dragNode Is Nothing) Then
+        dragNode.Selected = True
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_MouseDown"
+End Sub
+
+Private Sub trvBrowser_OLEDragDrop(Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
+On Error GoTo Err_Handler
+
+Dim sz_drag_key As String
+Dim sz_drop_key As String
+
+    Set dropNode = trvBrowser.HitTest(x, y)
+
+    If Not (dragNode Is Nothing) And Not (dropNode Is Nothing) Then
+        If dragNode.Key <> dropNode.Key Then
+            If dragNode.Parent Is Nothing Then
+               sz_drag_key = dragNode.Key
+            Else
+               sz_drag_key = dragNode.Parent.Key
+            End If
+            
+            If dropNode.Parent Is Nothing Then
+               sz_drop_key = dropNode.Key
+            Else
+               sz_drop_key = dropNode.Parent.Key
+            End If
+            
+            Select Case sz_drag_key
+                Case "Pro:"
+                    If (sz_drop_key = "Dev:") Then
+                            cmdCopyProToDev_Click
+                    End If
+                
+                Case "Sys:"
+                    If (sz_drop_key = "Dev:") Then
+                            cmdCopyProToDev_Click
+                    End If
+                    
+                 Case "Dev:"
+                    If (sz_drop_key = "Pro:" Or sz_drop_key = "Sys:") Then
+                       cmdCopyDevToPro_Click
+                    End If
+            End Select
+         Else
+            If Not (dropNode Is Nothing) Then
+                trvBrowser_NodeCheck dropNode
+            End If
+        End If
+    End If
+    
+    Set dragNode = Nothing
+    Set dropNode = Nothing
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_OLEDragDrop"
+End Sub
