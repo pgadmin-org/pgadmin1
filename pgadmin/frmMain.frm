@@ -349,6 +349,9 @@ Begin VB.MDIForm frmMain
       Begin VB.Menu mnuFileChangePassword 
          Caption         =   "&Change Password"
       End
+      Begin VB.Menu mnuFilePrintActiveWindow 
+         Caption         =   "&Print Active Window"
+      End
       Begin VB.Menu Sep1 
          Caption         =   "-"
       End
@@ -356,7 +359,7 @@ Begin VB.MDIForm frmMain
          Caption         =   "&Options"
       End
       Begin VB.Menu mnuFilePrinter 
-         Caption         =   "&Printer"
+         Caption         =   "P&rinter"
       End
       Begin VB.Menu Sep2 
          Caption         =   "-"
@@ -1247,6 +1250,18 @@ On Error GoTo Err_Handler
   frmOptions.ZOrder 0
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, mnuFileOptions_Click"
+End Sub
+
+Private Sub mnuFilePrintActiveWindow_Click()
+On Error GoTo Err_Handler
+  fMainForm.ActiveForm.PrintForm
+  Exit Sub
+Err_Handler:
+  If Err.Number = 91 Then
+    MsgBox "There is no Active Child Window to print!", vbExclamation, "Error"
+    Exit Sub
+  End If
+  If Err.Number <> 0 Then LogError Err, "frmMain, mnuFilePrintActiveWindow_Click"
 End Sub
 
 Private Sub mnuFilePrinter_Click()
