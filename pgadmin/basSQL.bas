@@ -99,7 +99,9 @@ SQL_PGADMIN_FUNCTIONS = _
   "  pgadmin_get_type(p.prorettype) AS function_returns, p.prosrc AS function_source, l.lanname AS function_language, " & _
   "  CASE WHEN p.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(p.oid) ELSE pgadmin_get_desc(p.oid) END AS function_comments " & _
   "FROM pg_proc p, pg_language l " & _
-  "WHERE p.prolang = l.oid"
+  "WHERE p.prolang = l.oid " & _
+  "AND p.proname NOT LIKE '%_call_handler'"
+  
   
 SQL_PGADMIN_GROUPS = _
   "CREATE VIEW pgadmin_groups AS SELECT " & _
