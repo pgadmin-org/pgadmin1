@@ -208,7 +208,7 @@ On Error GoTo Err_Handler
     If lngView_Name = "" Then Exit Function
     
     szQueryStr = "SELECT pg_get_viewdef ('" & lngView_Name & "') as Result"
-    LogMsg "Executing: " & szQueryStr
+    'LogMsg "Executing: " & szQueryStr
     
     ' open
     If rsTemp.State <> adStateClosed Then rsTemp.Close
