@@ -548,6 +548,14 @@ Dim rsDesc As New Recordset
   txtPlatform.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, " on") + 4, InStr(1, rsDesc!Version, ", compiled by ") - InStr(1, rsDesc!Version, " on") - 4)
   txtCompiler.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, ", compiled by ") + 14, Len(rsDesc!Version))
   fraDatasource.Visible = True
+  
+    ' Retrieve table content
+  ' This can be done because optimize with GetRows
+  If trvBrowser.Nodes.Count > 1 Then
+    trvBrowser_NodeClick trvBrowser.Nodes.Item(2)
+    trvBrowser.Nodes.Item(2).Expanded = False
+  End If
+  
   EndMsg
   Set rsDesc = Nothing
   Exit Sub
