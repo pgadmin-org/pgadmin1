@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Begin VB.Form frmTables 
    Caption         =   "Tables"
    ClientHeight    =   4050
@@ -980,7 +980,7 @@ Private Sub cmdSerialize_Click()
 ' Machine: KIRK
 ' set the next sequence id to the highest value contained in the data + 1.
 '-------------------------------------------------------------------------------
-'On Error GoTo Err_Handler
+''On Error GoTo Err_Handler
 Dim sTableName As String
 Dim sFieldName As String
 Dim sSQL As String
@@ -1057,13 +1057,13 @@ Err_Handler:
 End Sub
 
 Private Sub trvBrowser_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXTables
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, trvBrowser_MouseUp"
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-On Error Resume Next
+'On Error Resume Next
   Set rsTables = Nothing
   Set rsFields = Nothing
   Set rsChecks = Nothing
@@ -1073,21 +1073,21 @@ On Error Resume Next
 End Sub
 
 Private Sub chkFields_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, chkFields_Click"
 End Sub
 
 Private Sub chkTables_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, chkTables_Click"
 End Sub
 
 Public Sub cmdAddColumn_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If Left(trvBrowser.SelectedItem.Key, 1) <> "T" Then
     MsgBox "That object is not a table!", vbExclamation, "Error"
     Exit Sub
@@ -1103,7 +1103,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdAddColumn_Clic
 End Sub
 
 Public Sub cmdAddTable_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   Load frmAddTable
   frmAddTable.Show
   Exit Sub
@@ -1111,7 +1111,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdAddTable_Click
 End Sub
 
 Public Sub cmdComment_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If fraTable.Visible Then
     If txtOID.Text = "" Then
       MsgBox "You must select a table to edit the comment for.", vbExclamation, "Error"
@@ -1157,7 +1157,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdComment_Click"
 End Sub
 
 Public Sub cmdDropTable_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If Left(trvBrowser.SelectedItem.Key, 1) <> "T" Then
     MsgBox "That object is not a table!", vbExclamation, "Error"
     Exit Sub
@@ -1184,9 +1184,15 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRefresh_Click()
-On Error GoTo Err_Handler
+''On Error GoTo Err_Handler
 Dim NodeX As Node
 Dim rsDesc As New Recordset
+Dim iUbound As Long
+Dim iLoop As Long
+Dim szGetRows As Variant
+Dim lngTable_oid As Long
+Dim szTable_name As String
+Dim szQuery As String
 
   fraTable.Visible = False
   fraColumn.Visible = False
@@ -1208,19 +1214,28 @@ Dim rsDesc As New Recordset
   If rsUnique.State <> adStateClosed Then rsUnique.Close
   If rsTables.State <> adStateClosed Then rsTables.Close
   If chkTables.Value = 1 Then
-    LogMsg "Executing: SELECT DISTINCT ON(table_name) table_name, table_oid, table_owner, table_acl, table_has_indexes, table_has_rules, table_is_shared, table_has_triggers, table_has_primarykey, table_comments FROM pgadmin_tables ORDER BY table_name"
-    rsTables.Open "SELECT DISTINCT ON(table_name) table_name, table_oid, table_owner, table_acl, table_has_indexes, table_has_rules, table_is_shared, table_has_triggers, table_has_primarykey, table_comments FROM pgadmin_tables ORDER BY table_name", gConnection, adOpenStatic
+    szQuery = "SELECT DISTINCT ON(table_name) table_name, table_oid, table_owner, table_acl, table_has_indexes, table_has_rules, table_is_shared, table_has_triggers, table_has_primarykey, table_comments FROM pgadmin_tables ORDER BY table_name"
+    LogMsg "Executing: " & szQuery
+    rsTables.Open szQuery, gConnection, adOpenStatic
   Else
-    LogMsg "Executing: SELECT DISTINCT ON(table_name) table_name, table_oid, table_owner, table_acl, table_has_indexes, table_has_rules, table_is_shared, table_has_triggers, table_has_primarykey, table_comments FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name"
-    rsTables.Open "SELECT DISTINCT ON(table_name) table_name, table_oid, table_owner, table_acl, table_has_indexes, table_has_rules, table_is_shared, table_has_triggers, table_has_primarykey, table_comments FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name", gConnection, adOpenStatic
+    szQuery = "SELECT DISTINCT ON(table_name) table_name, table_oid, table_owner, table_acl, table_has_indexes, table_has_rules, table_is_shared, table_has_triggers, table_has_primarykey, table_comments FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name"
+    LogMsg "Executing: " & szQuery
+    rsTables.Open szQuery, gConnection, adOpenStatic
   End If
+  
   trvBrowser.Nodes.Clear
   Set NodeX = trvBrowser.Nodes.Add(, tvwChild, "D:" & Datasource, Datasource, 1)
-  While Not rsTables.EOF
-    Set NodeX = trvBrowser.Nodes.Add("D:" & Datasource, tvwChild, "T:" & rsTables!table_oid, rsTables!table_name, 2)
-    rsTables.MoveNext
-  Wend
-  If rsTables.BOF <> True Then rsTables.MoveFirst
+  If Not (rsTables.EOF) Then
+    szGetRows = rsTables.GetRows
+    iUbound = UBound(szGetRows, 2)
+    For iLoop = 0 To iUbound
+        szTable_name = szGetRows(0, iLoop)
+        lngTable_oid = szGetRows(1, iLoop)
+        Set NodeX = trvBrowser.Nodes.Add("D:" & Datasource, tvwChild, "T:" & lngTable_oid, szTable_name, 2)
+    Next iLoop
+    rsTables.MoveFirst
+    Erase szGetRows
+  End If
       
   trvBrowser.Nodes(1).Expanded = True
   trvBrowser.Nodes(1).Selected = True
@@ -1240,7 +1255,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRenColumn_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim NewName As String
 Dim AlterStr As String
   If Left(trvBrowser.SelectedItem.Key, 1) <> "F" Then
@@ -1269,7 +1284,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRenTable_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim NewName As String
 Dim AlterStr As String
   If Left(trvBrowser.SelectedItem.Key, 1) <> "T" Then
@@ -1297,7 +1312,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdData_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim Response As Integer
 Dim Tuples As Long
 Dim rsQuery As New Recordset
@@ -1334,7 +1349,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdData_Click"
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   Me.Width = 8325
   Me.Height = 4455
   LogMsg "Loading Form: " & Me.Name
@@ -1344,7 +1359,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If frmTables.Width < 8325 Then frmTables.Width = 8325
@@ -1378,7 +1393,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Resize"
 End Sub
 
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
-'On Error GoTo Err_Handler
+''On Error GoTo Err_Handler
 Dim NodeX As Node
 Dim lOID As Long
 Dim rsTemp As New Recordset
@@ -1389,9 +1404,15 @@ Dim szKey As String
 Dim szArgString As String
 Dim szArgs() As String
 
+Dim szQuery As String
+Dim iLoop As Long
+Dim iUbound As Long
+Dim szGetRows() As Variant
+
+             
   'If a table was clicked, set the data in the grid, and create children
   'if necessary
-  
+    
   Me.Refresh
   Select Case Mid(Node.Key, 1, 1)
   Case "T"
@@ -1402,130 +1423,248 @@ Dim szArgs() As String
     fraForeign.Visible = False
     fraPrimary.Visible = False
     fraUnique.Visible = False
-    While Not rsTables.EOF
-      If rsTables!table_name = Node.Text Then
-        lOID = rsTables!table_oid
-        txtOID.Text = rsTables!table_oid & ""
-        txtOwner.Text = rsTables!table_owner & ""
-        txtPermissions.Text = rsTables!table_acl & ""
-        If Node.Text = "pg_log" Or Node.Text = "pg_variable" Or Node.Text = "pg_xactlock" Then
-          txtRows.Text = "Unknown"
-        Else
-          If rsTemp.State <> adStateClosed Then rsTemp.Close
-          LogMsg "Executing: SELECT count(*) As records FROM " & QUOTE & Node.Text & QUOTE
-          rsTemp.Open "SELECT count(*) As records FROM " & QUOTE & Node.Text & QUOTE, gConnection, adOpenForwardOnly
-          If Not rsTemp.EOF Then
-            txtRows.Text = rsTemp!Records
-          Else
-            txtRows.Text = "Unknown"
-          End If
-          If rsTemp.State <> adStateClosed Then rsTemp.Close
-        End If
-        txtIndexes.Text = rsTables!table_has_indexes & ""
-        txtRules.Text = rsTables!table_has_rules & ""
-        txtShared.Text = rsTables!table_is_shared & ""
-        txtTriggers.Text = rsTables!table_has_triggers & ""
-        txtPrimaryKey.Text = rsTables!table_has_primarykey & ""
-        txtComments.Text = rsTables!table_comments & ""
-        rsTables.MoveLast
-      End If
-      rsTables.MoveNext
-    Wend
-    If rsTables.BOF <> True Then rsTables.MoveFirst
+    
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ' Tables
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim szTable_name As String
+    Dim lTable_OID As Long
+    Dim szTable_oid As String
+    Dim szTable_owner As String
+    Dim szTable_acl As String
+    Dim szTable_has_indexes As String
+    Dim szTable_has_rules As String
+    Dim szTable_is_shared As String
+    Dim szTable_has_triggers As String
+    Dim szTable_has_primarykey As String
+    Dim szTable_comments As String
+
+    If Not (rsTables.EOF) Then
+        szGetRows = rsTables.GetRows
+        iUbound = UBound(szGetRows, 2)
+        For iLoop = 0 To iUbound
+            szTable_name = szGetRows(0, iLoop) & ""
+            If szTable_name = Node.Text Then
+                lTable_OID = Int(szGetRows(1, iLoop))
+                szTable_oid = szGetRows(1, iLoop) & ""
+                szTable_owner = szGetRows(2, iLoop) & ""
+                szTable_acl = szGetRows(3, iLoop) & ""
+                szTable_has_indexes = szGetRows(4, iLoop) & ""
+                szTable_has_rules = szGetRows(5, iLoop) & ""
+                szTable_is_shared = szGetRows(6, iLoop) & ""
+                szTable_has_triggers = szGetRows(7, iLoop) & ""
+                szTable_has_primarykey = szGetRows(8, iLoop) & ""
+                szTable_comments = szGetRows(9, iLoop) & ""
+            
+                lOID = lTable_OID
+                txtOID.Text = szTable_oid
+                txtOwner.Text = szTable_owner
+                txtPermissions.Text = szTable_acl
+                If Node.Text = "pg_log" Or Node.Text = "pg_variable" Or Node.Text = "pg_xactlock" Then
+                  txtRows.Text = "Unknown"
+                Else
+                  Dim result As Variant
+                  result = RsExecuteGetResult("SELECT count(*) As records FROM " & QUOTE & Node.Text & QUOTE)
+                  If Not (IsNull(result)) Then
+                    txtRows.Text = result
+                  Else
+                    txtRows.Text = "Unknown"
+                  End If
+                  If rsTemp.State <> adStateClosed Then rsTemp.Close
+                End If
+                txtIndexes.Text = szTable_has_indexes
+                txtRules.Text = szTable_has_rules
+                txtShared.Text = szTable_is_shared
+                txtTriggers.Text = szTable_has_triggers
+                txtPrimaryKey.Text = szTable_has_primarykey
+                txtComments.Text = szTable_comments
+            End If
+        Next iLoop
+        Erase szGetRows
+        rsTables.MoveFirst
+    End If
   
-    'Get Columns
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ' Colums
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim szFields_Table_oid As String
+    Dim szFields_Table_name As String
+    Dim szFields_Column_name As String
+    Dim szFields_Column_oid As String
+    Dim szFields_column_position As String
+    Dim szFields_column_type As String
+    Dim szFields_column_length As String
+    Dim szFields_column_not_null As String
+    Dim szFields_column_default As String
+    Dim szFields_column_comments As String
+    
     If rsFields.State = adStateClosed Then
       If chkFields.Value = 1 Then
-        LogMsg "Executing: SELECT table_oid, table_name, column_name, column_oid, column_position, column_type, column_length, column_not_null, column_default, column_comments FROM pgadmin_tables ORDER BY column_position"
-        rsFields.Open "SELECT table_oid, table_name, column_name, column_oid, column_position, column_type, column_length, column_not_null, column_default, column_comments FROM pgadmin_tables ORDER BY column_position", gConnection, adOpenStatic
+        szQuery = "SELECT table_oid, table_name, column_name, column_oid, column_position, column_type, column_length, column_not_null, column_default, column_comments FROM pgadmin_tables ORDER BY column_position"
+        LogMsg "Executing: " & szQuery
+        rsFields.Open szQuery, gConnection, adOpenStatic
       Else
-        LogMsg "Executing: SELECT table_oid, table_name, column_name, column_oid, column_position, column_type, column_length, column_not_null, column_default, column_comments FROM pgadmin_tables WHERE column_position > 0 ORDER BY column_position"
-        rsFields.Open "SELECT table_oid, table_name, column_name, column_oid, column_position, column_type, column_length, column_not_null, column_default, column_comments FROM pgadmin_tables WHERE column_position > 0 ORDER BY column_position", gConnection, adOpenStatic
+        szQuery = "SELECT table_oid, table_name, column_name, column_oid, column_position, column_type, column_length, column_not_null, column_default, column_comments FROM pgadmin_tables WHERE column_position > 0 ORDER BY column_position"
+        LogMsg "Executing: " & szQuery
+        rsFields.Open szQuery, gConnection, adOpenStatic
       End If
       On Error Resume Next
-      While Not rsFields.EOF
-        Set NodeX = trvBrowser.Nodes.Add("T:" & rsFields!table_oid, tvwChild, "F:" & rsFields!column_oid, rsFields!column_name, 3)
-      rsFields.MoveNext
-      Wend
-      On Error GoTo Err_Handler
-      If rsFields.BOF <> True Then rsFields.MoveFirst
+
+      If Not (rsFields.EOF) Then
+            szGetRows = rsFields.GetRows
+            iUbound = UBound(szGetRows, 2)
+            For iLoop = 0 To iUbound
+                szFields_Table_oid = szGetRows(0, iLoop) & ""
+                szFields_Column_oid = szGetRows(3, iLoop) & ""
+                szFields_Column_name = szGetRows(2, iLoop) & ""
+                Set NodeX = trvBrowser.Nodes.Add("T:" & szFields_Table_oid, tvwChild, "F:" & szFields_Column_oid, szFields_Column_name, 3)
+            Next iLoop
+            Erase szGetRows
+            rsFields.MoveFirst
+       End If
+      
+      'On Error GoTo Err_Handler
     End If
     
-    'Get Checks
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ' Checks
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim szCheck_table_oid As String
+    Dim szCheck_oid As String
+    Dim szCheck_name As String
+    
     If rsChecks.State = adStateClosed Then
-      LogMsg "Executing: SELECT * FROM pgadmin_checks ORDER BY check_table_name, check_name"
-      rsChecks.Open "SELECT * FROM pgadmin_checks ORDER BY check_table_name, check_name", gConnection, adOpenStatic
-      On Error Resume Next
-      While Not rsChecks.EOF
-        If rsChecks!check_name & "" = "" Then
-          Set NodeX = trvBrowser.Nodes.Add("T:" & rsChecks!check_table_oid, tvwChild, "C:" & rsChecks!check_oid, "Unamed Check", 4)
-        Else
-          Set NodeX = trvBrowser.Nodes.Add("T:" & rsChecks!check_table_oid, tvwChild, "C:" & rsChecks!check_oid, rsChecks!check_name, 4)
-        End If
-        rsChecks.MoveNext
-      Wend
-      On Error GoTo Err_Handler
-      If rsChecks.BOF <> True Then rsChecks.MoveFirst
+      szQuery = "SELECT check_oid, check_name, check_table_oid, check_table_name, check_definition, check_comments FROM pgadmin_checks ORDER BY check_table_name, check_name;"
+      LogMsg "Executing: " & szQuery
+      rsChecks.Open szQuery, gConnection, adOpenStatic
+      'On Error Resume Next
+      If Not (rsChecks.EOF) Then
+            szGetRows = rsChecks.GetRows
+            iUbound = UBound(szGetRows, 2)
+            For iLoop = 0 To iUbound
+                szCheck_oid = szGetRows(0, iLoop) & ""
+                szCheck_name = szGetRows(1, iLoop) & ""
+                szCheck_table_oid = szGetRows(2, iLoop) & ""
+                
+                If szCheck_name & "" = "" Then
+                  Set NodeX = trvBrowser.Nodes.Add("T:" & szCheck_table_oid, tvwChild, "C:" & szCheck_oid, "Unamed Check", 4)
+                Else
+                  Set NodeX = trvBrowser.Nodes.Add("T:" & szCheck_table_oid, tvwChild, "C:" & szCheck_oid, szCheck_name, 4)
+                End If
+            Next iLoop
+            Erase szGetRows
+            rsChecks.MoveFirst
+       End If
+      'On Error GoTo Err_Handler
     End If
     
-    'Get Foreign Keys
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ' Foreign keys
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim szForeign_tgrelid As String
+    Dim szForeign_oid As String
+    Dim szForeign_tgconstrname As String
+    
     If rsForeign.State = adStateClosed Then
-      LogMsg "Executing: SELECT tgrelid, tgconstrname, tgnargs, tgargs, CASE WHEN oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(oid) ELSE pgadmin_get_desc(oid) END AS comments FROM pg_trigger WHERE tgisconstraint = TRUE AND tgtype = 21"
-      rsForeign.Open "SELECT oid, tgrelid, tgconstrname, tgnargs, tgargs, CASE WHEN oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(oid) ELSE pgadmin_get_desc(oid) END AS comments FROM pg_trigger WHERE tgisconstraint = TRUE AND tgtype = 21", gConnection, adOpenStatic
-      On Error Resume Next
-      While Not rsForeign.EOF
-        If rsForeign!tgconstrname & "" = "" Then
-          Set NodeX = trvBrowser.Nodes.Add("T:" & rsForeign!tgrelid, tvwChild, "O:" & rsForeign!OID, "Unamed Foreign Key", 5)
-        Else
-          Set NodeX = trvBrowser.Nodes.Add("T:" & rsForeign!tgrelid, tvwChild, "O:" & rsForeign!OID, rsForeign!tgconstrname, 5)
-        End If
-        rsForeign.MoveNext
-      Wend
-      On Error GoTo Err_Handler
-      If rsForeign.BOF <> True Then rsForeign.MoveFirst
+      szQuery = "SELECT oid, tgrelid, tgconstrname, tgnargs, tgargs, CASE WHEN oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(oid) ELSE pgadmin_get_desc(oid) END AS comments FROM pg_trigger WHERE tgisconstraint = TRUE AND tgtype = 21"
+      LogMsg szQuery
+      rsForeign.Open szQuery, gConnection, adOpenStatic
+      'On Error Resume Next
+      
+      If Not (rsForeign.EOF) Then
+            szGetRows = rsForeign.GetRows
+            iUbound = UBound(szGetRows, 2)
+            For iLoop = 0 To iUbound
+                szForeign_tgrelid = szGetRows(1, iLoop) & ""
+                szForeign_oid = szGetRows(0, iLoop) & ""
+                szForeign_tgconstrname = szGetRows(2, iLoop) & ""
+                
+                If rsForeign!tgconstrname & "" = "" Then
+                  Set NodeX = trvBrowser.Nodes.Add("T:" & szForeign_tgrelid, tvwChild, "O:" & szForeign_oid, "Unamed Foreign Key", 5)
+                Else
+                  Set NodeX = trvBrowser.Nodes.Add("T:" & szForeign_tgrelid, tvwChild, "O:" & szForeign_oid, szForeign_tgconstrname, 5)
+                End If
+            Next iLoop
+            Erase szGetRows
+            rsForeign.MoveFirst
+       End If
+      'On Error GoTo Err_Handler
     End If
     
-    'Get Primary Keys
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ' Primary keys
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim szPrimary_index_table As String
+    Dim szPrimary_index_oid As String
+    Dim szPrimary_index_name As String
+    
     If rsPrimary.State = adStateClosed Then
-      LogMsg "Executing: SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_primary = 'Yes'"
-      rsPrimary.Open "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_primary = 'Yes'", gConnection, adOpenStatic
-      On Error Resume Next
-      While Not rsPrimary.EOF
-        'pgadmin_indexes only has the table name so we need to get the Node Key first
-        szKey = ""
-        For X = 1 To trvBrowser.Nodes.Count
-          If (trvBrowser.Nodes(X).Text = rsPrimary!index_table & "") And (Mid(trvBrowser.Nodes(X).Key, 1, 1) = "T") Then
-            szKey = trvBrowser.Nodes(X).Key
-            Exit For
-          End If
-        Next X
-        If szKey <> "" Then Set NodeX = trvBrowser.Nodes.Add(szKey, tvwChild, "P:" & rsPrimary!index_oid, rsPrimary!index_name, 6)
-        rsPrimary.MoveNext
-      Wend
-      On Error GoTo Err_Handler
-      If rsPrimary.BOF <> True Then rsPrimary.MoveFirst
+      szQuery = "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_primary = 'Yes'"
+      LogMsg szQuery
+      rsPrimary.Open szQuery, gConnection, adOpenStatic
+      'On Error Resume Next
+     
+      If Not (rsPrimary.EOF) Then
+            szGetRows = rsPrimary.GetRows
+            iUbound = UBound(szGetRows, 2)
+            
+            For iLoop = 0 To iUbound
+                szPrimary_index_table = szGetRows(2, iLoop) & ""
+                szPrimary_index_oid = szGetRows(0, iLoop) & ""
+                szPrimary_index_name = szGetRows(1, iLoop) & ""
+                
+                'pgadmin_indexes only has the table name so we need to get the Node Key first
+                szKey = ""
+                For X = 1 To trvBrowser.Nodes.Count
+                  If (trvBrowser.Nodes(X).Text = szPrimary_index_table & "") And (Mid(trvBrowser.Nodes(X).Key, 1, 1) = "T") Then
+                    szKey = trvBrowser.Nodes(X).Key
+                    Exit For
+                  End If
+                Next X
+                If szKey <> "" Then Set NodeX = trvBrowser.Nodes.Add(szKey, tvwChild, "P:" & szPrimary_index_oid, szPrimary_index_name, 6)
+            Next iLoop
+            Erase szGetRows
+            rsPrimary.MoveFirst
+       End If
+      'On Error GoTo Err_Handler
     End If
   
-    'Get Unique Constraints
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ' Unique Constraints
+    ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim szUnique_index_table As String
+    Dim szUnique_index_oid As String
+    Dim szUnique_index_name As String
+    
     If rsUnique.State = adStateClosed Then
       'Note, as Primary Keys are inherently unique, exclude them here.
-      LogMsg "Executing: SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_unique = 'Yes' AND index_is_primary = 'No'"
-      rsUnique.Open "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_unique = 'Yes' AND index_is_primary = 'No'", gConnection, adOpenStatic
-      On Error Resume Next
-      While Not rsUnique.EOF
-        'pgadmin_indexes only has the table name so we need to get the Node Key first
-        szKey = ""
-        For X = 1 To trvBrowser.Nodes.Count
-          If (trvBrowser.Nodes(X).Text = rsUnique!index_table & "") And (Mid(trvBrowser.Nodes(X).Key, 1, 1) = "T") Then
-            szKey = trvBrowser.Nodes(X).Key
-            Exit For
-          End If
-        Next X
-        If szKey <> "" Then Set NodeX = trvBrowser.Nodes.Add(szKey, tvwChild, "U:" & rsUnique!index_oid, rsUnique!index_name, 7)
-        rsUnique.MoveNext
-      Wend
-      On Error GoTo Err_Handler
-      If rsUnique.BOF <> True Then rsUnique.MoveFirst
+      szQuery = "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_unique = 'Yes' AND index_is_primary = 'No'"
+      LogMsg szQuery
+      rsUnique.Open szQuery, gConnection, adOpenStatic
+      'On Error Resume Next
+      
+        If Not (rsUnique.EOF) Then
+            szGetRows = rsUnique.GetRows
+            iUbound = UBound(szGetRows, 2)
+            For iLoop = 0 To iUbound
+                szUnique_index_table = szGetRows(2, iLoop) & ""
+                szUnique_index_oid = szGetRows(0, iLoop) & ""
+                szUnique_index_name = szGetRows(1, iLoop) & ""
+                    
+                'pgadmin_indexes only has the table name so we need to get the Node Key first
+                szKey = ""
+                For X = 1 To trvBrowser.Nodes.Count
+                  If (trvBrowser.Nodes(X).Text = szUnique_index_table & "") And (Mid(trvBrowser.Nodes(X).Key, 1, 1) = "T") Then
+                    szKey = trvBrowser.Nodes(X).Key
+                    Exit For
+                  End If
+                Next X
+                If szKey <> "" Then Set NodeX = trvBrowser.Nodes.Add(szKey, tvwChild, "U:" & szUnique_index_oid, szUnique_index_name, 7)
+            Next iLoop
+            Erase szGetRows
+            rsUnique.MoveFirst
+       End If
+      'On Error GoTo Err_Handler
     End If
   
     EndMsg
@@ -1534,7 +1673,6 @@ Dim szArgs() As String
   'If a field was clicked then display the field data.
   
   Case "F"
-
     StartMsg "Retrieving Attribute Definition..."
     fraDatasource.Visible = False
     fraTable.Visible = False
@@ -1542,22 +1680,47 @@ Dim szArgs() As String
     fraForeign.Visible = False
     fraPrimary.Visible = False
     fraUnique.Visible = False
+        
+    If Not (rsFields.EOF) Then
+            szGetRows = rsFields.GetRows
+            iUbound = UBound(szGetRows, 2)
+            For iLoop = 0 To iUbound
+                 szUnique_index_table = szGetRows(2, iLoop) & ""
+                    
+                 szFields_Table_oid = szGetRows(0, iLoop) & ""
+                 szFields_Table_name = szGetRows(1, iLoop) & ""
+                 szFields_Column_name = szGetRows(2, iLoop) & ""
+                 szFields_Column_oid = szGetRows(3, iLoop) & ""
+                 szFields_column_position = szGetRows(4, iLoop) & ""
+                 szFields_column_type = szGetRows(5, iLoop) & ""
+                 szFields_column_length = szGetRows(6, iLoop) & ""
+                 szFields_column_not_null = szGetRows(7, iLoop) & ""
+                 szFields_column_default = szGetRows(8, iLoop) & ""
+                 szFields_column_comments = szGetRows(9, iLoop) & ""
+                       
+                 If szFields_Column_name = Node.Text And szFields_Table_name = Node.Parent.Text Then
+                    txtColOID.Text = szFields_Column_oid
+                    txtNumber.Text = szFields_column_position
+                    If szFields_column_type & "" = "numeric" Then
+                      szHex = Hex((Int(szFields_column_length) - 4) And &HFFFF)
+                      txtLength.Text = CLng("&H" & Mid(szHex, 1, Len(szHex) - 4)) & "," & CLng("&H" & Mid(szHex, Len(szHex) - 3, Len(szHex)))
+                    Else
+                      txtLength.Text = szFields_column_length
+                    End If
+                    txtNotNull.Text = szFields_column_not_null
+                    txtType.Text = szFields_column_type
+                    txtDefault.Text = szFields_column_default
+                    txtColComments.Text = szFields_column_comments
+                End If
+                   
+            Next iLoop
+            Erase szGetRows
+            rsFields.MoveFirst
+       End If
+    
+    
     While Not rsFields.EOF
-      If rsFields!column_name = Node.Text And rsFields!table_name = Node.Parent.Text Then
-        txtColOID.Text = rsFields!column_oid & ""
-        txtNumber.Text = rsFields!column_position & ""
-        If rsFields!column_type & "" = "numeric" Then
-          szHex = Hex((rsFields!column_length - 4) And &HFFFF)
-          txtLength.Text = CLng("&H" & Mid(szHex, 1, Len(szHex) - 4)) & "," & CLng("&H" & Mid(szHex, Len(szHex) - 3, Len(szHex)))
-        Else
-          txtLength.Text = rsFields!column_length & ""
-        End If
-        txtNotNull.Text = rsFields!column_not_null & ""
-        txtType.Text = rsFields!column_type & ""
-        txtDefault.Text = rsFields!column_default & ""
-        txtColComments.Text = rsFields!column_comments & ""
-        rsFields.MoveLast
-      End If
+    
       rsFields.MoveNext
     Wend
     If rsFields.BOF <> True Then rsFields.MoveFirst
