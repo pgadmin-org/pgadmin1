@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddFunction 
    Caption         =   "Function"
    ClientHeight    =   5595
@@ -372,7 +372,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Form_Resize"
 End Sub
 
 Private Sub Form_Load()
-' On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim rsTypes As New Recordset
   LogMsg "Loading Form: " & Me.Name
   Me.Height = 4110
@@ -446,38 +446,32 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddDatabase, vssLanguage_
 End Sub
 
 Private Sub Function_Load()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim temp_arg_list As Variant
     Dim temp_arg_item As Variant
-    Dim rsFunc As New Recordset
-    Dim szPath As String
+    
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    Dim szFunction_returns As String
+    Dim szFunction_source As String
+    Dim szFunction_language As String
+    
     StartMsg "Retrieving Function information..."
+    cmp_Function_GetValues lng_OpenFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
+    
+    ' Initialize form
+    txtName = szFunction_name
+    txtPath.Text = szFunction_source
+    vssLanguage.Text = szFunction_language
+    cboReturnType.Text = szFunction_returns
 
-    If rsFunc.State <> adStateClosed Then rsFunc.Close
-          LogMsg "Executing: SELECT * FROM pgadmin_functions WHERE Function_OID = " & lng_OpenFunction_OID
-          rsFunc.Open "SELECT * FROM pgadmin_functions WHERE function_OID = " & lng_OpenFunction_OID, gConnection, adOpenDynamic
-    
-    ' Initialize form with values from pgadmin_function
-    txtName = rsFunc!Function_name & ""
-    szPath = Replace(rsFunc!Function_source & "", "'", "''")
-    txtPath.Text = szPath
-    vssLanguage.Text = rsFunc!Function_language & ""
-    
-    If (rsFunc!Function_returns & "" <> "") Then
-        cboReturnType.Text = rsFunc!Function_returns & ""
-    Else
-        cboReturnType.Text = "opaque" ' Review if we could not put it in pgadmin_functions
-    End If
-    
-    temp_arg_list = Split(rsFunc!Function_arguments, ",")
+    temp_arg_list = Split(szFunction_arguments, ",")
     For Each temp_arg_item In temp_arg_list
          cboArguments.Text = Trim(temp_arg_item)
          cmdAdd_Click
     Next
     
-    rsFunc.Close
     EndMsg
-    
   Exit Sub
 Err_Handler:
   EndMsg

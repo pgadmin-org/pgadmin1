@@ -151,7 +151,7 @@ Sub cmp_Trigger_DropIfExists(ByVal lngTrigger_OID As Long, Optional ByVal szTrig
     ' Test existence of trigger
     If cmp_Trigger_Exists(lngTrigger_OID, szTrigger_name & "", szTrigger_table & "") Then
         ' Retrieve name and table is we only know the OID
-        If lngTrigger_OID <> 0 Then cmp_Trigger_GetInfo lngTrigger_OID, szTrigger_name, szTrigger_table
+        If lngTrigger_OID <> 0 Then cmp_Trigger_GetValues lngTrigger_OID, szTrigger_name, szTrigger_table
         
         ' Create drop query
         szDropStr = "DROP TRIGGER " & QUOTE & szTrigger_name & QUOTE & " ON " & szTrigger_table
@@ -169,7 +169,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_DropIfExists"
 End Sub
 
-Sub cmp_Trigger_GetInfo(ByVal lngTrigger_OID As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_Event As String)
+Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_Event As String)
  'On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -225,7 +225,7 @@ Sub cmp_Trigger_GetInfo(ByVal lngTrigger_OID As Long, Optional szTrigger_name As
     End If
   Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_GetInfo"
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_GetValues"
 End Sub
 
 Function cmp_Trigger_Exists(ByVal lngTrigger_OID As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String) As Boolean
@@ -324,7 +324,7 @@ Public Sub cmp_Function_DropIfExists(ByVal szFunction_OID As Long, Optional ByVa
     'Drop function if exists
     If cmp_Function_Exists(szFunction_OID, szFunction_name & "", szFunction_arguments & "") = True Then
         ' Retrieve function name and arguments if we only know the OID
-        If szFunction_OID <> 0 Then cmp_Function_GetInfo szFunction_OID, szFunction_name, szFunction_arguments
+        If szFunction_OID <> 0 Then cmp_Function_GetValues szFunction_OID, szFunction_name, szFunction_arguments
         
         ' create drop query
         szDropStr = "DROP FUNCTION " & QUOTE & szFunction_name & QUOTE & " (" & szFunction_arguments & ");"
@@ -377,29 +377,16 @@ Public Sub cmp_Function_Compile(ByVal lngFunction_OID As Long)
     Dim szFunction_language As String
     Dim szFunction_source As String
 
-    ' Retrive latest version of function
-    szQueryStr = "SELECT * FROM pgadmin_functions WHERE function_OID = " & Str(lngFunction_OID)
-    
-     'Log
-    LogMsg "Retrieving latest version of function OID = " & lngFunction_OID & " ..."
-    LogMsg "Executing: " & szQueryStr
-  
-    If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szQueryStr, gConnection
-  
+    ' Retrieve function
+    cmp_Function_GetValues lngFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
+ 
     ' Compile function if exists
-    If Not rsComp.EOF Then
-        szFunction_name = rsComp!Function_name & ""
-        szFunction_arguments = rsComp!Function_arguments & ""
-        szFunction_returns = rsComp!Function_returns & ""
-        If szFunction_returns = "" Then szFunction_returns = "opaque" 'strange
-        szFunction_language = rsComp!Function_language & ""
-        szFunction_source = Replace(rsComp!Function_source, "'", "''") & ""
-        
+    If szFunction_name <> "" Then
         ' Attempt to create a temporary function to see if it compiles
         LogMsg "Checking if " & szFunction_name & " (" & szFunction_arguments & ") can be compiled ..."
         cmp_Function_DropIfExists 0, "pgadmin_dev_temp_function", szFunction_arguments
         cmp_Function_Create "pgadmin_dev_temp_function", szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
+        cmp_Function_DropIfExists 0, "pgadmin_dev_temp_function", szFunction_arguments
     
        If bContinueCompilation = True Then
             ' If it does, compile the real function
@@ -417,7 +404,6 @@ Err_Handler:
   MsgBox "Function " & szFunction_name & " (" & szFunction_arguments & ") could not be compiled. Check source code of the function and compile again."
   bContinueCompilation = False
 End Sub
-
 
 Public Sub cmp_Function_Dependency_Initialize(ByVal lngFunction_OID As Long, ByVal szFunction_name As String)
 'On Error GoTo Err_Handler
@@ -535,7 +521,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_HasSatisfiedDependencies"
 End Function
 
-Sub cmp_Function_GetInfo(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String)
+Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String)
  'On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -554,17 +540,20 @@ Sub cmp_Function_GetInfo(ByVal lngFunction_OID As Long, Optional szFunction_name
         rsComp.Open szQueryStr, gConnection
         
         If Not rsComp.EOF Then
-            If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name
+            If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
             If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
             If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
             If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
-            If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language
+            If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
+            
+            If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
+            szFunction_source = Replace(szFunction_source, "'", "''")
             rsComp.Close
         End If
     End If
   Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_GetInfo"
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_GetValues"
 End Sub
 '****
 '**** Table
@@ -688,7 +677,7 @@ Public Sub comp_Project_RelinkTriggers()
     While Not rsTrigger.EOF
         ' Drop trigger if exists and then recreate it
         cmp_Trigger_DropIfExists rsTrigger!trigger_oid, rsTrigger!trigger_name, rsTrigger!trigger_table
-        cmp_Trigger_Create rsTrigger!trigger_name, rsTrigger!trigger_table, rsTrigger!trigger_function, rsTrigger!trigger_arguments, "", "", "", rsTrigger!trigger_type
+        cmp_Trigger_Create rsTrigger!trigger_name, rsTrigger!trigger_table, rsTrigger!trigger_function & "", rsTrigger!trigger_arguments & "", "", "", "", rsTrigger!trigger_type
         rsTrigger.MoveNext
     Wend
 

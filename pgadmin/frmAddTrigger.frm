@@ -428,7 +428,7 @@ On Error GoTo Err_Handler
     Dim szTriggerEvent As String
     
     StartMsg "Retrieving trigger information..."
-    cmp_Trigger_GetInfo lng_OpenTrig_OID, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
+    cmp_Trigger_GetValues lng_OpenTrig_OID, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
     
     ' Loading trigger name
     txtName = szTriggerName
