@@ -552,8 +552,6 @@ On Error GoTo Err_Handler
     Dim szView_owner As String
     Dim szView_acl As String
     Dim szView_comments As String
-    
-    Node.Checked = Not (Node.Checked)
         
     '----------------------------------------------------------------------------------
     ' Retrieve view name and arguments from List
@@ -593,11 +591,10 @@ End Sub
 Private Sub trvBrowser_dblClick()
 On Error GoTo Err_Handler
 
-    If trvBrowser.SelectedItem Is Nothing Then Exit Sub
-    
-    If (cmdModifyView.Enabled = True) Then
-        cmdModifyView_Click
-    End If
+    If trvBrowser.SelectedItem.Parent Is Nothing Then Exit Sub
+    If DevMode = True And trvBrowser.SelectedItem.Parent.Key = "Pro:" Or trvBrowser.SelectedItem.Parent.Key = "Sys:" Then Exit Sub
+
+    cmdModifyView_Click
     
 Exit Sub
 Err_Handler:
@@ -623,6 +620,7 @@ On Error GoTo Err_Handler
     Set dropNode = Nothing
     If Not (dragNode Is Nothing) Then
         dragNode.Selected = True
+        trvBrowser_NodeClick dragNode
     End If
     
 Exit Sub

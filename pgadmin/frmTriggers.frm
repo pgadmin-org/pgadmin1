@@ -565,8 +565,6 @@ On Error GoTo Err_Handler
     Dim szTrigger_Executes As String
     Dim szTrigger_Comments As String
     
-    Node.Checked = Not (Node.Checked)
-    
     '----------------------------------------------------------------------------------
     ' Retrieve Trigger name and arguments from List
     '----------------------------------------------------------------------------------
@@ -608,12 +606,11 @@ End Sub
 Private Sub trvBrowser_dblClick()
 On Error GoTo Err_Handler
 
-    If trvBrowser.SelectedItem Is Nothing Then Exit Sub
-    
-    If (cmdModifyTrig.Enabled = True) Then
-        cmdModifyTrig_Click
-    End If
-    
+    If trvBrowser.SelectedItem.Parent Is Nothing Then Exit Sub
+    If DevMode = True And trvBrowser.SelectedItem.Parent.Key = "Pro:" Or trvBrowser.SelectedItem.Parent.Key = "Sys:" Then Exit Sub
+
+    cmdModifyTrig_Click
+
 Exit Sub
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_dblClick"
@@ -638,6 +635,7 @@ On Error GoTo Err_Handler
     Set dropNode = Nothing
     If Not (dragNode Is Nothing) Then
         dragNode.Selected = True
+        trvBrowser_NodeClick dragNode
     End If
     
 Exit Sub

@@ -583,8 +583,6 @@ On Error GoTo Err_Handler
     '----------------------------------------------------------------------------------
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
-    
-    Node.Checked = Not (Node.Checked)
         
     Dim szRoot As String
     If Node.Text <> "" Then
@@ -624,12 +622,11 @@ End Sub
 Private Sub trvBrowser_dblClick()
 On Error GoTo Err_Handler
 
-    If trvBrowser.SelectedItem Is Nothing Then Exit Sub
+    If trvBrowser.SelectedItem.Parent Is Nothing Then Exit Sub
+    If DevMode = True And trvBrowser.SelectedItem.Parent.Key = "Pro:" Or trvBrowser.SelectedItem.Parent.Key = "Sys:" Then Exit Sub
     
-    If (cmdModifyFunc.Enabled = True) Then
-        ModifyFunc trvBrowser.SelectedItem.Text
-    End If
-    
+    ModifyFunc trvBrowser.SelectedItem.Text
+  
 Exit Sub
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_dblClick"
@@ -654,6 +651,7 @@ On Error GoTo Err_Handler
     Set dropNode = Nothing
     If Not (dragNode Is Nothing) Then
         dragNode.Selected = True
+        trvBrowser_NodeClick dragNode
     End If
     
 Exit Sub
