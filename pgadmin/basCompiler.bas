@@ -555,9 +555,9 @@ Sub cmp_Function_GetInfo(ByVal lngFunction_OID As Long, Optional szFunction_name
         
         If Not rsComp.EOF Then
             If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name
-            If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments
-            If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns
-            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source
+            If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
+            If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
+            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
             If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language
             rsComp.Close
         End If
@@ -687,7 +687,7 @@ Public Sub comp_Project_RelinkTriggers()
     
     While Not rsTrigger.EOF
         ' Drop trigger if exists and then recreate it
-        cmp_Trigger_DropIfExists rsTrigger!trigger_OID, rsTrigger!trigger_name, rsTrigger!trigger_table
+        cmp_Trigger_DropIfExists rsTrigger!trigger_oid, rsTrigger!trigger_name, rsTrigger!trigger_table
         cmp_Trigger_Create rsTrigger!trigger_name, rsTrigger!trigger_table, rsTrigger!trigger_function, rsTrigger!trigger_arguments, "", "", "", rsTrigger!trigger_type
         rsTrigger.MoveNext
     Wend
