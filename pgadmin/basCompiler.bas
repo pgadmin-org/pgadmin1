@@ -130,7 +130,7 @@ Sub cmp_View_GetValues(lngView_oid As Long, Optional szView_PostgreSQLtable As S
         szQueryStr = szQueryStr & " WHERE view_OID = " & lngView_oid
         LogMsg "Retrieving values from view OID =" & lngView_oid & "..."
     Else
-        If IsMissing(szView_name) Or szView_name = "" Then Exit Sub
+        If IsMissing(szView_name) Then szView_name = ""
         szQueryStr = "SELECT * from " & szView_PostgreSQLtable & " WHERE view_name = '" & szView_name & "'"
     End If
     
@@ -146,7 +146,14 @@ Sub cmp_View_GetValues(lngView_oid As Long, Optional szView_PostgreSQLtable As S
         If Not (IsMissing(szView_owner)) Then szView_owner = rsComp!view_owner & ""
         If Not (IsMissing(szView_acl)) Then szView_acl = rsComp!view_acl & ""
         If Not (IsMissing(szView_definition)) Then szView_definition = cmp_View_GetViewDef(szView_name)
+        If Not (IsMissing(szView_comments)) Then szView_comments = rsComp!view_comments & ""
         rsComp.Close
+    Else
+        If Not (IsMissing(szView_name)) Then szView_name = ""
+        If Not (IsMissing(szView_owner)) Then szView_owner = ""
+        If Not (IsMissing(szView_acl)) Then szView_acl = ""
+        If Not (IsMissing(szView_definition)) Then szView_definition = ""
+        If Not (IsMissing(szView_comments)) Then szView_comments = ""
     End If
   Exit Sub
 Err_Handler:
@@ -244,6 +251,7 @@ Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As 
     LogMsg "Executing: " & szQueryStr
       
     ' Execute drop query and close log
+    szQueryStr = Replace(szQueryStr, vbCrLf, "")
     gConnection.Execute szQueryStr
     LogQuery szQueryStr
       
@@ -296,7 +304,7 @@ Sub cmp_Trigger_GetValues(lngTrigger_OID As Long, Optional szTrigger_PostgreSQLt
         szQueryStr = szQueryStr & " WHERE trigger_OID = " & lngTrigger_OID
         LogMsg "Retrieving name and table from trigger OID =" & lngTrigger_OID & "..."
     Else
-        If IsMissing(szTrigger_name) Then Exit Sub
+        If IsMissing(szTrigger_name) Then szTrigger_name = ""
         szQueryStr = "SELECT * from " & szTrigger_PostgreSQLtable & " WHERE "
         szQueryStr = szQueryStr & " trigger_name = '" & szTrigger_name & "' "
         If Not (IsMissing(szTrigger_table)) And szTrigger_table <> "" Then
@@ -342,6 +350,15 @@ Sub cmp_Trigger_GetValues(lngTrigger_OID As Long, Optional szTrigger_PostgreSQLt
             End If
         End If
         rsComp.Close
+    Else
+        lngTrigger_OID = 0
+        If Not (IsMissing(szTrigger_name)) Then szTrigger_name = ""
+        If Not (IsMissing(szTrigger_table)) Then szTrigger_table = ""
+        If Not (IsMissing(szTrigger_function)) Then szTrigger_function = ""
+        If Not (IsMissing(szTrigger_arguments)) Then szTrigger_arguments = ""
+        If Not (IsMissing(szTrigger_foreach)) Then szTrigger_foreach = ""
+        If Not (IsMissing(szTrigger_Executes)) Then szTrigger_Executes = ""
+        If Not (IsMissing(szTrigger_event)) Then szTrigger_event = ""
     End If
   Exit Sub
 Err_Handler:
@@ -671,14 +688,12 @@ Sub cmp_Function_GetValues(lngFunction_OID As Long, Optional szFunction_PostgreS
         szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE function_OID = " & lngFunction_OID
     Else
-        If IsMissing(szFunction_name) Then Exit Sub
-        If szFunction_name <> "" Then
+        If IsMissing(szFunction_name) Then szFunction_name = ""
             szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
             szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
-            If Not (IsMissing(szFunction_arguments)) And szFunction_arguments <> "" Then
+            If Not (IsMissing(szFunction_arguments)) Then
                 szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
             End If
-        End If
     End If
     
     ' Log information
@@ -702,6 +717,15 @@ Sub cmp_Function_GetValues(lngFunction_OID As Long, Optional szFunction_PostgreS
         If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
         szFunction_source = Replace(szFunction_source, "'", "''")
         rsComp.Close
+    Else
+        lngFunction_OID = 0
+        If Not (IsMissing(szFunction_name)) Then szFunction_name = ""
+        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = ""
+        If Not (IsMissing(szFunction_returns)) Then szFunction_returns = ""
+        If Not (IsMissing(szFunction_source)) Then szFunction_source = ""
+        If Not (IsMissing(szFunction_language)) Then szFunction_language = ""
+        If Not (IsMissing(szFunction_owner)) Then szFunction_owner = ""
+        If Not (IsMissing(szFunction_comments)) Then szFunction_comments = ""
     End If
   Exit Sub
 Err_Handler:
