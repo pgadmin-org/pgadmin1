@@ -288,7 +288,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -356,7 +356,7 @@ Private Sub cmdExportTrig_Click()
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
         szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
-        szHeader = szHeader & "pgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
+        szHeader = szHeader & "pgadmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
         szHeader = szHeader & "*/" & vbCrLf & vbCrLf
         szExport = szHeader & szExport
@@ -398,7 +398,7 @@ Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuildTriggers_Click"
 End Sub
 
-Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXTriggers
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, lstTrig_MouseUp"
@@ -607,9 +607,10 @@ End Sub
 
 Public Sub CmdTrigButton()
 On Error GoTo Err_Handler
-    Dim bSystem As Boolean
-    bSystem = (chkSystem.Value = 1)
-    cmdButtonActivate bSystem, lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
+    Dim szType As String
+    Dim szMode As String
+    
+    'cmdButtonActivate "", lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
 
     If cmp_Project_IsRebuilt = True Then
         cmdRebuildProject.Enabled = False

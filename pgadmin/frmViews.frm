@@ -33,7 +33,6 @@ Begin VB.Form frmViews
    End
    Begin VB.CommandButton cmdExportView 
       Caption         =   "Export View"
-      Enabled         =   0   'False
       Height          =   330
       Left            =   45
       TabIndex        =   22
@@ -261,7 +260,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -327,7 +326,7 @@ On Error GoTo Err_Handler
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
         szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
-        szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
+        szHeader = szHeader & "pgadmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
         szHeader = szHeader & "*/" & vbCrLf & vbCrLf
         szExport = szHeader & szExport
@@ -366,7 +365,11 @@ Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildViews_Click"
 End Sub
 
-Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub Command1_Click()
+cmp_View_CopyToDev
+End Sub
+
+Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXViews
   
@@ -597,7 +600,7 @@ On Error GoTo Err_Handler
 
     Dim bSystem As Boolean
     bSystem = (chkSystem.Value = 1)
-    cmdButtonActivate bSystem, lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
+    'cmdButtonActivate "", lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
 
     If cmp_Project_IsRebuilt = True Then
         cmdRebuildProject.Enabled = False
@@ -609,3 +612,4 @@ On Error GoTo Err_Handler
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"
 End Sub
+

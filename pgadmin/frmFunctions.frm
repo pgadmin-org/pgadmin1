@@ -1,6 +1,8 @@
 VERSION 5.00
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
+Object = "{690E42C6-5198-11D5-834A-0050BACE7D99}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
    ClientHeight    =   5595
@@ -11,8 +13,56 @@ Begin VB.Form frmFunctions
    MDIChild        =   -1  'True
    ScaleHeight     =   5595
    ScaleWidth      =   8880
+   Begin TreeToys.TreeToy trvBrowser 
+      Height          =   5505
+      Left            =   1485
+      TabIndex        =   10
+      Top             =   45
+      Width           =   2985
+      _ExtentX        =   5265
+      _ExtentY        =   9710
+      NodeTips        =   1
+      BorderStyle     =   1
+      Checkboxes      =   -1  'True
+      FullRowSelect   =   -1  'True
+      Indentation     =   99.78
+      LabelEdit       =   1
+      LineStyle       =   1
+      Sorted          =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+   End
+   Begin VB.CommandButton cmdCopyProToDev 
+      BackColor       =   &H80000018&
+      Caption         =   "Load->Developt"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   28
+      ToolTipText     =   "Compiles a repository function."
+      Top             =   4230
+      Visible         =   0   'False
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCopyDevToPro 
+      BackColor       =   &H80000018&
+      Caption         =   "Unsafe compile"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   27
+      ToolTipText     =   "Compiles a repository function."
+      Top             =   3870
+      Visible         =   0   'False
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdExportFunc 
-      Caption         =   "Export Function"
+      Caption         =   "Export Function(s)"
       Height          =   330
       Left            =   45
       TabIndex        =   26
@@ -22,12 +72,12 @@ Begin VB.Form frmFunctions
    End
    Begin VB.CommandButton cmdRebuild 
       BackColor       =   &H80000018&
-      Caption         =   "Rebuild &project"
+      Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
       TabIndex        =   22
-      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
-      Top             =   3555
+      ToolTipText     =   "Checks and rebuilds project dependencies."
+      Top             =   3510
       Width           =   1410
    End
    Begin VB.CommandButton cmdModifyFunc 
@@ -75,7 +125,7 @@ Begin VB.Form frmFunctions
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropFunc 
-      Caption         =   "&Drop Function"
+      Caption         =   "&Drop Function(s)"
       Height          =   330
       Left            =   45
       TabIndex        =   1
@@ -104,7 +154,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   855
          Width           =   3345
       End
@@ -113,7 +163,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   1500
          Width           =   3345
       End
@@ -122,7 +172,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   225
          Width           =   3345
       End
@@ -131,7 +181,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   540
          Width           =   3345
       End
@@ -142,7 +192,7 @@ Begin VB.Form frmFunctions
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   1845
          Width           =   3345
       End
@@ -258,16 +308,6 @@ Begin VB.Form frmFunctions
          Width           =   735
       End
    End
-   Begin VB.ListBox lstFunc 
-      Height          =   5520
-      ItemData        =   "frmFunctions.frx":0000
-      Left            =   1485
-      List            =   "frmFunctions.frx":0002
-      MultiSelect     =   2  'Extended
-      TabIndex        =   5
-      Top             =   45
-      Width           =   2985
-   End
    Begin MSComDlg.CommonDialog CommonDialog1 
       Left            =   45
       Top             =   2295
@@ -286,13 +326,43 @@ Begin VB.Form frmFunctions
       Top             =   45
       Width           =   1410
    End
+   Begin MSComctlLib.ImageList ilBrowser 
+      Left            =   585
+      Top             =   2250
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   4
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":0000
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":031A
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":0474
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":05CE
+            Key             =   ""
+         EndProperty
+      EndProperty
+   End
 End
 Attribute VB_Name = "frmFunctions"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -310,63 +380,73 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim rsFunc As New Recordset
-Dim szFunction_PostgreSqlTable As String
+Option Compare Text
+
+Public dragNode As Node, dropNode As Node
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Form
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub Form_Load()
+On Error GoTo Err_Handler
+  LogMsg "Loading Form: " & Me.Name
+  Me.Width = 8325
+  Me.Height = 4455
+  
+  Set trvBrowser.ImageList = ilBrowser
+
+  cmdRefresh_Click
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"
+End Sub
+
+Private Sub Form_Resize()
+On Error GoTo Err_Handler
+  If Me.WindowState <> 1 Then
+    If Me.WindowState = 0 Then
+      If Me.Width < 9000 Then Me.Width = 9000
+      If Me.Height < 6000 Then Me.Height = 6000
+    End If
+    trvBrowser.Height = Me.ScaleHeight
+    trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
+    fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
+    fraDetails.Height = Me.ScaleHeight
+    txtFunction.Height = fraDetails.Height - txtFunction.Top - 100
+  End If
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Resize"
+End Sub
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Buttons
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub cmdCopyDevToPro_Click()
+On Error GoTo Err_Handler
+    cmp_function_tree_copy_devtopro trvBrowser
+    cmdRefresh_Click
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCopyDevToPro_Click"
+End Sub
+
+Private Sub cmdCopyProToDev_Click()
+On Error GoTo Err_Handler
+    cmp_function_tree_copy_protodev trvBrowser
+    cmdRefresh_Click
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCopyProToDev_Click"
+End Sub
 
 Private Sub cmdExportFunc_Click()
 On Error GoTo Err_Handler
-
-    Dim iLoop As Long
-    Dim iListCount As Long
-    Dim szExport As String
-    Dim bExport As Boolean
-    Dim szHeader As String
-    
-    Dim szFunction_oid As Long
-    Dim szFunction_name As String
-    Dim szFunction_arguments As String
-    Dim szFunction_returns As String
-    Dim szFunction_source As String
-    Dim szFunction_language As String
-    Dim szFunction_owner As String
-    Dim szFunction_comments As String
-    
-    bExport = False
-    szExport = ""
-
-    iListCount = lstFunc.ListCount
-        
-    For iLoop = 0 To iListCount - 1
-        If lstFunc.Selected(iLoop) = True Then
-            bExport = True
-            szFunction_oid = 0
-            cmp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
-            cmp_Function_GetValues szFunction_PostgreSqlTable, szFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
-            
-            ' Header
-            szExport = szExport & "/*" & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "Function " & szFunction_name & "(" & szFunction_arguments & ")" & " -> " & szFunction_returns & vbCrLf
-            If szFunction_comments <> "" Then szExport = szExport & szFunction_comments & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "*/" & vbCrLf
-            
-            ' Function
-            szExport = szExport & cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language) & vbCrLf & vbCrLf
-        End If
-    Next iLoop
-    
-    If bExport Then
-        szHeader = "/*" & vbCrLf
-        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
-        szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
-        szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
-        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "*/" & vbCrLf & vbCrLf
-        szExport = szHeader & szExport
-        MsgExportToFile CommonDialog1, szExport, "sql", "Export functions"
-    End If
+    cmp_function_tree_export trvBrowser, CommonDialog1
     
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdExportFunc_Click"
@@ -374,11 +454,21 @@ End Sub
 
 Public Sub cmdModifyFunc_Click()
 On Error GoTo Err_Handler
+    If txtName <> "" Then
+        ModifyFunc txtName & "(" & txtArguments & ")"
+    End If
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_Click"
+End Sub
 
-If txtOID <> "" Then
+Private Sub ModifyFunc(szFunction As String)
+On Error GoTo Err_Handler
+
+If szFunction <> "" Then
     ' Get name and arguments
-    cmp_Function_ParseName lstFunc.Text, gFunction_Name, gFunction_Arguments
- 
+    cmp_Function_ParseName szFunction, gFunction_Name, gFunction_Arguments
+     
     ' Load form
     Load frmAddFunction
     frmAddFunction.Show
@@ -392,47 +482,35 @@ Private Sub cmdRebuild_Click()
 On Error GoTo Err_Handler
 
     cmp_Project_Rebuild
-    
+    cmdRefresh_Click
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRebuild_Click"
 End Sub
 
-Private Sub lstFunc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub chkFunctions_Click()
 On Error GoTo Err_Handler
-  If Button = 2 Then PopupMenu fMainForm.mnuCTXFunctions
+  cmdRefresh_Click
 
 Exit Sub
-Err_Handler:
-If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_MouseUp"
-End Sub
-
-Private Sub Form_Unload(Cancel As Integer)
-On Error Resume Next
-  Set rsFunc = Nothing
-End Sub
-
-Private Sub chkFunctions_Click()
- On Error GoTo Err_Handler
-  cmdRefresh_Click
-  Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, chkFunctions_Click"
 End Sub
 
 Public Sub cmdComment_Click()
- On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If txtOID.Text = "" Then
     MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
     Exit Sub
   End If
   Load frmComments
-  frmComments.Setup "frmFunctions", QUOTE & lstFunc.Text & QUOTE & "(" & txtArguments.Text & ")", Val(txtOID.Text)
+  frmComments.Setup "frmFunctions", QUOTE & txtName.Text & QUOTE & "(" & txtArguments.Text & ")", Val(txtOID.Text)
   frmComments.Show
-  Exit Sub
+
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdComment_Click"
 End Sub
 
 Public Sub cmdCreateFunc_Click()
- On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   ' This means we will create the function
   gFunction_Name = ""
   gFunction_Arguments = ""
@@ -440,125 +518,93 @@ Public Sub cmdCreateFunc_Click()
   ' Load form
   Load frmAddFunction
   frmAddFunction.Show
-  Exit Sub
+
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCreateFunc_Click"
 End Sub
 
 Public Sub cmdDropFunc_Click()
- On Error GoTo Err_Handler
-    Dim szDropStr As String
-    Dim iLoop As Long
-    Dim iListCount As Long
-    Dim szFunction_name As String
-    Dim szFunction_arguments As String
-   
-    If MsgBox("Are you sure you wish to drop Function(s)?", vbYesNo + vbQuestion, _
-            "Confirm Function Deletion") = vbYes Then
-        
-        StartMsg "Dropping Function(s)..."
-        
-        iListCount = lstFunc.ListCount
-        For iLoop = 0 To iListCount - 1
-            If lstFunc.Selected(iLoop) = True Then
-                cmp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
-                cmp_Function_GetValues szFunction_PostgreSqlTable, 0, szFunction_name, szFunction_arguments
-                cmp_Function_DropIfExists szFunction_PostgreSqlTable, 0, szFunction_name, szFunction_arguments
-             End If
-        Next iLoop
-        
-        EndMsg
-        
-        cmdRefresh_Click
-    End If
-    
-  Exit Sub
+On Error GoTo Err_Handler
+If MsgBox("Are you sure you wish to drop Function(s)?", vbYesNo + vbQuestion, _
+            "Connfirm?") = vbYes Then
+    cmp_function_tree_drop trvBrowser
+    cmdRefresh_Click
+End If
+
+Exit Sub
 Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdDropFunc_Click"
+If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdDropFunc_Click"
 End Sub
 
 Public Sub cmdRefresh_Click()
- On Error GoTo Err_Handler
-  Dim szQuery As String
-  Dim szFunc() As Variant
-  Dim iLoop As Long
-  Dim iUbound As Long
-  Dim szFunction_name As String
-  Dim szFunction_arguments As String
-  
-  StartMsg "Retrieving Function Names..."
-  lstFunc.Clear
-  
-  If rsFunc.State <> adStateClosed Then rsFunc.Close
-  If chkFunctions.Value = 1 Then
-    szFunction_PostgreSqlTable = "pgadmin_functions"
-    szQuery = "SELECT function_name, function_arguments FROM " & szFunction_PostgreSqlTable & " WHERE function_oid < " & LAST_SYSTEM_OID & " OR function_name LIKE 'pgadmin_%' OR function_name  LIKE 'pg_%' ORDER BY function_name"
-    LogMsg "Executing: " & szQuery
-    rsFunc.Open szQuery, gConnection, adOpenDynamic
-  Else
-    szFunction_PostgreSqlTable = "pgadmin_dev_functions"
-    szQuery = "SELECT function_name, function_arguments FROM " & szFunction_PostgreSqlTable & " WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' ORDER BY function_name"
-    LogMsg "Executing: " & szQuery
-    rsFunc.Open szQuery, gConnection, adOpenDynamic
-  End If
-  
-  If Not (rsFunc.EOF) Then
-    szFunc = rsFunc.GetRows
-    iUbound = UBound(szFunc, 2)
-    For iLoop = 0 To iUbound
-         szFunction_name = szFunc(0, iLoop)
-         szFunction_arguments = szFunc(1, iLoop)
-        If szFunction_arguments <> "" Then
-            lstFunc.AddItem szFunction_name & " (" & szFunction_arguments & ")"
-        Else
-            lstFunc.AddItem szFunction_name
-        End If
-    Next iLoop
-  End If
-  Erase szFunc
-  lstFunc_Click
-  EndMsg
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRefresh_Click"
-End Sub
-
-Private Sub Form_Load()
- On Error GoTo Err_Handler
-  LogMsg "Loading Form: " & Me.Name
-  Me.Width = 8325
-  Me.Height = 4455
-  cmdRefresh_Click
-  Exit Sub
-Err_Handler:
-If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"
-End Sub
-
-Private Sub Form_Resize()
- On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
-    If Me.WindowState = 0 Then
-      If Me.Width < 9000 Then Me.Width = 9000
-      If Me.Height < 6000 Then Me.Height = 6000
-    End If
-    lstFunc.Height = Me.ScaleHeight
-    lstFunc.Width = Me.ScaleWidth - lstFunc.Left - fraDetails.Width - 25
-    fraDetails.Left = lstFunc.Left + lstFunc.Width + 25
-    fraDetails.Height = Me.ScaleHeight
-    txtFunction.Height = fraDetails.Height - txtFunction.Top - 100
-  End If
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Resize"
-End Sub
-
-Public Sub lstFunc_dblClick()
-    cmdModifyFunc_Click
-End Sub
-
-Public Sub lstFunc_Click()
 On Error GoTo Err_Handler
-    Dim szFunction_oid As Long
+
+cmp_function_tree_refresh trvBrowser, CBool(chkFunctions)
+
+cmdCopyDevToPro.Visible = DevMode
+cmdCopyProToDev.Visible = DevMode
+cmdRebuild.Visible = DevMode
+
+CmdFuncButton
+
+  Exit Sub
+Err_Handler:
+EndMsg
+If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRefresh_Click"
+End Sub
+
+Public Sub CmdFuncButton()
+On Error GoTo Err_Handler
+
+Dim iSelected As Integer
+Dim sz_key As String
+
+cmp_function_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkFunctions)
+
+'Check and uncheck buttons
+cmdButtonActivate sz_key, iSelected, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
+
+
+If cmp_Project_IsRebuilt = True Then
+    cmdRebuild.Enabled = False
+Else
+   cmdRebuild.Enabled = True
+End If
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, CmdFuncButton"
+End Sub
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Treeview
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub trvBrowser_NodeCheck(ByVal Node As MSComctlLib.Node)
+On Error GoTo Err_Handler
+
+trvBrowser.FreezeCtl
+trvBrowser.TreeSelectiveCheck Node
+trvBrowser.UnFreezeCtl
+    
+CmdFuncButton
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_NodeCheck"
+End Sub
+
+Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
+On Error GoTo Err_Handler
+
+    Dim NodeX As Node
+    Dim lOID As Long
+    Dim x As Long
+    Dim y As Long
+    Dim szHex As String
+    Dim szKey As String
+    
+    Dim szfunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -566,14 +612,29 @@ On Error GoTo Err_Handler
     Dim szFunction_language As String
     Dim szFunction_owner As String
     Dim szFunction_comments As String
-
+    Dim szFunction_table As String
+    
     Dim iInstr As Integer
     
+    If (Node.Checked = True) Then
+        Node.Checked = False
+        Node.Selected = False
+    Else
+        Node.Checked = True
+        Node.Selected = True
+    End If
     '----------------------------------------------------------------------------------
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
-    If lstFunc.SelCount > 0 Then
-        cmp_Function_ParseName lstFunc.Text, szFunction_name, szFunction_arguments
+    Dim szRoot As String
+    If Node.Text <> "" Then
+        cmp_Function_ParseName Node.Text, szFunction_name, szFunction_arguments
+        szRoot = Left(Node.Key, 2)
+        If szRoot = "P:" Or szRoot = "S:" Then
+            szFunction_table = "pgadmin_functions"
+        Else
+            szFunction_table = gDevPostgresqlTables & "_functions"
+        End If
     Else
         szFunction_name = ""
         szFunction_arguments = ""
@@ -582,10 +643,10 @@ On Error GoTo Err_Handler
     ' Lookup database
     '----------------------------------------------------------------------------------
     StartMsg "Retrieving Function Info..."
-    szFunction_oid = 0
-    cmp_Function_GetValues szFunction_PostgreSqlTable, szFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    szfunction_oid = 0
+    cmp_Function_GetValues szFunction_table, szfunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
     
-    txtOID.Text = Trim(Str(szFunction_oid))
+    txtOID.Text = Trim(Str(szfunction_oid))
     txtOwner.Text = szFunction_owner
     
     If szFunction_name <> "" Then
@@ -605,26 +666,100 @@ On Error GoTo Err_Handler
     CmdFuncButton
     EndMsg
     
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_Click"
-End Sub
-
-Public Sub CmdFuncButton()
-On Error GoTo Err_Handler
-
-    Dim bSystem As Boolean
-    bSystem = (chkFunctions.Value = 1)
-    cmdButtonActivate bSystem, lstFunc.SelCount, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
-    
-    If cmp_Project_IsRebuilt = True Then
-        cmdRebuild.Enabled = False
-    Else
-       cmdRebuild.Enabled = True
-    End If
 Exit Sub
 Err_Handler:
-If Err.Number <> 0 Then LogError Err, "frmFunctions, CmdFuncButton"
+If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_NodeClick"
 End Sub
 
+Private Sub trvBrowser_dblClick()
+On Error GoTo Err_Handler
+
+    If trvBrowser.SelectedItem Is Nothing Then Exit Sub
+    
+    If (cmdModifyFunc.Enabled = True) Then
+        ModifyFunc trvBrowser.SelectedItem.Text
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_dblClick"
+End Sub
+
+Private Sub trvBrowser_OLEStartDrag(Data As MSComctlLib.DataObject, _
+AllowedEffects As Long)
+On Error GoTo Err_Handler
+
+Set dragNode = trvBrowser.SelectedItem
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_OLEStartDrag"
+End Sub
+
+Private Sub trvBrowser_MouseDown(Button As Integer, Shift As Integer, _
+x As Single, y As Single)
+On Error GoTo Err_Handler
+
+    Set dragNode = trvBrowser.HitTest(x, y)
+    Set dropNode = Nothing
+    If Not (dragNode Is Nothing) Then
+        dragNode.Selected = True
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_MouseDown"
+End Sub
+
+Private Sub trvBrowser_OLEDragDrop(Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
+On Error GoTo Err_Handler
+
+Dim sz_drag_key As String
+Dim sz_drop_key As String
+
+    Set dropNode = trvBrowser.HitTest(x, y)
+
+    If Not (dragNode Is Nothing) And Not (dropNode Is Nothing) Then
+        If dragNode.Key <> dropNode.Key Then
+            If dragNode.Parent Is Nothing Then
+               sz_drag_key = dragNode.Key
+            Else
+               sz_drag_key = dragNode.Parent.Key
+            End If
+            
+            If dropNode.Parent Is Nothing Then
+               sz_drop_key = dropNode.Key
+            Else
+               sz_drop_key = dropNode.Parent.Key
+            End If
+            
+            Select Case sz_drag_key
+                Case "Pro:"
+                    If (sz_drop_key = "Dev:") Then
+                            cmdCopyProToDev_Click
+                    End If
+                
+                Case "Sys:"
+                    If (sz_drop_key = "Dev:") Then
+                            cmdCopyProToDev_Click
+                    End If
+                    
+                 Case "Dev:"
+                    If (sz_drop_key = "Pro:" Or sz_drop_key = "Sys:") Then
+                       cmdCopyDevToPro_Click
+                    End If
+            End Select
+         Else
+            If Not (dropNode Is Nothing) Then
+                trvBrowser_NodeCheck dropNode
+            End If
+        End If
+    End If
+    
+    Set dragNode = Nothing
+    Set dropNode = Nothing
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, trvBrowser_OLEDragDrop"
+End Sub
