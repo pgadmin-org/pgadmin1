@@ -96,6 +96,7 @@ End Sub
 Public Sub LogMsg(ByVal Msg As String)
 Dim fNum As Integer
 Dim x As Long
+  Msg = Replace(Msg, vbCrLf, " ")
   If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 16384 Then
     fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
   End If
