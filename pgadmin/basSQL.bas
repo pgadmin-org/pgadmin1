@@ -183,8 +183,6 @@ SQL_PGADMIN_VIEWS = _
   "WHERE " & _
   "  ((c.relhasrules AND (EXISTS (SELECT r.rulename FROM pg_rewrite r WHERE ((r.ev_class = c.oid) AND (r.ev_type::char = '1'::char))))) OR c.relkind = 'v')"
 
-'pgadmin_dev_tables are used for rebuilding and relinking the project
-'<jean-Michel POURE>
 SQL_PGADMIN_DEV_FUNCTIONS = "CREATE TABLE pgadmin_dev_functions AS SELECT * " & _
   "  FROM pgadmin_functions " & _
   "  WHERE function_name NOT LIKE '%_call_handler' " & _
@@ -218,7 +216,6 @@ SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * from " & _
 SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   " dependency_from int4," & _
   " dependency_to int4);"
-'</Jean-Michel POURE>
 
   'If the SSO Version on the server doesn't exist or is lower than
   'that defined in SSO_VERSION then drop all SSO's. If pgadmin_param
@@ -441,8 +438,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-   ' <Jean-Michel POURE>
-   ' Needed in pgadmin_triggers
   If ObjectExists("pgadmin_get_function_name", tFunction) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin Function Name Lookup Function..."
@@ -457,7 +452,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute SQL_PGADMIN_GET_FUNCTION_ARGUMENTS
     EndMsg
   End If
-  '</jean-Michel POURE>
   
   If ObjectExists("pgadmin_groups", tTable) <> 0 Then
     If Not SuperuserChk Then Exit Sub
@@ -588,8 +582,12 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  ' <Jean-Michel POURE> Objects needed for relinking
-  ' pgadmin_dev_functions
+  ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views and pgadmin_dev_dependencies
+  ' are temporary tables used for checking and rebuilding dependencies
+  ' The process of rebuilding dependencies starts with dropping  and recreating theses tables.
+  ' In a future release of PgAdmin, we might maintain the list of dependencies in real time.
+  ' Candidates ? Jaen-Michel POURE
+  
   If ObjectExists("pgadmin_dev_functions", tTable) <> 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Dropping corrupted pgAdmin_dev_functions table..."
@@ -657,7 +655,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute "GRANT all ON pgadmin_dev_dependencies TO public"
     EndMsg
   End If
-  ' </Jean-Michel POURE>
   
   'Set the SSO Version on the server
   LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & SSO_VERSION & "' WHERE param_id = 1"
@@ -706,6 +703,11 @@ On Error Resume Next
   gConnection.Execute "DROP FUNCTION pgadmin_get_function_name(oid)"
   LogMsg "Executing: DROP FUNCTION pgadmin_get_function_arguments(oid)"
   gConnection.Execute "DROP FUNCTION pgadmin_get_function_arguments(oid)"
+  LogMsg "Executing: DROP FUNCTION pgadmin_get_function_name(oid)"
+  gConnection.Execute "DROP FUNCTION pgadmin_get_function_name(oid)"
+  LogMsg "Executing: DROP FUNCTION pgadmin_get_function_arguments(oid)"
+  gConnection.Execute "DROP FUNCTION pgadmin_get_function_arguments(oid)"
+  
   'Drop views
   LogMsg "Executing: DROP VIEW pgadmin_checks"
   gConnection.Execute "DROP VIEW pgadmin_checks"
@@ -749,6 +751,14 @@ On Error Resume Next
   gConnection.Execute "DROP TABLE pgadmin_triggers"
   LogMsg "Executing: DROP TABLE pgadmin_views"
   gConnection.Execute "DROP TABLE pgadmin_views"
+  LogMsg "Executing: DROP TABLE pgadmin_dev_functions"
+  gConnection.Execute "DROP TABLE pgadmin_dev_functions"
+  LogMsg "Executing: DROP TABLE pgadmin_dev_triggers"
+  gConnection.Execute "DROP TABLE pgadmin_dev_triggers"
+  LogMsg "Executing: DROP TABLE pgadmin_dev_views"
+  gConnection.Execute "DROP TABLE pgadmin_dev_views"
+  LogMsg "Executing: DROP TABLE pgadmin_dev_dependencies"
+  gConnection.Execute "DROP TABLE pgadmin_dev_dependencies"
   EndMsg
 End Sub
 
