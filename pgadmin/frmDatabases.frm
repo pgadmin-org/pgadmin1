@@ -2,14 +2,14 @@ VERSION 5.00
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmDatabases 
    Caption         =   "Databases"
-   ClientHeight    =   4050
+   ClientHeight    =   4065
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8205
    Icon            =   "frmDatabases.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4050
+   ScaleHeight     =   4065
    ScaleWidth      =   8205
    Begin VB.CommandButton cmdSystemDSN 
       Caption         =   "&System DSN"
@@ -62,14 +62,59 @@ Begin VB.Form frmDatabases
       TabIndex        =   12
       Top             =   0
       Width           =   3660
+      Begin VB.TextBox txtUsername 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   21
+         Top             =   1035
+         Width           =   2625
+      End
+      Begin VB.TextBox txtTimeOut 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   20
+         Top             =   1350
+         Width           =   2625
+      End
+      Begin VB.TextBox txtCompiler 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   19
+         Top             =   2295
+         Width           =   2625
+      End
+      Begin VB.TextBox txtPlatform 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   18
+         Top             =   1980
+         Width           =   2625
+      End
+      Begin VB.TextBox txtdbVer 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   17
+         Top             =   1665
+         Width           =   2625
+      End
       Begin HighlightBox.HBX txtComments 
-         Height          =   2850
+         Height          =   1230
          Left            =   90
          TabIndex        =   11
-         Top             =   1080
+         Top             =   2700
          Width           =   3480
          _ExtentX        =   6138
-         _ExtentY        =   5027
+         _ExtentY        =   2170
          BackColor       =   -2147483633
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
@@ -86,29 +131,79 @@ Begin VB.Form frmDatabases
       Begin VB.TextBox txtPath 
          BackColor       =   &H8000000F&
          Height          =   240
-         Left            =   630
+         Left            =   945
          Locked          =   -1  'True
          TabIndex        =   10
          Top             =   765
-         Width           =   2940
+         Width           =   2625
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
          Height          =   240
-         Left            =   630
+         Left            =   945
          Locked          =   -1  'True
          TabIndex        =   9
          Top             =   495
-         Width           =   2940
+         Width           =   2625
       End
       Begin VB.TextBox txtOID 
          BackColor       =   &H8000000F&
          Height          =   240
-         Left            =   630
+         Left            =   945
          Locked          =   -1  'True
          TabIndex        =   8
          Top             =   225
-         Width           =   2940
+         Width           =   2625
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Username"
+         Height          =   195
+         Index           =   4
+         Left            =   90
+         TabIndex        =   26
+         Top             =   1080
+         Width           =   720
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Timeout"
+         Height          =   195
+         Index           =   3
+         Left            =   90
+         TabIndex        =   25
+         Top             =   1395
+         Width           =   570
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Compiler"
+         Height          =   195
+         Index           =   23
+         Left            =   90
+         TabIndex        =   24
+         Top             =   2340
+         Width           =   600
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Platform"
+         Height          =   195
+         Index           =   22
+         Left            =   90
+         TabIndex        =   23
+         Top             =   2025
+         Width           =   570
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "DBMS"
+         Height          =   195
+         Index           =   17
+         Left            =   90
+         TabIndex        =   22
+         Top             =   1710
+         Width           =   465
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -201,6 +296,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsDatabases As New Recordset
+Dim rsVersion As New Recordset
+
 
 Public Sub cmdSystemDSN_Click()
 On Error GoTo Err_Handler
@@ -405,8 +502,22 @@ On Error GoTo Err_Handler
     txtOwner.Text = rsDatabases!database_owner & ""
     txtPath.Text = rsDatabases!database_path & ""
     txtComments.Text = rsDatabases!database_comments & ""
-    If rsDatabases.BOF <> True Then rsDatabases.MoveFirst
+    
+    rsVersion.Open "SELECT version()", gConnection, adOpenForwardOnly
+    txtdbVer.Text = Mid(rsVersion!Version, 1, InStr(1, rsVersion!Version, " on ") - 1)
+    txtPlatform.Text = Mid(rsVersion!Version, InStr(1, rsVersion!Version, " on") + 4, InStr(1, rsVersion!Version, ", compiled by ") - InStr(1, rsVersion!Version, " on") - 4)
+    txtCompiler.Text = Mid(rsVersion!Version, InStr(1, rsVersion!Version, ", compiled by ") + 14, Len(rsVersion!Version))
+    rsVersion.Close
+    
     EndMsg
+  Else
+    txtOID.Text = ""
+    txtOwner.Text = ""
+    txtPath.Text = ""
+    txtComments.Text = ""
+    txtdbVer.Text = ""
+    txtPlatform.Text = ""
+    txtCompiler.Text = ""
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmDatabases, lstDB_Click"
