@@ -126,33 +126,33 @@ Begin VB.Form frmMigration
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmMigration.frx":130E
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "lstTables"
-      Tab(1).Control(1)=   "cmdSelect(0)"
-      Tab(1).Control(2)=   "cmdDeselect(0)"
-      Tab(1).Control(3)=   "Label1(1)"
+      Tab(1).Control(0)=   "Label1(1)"
+      Tab(1).Control(1)=   "cmdDeselect(0)"
+      Tab(1).Control(2)=   "cmdSelect(0)"
+      Tab(1).Control(3)=   "lstTables"
       Tab(1).ControlCount=   4
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmMigration.frx":132A
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "lstData"
-      Tab(2).Control(1)=   "cmdSelect(1)"
-      Tab(2).Control(2)=   "cmdDeselect(1)"
-      Tab(2).Control(3)=   "Label1(9)"
+      Tab(2).Control(0)=   "Label1(9)"
+      Tab(2).Control(1)=   "cmdDeselect(1)"
+      Tab(2).Control(2)=   "cmdSelect(1)"
+      Tab(2).Control(3)=   "lstData"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmMigration.frx":1346
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "lstForeignKeys"
-      Tab(3).Control(1)=   "cmdSelect(2)"
+      Tab(3).Control(0)=   "Label1(8)"
+      Tab(3).Control(1)=   "Label1(10)"
       Tab(3).Control(2)=   "cmdDeselect(2)"
-      Tab(3).Control(3)=   "Label1(10)"
-      Tab(3).Control(4)=   "Label1(8)"
+      Tab(3).Control(3)=   "cmdSelect(2)"
+      Tab(3).Control(4)=   "lstForeignKeys"
       Tab(3).ControlCount=   5
       TabCaption(4)   =   " "
       TabPicture(4)   =   "frmMigration.frx":1362
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "pbStatus"
-      Tab(4).Control(1)=   "txtStatus"
+      Tab(4).Control(0)=   "txtStatus"
+      Tab(4).Control(1)=   "pbStatus"
       Tab(4).ControlCount=   2
       Begin VB.TextBox txtStatus 
          Height          =   3480
@@ -594,7 +594,7 @@ Dim tblTemp As Table
     End If
     StartMsg "Opening and Examining Source Database..."
     LogMsg "Opening DSN: " & cboDatasource.Text
-    cnLocal.Open "DSN=" & cboDatasource.Text & ";UID=" & txtUID(0).Text & ";PWD=" & txtPWD(0).Text, txtUID(0).Text, txtPWD(0).Text
+    cnLocal.Open "DSN=" & cboDatasource.Text & ";UID=" & txtUID(1).Text & ";PWD=" & txtPWD(1).Text, txtUID(1).Text, txtPWD(1).Text
   End If
   LogMsg "Opened connection: " & cnLocal.ConnectionString
   LogMsg "Provider: " & cnLocal.Provider & " v" & cnLocal.Version
