@@ -99,6 +99,10 @@ MM - Matthew MacSuga</p>
   <li>(DP) Added EXPLAIN PLAN options to frmSQL and frmMain (requires psqlODBC 
   07.01.0006 or higher).</li>
   <li>(MM) Allow Migration Wizard to migrate auto increment columns from Access.</li>
+  <li>(DP) Ignore ADOX errors when connecting the source database in the 
+  Migration Wizard.</li>
+  <li>(DP) Don't Migrate the oid column from PostgreSQL databases (not sure why 
+  anyone would do this but at least it will work now!)</li>
 </ul>
 <p>WARNING : do not test the new IDE on a production database. Before testing, 
   export functions, triggers and views using the new export feature.</p>

@@ -599,7 +599,9 @@ Dim tblTemp As Table
   LogMsg "Opened connection: " & cnLocal.ConnectionString
   LogMsg "Provider: " & cnLocal.Provider & " v" & cnLocal.Version
   LogMsg "Quote Character: '" & szQuoteChar & "'"
+  On Error Resume Next
   Set catLocal.ActiveConnection = cnLocal
+  On Error GoTo Err_Handler
   lstTables.Clear
   For Each tblTemp In catLocal.Tables
     If tblTemp.Type = "TABLE" Or tblTemp.Type = "VIEW" Then lstTables.AddItem tblTemp.Name
@@ -992,125 +994,128 @@ Dim auto_increment_rs As New Recordset
             
     '   Return to original code
     For y = 0 To catLocal.Tables(lstData.List(x)).Columns.Count - 1
-      If chkLCaseColumns.Value = 0 Then
-        szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(x)).Columns(y).Name & QUOTE
-      Else
-        szTemp1 = szTemp1 & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) & QUOTE
-      End If
-      Select Case catLocal.Tables(lstData.List(x)).Columns(y).Type
-        Case adBigInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "BigInt", "int8")
-        Case adBinary
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Binary", "text")
-        Case adBoolean
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Boolean", "bool")
-        Case adBSTR
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "BSTR", "bytea")
-        Case adChapter
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Chapter", "int4")
-        Case adChar
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Char", "char")
-        Case adCurrency
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Currency", "money")
-        Case adDate
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Date", "date")
-        Case adDBDate
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "DBDate", "date")
-        Case adDBTime
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "DBTime", "time")
-        Case adDBTimeStamp
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "DBTimestamp", "timestamp")
-        Case adDecimal
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Decimal", "numeric")
-        Case adDouble
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Double", "float8")
-        Case adEmpty
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Empty", "text")
-        Case adError
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Error", "int4")
-        Case adFileTime
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "FileTime", "datetime")
-        Case adGUID
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "GUID", "text")
-        Case adInteger
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Integer", "int4")
-        Case adLongVarBinary
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "LongVarBinary", "lo")
-          loFlag = True
-        Case adLongVarChar
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "LongVarChar", "text")
-        Case adLongVarWChar
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "LongVarWChar", "text")
-        Case adPropVariant
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "PropVariant", "text")
-        Case adSingle
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Single", "float4")
-        Case adSmallInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "SmallInt", "int2")
-        Case adTinyInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "TinyInt", "int2")
-        Case adUnsignedBigInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedBigInt", "int8")
-        Case adUnsignedInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedInt", "int4")
-        Case adUnsignedSmallInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedSmallInt", "int2")
-        Case adUnsignedTinyInt
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedTinyInt", "int2")
-        Case adUserDefined
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UserDefined", "text")
-        Case adVarBinary
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "VarBinary", "lo")
-          loFlag = True
-        Case adVarChar
-          '1/16/2001 Rod Childers
-          'Changed VarChar to default to VarChar
-          'Text in Access is = VarChar in PostgreSQL
-          'Memo in Access is = text in PostgreSQL
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "VarChar", "varchar")
-        Case adVarWChar
-          '1/16/2001 Rod Childers
-          'Changed VarWChar to default to VarChar
-          'Text in Access is = VarChar in PostgreSQL
-          'Memo in Access is = text in PostgreSQL
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "VarWChar", "varchar")
-        Case adWChar
-          szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "WChar", "text")
-        Case Else
-          szTemp2 = "text"
-      End Select
-      If szTemp2 = "bpchar" Or szTemp2 = "char" Or szTemp2 = "varchar" Then
-        If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize = 0 Then
-          szTemp2 = szTemp2 & "(1)"
+      'DJP 2001-07-02 Don't migrate the oid column on PostgreSQL Databases!
+      If Not ((cnLocal.Properties("DBMS Name") = "PostgreSQL") And (catLocal.Tables(lstData.List(x)).Columns(y).Name = "oid")) Then
+        If chkLCaseColumns.Value = 0 Then
+          szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(x)).Columns(y).Name & QUOTE
         Else
-          'Varchar cannot exceed 8088 chars!
-          If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize > 8088 Then
-            txtStatus.Text = txtStatus.Text & "  The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'" & vbCrLf
-            txtStatus.SelStart = Len(txtStatus.Text)
-            LogMsg "The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'"
-            szTemp2 = "text"
+          szTemp1 = szTemp1 & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) & QUOTE
+        End If
+        Select Case catLocal.Tables(lstData.List(x)).Columns(y).Type
+          Case adBigInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "BigInt", "int8")
+          Case adBinary
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Binary", "text")
+          Case adBoolean
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Boolean", "bool")
+          Case adBSTR
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "BSTR", "bytea")
+          Case adChapter
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Chapter", "int4")
+          Case adChar
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Char", "char")
+          Case adCurrency
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Currency", "money")
+          Case adDate
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Date", "date")
+          Case adDBDate
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "DBDate", "date")
+          Case adDBTime
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "DBTime", "time")
+          Case adDBTimeStamp
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "DBTimestamp", "timestamp")
+          Case adDecimal
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Decimal", "numeric")
+          Case adDouble
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Double", "float8")
+          Case adEmpty
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Empty", "text")
+          Case adError
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Error", "int4")
+          Case adFileTime
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "FileTime", "datetime")
+          Case adGUID
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "GUID", "text")
+          Case adInteger
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Integer", "int4")
+          Case adLongVarBinary
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "LongVarBinary", "lo")
+            loFlag = True
+          Case adLongVarChar
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "LongVarChar", "text")
+          Case adLongVarWChar
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "LongVarWChar", "text")
+          Case adPropVariant
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "PropVariant", "text")
+          Case adSingle
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "Single", "float4")
+          Case adSmallInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "SmallInt", "int2")
+          Case adTinyInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "TinyInt", "int2")
+          Case adUnsignedBigInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedBigInt", "int8")
+          Case adUnsignedInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedInt", "int4")
+          Case adUnsignedSmallInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedSmallInt", "int2")
+          Case adUnsignedTinyInt
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UnsignedTinyInt", "int2")
+          Case adUserDefined
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "UserDefined", "text")
+          Case adVarBinary
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "VarBinary", "lo")
+            loFlag = True
+          Case adVarChar
+            '1/16/2001 Rod Childers
+            'Changed VarChar to default to VarChar
+            'Text in Access is = VarChar in PostgreSQL
+            'Memo in Access is = text in PostgreSQL
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "VarChar", "varchar")
+          Case adVarWChar
+            '1/16/2001 Rod Childers
+            'Changed VarWChar to default to VarChar
+            'Text in Access is = VarChar in PostgreSQL
+            'Memo in Access is = text in PostgreSQL
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "VarWChar", "varchar")
+          Case adWChar
+            szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "WChar", "text")
+          Case Else
+          szTemp2 = "text"
+        End Select
+        If szTemp2 = "bpchar" Or szTemp2 = "char" Or szTemp2 = "varchar" Then
+          If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize = 0 Then
+            szTemp2 = szTemp2 & "(1)"
           Else
-            szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize & ")"
+            'Varchar cannot exceed 8088 chars!
+            If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize > 8088 Then
+              txtStatus.Text = txtStatus.Text & "  The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'" & vbCrLf
+              txtStatus.SelStart = Len(txtStatus.Text)
+              LogMsg "The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'"
+              szTemp2 = "text"
+            Else
+              szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize & ")"
+            End If
           End If
         End If
-      End If
-      If szTemp2 = "numeric" Then
-        szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).NumericScale & "," & catLocal.Tables(lstData.List(x)).Columns(y).Precision & ")"
-      End If
-      
-      ' Matthew MacSuga Auto Increment Fix
-      If auto_increment_on = 1 Then
-        If LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) = LCase(auto_increment_field_name) Then
-            szTemp2 = "int4 DEFAULT nextval('" & auto_increment_table & "_" & auto_increment_field_name & "_key')"
+        If szTemp2 = "numeric" Then
+          szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).NumericScale & "," & catLocal.Tables(lstData.List(x)).Columns(y).Precision & ")"
         End If
-      End If
       
-      szTemp1 = szTemp1 & " " & szTemp2
-      If chkNotNull.Value = 1 Then
-        If catLocal.Tables(lstData.List(x)).Columns(y).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
+        ' Matthew MacSuga Auto Increment Fix
+        If auto_increment_on = 1 Then
+          If LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) = LCase(auto_increment_field_name) Then
+            szTemp2 = "int4 DEFAULT nextval('" & auto_increment_table & "_" & auto_increment_field_name & "_key')"
+          End If
+        End If
+        
+        szTemp1 = szTemp1 & " " & szTemp2
+        If chkNotNull.Value = 1 Then
+          If catLocal.Tables(lstData.List(x)).Columns(y).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
+        End If
+        szTemp1 = szTemp1 & ", "
       End If
-      szTemp1 = szTemp1 & ", "
-    Next
+    Next y
     
     If Len(szTemp1) > 2 Then
       
