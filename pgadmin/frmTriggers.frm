@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
@@ -141,7 +141,7 @@ Begin VB.Form frmTriggers
       Checkboxes      =   -1  'True
       FullRowSelect   =   -1  'True
       HideSelection   =   0   'False
-      Indentation     =   299.906
+      Indentation     =   299,906
       LabelEdit       =   1
       LineStyle       =   1
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -187,7 +187,7 @@ Begin VB.Form frmTriggers
             Key             =   ""
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmTriggers.frx":0B8C
+            Picture         =   "frmTriggers.frx":0A90
             Key             =   ""
          EndProperty
       EndProperty
