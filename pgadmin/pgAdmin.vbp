@@ -75,7 +75,6 @@ Module=basTrigger; basTrigger.bas
 Module=basView; basView.bas
 Module=basTable; basTable.bas
 Module=basProject; basProject.bas
-Form=ToolTip.frm
 Object={690E42C6-5198-11D5-834A-0050BACE7D99}#1.0#0; TreeToys.ocx
 IconForm="frmMain"
 Startup="Sub Main"
