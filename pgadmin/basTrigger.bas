@@ -28,7 +28,7 @@ On Error GoTo Err_Handler
     Dim szQueryStr As String
 
     ' if trigger_type defined
-    If Not (IsMissing(iTrigger_type)) And iTrigger_type <> 0 Then cmp_Trigger_Ctype iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
+    If Not (IsMissing(iTrigger_type)) And iTrigger_type <> 0 Then cmp_Trigger_Ctype_ToString iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
     szTrigger_arguments = Replace(szTrigger_arguments, "'", "''")
       
     szQueryStr = "CREATE TRIGGER " & QUOTE & szTrigger_name & QUOTE
@@ -165,7 +165,7 @@ On Error GoTo Err_Handler
         
         If (szTrigger_PostgreSqlTable = "pgadmin_triggers") Then
             iTrigger_type = rsComp!Trigger_type
-            If iTrigger_type <> 0 Then cmp_Trigger_Ctype iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
+            If iTrigger_type <> 0 Then cmp_Trigger_Ctype_ToString iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
         Else
             If Not (IsMissing(szTrigger_foreach)) Then szTrigger_foreach = rsComp!Trigger_foreach & ""
             If Not (IsMissing(szTrigger_executes)) Then szTrigger_executes = rsComp!Trigger_executes & ""
@@ -280,7 +280,7 @@ On Error GoTo Err_Handler
                 szTrigger_function = szTrigger(2, iLoop)
                 szTrigger_arguments = szTrigger(3, iLoop)
                 iTrigger_type = szTrigger(4, iLoop)
-                cmp_Trigger_Ctype iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
+                cmp_Trigger_Ctype_ToString iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
                 
                 ' Update definition of view
                 szQuery = szQuery & " UPDATE pgadmin_dev_triggers SET"
@@ -299,7 +299,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_CopyToDev"
 End Sub
 
-Sub cmp_Trigger_Ctype(iTrigger_type As Integer, szTrigger_foreach As String, szTrigger_executes As String, szTrigger_event As String)
+Sub cmp_Trigger_Ctype_ToString(iTrigger_type As Integer, szTrigger_foreach As String, szTrigger_executes As String, szTrigger_event As String)
 On Error GoTo Err_Handler
         szTrigger_event = ""
         szTrigger_foreach = ""
@@ -327,8 +327,41 @@ On Error GoTo Err_Handler
         End If
         
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_Ctype"
+  If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_Ctype_ToString"
 End Sub
+
+Function cmp_Trigger_Ctype_ToInteger(szTrigger_foreach As String, szTrigger_executes As String, szTrigger_event As String) As Integer
+On Error GoTo Err_Handler
+        Dim iForEach As Integer
+        Dim iExecutes As Integer
+        Dim iInsert As Integer
+        Dim iDelete As Integer
+        Dim iUpdate As Integer
+        
+        iForEach = 0
+        iExecutes = 0
+        iInsert = 0
+        iDelete = 0
+        iUpdate = 0
+        
+        cmp_Trigger_Ctype_ToInteger = 0
+        
+        If szTrigger_foreach = "" Then Exit Function
+        If szTrigger_executes = "" Then Exit Function
+        If szTrigger_event = "" Then Exit Function
+        
+        If InStr(szTrigger_foreach, "Row") > 0 Then iForEach = 1
+        If InStr(szTrigger_executes, "Before") > 0 Then iExecutes = 2
+        
+        If InStr(szTrigger_event, "Insert") > 0 Then iInsert = 4
+        If InStr(szTrigger_event, "Delete") > 0 Then iDelete = 8
+        If InStr(szTrigger_event, "Update") > 0 Then iUpdate = 16
+        
+        cmp_Trigger_Ctype_ToInteger = iForEach + iExecutes + iInsert + iDelete + iUpdate
+        
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_Ctype_ToInteger"
+End Function
 
 Public Sub cmp_Trigger_ParseName(szInput As String, szTrigger_name As String, szTrigger_table As String)
 On Error GoTo Err_Handler
