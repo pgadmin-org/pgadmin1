@@ -632,7 +632,7 @@ On Error GoTo Err_Handler
     NodeX.Expanded = False
   End If
   
-  szSys_Text = "System functions"
+  szSys_Text = "3 - System functions"
   If bShowSystem = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Sys:", szSys_Text, 1)
     iSys_Index = NodeX.Index
@@ -685,6 +685,7 @@ On Error GoTo Err_Handler
                 NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             End If
         End If
+        NodeX.Image = 4
     Next iLoop
   End If
   Erase szFunc
@@ -718,6 +719,8 @@ On Error GoTo Err_Handler
             End If
             If szFunction_iscompiled = "" Then
                 NodeX.Image = 3
+            Else
+                NodeX.Image = 2
             End If
         Next iLoop
       End If

@@ -518,7 +518,7 @@ On Error GoTo Err_Handler
     NodeX.Expanded = False
   End If
   
-  szSys_Text = "System views"
+  szSys_Text = "3 - System views"
   If bShowSystem = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Sys:", szSys_Text, 1)
     iSys_Index = NodeX.Index
@@ -559,6 +559,7 @@ On Error GoTo Err_Handler
             Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szView_name, szView_name, 4)
             NodeX.Tag = cmp_View_CreateSQL(szView_name, szview_definition)
         End If
+        NodeX.Image = 4
     Next iLoop
   End If
   Erase szView
@@ -586,6 +587,8 @@ On Error GoTo Err_Handler
             
             If szview_iscompiled = "" Then
                 NodeX.Image = 3
+            Else
+                NodeX.Image = 2
             End If
         Next iLoop
       End If
