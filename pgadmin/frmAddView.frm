@@ -1,27 +1,131 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddView 
    Caption         =   "Create View"
-   ClientHeight    =   3270
+   ClientHeight    =   4050
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   4650
+   ClientWidth     =   8205
    Icon            =   "frmAddView.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   3270
-   ScaleWidth      =   4650
-   Begin HighlightBox.HBX txtSQL 
-      Height          =   2175
+   ScaleHeight     =   4050
+   ScaleWidth      =   8205
+   Begin VB.Frame fraDetails 
+      Caption         =   "View Details"
+      Height          =   4020
+      Left            =   4500
+      TabIndex        =   3
+      Top             =   0
+      Width           =   3660
+      Begin VB.TextBox txtOwner 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   9
+         Top             =   855
+         Width           =   2670
+      End
+      Begin VB.TextBox txtACL 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   8
+         Top             =   1170
+         Width           =   2670
+      End
+      Begin VB.TextBox txtName 
+         Height          =   285
+         Left            =   900
+         TabIndex        =   7
+         Top             =   540
+         Width           =   2670
+      End
+      Begin VB.TextBox txtOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   4
+         Top             =   225
+         Width           =   2670
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Owner"
+         Height          =   195
+         Index           =   1
+         Left            =   90
+         TabIndex        =   11
+         Top             =   900
+         Width           =   465
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "ACL"
+         Height          =   195
+         Index           =   2
+         Left            =   90
+         TabIndex        =   10
+         Top             =   1215
+         Width           =   300
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "OID"
+         Height          =   195
+         Index           =   0
+         Left            =   90
+         TabIndex        =   6
+         Top             =   270
+         Width           =   285
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Name"
+         Height          =   195
+         Index           =   3
+         Left            =   90
+         TabIndex        =   5
+         Top             =   585
+         Width           =   420
+      End
+   End
+   Begin MSComDlg.CommonDialog CommonDialog1 
+      Left            =   45
+      Top             =   3510
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+   End
+   Begin VB.CommandButton cmdLoad 
+      Caption         =   "&Load Query"
+      Height          =   330
       Left            =   45
       TabIndex        =   2
+      Top             =   450
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCreate 
+      Caption         =   "&Save View"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   1
+      Top             =   45
+      Width           =   1410
+   End
+   Begin HighlightBox.HBX txtSQL 
+      Height          =   3960
+      Left            =   1485
+      TabIndex        =   0
       ToolTipText     =   "Enter the SQL Query for the View."
-      Top             =   630
-      Width           =   4560
-      _ExtentX        =   8043
-      _ExtentY        =   3836
-      Enabled         =   -1  'True
+      Top             =   45
+      Width           =   2985
+      _ExtentX        =   5265
+      _ExtentY        =   6985
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -34,54 +138,6 @@ Begin VB.Form frmAddView
       Text            =   ""
       ScrollBars      =   2
       MultiLine       =   -1  'True
-   End
-   Begin MSComDlg.CommonDialog CommonDialog1 
-      Left            =   2070
-      Top             =   2745
-      _ExtentX        =   847
-      _ExtentY        =   847
-      _Version        =   393216
-   End
-   Begin VB.CommandButton cmdLoad 
-      Caption         =   "&Load Query"
-      Height          =   375
-      Left            =   45
-      TabIndex        =   5
-      Top             =   2880
-      Width           =   1275
-   End
-   Begin VB.CommandButton cmdCreate 
-      Caption         =   "&Create View"
-      Height          =   375
-      Left            =   3330
-      TabIndex        =   4
-      Top             =   2880
-      Width           =   1275
-   End
-   Begin VB.TextBox txtName 
-      Height          =   285
-      Left            =   990
-      TabIndex        =   1
-      Top             =   45
-      Width           =   3615
-   End
-   Begin VB.Label lblSQL 
-      AutoSize        =   -1  'True
-      Caption         =   "SQL Query"
-      Height          =   195
-      Left            =   45
-      TabIndex        =   3
-      Top             =   405
-      Width           =   780
-   End
-   Begin VB.Label lblName 
-      AutoSize        =   -1  'True
-      Caption         =   "View Name"
-      Height          =   195
-      Left            =   45
-      TabIndex        =   0
-      Top             =   90
-      Width           =   810
    End
 End
 Attribute VB_Name = "frmAddView"
@@ -107,9 +163,12 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+Dim lng_OpenView_OID As Long
 
 Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
+  bContinueCompilation = True
+  
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the View!", vbExclamation, "Error"
     Exit Sub
@@ -119,11 +178,25 @@ On Error GoTo Err_Handler
     Exit Sub
   End If
   StartMsg "Creating View..."
-  LogMsg "Executing: CREATE VIEW " & txtName.Text & " AS " & txtSQL.Text
-  gConnection.Execute "CREATE VIEW " & txtName.Text & " AS " & txtSQL.Text
-  frmViews.cmdRefresh_Click
-  EndMsg
-  Unload Me
+    
+    ' Create fake view for testing purposes
+    cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15)
+    cmp_View_Create "pgadmin_fake__" & Left(txtName.Text, 15), txtSQL.Text
+    cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15)
+    
+    ' Create real view
+    If bContinueCompilation = True Then
+        ' Drop view if exists
+        If lng_OpenView_OID <> 0 Then cmp_View_DropIfExists lng_OpenView_OID
+        
+        ' Create view
+        cmp_View_Create txtName.Text, txtSQL.Text
+        
+        ' Refresh view list
+        frmViews.cmdRefresh_Click
+        Unload Me
+    End If
+    EndMsg
   Exit Sub
 Err_Handler:
   EndMsg
@@ -165,24 +238,58 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState = 0 Then
-    If Me.Height < 3675 Then Me.Height = 3675
-    If Me.Width < 4770 Then Me.Width = 4770
+  If Me.WindowState <> 1 Then
+    If Me.WindowState = 0 Then
+      If Me.Width < 8325 Then Me.Width = 8325
+      If Me.Height < 4455 Then Me.Height = 4455
+    End If
+    txtSQL.Height = Me.ScaleHeight
+    txtSQL.Width = Me.ScaleWidth - txtSQL.Left - fraDetails.Width - 25
+    fraDetails.Left = txtSQL.Left + txtSQL.Width + 25
+    fraDetails.Height = Me.ScaleHeight
   End If
   Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddView, Form_Resize"
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddViews, Form_Resize"
 End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-  LogMsg "Loading Form: " & Me.Name
-  Me.Height = 3675
-  Me.Width = 4770
-  txtSQL.Wordlist = TextColours
-  Gen_SQL
-  Exit Sub
+    Dim szView_Name As String
+    Dim szView_Definition As String
+    Dim szView_Owner As String
+    Dim szView_Acl As String
+    
+    LogMsg "Loading Form: " & Me.Name
+    Me.Height = 3675
+    Me.Width = 4770
+    txtSQL.Wordlist = TextColours
+    
+    ' Retrieve view if exists
+    lng_OpenView_OID = gPostgresOBJ_OID
+    gPostgresOBJ_OID = 0
+    If lng_OpenView_OID <> 0 Then
+      Me.Caption = "Modify view"
+      
+      ' Load View data
+      cmp_View_GetValues lng_OpenView_OID, szView_Name, szView_Definition, szView_Owner, szView_Acl
+      
+      txtName = szView_Name
+      txtSQL.Text = szView_Definition
+      txtOID.Text = lng_OpenView_OID
+      txtOwner.Text = szView_Owner
+      txtACL.Text = szView_Acl
+    Else
+      Me.Caption = "Create view"
+      txtOID.Text = "N.S."
+      txtOwner.Text = "N.S."
+      txtACL.Text = "N.S."
+    End If
+    
+    Gen_SQL
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddView, Form_Load"
 End Sub
+
 
 Private Sub txtName_Change()
 On Error GoTo Err_Handler
@@ -197,3 +304,4 @@ On Error GoTo Err_Handler
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddView, txtSQL_Change"
 End Sub
+
