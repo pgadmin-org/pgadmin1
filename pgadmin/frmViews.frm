@@ -580,6 +580,11 @@ On Error GoTo Err_Handler
     bSystem = (chkSystem.Value = 1)
     cmdButtonActivate bSystem, lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
 
+    If cmp_Project_IsRebuilt = True Then
+        cmdRebuild.Enabled = False
+    Else
+       cmdRebuild.Enabled = True
+    End If
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"
 End Sub

@@ -260,7 +260,6 @@ Begin VB.Form frmFunctions
    End
    Begin VB.ListBox lstFunc 
       Height          =   5520
-      ItemData        =   "frmFunctions.frx":0000
       Left            =   1485
       List            =   "frmFunctions.frx":0002
       MultiSelect     =   2  'Extended
@@ -619,7 +618,12 @@ On Error GoTo Err_Handler
     Dim bSystem As Boolean
     bSystem = (chkFunctions.Value = 1)
     cmdButtonActivate bSystem, lstFunc.SelCount, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
-
+    
+    If cmp_Project_IsRebuilt = True Then
+        cmdRebuild.Enabled = False
+    Else
+       cmdRebuild.Enabled = True
+    End If
 Exit Sub
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmFunctions, CmdFuncButton"
