@@ -507,9 +507,7 @@ Public Sub cmdRefresh_Click()
     Next iLoop
   End If
   Erase szFunc
-  txtName.Text = lstFunc
   lstFunc_Click
-  CmdFuncButton
   EndMsg
   Exit Sub
 Err_Handler:

@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmViews 
    Caption         =   "Views"
    ClientHeight    =   4050
@@ -225,6 +226,15 @@ Begin VB.Form frmViews
          Width           =   1065
       End
    End
+   Begin MSComDlg.CommonDialog CommonDialog1 
+      Left            =   45
+      Top             =   3195
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+      DialogTitle     =   "Select SQL File"
+      Filter          =   "All Files (*.*)|*.*"
+   End
 End
 Attribute VB_Name = "frmViews"
 Attribute VB_GlobalNameSpace = False
@@ -250,6 +260,58 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsView As New Recordset
+
+Private Sub cmdExportView_Click()
+    Dim iLoop As Long
+    Dim iListCount As Long
+    Dim szExport As String
+    Dim bExport As Boolean
+    Dim szHeader As String
+    
+    Dim lngView_oid As Long
+    Dim szView_name As String
+    Dim szView_owner As String
+    Dim szView_acl As String
+    Dim szView_comments As String
+    Dim szView_definition As String
+    
+    bExport = False
+    szExport = ""
+
+    iListCount = lstView.ListCount
+        
+    For iLoop = 0 To iListCount - 1
+        If lstView.Selected(iLoop) = True Then
+            bExport = True
+            szView_name = lstView.List(iLoop)
+            cmp_View_GetValues 0, "", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+            
+            ' Header
+            szExport = szExport & "/*" & vbCrLf
+            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+            szExport = szExport & szView_name & vbCrLf
+            If szView_comments <> "" Then szExport = szExport & szView_comments & vbCrLf
+            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+            szExport = szExport & "*/" & vbCrLf
+            
+            ' Function
+            szExport = szExport & cmp_View_CreateSQL(szView_name, szView_definition) & vbCrLf & vbCrLf
+        End If
+    Next iLoop
+    
+    If bExport Then
+        szHeader = "/*" & vbCrLf
+        szHeader = szHeader & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
+        szHeader = szHeader & "The choice of a GNU generation, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
+        szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
+        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
+        szHeader = szHeader & "*/" & vbCrLf & vbCrLf
+        szExport = szHeader & szExport
+        MsgExportToFile CommonDialog1, szExport, "sql", "Export views"
+    End If
+End Sub
 
 Public Sub cmdModifyView_Click()
 ' On Error GoTo Err_Handler
@@ -343,20 +405,35 @@ End Sub
 
 Public Sub cmdDropView_Click()
 On Error GoTo Err_Handler
-  If lstView.Text = "" Then
-    MsgBox "You must select a View to delete!", vbExclamation, "Error"
-    Exit Sub
+  Dim szTrigger_name As String
+  Dim iListCount As Long
+  Dim iLoop As Long
+  Dim szDropStr As String
+  
+  If MsgBox("Are you sure you wish to delete Views?", vbYesNo + vbQuestion, _
+            "Confirm View(s) Delete") = vbYes Then
+        StartMsg "Dropping View..."
+        
+        iListCount = lstView.ListCount
+        
+        For iLoop = 0 To iListCount - 1
+           If lstView.Selected(iLoop) = True Then
+           
+            szTrigger_name = lstView.List(iLoop)
+            szDropStr = "DROP VIEW " & QUOTE & szTrigger_name & QUOTE
+            
+            fMainForm.txtSQLPane.Text = szDropStr
+            LogMsg "Executing: " & szDropStr
+            gConnection.Execute szDropStr
+            LogQuery szDropStr
+            
+            End If
+        Next iLoop
+            
+        cmdRefresh_Click
+        EndMsg
   End If
-  If MsgBox("Are you sure you wish to delete this View?", vbYesNo + vbQuestion, _
-            "Confirm View Delete") = vbYes Then
-    StartMsg "Dropping View..."
-    fMainForm.txtSQLPane.Text = "DROP VIEW " & QUOTE & txtName.Text & QUOTE
-    LogMsg "Executing: DROP VIEW " & QUOTE & lstView.Text & QUOTE
-    gConnection.Execute "DROP VIEW " & QUOTE & lstView.Text & QUOTE
-    LogQuery "DROP VIEW " & QUOTE & lstView.Text & QUOTE
-    cmdRefresh_Click
-    EndMsg
-  End If
+  
   Exit Sub
 Err_Handler:
   EndMsg
@@ -395,7 +472,7 @@ On Error GoTo Err_Handler
   End If
   
   Erase szView
-  CmdViewButton
+  lstView_Click
   
   EndMsg
   Exit Sub
