@@ -1,5 +1,5 @@
 Attribute VB_Name = "basGlobal"
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ Public TextColours As String
 Public SecondLogon As Boolean
 Public rptList() As rptDef
 Public Exporters() As pgExporter
-Public DevMode As Boolean 'True = Development mode, False = Production Mode
+Public DevMode As Boolean 'True = Development & Production mode, False = Production Mode only
 
 ' Global variables used to open AddForms
 Public gPostgresOBJ_OID As Long
@@ -84,5 +84,9 @@ Public gTrigger_Table As String
 
 Public gView_Name As String
 
-' Gloabl variable used to control rebuilding
-Public bContinueRebuilding As Boolean
+' Global variable used to control rebuilding
+Public bContinueRebuilding As Boolean 'Stops rebuilding if false
+Public gDevConnection As String 'Connection to repository
+Public gDevPostgresqlTables As String
+
+
