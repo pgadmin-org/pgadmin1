@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
 Begin VB.Form frmOptions 
    BorderStyle     =   1  'Fixed Single
@@ -34,10 +34,11 @@ Begin VB.Form frmOptions
       _ExtentY        =   8440
       _Version        =   393216
       Style           =   1
+      Tab             =   1
       TabHeight       =   520
       TabCaption(0)   =   "Logging/Tracking"
       TabPicture(0)   =   "frmOptions.frx":128A
-      Tab(0).ControlEnabled=   -1  'True
+      Tab(0).ControlEnabled=   0   'False
       Tab(0).Control(0)=   "CommonDialog1"
       Tab(0).Control(0).Enabled=   0   'False
       Tab(0).Control(1)=   "fraTracking"
@@ -47,8 +48,9 @@ Begin VB.Form frmOptions
       Tab(0).ControlCount=   3
       TabCaption(1)   =   "&Syntax Highlight"
       TabPicture(1)   =   "frmOptions.frx":12A6
-      Tab(1).ControlEnabled=   0   'False
+      Tab(1).ControlEnabled=   -1  'True
       Tab(1).Control(0)=   "Frame2"
+      Tab(1).Control(0).Enabled=   0   'False
       Tab(1).ControlCount=   1
       TabCaption(2)   =   "&Project"
       TabPicture(2)   =   "frmOptions.frx":12C2
@@ -58,7 +60,7 @@ Begin VB.Form frmOptions
       Begin VB.Frame Frame2 
          Caption         =   "Colour"
          Height          =   4065
-         Left            =   -74820
+         Left            =   180
          TabIndex        =   1
          Top             =   495
          Width           =   5235
@@ -150,7 +152,7 @@ Begin VB.Form frmOptions
       Begin VB.Frame Loggin 
          Caption         =   "Logging"
          Height          =   1815
-         Left            =   180
+         Left            =   -74820
          TabIndex        =   3
          Top             =   495
          Width           =   5235
@@ -198,7 +200,7 @@ Begin VB.Form frmOptions
       Begin VB.Frame fraTracking 
          Caption         =   "Revision Tracking"
          Height          =   1185
-         Left            =   180
+         Left            =   -74820
          TabIndex        =   4
          Top             =   2430
          Width           =   5235
@@ -274,7 +276,7 @@ Begin VB.Form frmOptions
          End
       End
       Begin MSComDlg.CommonDialog CommonDialog1 
-         Left            =   45
+         Left            =   -74955
          Top             =   4230
          _ExtentX        =   847
          _ExtentY        =   847
