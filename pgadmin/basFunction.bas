@@ -347,40 +347,6 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_SetIsCompiled"
 End Sub
 
-Public Function cmp_Function_HasSatisfiedDependencies(ByVal szFunction_dev_table As String, ByVal szDependency_table As String, ByVal szFunction_name As String) As Boolean
-    On Error GoTo Err_Handler
-    
-    Dim szQueryStr As String
-    Dim rsComp As New Recordset
-    
-    ' Test existence of unsatisfied dependencies
-    szQueryStr = "SELECT " & szFunction_dev_table & ".function_name, " & szFunction_dev_table & ".function_arguments, " & szFunction_dev_table & ".function_iscompiled"
-    szQueryStr = szQueryStr & " From " & szFunction_dev_table
-    szQueryStr = szQueryStr & "    INNER JOIN " & szDependency_table
-    szQueryStr = szQueryStr & "    ON " & szFunction_dev_table & ".Function_name = " & szDependency_table & ".dependency_child_name"
-    szQueryStr = szQueryStr & "    INNER JOIN " & szFunction_dev_table & " AS " & szFunction_dev_table & "_1"
-    szQueryStr = szQueryStr & "    ON " & szDependency_table & ".dependency_parent_name =  " & szFunction_dev_table & "_1.Function_name"
-    szQueryStr = szQueryStr & "    WHERE (" & szFunction_dev_table & ".Function_name = '" & szFunction_name & "') "
-    szQueryStr = szQueryStr & "    AND (" & szDependency_table & ".dependency_child_object = 'function')"
-    szQueryStr = szQueryStr & "    AND (" & szFunction_dev_table & "_1.function_iscompiled = 'f')"
-    szQueryStr = szQueryStr & ";"
-    
-    LogMsg "Executing: " & szQueryStr
-  
-    If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szQueryStr, gConnection
-    
-    cmp_Function_HasSatisfiedDependencies = False
-    If rsComp.EOF Then
-        cmp_Function_HasSatisfiedDependencies = True
-    End If
-    
-    Exit Function
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_HasSatisfiedDependencies"
-End Function
-
-
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Tree
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

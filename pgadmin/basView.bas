@@ -339,39 +339,6 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basView, cmp_View_SetIsCompiled"
 End Sub
 
-Public Function cmp_View_HasSatisfiedDependencies(ByVal szView_dev_table As String, ByVal szDependency_table As String, ByVal szView_name As String) As Boolean
-    On Error GoTo Err_Handler
-    
-    Dim szQueryStr As String
-    Dim rsComp As New Recordset
-    
-    ' Test existence of unsatisfied dependencies
-    szQueryStr = "SELECT " & szView_dev_table & ".View_name, " & szView_dev_table & ".View_iscompiled"
-    szQueryStr = szQueryStr & " From " & szView_dev_table
-    szQueryStr = szQueryStr & "    INNER JOIN " & szDependency_table
-    szQueryStr = szQueryStr & "    ON " & szView_dev_table & ".View_name = " & szDependency_table & ".dependency_child_name"
-    szQueryStr = szQueryStr & "    INNER JOIN " & szView_dev_table & " AS " & szView_dev_table & "_1"
-    szQueryStr = szQueryStr & "    ON " & szDependency_table & ".dependency_parent_name =  " & szView_dev_table & "_1.View_name"
-    szQueryStr = szQueryStr & "    WHERE (" & szView_dev_table & ".View_name = '" & szView_name & "') "
-    szQueryStr = szQueryStr & "    AND (" & szDependency_table & ".dependency_child_object = 'view')"
-    szQueryStr = szQueryStr & "    AND (" & szView_dev_table & "_1.View_iscompiled = 'f')"
-    szQueryStr = szQueryStr & ";"
-    
-    LogMsg "Executing: " & szQueryStr
-  
-    If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szQueryStr, gConnection
-    
-    cmp_View_HasSatisfiedDependencies = False
-    If rsComp.EOF Then
-        cmp_View_HasSatisfiedDependencies = True
-    End If
-    
-    Exit Function
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_HasSatisfiedDependencies"
-End Function
-
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Tree
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
