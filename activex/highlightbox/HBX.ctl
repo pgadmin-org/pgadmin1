@@ -27,14 +27,14 @@ Begin VB.UserControl HBX
    Begin VB.Image imgUp 
       Height          =   150
       Left            =   2655
-      Picture         =   "HBX.ctx":019E
+      Picture         =   "HBX.ctx":0195
       Top             =   30
       Width           =   150
    End
    Begin VB.Image imgDown 
       Height          =   150
       Left            =   2655
-      Picture         =   "HBX.ctx":04F8
+      Picture         =   "HBX.ctx":04EF
       Top             =   30
       Visible         =   0   'False
       Width           =   150
@@ -83,20 +83,18 @@ Attribute VB_Ext_KEY = "PropPageWizardRun" ,"Yes"
 Option Explicit
 
 'Default Property Values:
-Const m_def_Wordlist = "0"
 Const m_def_ControlBarVisible = True
 Const m_def_MaximisedHeight = 0
-Const m_def_ForeColor = 0
-Const m_def_BackStyle = False
 Const m_def_MaximisedWidth = 0
+Const m_def_Wordlist = "0"
+
 Const DELIMCHARS = " []{}()'"""
 
-Dim m_ForeColor As Long
-Dim m_BackStyle As Boolean
 Dim m_ControlBarVisible As Boolean
 Dim m_MaximisedWidth As Long
 Dim m_MaximisedHeight As Long
 Dim m_Wordlist As String
+
 Dim bMaximised As Boolean
 Dim LastTop As Long
 Dim LastLeft As Long
@@ -404,22 +402,30 @@ End Sub
 Private Sub UserControl_Resize()
   If UserControl.Width < 10 Then UserControl.Width = 10
   If UserControl.Height < 500 Then UserControl.Height = 500
+  
   shpBar.Width = UserControl.Width
-  If m_ControlBarVisible = True Then
-    rtbString.Top = 0 + shpBar.Height
-    rtbString.Height = (UserControl.Height - shpBar.Height)
-  Else
-    rtbString.Top = 0
-    rtbString.Height = UserControl.Height
-  End If
-  rtbString.Left = 0
-  rtbString.Width = UserControl.Width
   If UserControl.BorderStyle = 0 Then
     imgDown.Left = UserControl.Width - 200
     imgUp.Left = UserControl.Width - 200
+    rtbString.Width = UserControl.Width
+    If m_ControlBarVisible = True Then
+      rtbString.Top = 0 + shpBar.Height
+      rtbString.Height = (UserControl.Height - shpBar.Height)
+    Else
+      rtbString.Top = 0
+      rtbString.Height = UserControl.Height
+    End If
   Else
     imgDown.Left = UserControl.Width - 250
     imgUp.Left = UserControl.Width - 250
+    rtbString.Width = UserControl.Width - 50
+    If m_ControlBarVisible = True Then
+      rtbString.Top = 0 + shpBar.Height
+      rtbString.Height = (UserControl.Height - shpBar.Height) - 50
+    Else
+      rtbString.Top = 0
+      rtbString.Height = UserControl.Height - 50
+    End If
   End If
 End Sub
 
@@ -431,18 +437,6 @@ End Sub
 Public Sub Maximise()
 Attribute Maximise.VB_Description = "Maximise the control to the size of it's container."
  If Not bMaximised Then imgUp_Click
-End Sub
-
-Private Sub ShowBar(bSho As Boolean)
-  If bSho = True Then
-    shpBar.Height = 195
-    rtbString.Top = 0 + shpBar.Height
-    rtbString.Height = UserControl.Height
-  Else
-    shpBar.Height = 0
-    rtbString.Top = 0 + shpBar.Height
-    rtbString.Height = UserControl.Height
-  End If
 End Sub
 
 Private Sub rtbstring_DblClick()
@@ -479,11 +473,13 @@ Public Property Let MaximisedWidth(ByVal New_MaximisedWidth As Variant)
 End Property
 
 Private Sub UserControl_InitProperties()
-  m_MaximisedWidth = m_def_MaximisedWidth
   Set UserControl.Font = Ambient.Font
-  m_MaximisedHeight = m_def_MaximisedHeight
+  
   m_Wordlist = m_def_Wordlist
-  BuildCache
+  m_ControlBarVisible = m_def_ControlBarVisible
+  m_MaximisedWidth = m_def_MaximisedWidth
+  m_MaximisedHeight = m_def_MaximisedHeight
+  UserControl.BorderStyle = 1
 End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
@@ -493,22 +489,14 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
   rtbString.Enabled = PropBag.ReadProperty("Enabled", True)
   Set rtbString.Font = PropBag.ReadProperty("Font", Ambient.Font)
   rtbString.Locked = PropBag.ReadProperty("Locked", False)
-  rtbString.BorderStyle = PropBag.ReadProperty("BorderStyle", 1)
   m_MaximisedHeight = PropBag.ReadProperty("MaximisedHeight", m_def_MaximisedHeight)
   m_MaximisedWidth = PropBag.ReadProperty("MaximisedWidth", m_def_MaximisedWidth)
-  rtbString.SelText = PropBag.ReadProperty("SelText", "")
-  rtbString.SelStart = PropBag.ReadProperty("SelStart", 0)
-  rtbString.SelLength = PropBag.ReadProperty("SelLength", 0)
-  rtbString.ToolTipText = PropBag.ReadProperty("ToolTipText", "")
   lblCaption.Caption = PropBag.ReadProperty("Caption", "")
   rtbString.MaxLength = PropBag.ReadProperty("MaxLength", 0)
-  rtbString.Text = PropBag.ReadProperty("Text", "HBX")
-  m_ForeColor = PropBag.ReadProperty("ForeColor", m_def_ForeColor)
-  m_BackStyle = PropBag.ReadProperty("BackStyle", m_def_BackStyle)
-  rtbString.RightMargin = PropBag.ReadProperty("RightMargin", 0)
-  UserControl.BorderStyle = PropBag.ReadProperty("BorderStyle", 0)
+  UserControl.BorderStyle = PropBag.ReadProperty("BorderStyle", 1)
   m_ControlBarVisible = PropBag.ReadProperty("ControlBarVisible", m_def_ControlBarVisible)
   m_Wordlist = PropBag.ReadProperty("Wordlist", m_def_Wordlist)
+  rtbString.AutoVerbMenu = PropBag.ReadProperty("AutoVerbMenu", True)
   BuildCache
 End Sub
 
@@ -517,22 +505,14 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
   Call PropBag.WriteProperty("Enabled", rtbString.Enabled, True)
   Call PropBag.WriteProperty("Font", rtbString.Font, Ambient.Font)
   Call PropBag.WriteProperty("Locked", rtbString.Locked, False)
-  Call PropBag.WriteProperty("BorderStyle", rtbString.BorderStyle, 1)
   Call PropBag.WriteProperty("MaximisedHeight", m_MaximisedHeight, m_def_MaximisedHeight)
   Call PropBag.WriteProperty("MaximisedWidth", m_MaximisedWidth, m_def_MaximisedWidth)
-  Call PropBag.WriteProperty("SelText", rtbString.SelText, "")
-  Call PropBag.WriteProperty("SelStart", rtbString.SelStart, 0)
-  Call PropBag.WriteProperty("SelLength", rtbString.SelLength, 0)
-  Call PropBag.WriteProperty("ToolTipText", rtbString.ToolTipText, "")
   Call PropBag.WriteProperty("Caption", lblCaption.Caption, "")
   Call PropBag.WriteProperty("MaxLength", rtbString.MaxLength, 0)
-  Call PropBag.WriteProperty("Text", rtbString.Text, "HBX")
-  Call PropBag.WriteProperty("ForeColor", m_ForeColor, m_def_ForeColor)
-  Call PropBag.WriteProperty("BackStyle", m_BackStyle, m_def_BackStyle)
-  Call PropBag.WriteProperty("RightMargin", rtbString.RightMargin, 0)
-  Call PropBag.WriteProperty("BorderStyle", UserControl.BorderStyle, 0)
+  Call PropBag.WriteProperty("BorderStyle", UserControl.BorderStyle, 1)
   Call PropBag.WriteProperty("ControlBarVisible", m_ControlBarVisible, m_def_ControlBarVisible)
   Call PropBag.WriteProperty("Wordlist", m_Wordlist, m_def_Wordlist)
+  Call PropBag.WriteProperty("AutoVerbMenu", rtbString.AutoVerbMenu, True)
 End Sub
 
 Public Property Get BorderStyle() As MSComctlLib.BorderStyleConstants
@@ -541,7 +521,7 @@ Attribute BorderStyle.VB_Description = "Returns/sets the border style for an obj
 End Property
 
 Public Property Let BorderStyle(ByVal New_BorderStyle As MSComctlLib.BorderStyleConstants)
-  UserControl.BorderStyle() = New_BorderStyle
+  UserControl.BorderStyle = New_BorderStyle
   PropertyChanged "BorderStyle"
 End Property
 
@@ -618,6 +598,7 @@ End Property
 Public Property Let Text(ByVal New_Text As String)
   rtbString.Text() = New_Text
   PropertyChanged "Text"
+  QR
 End Property
 
 Public Property Get Caption() As String
@@ -686,6 +667,13 @@ Attribute Maximised.VB_Description = "Set/Returns a boolean indicating whether t
   Maximised = bMaximised
 End Property
 
+Public Property Get AutoVerbMenu() As Boolean
+Attribute AutoVerbMenu.VB_Description = "Returns/sets a value that indicating whether the selected object's verbs will be displayed in a popup menu when the right mouse button is clicked."
+  AutoVerbMenu = rtbString.AutoVerbMenu
+End Property
 
-
+Public Property Let AutoVerbMenu(ByVal New_AutoVerbMenu As Boolean)
+  rtbString.AutoVerbMenu() = New_AutoVerbMenu
+  PropertyChanged "AutoVerbMenu"
+End Property
 
