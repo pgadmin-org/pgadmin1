@@ -24,15 +24,6 @@ Begin VB.Form frmAddFunction
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   19
-         Top             =   540
-         Width           =   3345
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
          TabIndex        =   18
          Top             =   225
          Width           =   3345
@@ -84,7 +75,7 @@ Begin VB.Form frmAddFunction
          Style           =   2  'Dropdown List
          TabIndex        =   11
          ToolTipText     =   "Input arguments of your function."
-         Top             =   1845
+         Top             =   1530
          Width           =   2310
       End
       Begin VB.ComboBox cboReturnType 
@@ -93,7 +84,7 @@ Begin VB.Form frmAddFunction
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   9
-         Top             =   1485
+         Top             =   1170
          Width           =   3345
       End
       Begin VB.TextBox txtName 
@@ -101,7 +92,7 @@ Begin VB.Form frmAddFunction
          Left            =   900
          MaxLength       =   31
          TabIndex        =   7
-         Top             =   1170
+         Top             =   855
          Width           =   3345
       End
       Begin VB.TextBox txtComments 
@@ -117,7 +108,7 @@ Begin VB.Form frmAddFunction
          Height          =   315
          Left            =   900
          TabIndex        =   5
-         Top             =   855
+         Top             =   540
          Width           =   3345
          _ExtentX        =   5900
          _ExtentY        =   556
@@ -138,19 +129,9 @@ Begin VB.Form frmAddFunction
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   21
-         Top             =   585
-         Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   20
+         TabIndex        =   19
          Top             =   270
-         Width           =   285
+         Width           =   465
       End
       Begin VB.Label lblReturnType 
          AutoSize        =   -1  'True
@@ -158,7 +139,7 @@ Begin VB.Form frmAddFunction
          Height          =   195
          Left            =   90
          TabIndex        =   10
-         Top             =   1530
+         Top             =   1215
          Width           =   510
       End
       Begin VB.Label lblName 
@@ -167,7 +148,7 @@ Begin VB.Form frmAddFunction
          Height          =   195
          Left            =   90
          TabIndex        =   8
-         Top             =   1215
+         Top             =   900
          Width           =   420
       End
       Begin VB.Label lblLanguage 
@@ -176,7 +157,7 @@ Begin VB.Form frmAddFunction
          Height          =   195
          Left            =   90
          TabIndex        =   6
-         Top             =   900
+         Top             =   585
          Width           =   810
       End
       Begin VB.Label Label1 
@@ -196,7 +177,7 @@ Begin VB.Form frmAddFunction
          Index           =   2
          Left            =   90
          TabIndex        =   3
-         Top             =   1845
+         Top             =   1530
          Width           =   780
       End
    End
@@ -339,14 +320,14 @@ Dim x As Integer
   
  ' In case of a creation, test existence of function with same arguments
   If szFunction_name_old = "" Then
-    If cmp_Function_Exists("pgadmin_dev_functions", 0, txtName.Text, ArgList) = True Then
+    If cmp_Function_Exists("pgadmin_dev_functions", txtName.Text, ArgList) = True Then
         MsgBox "Function " & txtName.Text & " (" & ArgList & ") already exists ", vbExclamation, "Error"
     Exit Sub
     End If
   End If
     
     ' Drop function if exists
-    If szFunction_name_old <> "" Then cmp_Function_DropIfExists "pgadmin_dev_functions", 0, szFunction_name_old, szFunction_arguments_old
+    If szFunction_name_old <> "" Then cmp_Function_DropIfExists "pgadmin_dev_functions", szFunction_name_old, szFunction_arguments_old
     
     ' Create function
     cmp_Function_Create "pgadmin_dev_functions", txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text, "", txtComments.Text
@@ -437,7 +418,6 @@ On Error GoTo Err_Handler
     Dim temp_arg_list As Variant
     Dim temp_arg_item As Variant
     
-    Dim lngFunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -491,15 +471,13 @@ On Error GoTo Err_Handler
               Me.Caption = "Modify function"
               
               ' get function values
-              lngFunction_oid = 0
-              cmp_Function_GetValues "pgadmin_dev_functions", lngFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+              cmp_Function_GetValues "pgadmin_dev_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
               
               ' Initialize form
               txtName = szFunction_name
               txtPath.Text = szFunction_source
               vssLanguage.Text = szFunction_language
               cboReturnType.Text = szFunction_returns
-              txtOID = lngFunction_oid
               txtOwner = szFunction_owner
               txtComments = szFunction_comments
               
@@ -509,12 +487,9 @@ On Error GoTo Err_Handler
                    cmdAdd_Click
               Next
               
-             
-            If txtOID = 0 Then txtOID = "N.S."
             If txtOwner = "" Then txtOwner = "N.S."
         Else
            Me.Caption = "Create function"
-           txtOID = "N.S."
            txtOwner = "N.S."
         End If
     

@@ -1,40 +1,55 @@
 VERSION 5.00
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{690E42C6-5198-11D5-834A-0050BACE7D99}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmTriggers 
    Caption         =   "Triggers"
-   ClientHeight    =   4425
+   ClientHeight    =   5595
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   8205
+   ClientWidth     =   8880
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4425
-   ScaleWidth      =   8205
-   Begin VB.CommandButton cmdRebuildTriggers 
-      BackColor       =   &H80000018&
-      Caption         =   "Rebuild Triggers"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   27
-      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
-      Top             =   3915
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdRebuildProject 
+   ScaleHeight     =   7266.234
+   ScaleMode       =   0  'User
+   ScaleWidth      =   9740.402
+   Begin VB.CommandButton cmdRebuild 
       BackColor       =   &H80000018&
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
       TabIndex        =   26
-      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
+      ToolTipText     =   "Checks and rebuilds project dependencies."
       Top             =   3555
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCopyDevToPro 
+      BackColor       =   &H80000018&
+      Caption         =   "Compile unsafe"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   25
+      ToolTipText     =   "Compiles a repository function."
+      Top             =   3915
+      Visible         =   0   'False
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCopyProToDev 
+      BackColor       =   &H80000018&
+      Caption         =   "Load->Developt"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   24
+      ToolTipText     =   "Compiles a repository function."
+      Top             =   4275
+      Visible         =   0   'False
       Width           =   1410
    End
    Begin VB.CommandButton cmdExportTrig 
       Caption         =   "Export Trigger"
       Height          =   330
       Left            =   45
-      TabIndex        =   23
+      TabIndex        =   20
       ToolTipText     =   "Modify the selected trigger."
       Top             =   1125
       Width           =   1410
@@ -43,7 +58,7 @@ Begin VB.Form frmTriggers
       Caption         =   "&Modify Trigger"
       Height          =   330
       Left            =   45
-      TabIndex        =   22
+      TabIndex        =   19
       ToolTipText     =   "Modify the selected trigger."
       Top             =   405
       Width           =   1410
@@ -52,7 +67,7 @@ Begin VB.Form frmTriggers
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   21
+      TabIndex        =   18
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -76,84 +91,75 @@ Begin VB.Form frmTriggers
    End
    Begin VB.Frame fraDetails 
       Caption         =   "Trigger Details"
-      Height          =   4380
-      Left            =   4500
-      TabIndex        =   13
+      Height          =   5550
+      Left            =   4680
+      TabIndex        =   11
       Top             =   0
-      Width           =   3660
+      Width           =   4200
       Begin VB.TextBox txtName 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   24
-         Top             =   540
-         Width           =   2760
+         TabIndex        =   21
+         Top             =   270
+         Width           =   3300
       End
       Begin VB.TextBox txtForEach 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   11
-         Top             =   2115
-         Width           =   2760
+         TabIndex        =   9
+         Top             =   1845
+         Width           =   3300
       End
       Begin VB.TextBox txtEvent 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   10
-         Top             =   1800
-         Width           =   2760
+         TabIndex        =   8
+         Top             =   1530
+         Width           =   3300
       End
       Begin VB.TextBox txtExecutes 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   9
-         Top             =   1485
-         Width           =   2760
+         TabIndex        =   7
+         Top             =   1215
+         Width           =   3300
       End
       Begin VB.TextBox txtFunction 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   8
-         Top             =   1170
-         Width           =   2760
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   810
-         Locked          =   -1  'True
          TabIndex        =   6
-         Top             =   225
-         Width           =   2760
+         Top             =   900
+         Width           =   3300
       End
       Begin VB.TextBox txtTable 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   7
-         Top             =   855
-         Width           =   2760
+         TabIndex        =   5
+         Top             =   585
+         Width           =   3300
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   1635
+         Height          =   2940
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   12
-         Top             =   2700
-         Width           =   3480
+         TabIndex        =   10
+         Top             =   2520
+         Width           =   4020
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -161,19 +167,9 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   25
-         Top             =   585
+         TabIndex        =   22
+         Top             =   315
          Width           =   420
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   20
-         Top             =   270
-         Width           =   285
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -181,8 +177,8 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   19
-         Top             =   900
+         TabIndex        =   17
+         Top             =   630
          Width           =   405
       End
       Begin VB.Label Label1 
@@ -191,8 +187,8 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   18
-         Top             =   1215
+         TabIndex        =   16
+         Top             =   945
          Width           =   615
       End
       Begin VB.Label Label1 
@@ -201,8 +197,8 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   17
-         Top             =   1530
+         TabIndex        =   15
+         Top             =   1260
          Width           =   660
       End
       Begin VB.Label Label1 
@@ -211,8 +207,8 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   16
-         Top             =   1845
+         TabIndex        =   14
+         Top             =   1575
          Width           =   420
       End
       Begin VB.Label Label1 
@@ -221,8 +217,8 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   15
-         Top             =   2160
+         TabIndex        =   13
+         Top             =   1890
          Width           =   645
       End
       Begin VB.Label Label1 
@@ -231,20 +227,10 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   14
-         Top             =   2430
+         TabIndex        =   12
+         Top             =   2250
          Width           =   735
       End
-   End
-   Begin VB.ListBox lstTrig 
-      Height          =   4350
-      ItemData        =   "frmTriggers.frx":0000
-      Left            =   1485
-      List            =   "frmTriggers.frx":0002
-      MultiSelect     =   2  'Extended
-      TabIndex        =   5
-      Top             =   45
-      Width           =   2985
    End
    Begin VB.CommandButton cmdRefresh 
       Caption         =   "&Refresh"
@@ -282,6 +268,63 @@ Begin VB.Form frmTriggers
       DialogTitle     =   "Select SQL File"
       Filter          =   "All Files (*.*)|*.*"
    End
+   Begin TreeToys.TreeToy trvBrowser 
+      Height          =   5505
+      Left            =   1530
+      TabIndex        =   23
+      Top             =   45
+      Width           =   3135
+      _ExtentX        =   5530
+      _ExtentY        =   9710
+      NodeTips        =   1
+      BorderStyle     =   1
+      Checkboxes      =   -1  'True
+      FullRowSelect   =   -1  'True
+      HideSelection   =   0   'False
+      Indentation     =   99.78
+      LabelEdit       =   1
+      LineStyle       =   1
+      Sorted          =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+   End
+   Begin MSComctlLib.ImageList ilBrowser 
+      Left            =   585
+      Top             =   2250
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   4
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":0000
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":031A
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":0474
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":05CE
+            Key             =   ""
+         EndProperty
+      EndProperty
+   End
 End
 Attribute VB_Name = "frmTriggers"
 Attribute VB_GlobalNameSpace = False
@@ -305,239 +348,37 @@ Attribute VB_Exposed = False
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+Public dragNode As Node, dropNode As Node
 Option Explicit
-Dim rsTrig As New Recordset
-Dim szTrigger_PostgreSqlTable As String
 
-Private Sub cmdExportTrig_Click()
- On Error GoTo Err_Handler
-    Dim iLoop As Long
-    Dim iListCount As Long
-    Dim szExport As String
-    Dim bExport As Boolean
-    Dim szHeader As String
-    
-    Dim szTrigger_oid As Long
-    Dim szTrigger_name As String
-    Dim szTrigger_table As String
-    Dim szTrigger_function As String
-    Dim szTrigger_arguments As String
-    Dim szTrigger_foreach As String
-    Dim szTrigger_event As String
-    Dim szTrigger_executes As String
-    Dim szTrigger_Comments As String
-    
-    bExport = False
-    szExport = ""
-
-    iListCount = lstTrig.ListCount
-        
-    For iLoop = 0 To iListCount - 1
-        If lstTrig.Selected(iLoop) = True Then
-            bExport = True
-            cmp_Trigger_ParseName lstTrig.List(iLoop), szTrigger_name, szTrigger_table
-            cmp_Trigger_GetValues szTrigger_PostgreSqlTable, 0, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
-            
-            ' Header
-            szExport = szExport & "/*" & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "Trigger " & szTrigger_name & " ON " & szTrigger_table & vbCrLf
-            If szTrigger_Comments <> "" Then szExport = szExport & szTrigger_Comments & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "*/" & vbCrLf
-            
-            ' Function
-            szExport = szExport & Replace(cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event), vbCrLf, " ") & vbCrLf & vbCrLf
-        End If
-    Next iLoop
-    
-    If bExport Then
-        szHeader = "/*" & vbCrLf
-        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
-        szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
-        szHeader = szHeader & "pgadmin        www.greatbridge.org/project/pgadmin" & vbCrLf
-        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "*/" & vbCrLf & vbCrLf
-        szExport = szHeader & szExport
-        MsgExportToFile CommonDialog1, szExport, "sql", "Export triggers"
-    End If
-    
-Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdExportTrig_Click"
-End Sub
-
-Public Sub cmdModifyTrig_Click()
- On Error GoTo Err_Handler
-
-If txtOID <> "" Then
-    ' This means we can open the function
-    cmp_Trigger_ParseName lstTrig.Text, gTrigger_Name, gTrigger_Table
-    
-    ' Load form
-    Load frmAddTrigger
-    frmAddTrigger.Show
-End If
-
-Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdModifyFunc_Click"
-End Sub
-
-Private Sub cmdRebuildProject_click()
-On Error GoTo Err_Handler
-    cmp_Project_Rebuild
-    
-Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuildProject"
-End Sub
-
-Private Sub cmdRebuildTriggers_Click()
-On Error GoTo Err_Handler
-    cmp_Project_RebuildTriggers
-Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuildTriggers_Click"
-End Sub
-
-Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
-On Error GoTo Err_Handler
-  If Button = 2 Then PopupMenu fMainForm.mnuCTXTriggers
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, lstTrig_MouseUp"
-End Sub
-
-Private Sub chkSystem_Click()
-On Error GoTo Err_Handler
-  cmdRefresh_Click
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, chkSystem_Click"
-End Sub
-
-Private Sub Form_Unload(Cancel As Integer)
-On Error Resume Next
-  Set rsTrig = Nothing
-End Sub
-
-Public Sub cmdComment_Click()
-On Error GoTo Err_Handler
-  If txtOID.Text = "" Then
-    MsgBox "You must select a Trigger to edit the comment for.", vbExclamation, "Error"
-    Exit Sub
-  End If
-  Load frmComments
-  frmComments.Setup "frmTriggers", QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE, Val(txtOID.Text)
-  frmComments.Show
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdComment_Click"
-End Sub
-
-Public Sub cmdCreateTrig_Click()
-On Error GoTo Err_Handler
-    gTrigger_Name = ""
-    gTrigger_Table = ""
-    Load frmAddTrigger
-    frmAddTrigger.Show
-    
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdCreateTrig_Click"
-End Sub
-
-Public Sub cmdDropTrig_Click()
-On Error GoTo Err_Handler
-Dim szDropStr As String
-Dim szTrigger_name As String
-Dim szTrigger_table As String
-Dim iLoop As Long
-Dim iListCount As Long
-
-  If MsgBox("Are you sure you wish to drop Trigger(s)?", vbYesNo + vbQuestion, _
-            "Confirm Trigger(s) deletion") = vbYes Then
-                   
-         StartMsg "Dropping Trigger..."
-         
-         iListCount = lstTrig.ListCount
-         For iLoop = 0 To iListCount - 1
-            If lstTrig.Selected(iLoop) = True Then
-                cmp_Trigger_ParseName lstTrig.List(iLoop), szTrigger_name, szTrigger_table
-                cmp_Trigger_GetValues szTrigger_PostgreSqlTable, 0, szTrigger_name, szTrigger_table
-                cmp_Trigger_DropIfExists szTrigger_PostgreSqlTable, 0, szTrigger_name, szTrigger_table
-             End If
-          Next iLoop
-
-          EndMsg
-          cmdRefresh_Click
-  End If
-
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdDropTrig_Click"
-End Sub
-
-Public Sub cmdRefresh_Click()
-On Error GoTo Err_Handler
-  Dim iLoop As Long
-  Dim iUbound As Long
-  Dim szTrigger() As Variant
-  Dim szTrigger_name As String
-  Dim szTrigger_table As String
-  Dim szQuery As String
-  
-  LogMsg "Loading Form: " & Me.Name
-  StartMsg "Retrieving Trigger Names..."
-  lstTrig.Clear
-  lstTrig = 0
-  
-  If rsTrig.State <> adStateClosed Then rsTrig.Close
-  If chkSystem.Value = 1 Then
-    szTrigger_PostgreSqlTable = "pgadmin_triggers"
-    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSqlTable & " WHERE trigger_oid < " & LAST_SYSTEM_OID & " OR trigger_name LIKE 'pgadmin_%' OR trigger_name  LIKE 'pg_%' OR trigger_name LIKE 'RI_%' ORDER BY trigger_name"
-    LogMsg "Executing: " & szQuery
-    rsTrig.Open szQuery, gConnection, adOpenDynamic
-  Else
-    szTrigger_PostgreSqlTable = "pgadmin_dev_triggers"
-    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSqlTable & " WHERE trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_%' ORDER BY trigger_name"
-    LogMsg "Executing: " & szQuery
-    rsTrig.Open szQuery, gConnection, adOpenDynamic
-  End If
-  
-  If Not (rsTrig.EOF) Then
-    szTrigger = rsTrig.GetRows
-    iUbound = UBound(szTrigger, 2)
-    For iLoop = 0 To iUbound
-      szTrigger_name = szTrigger(0, iLoop)
-      szTrigger_table = szTrigger(1, iLoop)
-      lstTrig.AddItem szTrigger_name & " ON " & szTrigger_table
-    Next iLoop
-  End If
-  
-  Erase szTrigger
-  lstTrig_Click
-  
-  EndMsg
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRefresh_Click"
-End Sub
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Form
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-  Me.Width = 8325
-  Me.Height = 4455
+  LogMsg "Loading Form: " & Me.Name
+  Me.Width = 9000
+  Me.Height = 6000
+  
+  Set trvBrowser.ImageList = ilBrowser
   cmdRefresh_Click
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, Form_Load"
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
-      If Me.Width < 8325 Then Me.Width = 8325
-      If Me.Height < 4830 Then Me.Height = 4830
+      If Me.Width < 9000 Then Me.Width = 9000
+      If Me.Height < 6000 Then Me.Height = 6000
     End If
-    lstTrig.Height = Me.ScaleHeight
-    lstTrig.Width = Me.ScaleWidth - lstTrig.Left - fraDetails.Width - 25
-    fraDetails.Left = lstTrig.Left + lstTrig.Width + 25
+    trvBrowser.Height = Me.ScaleHeight
+    trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
+    fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
     fraDetails.Height = Me.ScaleHeight
     txtComments.Height = fraDetails.Height - txtComments.Top - 100
   End If
@@ -545,80 +386,315 @@ On Error GoTo Err_Handler
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, Form_Resize"
 End Sub
 
-Public Sub lstTrig_dblClick()
-    cmdModifyTrig_Click
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Buttons
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub cmdCopyDevToPro_Click()
+On Error GoTo Err_Handler
+    cmp_Trigger_tree_copy_devtopro trvBrowser
+    cmdRefresh_Click
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdCopyDevToPro_Click"
 End Sub
 
-Public Sub lstTrig_Click()
+Private Sub cmdCopyProToDev_Click()
 On Error GoTo Err_Handler
-Dim iTrigger_type As Integer
-Dim iTemp As Integer
+    cmp_Trigger_tree_copy_protodev trvBrowser
+    cmdRefresh_Click
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdCopyProToDev_Click"
+End Sub
 
-Dim szTrigger_oid As Long
-Dim szTrigger_name As String
-Dim szTrigger_table As String
-Dim szTrigger_function As String
-Dim szTrigger_arguments As String
-Dim szTrigger_foreach As String
-Dim szTrigger_event As String
-Dim szTrigger_executes As String
-Dim szTrigger_Comments As String
-Dim iInstr As Integer
+Private Sub cmdExportTrig_Click()
+On Error GoTo Err_Handler
+    cmp_trigger_tree_export trvBrowser, CommonDialog1
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdExportTrig_Click"
+End Sub
 
+Public Sub cmdModifyTrig_Click()
+On Error GoTo Err_Handler
+    If txtName <> "" Then
+        ModifyTrigger txtName & " ON " & txtTable
+    End If
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdModifyTrig_Click"
+End Sub
+
+Private Sub ModifyTrigger(szTrigger As String)
+On Error GoTo Err_Handler
+
+If szTrigger <> "" Then
+    ' Get name and arguments
+    cmp_Trigger_ParseName szTrigger, gTrigger_Name, gTrigger_Table
+     
+    ' Load form
+    Load frmAddTrigger
+    frmAddTrigger.Show
+End If
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, ModifyTrigger"
+End Sub
+
+Private Sub cmdRebuild_Click()
+On Error GoTo Err_Handler
+
+    cmp_Project_Rebuild
+    cmdRefresh_Click
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuild_Click"
+End Sub
+
+Private Sub chkSystem_Click()
+On Error GoTo Err_Handler
+  cmdRefresh_Click
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, chkFunctions_Click"
+End Sub
+
+Public Sub cmdComment_Click()
+On Error GoTo Err_Handler
+  'If txtOID.Text = "" Then
+  '  MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
+  '  Exit Sub
+  'End If
+  'Load frmComments
+  'frmComments.Setup "frmTriggers", QUOTE & txtName.Text & QUOTE & "(" & txtTable.Text & ")", Val(txtOID.Text)
+  'frmComments.Show
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdComment_Click"
+End Sub
+
+Public Sub cmdCreateTrig_Click()
+On Error GoTo Err_Handler
+  ' This means we will create the function
+  gTrigger_Name = ""
+  gTrigger_Table = ""
+  
+  ' Load form
+  Load frmAddTrigger
+  frmAddTrigger.Show
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdCreateTrig_Click"
+End Sub
+
+Public Sub cmdDropTrig_Click()
+On Error GoTo Err_Handler
+
+If MsgBox("Are you sure you wish to drop Trigger(s)?", vbYesNo + vbQuestion, _
+            "Connfirm?") = vbYes Then
+    cmp_Trigger_tree_drop trvBrowser
+    cmdRefresh_Click
+End If
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdDropTrig_Click"
+End Sub
+
+Public Sub cmdRefresh_Click()
+On Error GoTo Err_Handler
+
+cmp_Trigger_tree_refresh trvBrowser, CBool(chkSystem)
+
+cmdCopyDevToPro.Visible = DevMode
+cmdCopyProToDev.Visible = DevMode
+cmdRebuild.Visible = DevMode
+
+CmdTriggerButton
+
+  Exit Sub
+Err_Handler:
+EndMsg
+If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRefresh_Click"
+End Sub
+
+Public Sub CmdTriggerButton()
+On Error GoTo Err_Handler
+
+Dim iSelected As Integer
+Dim sz_key As String
+
+cmp_Trigger_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkSystem)
+
+'Check and uncheck buttons
+cmdButtonActivate sz_key, iSelected, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, CmdFuncButton"
+End Sub
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Treeview
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub trvBrowser_NodeCheck(ByVal Node As MSComctlLib.Node)
+On Error GoTo Err_Handler
+
+trvBrowser.FreezeCtl
+trvBrowser.TreeSelectiveCheck Node
+trvBrowser.UnFreezeCtl
+    
+CmdTriggerButton
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_NodeCheck"
+End Sub
+
+Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
+On Error GoTo Err_Handler
+    
+    Dim szTrigger_pgTable As String
+    Dim szTrigger_Name As String
+    Dim szTrigger_Table As String
+    Dim szTrigger_Function As String
+    Dim szTrigger_Arguments As String
+    Dim szTrigger_Foreach As String
+    Dim szTrigger_Event As String
+    Dim szTrigger_Executes As String
+    Dim szTrigger_Comments As String
+    
+    Node.Checked = Not (Node.Checked)
+    
     '----------------------------------------------------------------------------------
-    ' Parse trigger name and arguments from List
+    ' Retrieve Trigger name and arguments from List
     '----------------------------------------------------------------------------------
-    If lstTrig.SelCount > 0 Then
-        cmp_Trigger_ParseName lstTrig.Text, szTrigger_name, szTrigger_table
+    Dim szRoot As String
+    If Node.Text <> "" Then
+        cmp_Trigger_ParseName Node.Text, szTrigger_Name, szTrigger_Table
+        szRoot = Left(Node.Key, 2)
+        If szRoot = "P:" Or szRoot = "S:" Then
+            szTrigger_pgTable = "pgadmin_Triggers"
+        Else
+            szTrigger_pgTable = gDevPostgresqlTables & "_Triggers"
+        End If
     Else
-        szTrigger_name = ""
-        szTrigger_table = ""
+        szTrigger_Name = ""
     End If
     '----------------------------------------------------------------------------------
     ' Lookup database
     '----------------------------------------------------------------------------------
-
-    StartMsg "Retrieving trigger info..."
-    szTrigger_oid = 0
-    cmp_Trigger_GetValues szTrigger_PostgreSqlTable, szTrigger_oid, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
-    txtOID.Text = Trim(Str(szTrigger_oid))
-    If szTrigger_name <> "" Then
-        If txtOID.Text = "0" Then txtOID.Text = "N.S."
-    Else
-        txtOID.Text = ""
-    End If
-    txtName.Text = szTrigger_name
-    txtTable.Text = szTrigger_table
-    txtFunction.Text = szTrigger_function
-    txtForEach.Text = szTrigger_foreach
-    txtExecutes.Text = szTrigger_executes
-    txtEvent.Text = szTrigger_event
+    StartMsg "Retrieving Trigger Info..."
+    cmp_Trigger_GetValues szTrigger_pgTable, szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event, szTrigger_Comments
+    
+   
+    txtName.Text = szTrigger_Name
+    txtTable.Text = szTrigger_Table
+    txtFunction.Text = szTrigger_Function & " (" & szTrigger_Arguments & ")"
+    txtForEach.Text = szTrigger_Foreach
+    txtExecutes.Text = szTrigger_Executes
+    txtEvent.Text = szTrigger_Event
     txtComments.Text = szTrigger_Comments
-    
-    CmdTrigButton
-    
+       
+    CmdTriggerButton
     EndMsg
-
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmTriggers, lstTrig_Click"
-End Sub
-
-Public Sub CmdTrigButton()
-On Error GoTo Err_Handler
-    Dim szType As String
-    Dim szMode As String
     
-    'cmdButtonActivate "", lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
-
-    If cmp_Project_IsRebuilt = True Then
-        cmdRebuildProject.Enabled = False
-        cmdRebuildTriggers.Enabled = False
-    Else
-        cmdRebuildProject.Enabled = True
-        cmdRebuildTriggers.Enabled = True
-    End If
+Exit Sub
 Err_Handler:
-If Err.Number <> 0 Then LogError Err, "frmTriggers, CmdTrigButton"
+If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_NodeClick"
 End Sub
+
+Private Sub trvBrowser_dblClick()
+On Error GoTo Err_Handler
+
+    If trvBrowser.SelectedItem Is Nothing Then Exit Sub
+    
+    If (cmdModifyTrig.Enabled = True) Then
+        cmdModifyTrig_Click
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_dblClick"
+End Sub
+
+Private Sub trvBrowser_OLEStartDrag(Data As MSComctlLib.DataObject, _
+AllowedEffects As Long)
+On Error GoTo Err_Handler
+
+Set dragNode = trvBrowser.SelectedItem
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_OLEStartDrag"
+End Sub
+
+Private Sub trvBrowser_MouseDown(Button As Integer, Shift As Integer, _
+x As Single, y As Single)
+On Error GoTo Err_Handler
+
+    Set dragNode = trvBrowser.HitTest(x, y)
+    Set dropNode = Nothing
+    If Not (dragNode Is Nothing) Then
+        dragNode.Selected = True
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_MouseDown"
+End Sub
+
+Private Sub trvBrowser_OLEDragDrop(Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
+On Error GoTo Err_Handler
+
+Dim sz_drag_key As String
+Dim sz_drop_key As String
+
+    Set dropNode = trvBrowser.HitTest(x, y)
+
+    If Not (dragNode Is Nothing) And Not (dropNode Is Nothing) Then
+        If dragNode.Key <> dropNode.Key Then
+            If dragNode.Parent Is Nothing Then
+               sz_drag_key = dragNode.Key
+            Else
+               sz_drag_key = dragNode.Parent.Key
+            End If
+            
+            If dropNode.Parent Is Nothing Then
+               sz_drop_key = dropNode.Key
+            Else
+               sz_drop_key = dropNode.Parent.Key
+            End If
+            
+            Select Case sz_drag_key
+                Case "Pro:"
+                    If (sz_drop_key = "Dev:") Then
+                            cmdCopyProToDev_Click
+                    End If
+                
+                Case "Sys:"
+                    If (sz_drop_key = "Dev:") Then
+                            cmdCopyProToDev_Click
+                    End If
+                    
+                 Case "Dev:"
+                    If (sz_drop_key = "Pro:" Or sz_drop_key = "Sys:") Then
+                       cmdCopyDevToPro_Click
+                    End If
+            End Select
+         Else
+            If Not (dropNode Is Nothing) Then
+                trvBrowser_NodeCheck dropNode
+            End If
+        End If
+    End If
+    
+    Set dragNode = Nothing
+    Set dropNode = Nothing
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, trvBrowser_OLEDragDrop"
+End Sub
+

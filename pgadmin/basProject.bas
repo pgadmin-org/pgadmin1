@@ -63,7 +63,7 @@ Err_Handler:
 End Sub
 
 Public Function cmp_Project_FindNextFunctionToCompile() As String
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim szFunc() As Variant
     Dim iLoop As Long
@@ -103,30 +103,37 @@ Err_Handler:
 End Function
 
 Public Sub cmp_Project_RebuildTriggers()
-'On Error GoTo Err_Handler
-    Dim rsTrigger As New Recordset
-    Dim szQueryStr As String
-    ' Obviously this does not work
-    
-    szQueryStr = "SELECT * From pgadmin_dev_triggers"
+On Error GoTo Err_Handler
+    Dim szQuery As String
+    Dim szTrigger() As Variant
+    Dim iLoop As Long
+    Dim iUbound As Long
+    Dim rsTriggers As New Recordset
+    Dim szTrigger_Name As String
+    Dim szTrigger_Table As String
+ 
+    szQuery = "SELECT trigger_name, trigger_table FROM pgadmin_dev_triggers"
     
     LogMsg "Now relinking triggers..."
-    LogMsg "Executing: " & szQueryStr
+    LogMsg "Executing: " & szQuery
     
-    If rsTrigger.State <> adStateClosed Then rsTrigger.Close
-    rsTrigger.Open szQueryStr, gConnection, adOpenDynamic
+    If rsTriggers.State <> adStateClosed Then rsTriggers.Close
+    rsTriggers.Open szQuery, gConnection, adOpenForwardOnly
     
-    ' All triggers carry functions_OID that have been deleted
-    ' Therefore, we cannot stop and must compile all triggers
-    While Not rsTrigger.EOF
-        cmp_Trigger_DropIfExists "", 0, rsTrigger!trigger_name, rsTrigger!trigger_table
-        cmp_Trigger_Create "", rsTrigger!trigger_name, rsTrigger!trigger_table, rsTrigger!trigger_function & "", rsTrigger!Trigger_arguments & "", rsTrigger!Trigger_foreach & "", rsTrigger!Trigger_executes & "", rsTrigger!Trigger_event & ""
-        rsTrigger.MoveNext
-    Wend
-
-    Exit Sub
+    If Not (rsTriggers.EOF) Then
+        szTrigger = rsTriggers.GetRows
+        iUbound = UBound(szTrigger, 2)
+        rsTriggers.Close
+        For iLoop = 0 To iUbound
+            szTrigger_Name = szTrigger(0, iLoop) & ""
+            szTrigger_Table = szTrigger(1, iLoop) & ""
+            cmp_Trigger_Move gDevPostgresqlTables & "_triggers", "pgadmin_triggers", szTrigger_Name, szTrigger_Table, False
+        Next
+    End If
+ 
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildTriggers"
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildTriggers"
 End Sub
 
 Public Sub cmp_Project_RebuildViews()
@@ -144,7 +151,7 @@ Public Sub cmp_Project_RebuildViews()
     LogMsg "Executing: " & szQueryStr
     
     If rsViews.State <> adStateClosed Then rsViews.Close
-    rsViews.Open szQueryStr, gConnection, adOpenDynamic
+    rsViews.Open szQueryStr, gConnection, adOpenForwardOnly
     
     If Not (rsViews.EOF) Then
         szView = rsViews.GetRows
@@ -185,9 +192,10 @@ Public Sub cmp_Project_Compile()
     If bContinueRebuilding = True Then
         MsgBox ("Rebuilding successfull")
     End If
-    Exit Sub
+
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Compile"
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Compile"
 End Sub
 
 Public Function cmp_Project_IsRebuilt() As Boolean

@@ -24,7 +24,7 @@ Begin VB.Form frmAddView
          Left            =   90
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   12
+         TabIndex        =   10
          Top             =   1755
          Width           =   3480
       End
@@ -33,7 +33,7 @@ Begin VB.Form frmAddView
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   9
+         TabIndex        =   7
          Top             =   855
          Width           =   2670
       End
@@ -42,24 +42,15 @@ Begin VB.Form frmAddView
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   8
+         TabIndex        =   6
          Top             =   1170
          Width           =   2670
       End
       Begin VB.TextBox txtName 
          Height          =   285
          Left            =   900
-         TabIndex        =   7
+         TabIndex        =   5
          Top             =   540
-         Width           =   2670
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   4
-         Top             =   225
          Width           =   2670
       End
       Begin VB.Label Label1 
@@ -68,7 +59,7 @@ Begin VB.Form frmAddView
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   13
+         TabIndex        =   11
          Top             =   1530
          Width           =   735
       End
@@ -78,7 +69,7 @@ Begin VB.Form frmAddView
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   11
+         TabIndex        =   9
          Top             =   900
          Width           =   465
       End
@@ -88,19 +79,9 @@ Begin VB.Form frmAddView
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   10
+         TabIndex        =   8
          Top             =   1215
          Width           =   300
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   6
-         Top             =   270
-         Width           =   285
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -108,7 +89,7 @@ Begin VB.Form frmAddView
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   585
          Width           =   420
       End
@@ -181,7 +162,6 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim lngView_oid_old As Long
 Dim szView_name_old As String
 
 Private Sub cmdCreate_Click()
@@ -199,7 +179,7 @@ On Error GoTo Err_Handler
   StartMsg "Creating View..."
     
 
-    If szView_name_old <> "" Then cmp_View_DropIfExists "pgadmin_dev_views", 0, szView_name_old
+    If szView_name_old <> "" Then cmp_View_DropIfExists "pgadmin_dev_views", szView_name_old
     
     ' Create view
     cmp_View_Create "pgadmin_dev_views", txtName.Text, txtSQL.Text, txtOwner.Text, txtACL.Text, txtComments.Text
@@ -267,7 +247,6 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-    Dim lngView_oid As Long
     Dim szView_name As String
     Dim szView_definition As String
     Dim szView_owner As String
@@ -289,25 +268,15 @@ On Error GoTo Err_Handler
       Me.Caption = "Modify view"
       
       ' Load View data
-      lngView_oid = 0
-      cmp_View_GetValues "pgadmin_dev_views", lngView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+      cmp_View_GetValues "pgadmin_dev_views", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
       
       txtName.Text = szView_name
       txtSQL.Text = szView_definition
       txtComments.Text = szView_comments
-      
-      If (lngView_oid = 0) Then
-            txtOID.Text = "N.S."
-            txtACL.Text = "N.S."
-            txtOwner.Text = "N.S."
-      Else
-            txtOID.Text = lngView_oid
-            txtACL.Text = szView_acl
-            txtOwner.Text = szView_owner
-      End If
+      txtACL.Text = szView_acl
+      txtOwner.Text = szView_owner
     Else
       Me.Caption = "Create view"
-      txtOID.Text = "N.S."
       txtOwner.Text = "N.S."
       txtACL.Text = "N.S."
     End If

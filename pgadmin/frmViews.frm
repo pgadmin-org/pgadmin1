@@ -18,7 +18,7 @@ Begin VB.Form frmViews
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
-      TabIndex        =   25
+      TabIndex        =   23
       ToolTipText     =   "Checks and rebuilds project dependencies."
       Top             =   3510
       Width           =   1410
@@ -28,7 +28,7 @@ Begin VB.Form frmViews
       Caption         =   "Compile unsafe"
       Height          =   330
       Left            =   45
-      TabIndex        =   24
+      TabIndex        =   22
       ToolTipText     =   "Compiles a repository function."
       Top             =   3870
       Visible         =   0   'False
@@ -39,7 +39,7 @@ Begin VB.Form frmViews
       Caption         =   "Load->Developt"
       Height          =   330
       Left            =   45
-      TabIndex        =   23
+      TabIndex        =   21
       ToolTipText     =   "Compiles a repository function."
       Top             =   4230
       Visible         =   0   'False
@@ -49,7 +49,7 @@ Begin VB.Form frmViews
       Caption         =   "Export View"
       Height          =   330
       Left            =   45
-      TabIndex        =   21
+      TabIndex        =   19
       ToolTipText     =   "Modify the selected View."
       Top             =   1125
       Width           =   1410
@@ -58,7 +58,7 @@ Begin VB.Form frmViews
       Caption         =   "&Modify View"
       Height          =   330
       Left            =   45
-      TabIndex        =   20
+      TabIndex        =   18
       ToolTipText     =   "Modify the selected View."
       Top             =   405
       Width           =   1410
@@ -85,7 +85,7 @@ Begin VB.Form frmViews
       Caption         =   "View Details"
       Height          =   4560
       Left            =   4500
-      TabIndex        =   11
+      TabIndex        =   10
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtName 
@@ -93,8 +93,8 @@ Begin VB.Form frmViews
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   18
-         Top             =   540
+         TabIndex        =   16
+         Top             =   225
          Width           =   2670
       End
       Begin VB.TextBox txtACL 
@@ -102,37 +102,28 @@ Begin VB.Form frmViews
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   8
-         Top             =   1170
+         TabIndex        =   7
+         Top             =   855
          Width           =   2670
       End
       Begin VB.TextBox txtDefinition 
          BackColor       =   &H8000000F&
-         Height          =   1230
+         Height          =   1455
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   9
-         Top             =   1755
+         TabIndex        =   8
+         Top             =   1530
          Width           =   3480
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   6
-         Top             =   225
-         Width           =   2670
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   7
-         Top             =   855
+         TabIndex        =   6
+         Top             =   540
          Width           =   2670
       End
       Begin VB.TextBox txtComments 
@@ -142,7 +133,7 @@ Begin VB.Form frmViews
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   3285
          Width           =   3480
       End
@@ -152,8 +143,8 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   19
-         Top             =   585
+         TabIndex        =   17
+         Top             =   270
          Width           =   420
       End
       Begin VB.Label Label1 
@@ -162,19 +153,9 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   17
-         Top             =   1215
-         Width           =   300
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   0
-         Left            =   90
          TabIndex        =   15
-         Top             =   270
-         Width           =   285
+         Top             =   900
+         Width           =   300
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -182,8 +163,8 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   14
-         Top             =   900
+         TabIndex        =   13
+         Top             =   585
          Width           =   465
       End
       Begin VB.Label Label1 
@@ -192,8 +173,8 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   13
-         Top             =   1530
+         TabIndex        =   12
+         Top             =   1260
          Width           =   660
       End
       Begin VB.Label Label1 
@@ -202,7 +183,7 @@ Begin VB.Form frmViews
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   3060
          Width           =   735
       End
@@ -238,7 +219,7 @@ Begin VB.Form frmViews
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   16
+      TabIndex        =   14
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -263,7 +244,7 @@ Begin VB.Form frmViews
    Begin TreeToys.TreeToy trvBrowser 
       Height          =   4560
       Left            =   1485
-      TabIndex        =   22
+      TabIndex        =   20
       Top             =   0
       Width           =   2985
       _ExtentX        =   5265
@@ -473,17 +454,17 @@ End Sub
 
 Public Sub cmdComment_Click()
 On Error GoTo Err_Handler
-Dim szView_name As String
+'Dim szView_name As String
 
-    szView_name = trvBrowser.SelectedItem.Text & ""
+    'szView_name = trvBrowser.SelectedItem.Text & ""
     
-    If szView_name = "" Then
-      MsgBox "You must select a View to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    Load frmComments
-    frmComments.Setup "frmViews", QUOTE & szView_name & QUOTE, txtOID.Text
-    frmComments.Show
+    'If szView_name = "" Then
+    '  MsgBox "You must select a View to edit the comment for.", vbExclamation, "Error"
+    '  Exit Sub
+    'End If
+    'Load frmComments
+    'frmComments.Setup "frmViews", QUOTE & szView_name & QUOTE, txtOID.Text
+    'frmComments.Show
   
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdComment_Click"
@@ -535,7 +516,7 @@ On Error GoTo Err_Handler
 Dim iSelected As Integer
 Dim sz_key As String
 
-cmp_function_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkSystem)
+cmp_view_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkSystem)
 
 'Check and uncheck buttons
 cmdButtonActivate sz_key, iSelected, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
@@ -544,9 +525,6 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"
 End Sub
 
-' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' Treeview
-' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Treeview
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -568,30 +546,15 @@ End Sub
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
 On Error GoTo Err_Handler
 
-    Dim NodeX As Node
-    Dim lOID As Long
-    Dim x As Long
-    Dim y As Long
-    Dim szHex As String
-    Dim szKey As String
-    
     Dim szview_table As String
-    Dim szview_oid As Long
     Dim szView_name As String
-    Dim szview_definition As String
-    Dim szview_owner As String
+    Dim szView_definition As String
+    Dim szView_owner As String
     Dim szView_acl As String
-    Dim szview_comments As String
+    Dim szView_comments As String
     
-    Dim iInstr As Integer
-    
-    If (Node.Checked = True) Then
-        Node.Checked = False
-        Node.Selected = False
-    Else
-        Node.Checked = True
-        Node.Selected = True
-    End If
+    Node.Checked = Not (Node.Checked)
+        
     '----------------------------------------------------------------------------------
     ' Retrieve view name and arguments from List
     '----------------------------------------------------------------------------------
@@ -611,21 +574,12 @@ On Error GoTo Err_Handler
     ' Lookup database
     '----------------------------------------------------------------------------------
     StartMsg "Retrieving view Info..."
-    cmp_View_GetValues szview_table, 0, szView_name, szview_definition, szview_owner, szView_acl, szview_comments
+    cmp_View_GetValues szview_table, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
     
-    txtOID.Text = Trim(Str(szview_oid))
-    txtOwner.Text = szview_owner
-    
-    If szView_name <> "" Then
-        If txtOID.Text = 0 Then txtOID.Text = "N.S."
-        If txtOwner.Text = "" Then txtOwner.Text = "N.S."
-    Else
-        If txtOID.Text = 0 Then txtOID.Text = ""
-    End If
-    
+    txtOwner.Text = szView_owner
     txtName.Text = szView_name
-    txtDefinition.Text = szview_definition
-    txtComments.Text = szview_comments
+    txtDefinition.Text = szView_definition
+    txtComments.Text = szView_comments
     
     
     CmdViewButton

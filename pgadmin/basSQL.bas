@@ -197,12 +197,14 @@ SQL_PGADMIN_DEV_TRIGGERS = "CREATE TABLE pgadmin_dev_triggers AS SELECT * " & _
   "  AND trigger_name NOT LIKE 'pg_%' " & _
   "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
   "  ORDER BY trigger_name; " & _
-  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_foreach text;" & _
-  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_executes text;" & _
-  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_event text;" & _
   "  ALTER TABLE pgadmin_dev_triggers ADD trigger_iscompiled boolean DEFAULT 'f'  ;" & _
   "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
-  
+
+'  Backup if needed
+'  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_foreach text;" & _
+'  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_executes text;" & _
+'  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_event text;" & _
+
 SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * from " & _
   "  pgadmin_views " & _
   "  WHERE view_oid > " & LAST_SYSTEM_OID & _

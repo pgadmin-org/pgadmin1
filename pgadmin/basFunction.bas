@@ -19,19 +19,19 @@ Attribute VB_Name = "basFunction"
 Option Explicit
 Option Compare Text
 
-Public szPro_Text As String
-Public szDev_Text As String
-Public szSys_Text As String
+Private szPro_Text As String
+Private szDev_Text As String
+Private szSys_Text As String
 
-Public iPro_Index As Integer
-Public iDev_Index As Integer
-Public iSys_Index As Integer
+Private iPro_Index As Integer
+Private iDev_Index As Integer
+Private iSys_Index As Integer
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' General
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Public Function cmp_Function_Exists(szFunction_table As String, ByVal szfunction_oid As Long, Optional ByVal szFunction_name As String, Optional ByVal szFunction_arguments As String) As Boolean
+Public Function cmp_Function_Exists(szFunction_table As String, Optional ByVal szFunction_name As String, Optional ByVal szFunction_arguments As String) As Boolean
 On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -41,23 +41,16 @@ On Error GoTo Err_Handler
     End If
     cmp_Function_Exists = False
         
-    If szfunction_oid <> 0 Then
+    If szFunction_name <> "" Then
         szQueryStr = "SELECT * FROM " & szFunction_table
-        szQueryStr = szQueryStr & " WHERE Function_OID = " & szfunction_oid
-        
-        ' Log
-        LogMsg "Testing existence of function OID = " & szfunction_oid & "..."
+        szQueryStr = szQueryStr & " WHERE Function_name = '" & szFunction_name & "'"
+        szQueryStr = szQueryStr & " AND Function_arguments = '" & szFunction_arguments & "'"
+        'Log
+        LogMsg "Testing existence of function " & szFunction_name & " (" & szFunction_arguments & ") in " & szFunction_table & "..."
     Else
-        If szFunction_name <> "" Then
-            szQueryStr = "SELECT * FROM " & szFunction_table
-            szQueryStr = szQueryStr & " WHERE Function_name = '" & szFunction_name & "'"
-            szQueryStr = szQueryStr & " AND Function_arguments = '" & szFunction_arguments & "'"
-            'Log
-            LogMsg "Testing existence of function " & szFunction_name & " (" & szFunction_arguments & ") in " & szFunction_table & "..."
-        Else
-            Exit Function
-        End If
+        Exit Function
     End If
+
     
     ' retrieve name and arguments of function to drop
     LogMsg "Executing: " & szQueryStr
@@ -75,18 +68,14 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Exists"
 End Function
 
-Public Sub cmp_Function_Drop(szFunction_table As String, ByVal szfunction_oid As Long, Optional ByVal szFunction_name As String, Optional ByVal szFunction_arguments As String)
+Public Sub cmp_Function_Drop(szFunction_table As String, ByVal szFunction_name As String, ByVal szFunction_arguments As String)
 On Error GoTo Err_Handler
     Dim szDropStr As String
     
-    ' Development  -> szFunction_Table="pgadmin_dev_functions"
-    ' Production   -> szFunction_Table="pgadmin_functions"
     If (szFunction_table = "") Then
         szFunction_table = "pgadmin_functions"
     End If
-    
-    ' Retrieve function name and arguments if we only know the OID
-    If szfunction_oid <> 0 Then cmp_Function_GetValues szFunction_table, szfunction_oid, szFunction_name, szFunction_arguments
+    If szFunction_name = "" Then Exit Sub
     
     ' create drop query
     If (szFunction_table = "pgadmin_functions") Then
@@ -108,7 +97,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_DropIfExists"
 End Sub
 
-Public Sub cmp_Function_DropIfExists(szFunction_table As String, ByVal szfunction_oid As Long, Optional ByVal szFunction_name As String, Optional ByVal szFunction_arguments As String)
+Public Sub cmp_Function_DropIfExists(szFunction_table As String, ByVal szFunction_name As String, ByVal szFunction_arguments As String)
 On Error GoTo Err_Handler
     Dim szDropStr As String
     
@@ -117,10 +106,11 @@ On Error GoTo Err_Handler
     If (szFunction_table = "") Then
         szFunction_table = "pgadmin_functions"
     End If
+    If szFunction_name = "" Then Exit Sub
     
     'Drop function if exists
-    If cmp_Function_Exists(szFunction_table, szfunction_oid, szFunction_name & "", szFunction_arguments & "") = True Then
-        cmp_Function_Drop szFunction_table, szfunction_oid, szFunction_name & "", szFunction_arguments & ""
+    If cmp_Function_Exists(szFunction_table, szFunction_name & "", szFunction_arguments & "") = True Then
+        cmp_Function_Drop szFunction_table, szFunction_name & "", szFunction_arguments & ""
     End If
   Exit Sub
 Err_Handler:
@@ -130,11 +120,7 @@ End Sub
 Public Sub cmp_Function_Create(szFunction_table As String, ByVal szFunction_name As String, ByVal szFunction_arguments As String, ByVal szFunction_returns As String, ByVal szFunction_source As String, ByVal szFunction_language As String, ByVal szFunction_owner As String, ByVal szFunction_comments As String)
 On Error GoTo Err_Handler
     Dim szQuery As String
-    Dim szFunction_query_oid As Variant
-    Dim szfunction_oid As Long
     
-    ' Development  -> szFunction_Table="pgadmin_dev_functions"
-    ' Production   -> szFunction_Table="pgadmin_functions"
     If (szFunction_table = "") Then
         szFunction_table = "pgadmin_functions"
     End If
@@ -210,15 +196,15 @@ On Error GoTo Err_Handler
     If szFunction_target_table = "" Then szFunction_target_table = "pgadmin_Functions"
     If szFunction_source_table = szFunction_target_table Then Exit Sub
     
-    If cmp_Function_Exists(szFunction_source_table, 0, szFunction_name, szFunction_arguments) Then
-        cmp_Function_GetValues szFunction_source_table, 0, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
-        If cmp_Function_Exists(szFunction_target_table, 0, szFunction_name, szFunction_arguments) Then
+    If cmp_Function_Exists(szFunction_source_table, szFunction_name, szFunction_arguments) Then
+        cmp_Function_GetValues szFunction_source_table, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+        If cmp_Function_Exists(szFunction_target_table, szFunction_name, szFunction_arguments) Then
              If (bPromptForReplace = False) Then
-                 cmp_Function_Drop szFunction_target_table, 0, szFunction_name, szFunction_arguments
+                 cmp_Function_Drop szFunction_target_table, szFunction_name, szFunction_arguments
                  cmp_Function_Create szFunction_target_table, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
              Else
                 If MsgBox("Replace existing target Function " & vbCrLf & szFunction_name & " ?", vbYesNo) = vbYes Then
-                    cmp_Function_Drop szFunction_target_table, 0, szFunction_name, szFunction_arguments
+                    cmp_Function_Drop szFunction_target_table, szFunction_name, szFunction_arguments
                     cmp_Function_Create szFunction_target_table, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
                 End If
              End If
@@ -274,9 +260,7 @@ On Error GoTo Err_Handler
     szQueryStr = szQueryStr & " WHERE Function_name = '" & szFunction_name & "'"
     szQueryStr = szQueryStr & " AND Function_arguments = '" & szFunction_arguments & "'"
      
-    LogMsg "Setting function " & szFunction_name & " (" & szFunction_arguments & "" & ") to IsCompiled=TRUE..."
     LogMsg "Executing: " & szQueryStr
-    
     gConnection.Execute szQueryStr
 Exit Sub
 Err_Handler:
@@ -313,7 +297,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_HasSatisfiedDependencies"
 End Function
 
-Sub cmp_Function_GetValues(szFunction_table As String, lngFunction_oid As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String, Optional szFunction_comments As String)
+Sub cmp_Function_GetValues(szFunction_table As String, szFunction_name As String, szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String, Optional szFunction_comments As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -321,28 +305,16 @@ Sub cmp_Function_GetValues(szFunction_table As String, lngFunction_oid As Long, 
     If (szFunction_table = "") Then szFunction_table = "pgadmin_functions"
 
     ' Select query
-    If lngFunction_oid <> 0 Then
-        szQueryStr = "SELECT * from " & szFunction_table
-        szQueryStr = szQueryStr & " WHERE function_OID = " & lngFunction_oid
-    Else
-        If IsMissing(szFunction_name) Then szFunction_name = ""
-            szQueryStr = "SELECT * from " & szFunction_table
-            szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
-            If Not (IsMissing(szFunction_arguments)) Then
-                szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
-            End If
-    End If
+
+    szQueryStr = "SELECT * from " & szFunction_table
+    szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
+    szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
      
     ' open
     If rsComp.State <> adStateClosed Then rsComp.Close
     rsComp.Open szQueryStr, gConnection
     
     If Not rsComp.EOF Then
-        If IsNull(rsComp!function_oid) Then
-            lngFunction_oid = 0
-        Else
-            lngFunction_oid = rsComp!function_oid
-        End If
         If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!function_name & ""
         If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
         If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
@@ -354,7 +326,6 @@ Sub cmp_Function_GetValues(szFunction_table As String, lngFunction_oid As Long, 
         If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
         rsComp.Close
     Else
-        lngFunction_oid = 0
         If Not (IsMissing(szFunction_name)) Then szFunction_name = ""
         If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = ""
         If Not (IsMissing(szFunction_returns)) Then szFunction_returns = ""
@@ -381,9 +352,9 @@ Dim iInstr As Integer
         szFunction_arguments = ""
     End If
     
-    Exit Sub
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
+If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
 End Sub
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -477,7 +448,6 @@ On Error GoTo Err_Handler
     Dim szParentKey As String
     
     Dim szFunction_table As String
-    Dim szfunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -506,10 +476,9 @@ On Error GoTo Err_Handler
             End If
 
             bExport = True
-            szfunction_oid = 0
             
             cmp_Function_ParseName nodX.Text, szFunction_name, szFunction_arguments
-            cmp_Function_GetValues szFunction_table, szfunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+            cmp_Function_GetValues szFunction_table, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
                 
             If szFunction_name <> "" Then
                 ' Header
@@ -578,7 +547,7 @@ Public Sub cmp_function_tree_drop(Tree As TreeToy)
                      
                 If bDrop = True Then
                     cmp_Function_ParseName nodX.Text, szFunction_name, szFunction_arguments
-                    cmp_Function_DropIfExists szFunction_table, 0, szFunction_name, szFunction_arguments
+                    cmp_Function_DropIfExists szFunction_table, szFunction_name, szFunction_arguments
                 End If
              End If
         Next
@@ -586,10 +555,10 @@ Public Sub cmp_function_tree_drop(Tree As TreeToy)
         
         EndMsg
     
-  Exit Sub
+Exit Sub
 Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_function_tree_drop"
+EndMsg
+If Err.Number <> 0 Then LogError Err, "basFunction, cmp_function_tree_drop"
 End Sub
 
 Public Sub cmp_function_tree_refresh(Tree As TreeToy, bShowSystem As Boolean)
@@ -601,7 +570,7 @@ On Error GoTo Err_Handler
   Dim iLoop As Long
   Dim iUbound As Long
   
-  Dim szfunction_oid As String
+  Dim szFunction_oid As String
   Dim szFunction_name As String
   Dim szFunction_arguments As String
   Dim szFunction_returns As String
@@ -655,23 +624,21 @@ On Error GoTo Err_Handler
     szFunc = rsFunc.GetRows
     iUbound = UBound(szFunc, 2)
     For iLoop = 0 To iUbound
-         szfunction_oid = szFunc(0, iLoop) & ""
+         szFunction_oid = szFunc(0, iLoop) & ""
          szFunction_name = szFunc(1, iLoop) & ""
          szFunction_arguments = szFunc(2, iLoop) & ""
          szFunction_returns = szFunc(3, iLoop) & ""
          szFunction_source = szFunc(4, iLoop) & ""
          szFunction_language = szFunc(5, iLoop) & ""
          
-         If CLng(szfunction_oid) < LAST_SYSTEM_OID Or Left(szFunction_name, 8) = "pgadmin_" Or Left(szFunction_name, 3) = "pg_" Then
+         If CLng(szFunction_oid) < LAST_SYSTEM_OID Or Left(szFunction_name, 8) = "pgadmin_" Or Left(szFunction_name, 3) = "pg_" Then
          ' ---------------------------------------------------------------------
          ' If it is a system function, add it to "S:" System node
          ' ---------------------------------------------------------------------
             If szFunction_arguments <> "" Then
                 Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 2)
-                NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
-            Else
+             Else
                 Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name, szFunction_name, 2)
-                NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             End If
         Else
          ' ---------------------------------------------------------------------
@@ -679,12 +646,11 @@ On Error GoTo Err_Handler
          ' ---------------------------------------------------------------------
             If szFunction_arguments <> "" Then
                 Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szFunction_name & "(" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 4)
-                NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             Else
                 Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szFunction_name, szFunction_name, 4)
-                NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             End If
         End If
+        NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
         NodeX.Image = 4
     Next iLoop
   End If
@@ -703,7 +669,7 @@ On Error GoTo Err_Handler
         szFunc = rsFunc.GetRows
         iUbound = UBound(szFunc, 2)
         For iLoop = 0 To iUbound
-             szfunction_oid = szFunc(0, iLoop) & ""
+             szFunction_oid = szFunc(0, iLoop) & ""
              szFunction_name = szFunc(1, iLoop) & ""
              szFunction_arguments = szFunc(2, iLoop) & ""
              szFunction_returns = szFunc(3, iLoop) & ""
@@ -712,11 +678,10 @@ On Error GoTo Err_Handler
              szFunction_iscompiled = szFunc(6, iLoop) & ""
             If szFunction_arguments <> "" Then
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 2)
-                NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             Else
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szFunction_name, szFunction_name, 2)
-                NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             End If
+            NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
             If szFunction_iscompiled = "" Then
                 NodeX.Image = 3
             Else

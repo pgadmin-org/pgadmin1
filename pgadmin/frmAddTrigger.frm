@@ -2,46 +2,45 @@ VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Begin VB.Form frmAddTrigger 
    Caption         =   "Trigger"
-   ClientHeight    =   3450
+   ClientHeight    =   5595
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   4245
+   ClientWidth     =   4230
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   3450
-   ScaleWidth      =   4245
-   Begin vsAdoSelector.VS_AdoSelector vssTable 
-      Height          =   315
-      Left            =   1440
-      TabIndex        =   16
-      ToolTipText     =   "Select the table that the trigger will be created on."
-      Top             =   1620
-      Width           =   2760
-      _ExtentX        =   4868
-      _ExtentY        =   556
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
+   ScaleHeight     =   5595
+   ScaleWidth      =   4230
+   Begin VB.Frame Frame4 
+      Caption         =   "Comments"
+      Height          =   1590
+      Left            =   90
+      TabIndex        =   17
+      Top             =   3375
+      Width           =   4110
+      Begin VB.TextBox txtComments 
+         BackColor       =   &H80000009&
+         Height          =   1290
+         Left            =   90
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   18
+         Top             =   225
+         Width           =   3930
+      End
    End
    Begin VB.Frame Frame3 
       Caption         =   "For Each"
-      Height          =   555
+      Height          =   600
       Left            =   90
-      TabIndex        =   13
-      Top             =   1980
+      TabIndex        =   12
+      Top             =   1800
       Width           =   4065
       Begin VB.OptionButton optForEach 
          Caption         =   "Row"
          Height          =   195
          Index           =   0
          Left            =   810
-         TabIndex        =   15
+         TabIndex        =   14
          ToolTipText     =   "Specify that the Trigger will execute for each affected row."
          Top             =   270
          Value           =   -1  'True
@@ -53,7 +52,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   1
          Left            =   2340
-         TabIndex        =   14
+         TabIndex        =   13
          ToolTipText     =   "Specify that the Trigger will execute once for a single statement."
          Top             =   270
          Width           =   1320
@@ -61,26 +60,26 @@ Begin VB.Form frmAddTrigger
    End
    Begin VB.ComboBox cboFunction 
       Height          =   315
-      Left            =   1485
+      Left            =   1035
       Style           =   2  'Dropdown List
-      TabIndex        =   12
+      TabIndex        =   11
       ToolTipText     =   "Select the function that the trigger will execute."
-      Top             =   2610
-      Width           =   2715
+      Top             =   2925
+      Width           =   3120
    End
    Begin VB.Frame Frame2 
       Caption         =   "Event"
       Height          =   600
       Left            =   90
-      TabIndex        =   7
-      Top             =   945
+      TabIndex        =   6
+      Top             =   1080
       Width           =   4065
       Begin VB.CheckBox chkEvent 
          Caption         =   "Update"
          Height          =   195
          Index           =   1
          Left            =   3105
-         TabIndex        =   10
+         TabIndex        =   9
          ToolTipText     =   "Specify that the trigger will occur before or after an Update."
          Top             =   270
          Width           =   870
@@ -90,7 +89,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   2
          Left            =   1620
-         TabIndex        =   9
+         TabIndex        =   8
          ToolTipText     =   "Specify that the trigger will occur before or after a Deletion."
          Top             =   270
          Width           =   1140
@@ -100,7 +99,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   0
          Left            =   135
-         TabIndex        =   8
+         TabIndex        =   7
          ToolTipText     =   "Specify that the trigger will occur before or after an Insert."
          Top             =   270
          Width           =   1140
@@ -110,15 +109,15 @@ Begin VB.Form frmAddTrigger
       Caption         =   "Execution Time"
       Height          =   555
       Left            =   90
-      TabIndex        =   4
-      Top             =   360
+      TabIndex        =   3
+      Top             =   405
       Width           =   4065
       Begin VB.OptionButton optExecution 
          Caption         =   "After"
          Height          =   195
          Index           =   1
          Left            =   2340
-         TabIndex        =   6
+         TabIndex        =   5
          ToolTipText     =   "Specify that the Trigger will execute after the event."
          Top             =   270
          Width           =   1320
@@ -128,7 +127,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   0
          Left            =   810
-         TabIndex        =   5
+         TabIndex        =   4
          ToolTipText     =   "Specify that the Trigger will execute before the event."
          Top             =   270
          Value           =   -1  'True
@@ -141,34 +140,53 @@ Begin VB.Form frmAddTrigger
       Left            =   2700
       TabIndex        =   2
       ToolTipText     =   "Saves trigger."
-      Top             =   3015
+      Top             =   5175
       Width           =   1500
    End
    Begin VB.TextBox txtName 
       Height          =   285
-      Left            =   1440
+      Left            =   1260
       TabIndex        =   0
       ToolTipText     =   "Enter a name for the new Trigger."
       Top             =   45
-      Width           =   2715
+      Width           =   2895
    End
-   Begin VB.Label Label1 
-      Caption         =   "Function"
-      Height          =   195
-      Index           =   2
-      Left            =   135
-      TabIndex        =   11
-      Top             =   2655
-      Width           =   1500
+   Begin vsAdoSelector.VS_AdoSelector vssTable 
+      Height          =   315
+      Left            =   1035
+      TabIndex        =   15
+      ToolTipText     =   "Select the table that the trigger will be created on."
+      Top             =   2520
+      Width           =   3120
+      _ExtentX        =   5503
+      _ExtentY        =   556
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
    End
    Begin VB.Label Label1 
       Caption         =   "Table"
-      Height          =   195
+      Height          =   240
       Index           =   1
       Left            =   135
-      TabIndex        =   3
-      Top             =   1665
-      Width           =   1500
+      TabIndex        =   16
+      Top             =   2565
+      Width           =   735
+   End
+   Begin VB.Label Label1 
+      Caption         =   "Function"
+      Height          =   240
+      Index           =   2
+      Left            =   135
+      TabIndex        =   10
+      Top             =   2970
+      Width           =   780
    End
    Begin VB.Label Label1 
       Caption         =   "Trigger Name"
@@ -177,7 +195,7 @@ Begin VB.Form frmAddTrigger
       Left            =   90
       TabIndex        =   1
       Top             =   90
-      Width           =   1500
+      Width           =   1095
    End
 End
 Attribute VB_Name = "frmAddTrigger"
@@ -223,20 +241,21 @@ End Sub
 
 Private Sub cmdCreate_Click()
 'On Error GoTo Err_Handler
-Dim szTriggerName As String
-Dim szTriggerTable As String
-Dim szTriggerFunction As String
-Dim szTriggerArguments As String
-Dim szTriggerForeach As String
-Dim szTriggerExecutes As String
-Dim szTriggerEvent As String
-  
-If (Form_txtSave(True, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent) = False) Then Exit Sub
+Dim szTrigger_Name As String
+Dim szTrigger_Table As String
+Dim szTrigger_Function As String
+Dim szTrigger_Arguments As String
+Dim szTrigger_Foreach As String
+Dim szTrigger_Executes As String
+Dim szTrigger_Event As String
+Dim szTrigger_Comments As String
+
+If (Form_txtSave(True, szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event, szTrigger_Comments) = False) Then Exit Sub
     
   ' In case of a creation, test existence of a trigger with same name & table
   If szTriggerName_old = "" Then
-    If cmp_Trigger_Exists("pgadmin_dev_triggers", 0, szTriggerName, szTriggerTable) = True Then
-    MsgBox "Trigger " & szTriggerName & " already exists on table " & szTriggerTable, vbExclamation, "Error"
+    If cmp_Trigger_Exists("pgadmin_dev_triggers", szTrigger_Name, szTrigger_Table) = True Then
+    MsgBox "Trigger " & szTrigger_Name & " already exists on table " & szTrigger_Table, vbExclamation, "Error"
     Exit Sub
     End If
   End If
@@ -244,10 +263,10 @@ If (Form_txtSave(True, szTriggerName, szTriggerTable, szTriggerFunction, szTrigg
   StartMsg "Creating Trigger..."
  
   ' Drop trigger if exists
-  If szTriggerName_old <> "" Then cmp_Trigger_DropIfExists "pgadmin_dev_triggers", 0, szTriggerName_old, szTriggerTable_old
+  If szTriggerName_old <> "" Then cmp_Trigger_DropIfExists "pgadmin_dev_triggers", szTriggerName_old, szTriggerTable_old
 
   ' Create trigger
-  cmp_Trigger_Create "pgadmin_dev_triggers", szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent
+  cmp_Trigger_Create "pgadmin_dev_triggers", szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event, szTrigger_Comments
   
   EndMsg
   frmTriggers.cmdRefresh_Click
@@ -270,8 +289,9 @@ On Error GoTo Err_Handler
     Dim szTriggerForeach As String
     Dim szTriggerExecutes As String
     Dim szTriggerEvent As String
+    Dim szTriggerComments As String
     
-    Form_txtSave False, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent
+    Form_txtSave False, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent, szTriggerComments
     fMainForm.txtSQLPane.Text = cmp_Trigger_CreateSQL(szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent)
 
     Exit Sub
@@ -281,8 +301,8 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   If Me.WindowState = 0 Then
-    If Me.Height < 3855 Then Me.Height = 3855
-    If Me.Width < 4365 Then Me.Width = 4365
+    If Me.Height < 6000 Then Me.Height = 6000
+    If Me.Width < 4350 Then Me.Width = 4350
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddTrigger, Form_Resize"
@@ -375,13 +395,14 @@ On Error GoTo Err_Handler
     Dim szTriggerForeach As String
     Dim szTriggerExecutes As String
     Dim szTriggerEvent As String
+    Dim szTriggerComments As String
     
     szTriggerName = szTriggerName_old
     szTriggerTable = szTriggerTable_old
     
     StartMsg "Retrieving trigger information..."
     lngTriggeroid = 0
-    cmp_Trigger_GetValues "pgadmin_dev_triggers", lngTriggeroid, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent
+    cmp_Trigger_GetValues "pgadmin_dev_triggers", szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent, szTriggerComments
     
     ' Loading trigger name
     txtName = szTriggerName
@@ -411,6 +432,8 @@ On Error GoTo Err_Handler
     If InStr(szTriggerEvent, "Update") > 0 Then chkEvent(1).Value = 1 ' Update
     If InStr(szTriggerEvent, "Delete") > 0 Then chkEvent(2).Value = 1 ' Delete
       
+    txtComments.Text = szTriggerComments
+    
     ' Check if trigger is not broken because function was dropped
 
     cboFunction = szTriggerFunction & "(" & szTriggerArguments & ")"
@@ -425,7 +448,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRefresh_Click"
 End Sub
 
-Private Function Form_txtSave(bWarn As Boolean, szTriggerName As String, szTriggerTable As String, szTriggerFunction As String, szTriggerArguments As String, szTriggerForeach As String, szTriggerExecutes As String, szTriggerEvent As String) As Boolean
+Private Function Form_txtSave(bWarn As Boolean, szTriggerName As String, szTriggerTable As String, szTriggerFunction As String, szTriggerArguments As String, szTriggerForeach As String, szTriggerExecutes As String, szTriggerEvent As String, szTriggerComments As String) As Boolean
 On Error GoTo Err_Handler
       Dim iLoop As Integer
       iLoop = 0
@@ -485,6 +508,8 @@ On Error GoTo Err_Handler
         szTriggerFunction = ""
         szTriggerArguments = ""
       End If
+      
+      szTriggerComments = txtComments.Text
       
       Form_txtSave = True
       Exit Function

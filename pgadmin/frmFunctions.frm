@@ -12,14 +12,15 @@ Begin VB.Form frmFunctions
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
    ScaleHeight     =   5595
-   ScaleWidth      =   8880
+   ScaleMode       =   0  'User
+   ScaleWidth      =   9000
    Begin TreeToys.TreeToy trvBrowser 
       Height          =   5505
       Left            =   1485
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   45
-      Width           =   2985
-      _ExtentX        =   5265
+      Width           =   3135
+      _ExtentX        =   5530
       _ExtentY        =   9710
       NodeTips        =   1
       BorderStyle     =   1
@@ -44,9 +45,9 @@ Begin VB.Form frmFunctions
       Caption         =   "Load->Developt"
       Height          =   330
       Left            =   45
-      TabIndex        =   28
+      TabIndex        =   26
       ToolTipText     =   "Compiles a repository function."
-      Top             =   4230
+      Top             =   4275
       Visible         =   0   'False
       Width           =   1410
    End
@@ -55,9 +56,9 @@ Begin VB.Form frmFunctions
       Caption         =   "Compile unsafe"
       Height          =   330
       Left            =   45
-      TabIndex        =   27
+      TabIndex        =   25
       ToolTipText     =   "Compiles a repository function."
-      Top             =   3870
+      Top             =   3915
       Visible         =   0   'False
       Width           =   1410
    End
@@ -65,7 +66,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Export Function(s)"
       Height          =   330
       Left            =   45
-      TabIndex        =   26
+      TabIndex        =   24
       ToolTipText     =   "Delete the selected function."
       Top             =   1125
       Width           =   1410
@@ -75,16 +76,16 @@ Begin VB.Form frmFunctions
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
-      TabIndex        =   22
+      TabIndex        =   20
       ToolTipText     =   "Checks and rebuilds project dependencies."
-      Top             =   3510
+      Top             =   3555
       Width           =   1410
    End
    Begin VB.CommandButton cmdModifyFunc 
       Caption         =   "&Modify Function"
       Height          =   330
       Left            =   45
-      TabIndex        =   21
+      TabIndex        =   19
       ToolTipText     =   "Create a new function."
       Top             =   405
       Width           =   1410
@@ -93,7 +94,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   20
+      TabIndex        =   18
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkFunctions 
@@ -136,85 +137,76 @@ Begin VB.Form frmFunctions
    Begin VB.Frame fraDetails 
       Caption         =   "Function Details"
       Height          =   5595
-      Left            =   4500
-      TabIndex        =   12
+      Left            =   4680
+      TabIndex        =   11
       Top             =   0
-      Width           =   4335
+      Width           =   4155
       Begin VB.TextBox txtName 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   24
-         Top             =   1170
-         Width           =   3345
+         TabIndex        =   22
+         Top             =   855
+         Width           =   3210
       End
       Begin VB.TextBox txtLanguage 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   9
-         Top             =   855
-         Width           =   3345
+         TabIndex        =   8
+         Top             =   540
+         Width           =   3210
       End
       Begin VB.TextBox txtReturns 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   8
-         Top             =   1500
-         Width           =   3345
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   5
-         Top             =   225
-         Width           =   3345
+         TabIndex        =   7
+         Top             =   1185
+         Width           =   3210
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   6
-         Top             =   540
-         Width           =   3345
+         TabIndex        =   5
+         Top             =   225
+         Width           =   3210
       End
       Begin VB.TextBox txtArguments 
          BackColor       =   &H8000000F&
-         Height          =   1635
+         Height          =   1680
          Left            =   900
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   7
-         Top             =   1845
-         Width           =   3345
+         TabIndex        =   6
+         Top             =   1530
+         Width           =   3165
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   795
+         Height          =   1020
          Left            =   900
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   11
-         Top             =   3525
-         Width           =   3345
+         TabIndex        =   10
+         Top             =   3240
+         Width           =   3165
       End
       Begin HighlightBox.HBX txtFunction 
-         Height          =   1095
+         Height          =   1005
          Left            =   45
-         TabIndex        =   25
-         Top             =   4500
-         Width           =   4245
-         _ExtentX        =   7488
-         _ExtentY        =   1931
+         TabIndex        =   23
+         Top             =   4545
+         Width           =   4020
+         _ExtentX        =   7091
+         _ExtentY        =   1773
          BackColor       =   -2147483633
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
@@ -233,19 +225,9 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   7
          Left            =   90
-         TabIndex        =   23
-         Top             =   1215
+         TabIndex        =   21
+         Top             =   900
          Width           =   780
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   19
-         Top             =   270
-         Width           =   285
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -253,8 +235,8 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   18
-         Top             =   585
+         TabIndex        =   17
+         Top             =   270
          Width           =   465
       End
       Begin VB.Label Label1 
@@ -263,8 +245,8 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   17
-         Top             =   1845
+         TabIndex        =   16
+         Top             =   1530
          Width           =   780
       End
       Begin VB.Label Label1 
@@ -273,8 +255,8 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   16
-         Top             =   1530
+         TabIndex        =   15
+         Top             =   1215
          Width           =   645
       End
       Begin VB.Label Label1 
@@ -283,7 +265,7 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   15
+         TabIndex        =   14
          Top             =   4275
          Width           =   870
       End
@@ -293,8 +275,8 @@ Begin VB.Form frmFunctions
          Height          =   285
          Index           =   5
          Left            =   90
-         TabIndex        =   14
-         Top             =   900
+         TabIndex        =   13
+         Top             =   585
          Width           =   735
       End
       Begin VB.Label Label1 
@@ -303,8 +285,8 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   13
-         Top             =   3510
+         TabIndex        =   12
+         Top             =   3195
          Width           =   735
       End
    End
@@ -391,8 +373,8 @@ Public dragNode As Node, dropNode As Node
 Private Sub Form_Load()
 On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
-  Me.Width = 8325
-  Me.Height = 4455
+  Me.Width = 9000
+  Me.Height = 6000
   
   Set trvBrowser.ImageList = ilBrowser
   cmdRefresh_Click
@@ -496,13 +478,13 @@ End Sub
 
 Public Sub cmdComment_Click()
 On Error GoTo Err_Handler
-  If txtOID.Text = "" Then
-    MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
-    Exit Sub
-  End If
-  Load frmComments
-  frmComments.Setup "frmFunctions", QUOTE & txtName.Text & QUOTE & "(" & txtArguments.Text & ")", Val(txtOID.Text)
-  frmComments.Show
+  'If txtName.Text = "" Then
+  '  MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
+  '  Exit Sub
+  'End If
+  'Load frmComments
+  'frmComments.Setup "frmFunctions", QUOTE & txtName.Text & QUOTE & "(" & txtArguments.Text & ")", Val(txtOID.Text)
+  'frmComments.Show
 
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdComment_Click"
@@ -589,14 +571,6 @@ End Sub
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
 On Error GoTo Err_Handler
 
-    Dim NodeX As Node
-    Dim lOID As Long
-    Dim x As Long
-    Dim y As Long
-    Dim szHex As String
-    Dim szKey As String
-    
-    Dim szfunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -606,18 +580,12 @@ On Error GoTo Err_Handler
     Dim szFunction_comments As String
     Dim szFunction_table As String
     
-    Dim iInstr As Integer
-    
-    If (Node.Checked = True) Then
-        Node.Checked = False
-        Node.Selected = False
-    Else
-        Node.Checked = True
-        Node.Selected = True
-    End If
     '----------------------------------------------------------------------------------
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
+    
+    Node.Checked = Not (Node.Checked)
+        
     Dim szRoot As String
     If Node.Text <> "" Then
         cmp_Function_ParseName Node.Text, szFunction_name, szFunction_arguments
@@ -635,19 +603,9 @@ On Error GoTo Err_Handler
     ' Lookup database
     '----------------------------------------------------------------------------------
     StartMsg "Retrieving Function Info..."
-    szfunction_oid = 0
-    cmp_Function_GetValues szFunction_table, szfunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+    cmp_Function_GetValues szFunction_table, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
     
-    txtOID.Text = Trim(Str(szfunction_oid))
     txtOwner.Text = szFunction_owner
-    
-    If szFunction_name <> "" Then
-        If txtOID.Text = 0 Then txtOID.Text = "N.S."
-        If txtOwner.Text = "" Then txtOwner.Text = "N.S."
-    Else
-        If txtOID.Text = 0 Then txtOID.Text = ""
-    End If
-    
     txtReturns.Text = szFunction_returns
     txtArguments.Text = szFunction_arguments
     txtFunction.Text = szFunction_source
