@@ -10,13 +10,22 @@ Begin VB.Form frmViews
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdModifyView 
+      Caption         =   "&Modify View"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   21
+      ToolTipText     =   "Modify the selected View."
+      Top             =   405
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdViewData 
       Caption         =   "&View Data"
       Height          =   330
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Edit the comment for the selected View."
-      Top             =   1125
+      Top             =   1485
       Width           =   1410
    End
    Begin VB.CommandButton cmdComment 
@@ -25,7 +34,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected View."
-      Top             =   765
+      Top             =   1125
       Width           =   1410
    End
    Begin VB.Frame fraDetails 
@@ -35,13 +44,22 @@ Begin VB.Form frmViews
       TabIndex        =   12
       Top             =   0
       Width           =   3660
+      Begin VB.TextBox txtName 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   19
+         Top             =   540
+         Width           =   2670
+      End
       Begin VB.TextBox txtACL 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
          TabIndex        =   9
-         Top             =   855
+         Top             =   1170
          Width           =   2670
       End
       Begin VB.TextBox txtDefinition 
@@ -52,7 +70,7 @@ Begin VB.Form frmViews
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   10
-         Top             =   1440
+         Top             =   1755
          Width           =   3480
       End
       Begin VB.TextBox txtOID 
@@ -70,19 +88,29 @@ Begin VB.Form frmViews
          Left            =   900
          Locked          =   -1  'True
          TabIndex        =   8
-         Top             =   540
+         Top             =   855
          Width           =   2670
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   1005
+         Height          =   645
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   11
-         Top             =   2925
+         Top             =   3285
          Width           =   3480
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Name"
+         Height          =   195
+         Index           =   3
+         Left            =   90
+         TabIndex        =   20
+         Top             =   585
+         Width           =   420
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -91,7 +119,7 @@ Begin VB.Form frmViews
          Index           =   2
          Left            =   90
          TabIndex        =   18
-         Top             =   900
+         Top             =   1215
          Width           =   300
       End
       Begin VB.Label Label1 
@@ -111,7 +139,7 @@ Begin VB.Form frmViews
          Index           =   1
          Left            =   90
          TabIndex        =   15
-         Top             =   585
+         Top             =   900
          Width           =   465
       End
       Begin VB.Label Label1 
@@ -121,7 +149,7 @@ Begin VB.Form frmViews
          Index           =   5
          Left            =   90
          TabIndex        =   14
-         Top             =   1215
+         Top             =   1530
          Width           =   660
       End
       Begin VB.Label Label1 
@@ -131,7 +159,7 @@ Begin VB.Form frmViews
          Index           =   8
          Left            =   90
          TabIndex        =   13
-         Top             =   2700
+         Top             =   3060
          Width           =   735
       End
    End
@@ -148,7 +176,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   4
       ToolTipText     =   "Refresh the list of Views."
-      Top             =   1485
+      Top             =   1845
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropView 
@@ -157,7 +185,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   1
       ToolTipText     =   "Delete the selected View."
-      Top             =   405
+      Top             =   765
       Width           =   1410
    End
    Begin VB.CommandButton cmdCreateView 
@@ -174,7 +202,7 @@ Begin VB.Form frmViews
       Height          =   525
       Left            =   45
       TabIndex        =   17
-      Top             =   1845
+      Top             =   2205
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Views"
@@ -211,6 +239,22 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsView As New Recordset
+
+Private Sub cmdModifyView_Click()
+' On Error GoTo Err_Handler
+
+If txtOID <> "" Then
+    ' This means we can open the function
+    gPostgresOBJ_OID = Val(txtOID)
+    
+    ' Load form
+    Load frmAddView
+    frmAddView.Show
+End If
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdModifyView_Click"
+End Sub
 
 Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 On Error GoTo Err_Handler
@@ -369,6 +413,7 @@ On Error GoTo Err_Handler
     If rsView.BOF <> True Then rsView.MoveFirst
     MoveRS rsView, lstView.ListIndex
     txtOID.Text = rsView!view_oid & ""
+    txtName.Text = rsView!view_name & ""
     txtOwner.Text = rsView!view_owner & ""
     txtACL.Text = rsView!view_acl & ""
     txtDefinition.Text = rsView!view_definition & ""
