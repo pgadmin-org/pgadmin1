@@ -19,6 +19,7 @@ Begin VB.UserControl HBX
       _ExtentY        =   661
       _Version        =   393217
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ScrollBars      =   3
       Appearance      =   0
       AutoVerbMenu    =   -1  'True
@@ -86,7 +87,7 @@ Option Explicit
 Const m_def_ControlBarVisible = True
 Const m_def_MaximisedHeight = 0
 Const m_def_MaximisedWidth = 0
-Const m_def_Wordlist = "0"
+Const m_def_Wordlist = ""
 Const m_def_AutoColour = True
 
 Const DELIMCHARS = " []{}()'"""
@@ -97,6 +98,7 @@ Dim m_MaximisedHeight As Long
 Dim m_Wordlist As String
 Dim m_AutoColour As Boolean
 
+Dim bTextPropertySet As Boolean
 Dim bMaximised As Boolean
 Dim LastTop As Long
 Dim LastLeft As Long
@@ -153,18 +155,12 @@ Dim szHEX As String
 End Function
 
 Private Function CharInstr(szChar As String, szString As String) As Boolean
-Dim lX As Long
-  For lX = 1 To Len(szString)
-    If Mid(szString, lX, 1) = szChar Then
-      CharInstr = True
-      Exit For
-    End If
-  Next lX
+  If InStr(1, szString, szChar) <> 0 Then CharInstr = True
 End Function
 
 Private Function SearchCache(szLookup As String) As String
-Dim szSearchcache As String
 On Error Resume Next
+Dim szSearchcache As String
 
   szSearchcache = WordCache(szLookup).szRTFstring
   If szSearchcache = "" Then
@@ -175,10 +171,10 @@ On Error Resume Next
   SearchCache = szSearchcache
 End Function
 
-Private Sub rtbstring_Change()
+Private Sub rtbString_Change()
 Static lPrevLen As Long
 Dim lCount As Long
-  If m_AutoColour Then
+  If m_AutoColour And Not bTextPropertySet Then
     lCount = Len(rtbString.Text)
     If (lCount > lPrevLen + 2) Or (lCount < lPrevLen - 2) Then QR
     lPrevLen = lCount
@@ -198,7 +194,7 @@ Dim szTemp As String
   lWordstart = lWordend
   szChar = Mid(rtbString.Text, lWordstart - 1, 1)
 
-  While (CharInstr(szChar, DELIMCHARS) = False) And szChar <> Chr(10)
+  While (CharInstr(szChar, DELIMCHARS) = False) And szChar <> vbLf
     If lWordstart = 1 Then GoTo fred
     lWordstart = lWordstart - 1
     szChar = Mid(rtbString.Text, lWordstart, 1)
@@ -232,6 +228,7 @@ End Sub
 Private Sub QR()
 On Error Resume Next
 Dim lCurpos As Long
+Dim lCount As Long
 Dim Stringlist() As String
 Dim szOutputstring As String
 Dim szTemp As String
@@ -243,14 +240,14 @@ Dim lX As Long
   ReDim Stringlist(Len(rtbString.Text))
   lCurpos = rtbString.SelStart
 
-  szTemp = ""
   szData = rtbString.Text
-  For lX = 1 To Len(szData)
+  lCount = Len(szData)
+  For lX = 1 To lCount
     szChar = Mid(szData, lX, 1)
-     If CharInstr(szChar, DELIMCHARS) = False And szChar <> Chr(10) Then
+     If Not CharInstr(szChar, DELIMCHARS) And szChar <> vbLf Then
       szTemp = szTemp & szChar
     Else
-      If szChar = Chr(10) Then szChar = "\par "
+      If szChar = vbLf Then szChar = "\par "
       If szTemp <> "" Then
         Stringlist(lArraypos) = szTemp
         lArraypos = lArraypos + 1
@@ -262,16 +259,17 @@ Dim lX As Long
   Next lX
 
   If szTemp <> "" Then Stringlist(lArraypos) = szTemp
-
-  For lX = 0 To UBound(Stringlist) - 1
+  
+  lCount = UBound(Stringlist)
+  For lX = 0 To lCount
     If Stringlist(lX) <> "" Then Stringlist(lX) = SearchCache(Stringlist(lX))
   Next lX
   
-  For lX = 0 To UBound(Stringlist)
+  For lX = 0 To lCount
     If Stringlist(lX) <> "" Then szOutputstring = szOutputstring & Stringlist(lX)
   Next lX
 
-  rtbString.TextRTF = szRTBFontinfo & szRTBColours & szRTBWordinfo & szOutputstring & " \par }"
+  rtbString.TextRTF = szRTBFontinfo & szRTBColours & szRTBWordinfo & szOutputstring & "\par}"
   rtbString.SelStart = lCurpos
 End Sub
 
@@ -503,6 +501,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
   m_Wordlist = PropBag.ReadProperty("Wordlist", m_def_Wordlist)
   rtbString.AutoVerbMenu = PropBag.ReadProperty("AutoVerbMenu", True)
   m_AutoColour = PropBag.ReadProperty("AutoColour", m_def_AutoColour)
+  rtbString.RightMargin = PropBag.ReadProperty("RightMargin", 0)
   BuildCache
 End Sub
 
@@ -519,7 +518,8 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
   Call PropBag.WriteProperty("ControlBarVisible", m_ControlBarVisible, m_def_ControlBarVisible)
   Call PropBag.WriteProperty("Wordlist", m_Wordlist, m_def_Wordlist)
   Call PropBag.WriteProperty("AutoVerbMenu", rtbString.AutoVerbMenu, True)
-  Call PropBag.WriteProperty("AutoColour", m_def_AutoColour)
+  Call PropBag.WriteProperty("AutoColour", m_AutoColour, m_def_AutoColour)
+  Call PropBag.WriteProperty("RightMargin", rtbString.RightMargin, 0)
 End Sub
 
 Public Property Get BorderStyle() As MSComctlLib.BorderStyleConstants
@@ -612,9 +612,11 @@ Attribute Text.VB_Description = "Sets/Returns the Displayed Text."
 End Property
 
 Public Property Let Text(ByVal New_Text As String)
+  bTextPropertySet = True
   rtbString.Text() = New_Text
+  If m_AutoColour Then QR
+  bTextPropertySet = False
   PropertyChanged "Text"
-  QR
 End Property
 
 Public Property Get Caption() As String
@@ -691,5 +693,15 @@ End Property
 Public Property Let AutoVerbMenu(ByVal New_AutoVerbMenu As Boolean)
   rtbString.AutoVerbMenu() = New_AutoVerbMenu
   PropertyChanged "AutoVerbMenu"
+End Property
+
+Public Property Get RightMargin() As Single
+Attribute RightMargin.VB_Description = "Sets the right margin used for textwrap, centering, etc."
+  RightMargin = rtbString.RightMargin
+End Property
+
+Public Property Let RightMargin(ByVal New_RightMargin As Single)
+  rtbString.RightMargin() = New_RightMargin
+  PropertyChanged "RightMargin"
 End Property
 
