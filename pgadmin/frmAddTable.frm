@@ -456,7 +456,7 @@ On Error GoTo Err_Handler
     MsgBox "You must select a table to inherit!", vbExclamation, "Error"
     Exit Sub
   End If
-  lstInherits.AddItem QUOTE & vssTables.Text & QUOTE
+  lstInherits.AddItem QUOTE & vssTables.Caption & QUOTE
   vssTables.Text = ""
   Gen_SQL
   Exit Sub
