@@ -437,7 +437,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        cmdObjView.Enabled = False
+                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                     Else
                         cmdObjCreate.Enabled = False
                         cmdObjModify.Enabled = False
@@ -445,7 +445,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        cmdObjView.Enabled = False
+                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                     End If
         
                 Case 1
@@ -456,7 +456,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = True
                         cmdObjEdit.Enabled = True
                         cmdObjRefresh.Enabled = True
-                        cmdObjView.Enabled = True
+                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
                     Else
                         cmdObjCreate.Enabled = False
                         cmdObjModify.Enabled = False
@@ -464,7 +464,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        cmdObjView.Enabled = True
+                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
                     End If
                     
                 Case Is > 1
@@ -475,7 +475,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = True
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        cmdObjView.Enabled = False
+                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                     Else
                         cmdObjCreate.Enabled = False
                         cmdObjModify.Enabled = False
@@ -483,7 +483,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        cmdObjView.Enabled = True
+                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
                     End If
         End Select
    Exit Sub
