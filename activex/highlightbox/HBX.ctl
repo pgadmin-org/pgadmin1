@@ -19,7 +19,6 @@ Begin VB.UserControl HBX
       _ExtentY        =   661
       _Version        =   393217
       BorderStyle     =   0
-      Enabled         =   -1  'True
       ScrollBars      =   3
       Appearance      =   0
       AutoVerbMenu    =   -1  'True
@@ -114,6 +113,7 @@ Event Click()
 Attribute Click.VB_Description = "Occurs when the control is clicked."
 Event DblClick()
 Attribute DblClick.VB_Description = "Occurs when the control is double clicked."
+Event Change()
 Event KeyDown(KeyCode As Integer, Shift As Integer)
 Attribute KeyDown.VB_Description = "Occurs when a key is pressed down."
 Event KeyPress(KeyAscii As Integer)
@@ -179,6 +179,7 @@ Dim lCount As Long
     If (lCount > lPrevLen + 2) Or (lCount < lPrevLen - 2) Then QR
     lPrevLen = lCount
   End If
+  RaiseEvent Change
 End Sub
 
 Private Sub ColourWord() 'Colour the previous word
