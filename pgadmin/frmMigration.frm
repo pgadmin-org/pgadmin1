@@ -126,33 +126,33 @@ Begin VB.Form frmMigration
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmMigration.frx":130E
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "lstTables"
-      Tab(1).Control(1)=   "cmdSelect(0)"
-      Tab(1).Control(2)=   "cmdDeselect(0)"
-      Tab(1).Control(3)=   "Label1(1)"
+      Tab(1).Control(0)=   "Label1(1)"
+      Tab(1).Control(1)=   "cmdDeselect(0)"
+      Tab(1).Control(2)=   "cmdSelect(0)"
+      Tab(1).Control(3)=   "lstTables"
       Tab(1).ControlCount=   4
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmMigration.frx":132A
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "lstData"
-      Tab(2).Control(1)=   "cmdSelect(1)"
-      Tab(2).Control(2)=   "cmdDeselect(1)"
-      Tab(2).Control(3)=   "Label1(9)"
+      Tab(2).Control(0)=   "Label1(9)"
+      Tab(2).Control(1)=   "cmdDeselect(1)"
+      Tab(2).Control(2)=   "cmdSelect(1)"
+      Tab(2).Control(3)=   "lstData"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmMigration.frx":1346
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "lstForeignKeys"
-      Tab(3).Control(1)=   "cmdSelect(2)"
+      Tab(3).Control(0)=   "Label1(8)"
+      Tab(3).Control(1)=   "Label1(10)"
       Tab(3).Control(2)=   "cmdDeselect(2)"
-      Tab(3).Control(3)=   "Label1(10)"
-      Tab(3).Control(4)=   "Label1(8)"
+      Tab(3).Control(3)=   "cmdSelect(2)"
+      Tab(3).Control(4)=   "lstForeignKeys"
       Tab(3).ControlCount=   5
       TabCaption(4)   =   " "
       TabPicture(4)   =   "frmMigration.frx":1362
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "txtStatus"
-      Tab(4).Control(1)=   "pbStatus"
+      Tab(4).Control(0)=   "pbStatus"
+      Tab(4).Control(1)=   "txtStatus"
       Tab(4).ControlCount=   2
       Begin VB.TextBox txtStatus 
          Height          =   3480
@@ -964,7 +964,7 @@ Dim auto_increment_rs As New Recordset
             Else
               auto_increment_field_name = LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name)
             End If
-                    
+            
             Exit For
           End If
         End If
@@ -990,18 +990,44 @@ Dim auto_increment_rs As New Recordset
         auto_increment_query = ""
       End If
     End If
-    '   End Part 1 AutoIncrement Fix
+    '   End AutoIncrement Fix
             
-    '   Return to original code
+    '   07/02/01 - Matthew MacSuga - Put columns in original order fix
+    Dim rsTemp_Column As New Recordset
+    Dim K As Integer
+    Dim sqlQ As String
+    Dim newColumnArray()
+    Dim ColCount As Integer
+    
+    '   Generate query to get column names
+    sqlQ = "SELECT * FROM " & lstData.List(x) & " WHERE 1=2"
+    rsTemp_Column.Open sqlQ, cnLocal, 3, 1
+    
+    ColCount = rsTemp_Column.Fields.Count - 1
+    '   Set up the temporary copy array - sloppy sort
+    ReDim newColumnArray(ColCount)
+    For K = 0 To ColCount
+        For y = 0 To catLocal.Tables(lstData.List(x)).Columns.Count - 1
+            If catLocal.Tables(lstData.List(x)).Columns(y).Name = rsTemp_Column.Fields(K).Name Then
+                newColumnArray(K) = catLocal.Tables(lstData.List(x)).Columns(y).Name
+                
+                Exit For
+            End If
+        Next
+    Next
+    
+    If rsTemp_Column.State <> adStateClosed Then rsTemp_Column.Close
+    Set rsTemp_Column = Nothing
+    
     For y = 0 To catLocal.Tables(lstData.List(x)).Columns.Count - 1
       'DJP 2001-07-02 Don't migrate the oid column on PostgreSQL Databases!
-      If Not ((cnLocal.Properties("DBMS Name") = "PostgreSQL") And (catLocal.Tables(lstData.List(x)).Columns(y).Name = "oid")) Then
+      If Not ((cnLocal.Properties("DBMS Name") = "PostgreSQL") And (newColumnArray(y) = "oid")) Then
         If chkLCaseColumns.Value = 0 Then
-          szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(x)).Columns(y).Name & QUOTE
+          szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Name & QUOTE
         Else
-          szTemp1 = szTemp1 & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) & QUOTE
+          szTemp1 = szTemp1 & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Name) & QUOTE
         End If
-        Select Case catLocal.Tables(lstData.List(x)).Columns(y).Type
+        Select Case catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Type
           Case adBigInt
             szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "BigInt", "int8")
           Case adBinary
@@ -1084,34 +1110,34 @@ Dim auto_increment_rs As New Recordset
           szTemp2 = "text"
         End Select
         If szTemp2 = "bpchar" Or szTemp2 = "char" Or szTemp2 = "varchar" Then
-          If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize = 0 Then
+          If catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).DefinedSize = 0 Then
             szTemp2 = szTemp2 & "(1)"
           Else
             'Varchar cannot exceed 8088 chars!
             If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize > 8088 Then
-              txtStatus.Text = txtStatus.Text & "  The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'" & vbCrLf
+              txtStatus.Text = txtStatus.Text & "  The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Name & " is too long and has been converted to type 'text'" & vbCrLf
               txtStatus.SelStart = Len(txtStatus.Text)
-              LogMsg "The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'"
+              LogMsg "The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Name & " is too long and has been converted to type 'text'"
               szTemp2 = "text"
             Else
-              szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize & ")"
+              szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).DefinedSize & ")"
             End If
           End If
         End If
         If szTemp2 = "numeric" Then
-          szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).NumericScale & "," & catLocal.Tables(lstData.List(x)).Columns(y).Precision & ")"
+          szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).NumericScale & "," & catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Precision & ")"
         End If
       
         ' Matthew MacSuga Auto Increment Fix
         If auto_increment_on = 1 Then
-          If LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) = LCase(auto_increment_field_name) Then
+          If LCase(newColumnArray(y)) = LCase(auto_increment_field_name) Then
             szTemp2 = "int4 DEFAULT nextval('" & auto_increment_table & "_" & auto_increment_field_name & "_key')"
           End If
         End If
         
         szTemp1 = szTemp1 & " " & szTemp2
         If chkNotNull.Value = 1 Then
-          If catLocal.Tables(lstData.List(x)).Columns(y).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
+          If catLocal.Tables(lstData.List(x)).Columns(newColumnArray(y)).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
         End If
         szTemp1 = szTemp1 & ", "
       End If
@@ -1611,4 +1637,3 @@ Cleanup:
   SQLFreeConnect lDBC
   If lEnv <> 0 Then SQLFreeEnv lEnv
 End Function
-

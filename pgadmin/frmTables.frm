@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmTables 
    Caption         =   "Tables"
@@ -897,7 +897,7 @@ Private Sub cmdSerialize_Click()
 ' Machine: KIRK
 ' set the next sequence id to the highest value contained in the data + 1.
 '-------------------------------------------------------------------------------
-'on error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim sTableName As String
 Dim sFieldName As String
 Dim sSQL As String
@@ -1081,7 +1081,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRefresh_Click()
-'on error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim NodeX As Node
 Dim rsDesc As New Recordset
 Dim iUbound As Long
@@ -1300,7 +1300,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Resize"
 End Sub
 
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
-'on error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim NodeX As Node
 Dim lOID As Long
 Dim rsTemp As New Recordset

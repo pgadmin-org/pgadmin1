@@ -258,8 +258,8 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   If ObjectExists("pgadmin_get_pgdesc", tFunction) <> 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Dropping old pgAdmin Description Lookup Function..."
-    LogMsg "Executing: DROP FUNCTION pgadmin_get_desc(oid)"
-    gConnection.Execute "DROP FUNCTION pgadmin_get_desc(oid)"
+    LogMsg "Executing: DROP FUNCTION pgadmin_get_pgdesc(oid)"
+    gConnection.Execute "DROP FUNCTION pgadmin_get_pgdesc(oid)"
     EndMsg
   End If
   

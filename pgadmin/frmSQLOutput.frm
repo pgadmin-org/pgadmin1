@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Begin VB.Form frmSQLOutput 
    Caption         =   "SQL Output"
    ClientHeight    =   3195
@@ -182,7 +182,7 @@ Dim szWhere As String
 Dim bUpdateable As Boolean
 
 Private Sub cmdAdd_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   BuildEditBox
   lblInfo.Caption = "Add Record"
   Exit Sub
@@ -190,14 +190,14 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, cmdAdd_Click"
 End Sub
 
 Private Sub cmdCancel_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   HideEditBox
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, cmdCancel_Click"
 End Sub
 
 Private Sub cmdDelete_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim x As Integer
 Dim y As Integer
 Dim Z As Integer
@@ -316,7 +316,7 @@ Err_Handler:
 End Sub
 
 Private Sub cmdSave_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim szQuery As String
 Dim szColumns As String
 Dim szValues As String
@@ -516,19 +516,19 @@ Err_Handler:
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-'On Error Resume Next
+On Error Resume Next
   Set rsSQL = Nothing
 End Sub
 
 Private Sub Form_Load()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Load"
 End Sub
 
 Public Sub Display(rsQuery As Recordset)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim iStart As Integer
 Dim iEnd As Integer
 Dim iTemp As Integer
@@ -731,7 +731,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 5820 Then Me.Width = 5820
@@ -755,7 +755,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Resize"
 End Sub
 
 Private Sub LoadGrid()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim x As Long
 Dim itmX As ListItem
 
@@ -807,14 +807,14 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, LoadGrid"
 End Sub
 
 Private Sub lvData_ItemClick(ByVal Item As MSComctlLib.ListItem)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   lblInfo.Caption = "Record " & lvData.SelectedItem.Index & " of " & lvData.ListItems.Count
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, lvData_ItemClick"
 End Sub
 
 Private Sub BuildEditBox()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim x As Integer
   lblField(0).Top = 3
   txtField(0).Top = lblField(0).Top + lblField(0).Height
@@ -865,7 +865,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, BuildEditBox"
 End Sub
 
 Private Sub cmdEdit_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim x As Long
   BuildEditBox
   For x = 0 To lvData.ColumnHeaders.Count - 1
@@ -882,21 +882,21 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, cmdEdit_Click"
 End Sub
 
 Private Sub scScroll_Change()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   picScroll.Top = -scScroll.Value
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, scScroll_Change"
 End Sub
 
 Private Sub txtField_Change(Index As Integer)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   txtField(Index).Tag = "Y"
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, txtField_Change"
 End Sub
 
 Private Sub txtField_GotFocus(Index As Integer)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim x As Long
   For x = 0 To txtField.Count - 1
     If x = Index Then
@@ -919,7 +919,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, txtField_GotFo
 End Sub
 
 Private Sub HideEditBox()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim x As Integer
   txtField(0).Text = ""
   txtField(0).Tag = ""
