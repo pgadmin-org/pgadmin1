@@ -427,7 +427,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, MsgExportToFile"
 End Sub
 
 Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optional cmdObjCreate As Object, Optional cmdObjModify As Object, Optional cmdObjDrop As Object, Optional cmdObjExport As Object, Optional cmdObjEdit As Object, Optional cmdObjRefresh As Object, Optional cmdObjView As Object)
-    On Error Resume Next
+    On Error GoTo Err_Handler
         Select Case intSelCount
                 Case 0
                      If bSystem = False Then
@@ -437,7 +437,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                     Else
                         cmdObjCreate.Enabled = False
                         cmdObjModify.Enabled = False
@@ -445,7 +445,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                     End If
         
                 Case 1
@@ -456,7 +456,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = True
                         cmdObjEdit.Enabled = True
                         cmdObjRefresh.Enabled = True
-                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
+                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
                     Else
                         cmdObjCreate.Enabled = False
                         cmdObjModify.Enabled = False
@@ -464,7 +464,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
+                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
                     End If
                     
                 Case Is > 1
@@ -475,7 +475,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = True
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                     Else
                         cmdObjCreate.Enabled = False
                         cmdObjModify.Enabled = False
@@ -483,7 +483,7 @@ Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optiona
                         cmdObjExport.Enabled = False
                         cmdObjEdit.Enabled = False
                         cmdObjRefresh.Enabled = True
-                        If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
+                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
                     End If
         End Select
    Exit Sub
