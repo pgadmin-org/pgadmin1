@@ -319,13 +319,13 @@ Public Sub cmdDropTrig_Click()
 On Error GoTo Err_Handler
 Dim szDropStr As String
   If lstTrig.Text = "" Then
-    MsgBox "You must select a Trigger to delete!", vbExclamation, "Error"
+    MsgBox "Select a Trigger to drop!", vbExclamation, "Error"
     Exit Sub
   End If
-  If MsgBox("Are you sure you wish to delete this Trigger?", vbYesNo + vbQuestion, _
-            "Confirm Trigger Delete") = vbYes Then
+  If MsgBox("Are you sure you wish to drop this Trigger?", vbYesNo + vbQuestion, _
+            "Confirm Trigger deletion") = vbYes Then
     StartMsg "Dropping Trigger..."
-    szDropStr = "DROP TRIGGER " & QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
+    szDropStr = "DROP TRIGGER " & QUOTE & txtName.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
     fMainForm.txtSQLPane.Text = szDropStr
     LogMsg "Executing: DROP TRIGGER " & QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
     gConnection.Execute szDropStr

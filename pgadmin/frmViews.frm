@@ -349,7 +349,7 @@ On Error GoTo Err_Handler
   If MsgBox("Are you sure you wish to delete this View?", vbYesNo + vbQuestion, _
             "Confirm View Delete") = vbYes Then
     StartMsg "Dropping View..."
-    fMainForm.txtSQLPane.Text = "DROP VIEW " & QUOTE & lstView.Text & QUOTE
+    fMainForm.txtSQLPane.Text = "DROP VIEW " & QUOTE & txtName.Text & QUOTE
     LogMsg "Executing: DROP VIEW " & QUOTE & lstView.Text & QUOTE
     gConnection.Execute "DROP VIEW " & QUOTE & lstView.Text & QUOTE
     LogQuery "DROP VIEW " & QUOTE & lstView.Text & QUOTE
