@@ -509,6 +509,9 @@ On Error GoTo Err_Handler
     txtCompiler.Text = Mid(rsVersion!Version, InStr(1, rsVersion!Version, ", compiled by ") + 14, Len(rsVersion!Version))
     rsVersion.Close
     
+    txtUsername.Text = Username
+    txtTimeOut.Text = gConnection.ConnectionTimeout
+    
     EndMsg
   Else
     txtOID.Text = ""
