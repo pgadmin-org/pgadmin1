@@ -51,6 +51,10 @@ Dim SQL_PGADMIN_TABLES As String
 Dim SQL_PGADMIN_USERS As String
 Dim SQL_PGADMIN_TRIGGERS As String
 Dim SQL_PGADMIN_VIEWS As String
+Dim SQL_PGADMIN_DEV_FUNCTIONS As String
+Dim SQL_PGADMIN_DEV_TRIGGERS As String
+Dim SQL_PGADMIN_DEV_VIEWS As String
+Dim SQL_PGADMIN_DEV_DEPENDENCIES As String
 
 SQL_PGADMIN_DESC = "SELECT * INTO pgadmin_desc FROM pg_description WHERE objoid > " & LAST_SYSTEM_OID
 SQL_PGADMIN_PARAM = "CREATE TABLE pgadmin_param(param_id int4, param_value text, param_desc text)"
@@ -101,8 +105,7 @@ SQL_PGADMIN_FUNCTIONS = _
   "FROM pg_proc p, pg_language l " & _
   "WHERE p.prolang = l.oid " & _
   "AND p.proname NOT LIKE '%_call_handler'"
-  
-  
+   
 SQL_PGADMIN_GROUPS = _
   "CREATE VIEW pgadmin_groups AS SELECT " & _
   "oid AS group_oid, groname AS group_name, grosysid AS group_id, grolist As group_members " & _
@@ -179,7 +182,44 @@ SQL_PGADMIN_VIEWS = _
   "  pg_class c " & _
   "WHERE " & _
   "  ((c.relhasrules AND (EXISTS (SELECT r.rulename FROM pg_rewrite r WHERE ((r.ev_class = c.oid) AND (r.ev_type::char = '1'::char))))) OR c.relkind = 'v')"
+
+'pgadmin_dev_tables are used for rebuilding and relinking the project
+'<jean-Michel POURE>
+SQL_PGADMIN_DEV_FUNCTIONS = "CREATE TABLE pgadmin_dev_functions AS SELECT * " & _
+  "  FROM pgadmin_functions " & _
+  "  WHERE function_name NOT LIKE '%_call_handler' " & _
+  "  AND function_name NOT LIKE 'pgadmin_%' " & _
+  "  AND function_name NOT LIKE 'pg_%' " & _
+  "  AND function_oid > " & LAST_SYSTEM_OID & _
+  "  ORDER BY function_oid ;" & _
+  "  ALTER TABLE pgadmin_dev_functions ADD function_iscompiled boolean DEFAULT 'f'  ;" & _
+  "  UPDATE pgadmin_dev_functions SET function_iscompiled = 'f';" & _
+  "  UPDATE pgadmin_dev_functions SET function_returns = 'opaque' WHERE function_returns = NULL;"
+
+SQL_PGADMIN_DEV_TRIGGERS = "CREATE TABLE pgadmin_dev_triggers AS SELECT * " & _
+  "  FROM pgadmin_triggers " & _
+  "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
+  "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
+  "  AND trigger_name NOT LIKE 'pg_%' " & _
+  "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
+  "  ORDER BY trigger_name; " & _
+  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_iscompiled boolean DEFAULT 'f'  ;" & _
+  "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
   
+SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * from " & _
+  "  pgadmin_views " & _
+  "  WHERE view_oid > " & LAST_SYSTEM_OID & _
+  "  AND view_name NOT LIKE 'pgadmin_%' " & _
+  "  AND view_name NOT LIKE 'pg_%' " & _
+  "  ORDER BY view_name; " & _
+  "  ALTER TABLE pgadmin_dev_views ADD view_iscompiled boolean DEFAULT 'f'  ;" & _
+  "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
+  
+SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
+  " dependency_from int4," & _
+  " dependency_to int4);"
+'</Jean-Michel POURE>
+
   'If the SSO Version on the server doesn't exist or is lower than
   'that defined in SSO_VERSION then drop all SSO's. If pgadmin_param
   'doesn't exist then we'll get a new set of SSO's anyway.
@@ -547,6 +587,77 @@ SQL_PGADMIN_VIEWS = _
     gConnection.Execute "GRANT all ON pgadmin_views TO public"
     EndMsg
   End If
+  
+  ' <Jean-Michel POURE> Objects needed for relinking
+  ' pgadmin_dev_functions
+  If ObjectExists("pgadmin_dev_functions", tTable) <> 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Dropping corrupted pgAdmin_dev_functions table..."
+    LogMsg "Executing: DROP TABLE pgadmin_dev_functions"
+    gConnection.Execute "DROP TABLE pgadmin_dev_functions"
+    EndMsg
+  End If
+  If ObjectExists("pgadmin_dev_functions", tTable) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin_dev_functions table..."
+    LogMsg "Executing: " & SQL_PGADMIN_DEV_FUNCTIONS
+    gConnection.Execute SQL_PGADMIN_DEV_FUNCTIONS
+    LogMsg "Executing: GRANT all ON pgadmin_dev_functions TO public"
+    gConnection.Execute "GRANT all ON pgadmin_dev_functions TO public"
+    EndMsg
+  End If
+  
+  If ObjectExists("pgadmin_dev_triggers", tTable) <> 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Dropping corrupted pgAdmin_dev_triggers table..."
+    LogMsg "Executing: DROP TABLE pgAdmin_dev_triggers"
+    gConnection.Execute "DROP TABLE pgAdmin_dev_triggers"
+    EndMsg
+  End If
+  If ObjectExists("pgadmin_dev_triggers", tTable) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin_dev_triggers table..."
+    LogMsg "Executing: " & SQL_PGADMIN_DEV_TRIGGERS
+    gConnection.Execute SQL_PGADMIN_DEV_TRIGGERS
+    LogMsg "Executing: GRANT all ON pgadmin_dev_triggers TO public"
+    gConnection.Execute "GRANT all ON pgadmin_dev_triggers TO public"
+    EndMsg
+  End If
+  
+  If ObjectExists("pgadmin_dev_views", tTable) <> 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Dropping corrupted pgadmin_dev_views table..."
+    LogMsg "Executing: DROP TABLE pgadmin_dev_views"
+    gConnection.Execute "DROP TABLE pgadmin_dev_views"
+    EndMsg
+  End If
+  If ObjectExists("pgadmin_dev_views", tTable) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin_dev_triggers table..."
+    LogMsg "Executing: " & SQL_PGADMIN_DEV_VIEWS
+    gConnection.Execute SQL_PGADMIN_DEV_VIEWS
+    LogMsg "Executing: GRANT all ON pgadmin_dev_views TO public"
+    gConnection.Execute "GRANT all ON pgadmin_dev_views TO public"
+    EndMsg
+  End If
+  
+  If ObjectExists("pgadmin_dev_dependencies", tTable) <> 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Dropping corrupted pgadmin_dev_dependencies table..."
+    LogMsg "Executing: DROP TABLE pgadmin_dev_dependencies"
+    gConnection.Execute "DROP TABLE pgadmin_dev_dependencies"
+    EndMsg
+  End If
+  If ObjectExists("pgadmin_dev_dependencies", tTable) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin_dev_triggers table..."
+    LogMsg "Executing: " & SQL_PGADMIN_DEV_DEPENDENCIES
+    gConnection.Execute SQL_PGADMIN_DEV_DEPENDENCIES
+    LogMsg "Executing: GRANT all ON pgadmin_dev_dependencies TO public"
+    gConnection.Execute "GRANT all ON pgadmin_dev_dependencies TO public"
+    EndMsg
+  End If
+  ' </Jean-Michel POURE>
   
   'Set the SSO Version on the server
   LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & SSO_VERSION & "' WHERE param_id = 1"
