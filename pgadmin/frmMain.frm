@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.3#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H80000010&
    Caption         =   "pgAdmin"
@@ -27,6 +27,26 @@ Begin VB.MDIForm frmMain
       TabIndex        =   2
       Top             =   5685
       Width           =   8775
+      Begin HighlightBox.TBX txtLog 
+         Height          =   1275
+         Left            =   3780
+         TabIndex        =   10
+         Top             =   135
+         Width           =   2580
+         _ExtentX        =   4551
+         _ExtentY        =   2249
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Log View"
+      End
       Begin VB.CommandButton cmdSQL 
          Caption         =   "&SQL"
          Default         =   -1  'True
@@ -68,28 +88,6 @@ Begin VB.MDIForm frmMain
          Wordlist        =   $"frmMain.frx":030A
          RightMargin     =   1.00000e5
       End
-      Begin HighlightBox.HBX txtLog 
-         Height          =   1275
-         Left            =   3825
-         TabIndex        =   10
-         Top             =   135
-         Width           =   2490
-         _ExtentX        =   4392
-         _ExtentY        =   2249
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Log View"
-         Wordlist        =   $"frmMain.frx":03E4
-         RightMargin     =   1.00000e5
-      End
       Begin VB.Label lblVersion 
          Alignment       =   1  'Right Justify
          AutoSize        =   -1  'True
@@ -126,7 +124,7 @@ Begin VB.MDIForm frmMain
       Begin VB.Image imgLogo 
          Height          =   1260
          Left            =   6345
-         Picture         =   "frmMain.frx":04BE
+         Picture         =   "frmMain.frx":03E4
          Stretch         =   -1  'True
          Top             =   135
          Width           =   2400
@@ -241,102 +239,102 @@ Begin VB.MDIForm frmMain
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
          NumListImages   =   24
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":199A
+            Picture         =   "frmMain.frx":18C0
             Key             =   "Tune db"
          EndProperty
          BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":1CB4
+            Picture         =   "frmMain.frx":1BDA
             Key             =   "Triggers"
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":1FCE
+            Picture         =   "frmMain.frx":1EF4
             Key             =   "Languages"
          EndProperty
          BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":22E8
+            Picture         =   "frmMain.frx":220E
             Key             =   "Databases"
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2602
+            Picture         =   "frmMain.frx":2528
             Key             =   "rExec"
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":291C
+            Picture         =   "frmMain.frx":2842
             Key             =   "Tracking"
          EndProperty
          BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2C36
+            Picture         =   "frmMain.frx":2B5C
             Key             =   "Migration"
          EndProperty
          BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2F50
+            Picture         =   "frmMain.frx":2E76
             Key             =   "Users"
          EndProperty
          BeginProperty ListImage9 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":326A
+            Picture         =   "frmMain.frx":3190
             Key             =   "Groups"
          EndProperty
          BeginProperty ListImage10 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":3584
+            Picture         =   "frmMain.frx":34AA
             Key             =   "Vacuum"
          EndProperty
          BeginProperty ListImage11 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":389E
+            Picture         =   "frmMain.frx":37C4
             Key             =   "Tables"
          EndProperty
          BeginProperty ListImage12 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":3BB8
+            Picture         =   "frmMain.frx":3ADE
             Key             =   "Indexes"
          EndProperty
          BeginProperty ListImage13 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":3ED2
+            Picture         =   "frmMain.frx":3DF8
             Key             =   "Import"
          EndProperty
          BeginProperty ListImage14 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":41EC
+            Picture         =   "frmMain.frx":4112
             Key             =   "Privileges"
          EndProperty
          BeginProperty ListImage15 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4506
+            Picture         =   "frmMain.frx":442C
             Key             =   "Export"
          EndProperty
          BeginProperty ListImage16 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4820
+            Picture         =   "frmMain.frx":4746
             Key             =   "SQL"
          EndProperty
          BeginProperty ListImage17 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4B3A
+            Picture         =   "frmMain.frx":4A60
             Key             =   "Sequences"
          EndProperty
          BeginProperty ListImage18 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4E54
+            Picture         =   "frmMain.frx":4D7A
             Key             =   "Functions"
          EndProperty
          BeginProperty ListImage19 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":516E
+            Picture         =   "frmMain.frx":5094
             Key             =   "Views"
          EndProperty
          BeginProperty ListImage20 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5488
+            Picture         =   "frmMain.frx":53AE
             Key             =   "Psql"
          EndProperty
          BeginProperty ListImage21 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":57A2
+            Picture         =   "frmMain.frx":56C8
             Key             =   "Reports"
             Object.Tag             =   "Reports"
          EndProperty
          BeginProperty ListImage22 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5ABC
+            Picture         =   "frmMain.frx":59E2
             Key             =   "Datasources"
             Object.Tag             =   "Datasources"
          EndProperty
          BeginProperty ListImage23 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5DD6
+            Picture         =   "frmMain.frx":5CFC
             Key             =   "Manager"
             Object.Tag             =   "Manager"
          EndProperty
          BeginProperty ListImage24 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":60F0
+            Picture         =   "frmMain.frx":6016
             Key             =   "Exporters"
             Object.Tag             =   "Exporters"
          EndProperty
