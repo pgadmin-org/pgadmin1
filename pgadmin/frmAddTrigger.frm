@@ -383,7 +383,7 @@ Dim szQuery As String
   vssTable.LoadList
   
   szQuery = "SELECT function_name, function_arguments FROM pgadmin_functions " & _
-  "WHERE function_returns = NULL AND function_name NOT LIKE 'pg_%' AND function_name NOT LIKE 'pgadmin_%' " & _
+  "WHERE function_returns = NULL AND function_name NOT LIKE 'pg_%' AND function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'RI_%'" & _
   "ORDER BY function_name"
   LogMsg "Executing: " & szQuery
   rsFuncs.Open szQuery, gConnection, adOpenForwardOnly
