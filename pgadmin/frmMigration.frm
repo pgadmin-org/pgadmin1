@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
 Begin VB.Form frmMigration 
@@ -134,10 +134,10 @@ Begin VB.Form frmMigration
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmMigration.frx":132A
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "Label1(9)"
-      Tab(2).Control(1)=   "cmdDeselect(1)"
-      Tab(2).Control(2)=   "cmdSelect(1)"
-      Tab(2).Control(3)=   "lstData"
+      Tab(2).Control(0)=   "lstData"
+      Tab(2).Control(1)=   "cmdSelect(1)"
+      Tab(2).Control(2)=   "cmdDeselect(1)"
+      Tab(2).Control(3)=   "Label1(9)"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmMigration.frx":1346
@@ -594,7 +594,7 @@ Dim tblTemp As Table
     End If
     StartMsg "Opening and Examining Source Database..."
     LogMsg "Opening DSN: " & cboDatasource.Text
-    cnLocal.Open "DSN=" & cboDatasource.Text & ";UID=" & txtUID(1).Text & ";PWD=" & txtPWD(1).Text, txtUID(1).Text, txtPWD(1).Text
+    cnLocal.Open "DSN=" & cboDatasource.Text & ";UID=" & txtUID(0).Text & ";PWD=" & txtPWD(0).Text, txtUID(0).Text, txtPWD(0).Text
   End If
   LogMsg "Opened connection: " & cnLocal.ConnectionString
   LogMsg "Provider: " & cnLocal.Provider & " v" & cnLocal.Version
@@ -1128,21 +1128,42 @@ Dim fNum As Integer
                   Fields = Fields & QUOTE & LCase(rsTemp.Fields(Z).Name) & QUOTE & ", "
                 End If
               
-                '1/20/2001 Rod Childers
-                'See if this a date field that only contains a Time, if so add Old date to it
-                'so postgress will accept it into a timestamp field
-                If rsTemp.Fields(Z).Type = adDate Or rsTemp.Fields(Z).Type = adDBDate Or rsTemp.Fields(Z).Type = adDBTimeStamp Then
-                  If Len(rsTemp.Fields(Z).Value) < 12 And Right(rsTemp.Fields(Z).Value, 1) = "M" Then
-                    'Only contains the time
-                    Values = Values & "'1899-12-30 " & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
-                  Else
-                    'Valid date,treat like any other field
-                    Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
-                  End If
-                Else
-                  Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
-                End If
-              End If
+                Select Case rsTemp.Fields(Z).Type
+                   ' 04/24/2001 Jean-Michel POURE
+                   ' Usefull tricks to avoid bugs in non-English systems :
+                   ' replace comma with dots in numerical values
+                   ' and get rid of money acronyms (like FF for example)
+                    Case adCurrency, adDouble, adSingle, adDecimal
+                        Values = Values & "'" & Str(Val(Replace(rsTemp.Fields(Z).Value, ",", "."))) & "', "
+                   
+                   ' Another usefull tricks to avoid bugs in non-English systems :
+                   ' Convert 'True' or 'Vrai' or 'T' into -1
+                   ' and 'False' or 'Faux' or 'F' into 0
+                   ' In PostgreSQL driver uncheck Bool as Char
+                    Case adBoolean
+                        Dim tempValue As String
+                        tempValue = rsTemp.Fields(Z).Value
+                        If (tempValue = "F") Then tempValue = "False"
+                        If (tempValue = "T") Then tempValue = "True"
+                        Values = Values & "'" & CBool(tempValue) * "-1" & "', "
+
+                    '1/20/2001 Rod Childers
+                    'See if this a date field that only contains a Time, if so add Old date to it
+                    'so postgress will accept it into a timestamp field
+                     Case adDate, adDBDate, adDBTimeStamp
+                         If Len(rsTemp.Fields(Z).Value) < 12 And Right(rsTemp.Fields(Z).Value, 1) = "M" Then
+                            'Only contains the time
+                            Values = Values & "'1899-12-30 " & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
+                         Else
+                            'Valid date,treat like any other field
+                            Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
+                         End If
+                       
+                      ' Text values and others
+                      Case Else
+                      Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
+                 End Select
+               End If
             Next
           
             Fields = Mid(Fields, 1, Len(Fields) - 2)
