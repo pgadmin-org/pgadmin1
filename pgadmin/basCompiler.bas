@@ -24,7 +24,7 @@ Dim bContinueCompilation As Boolean
 '****
 
 Sub cmp_View_DropIfExists(ByVal szView_name As String)
- 'On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szDropStr As String
   
     ' Test existence of view
@@ -46,7 +46,7 @@ Err_Handler:
 End Sub
 
 Function cmp_View_Exists(ByVal szView_name As String) As Boolean
- 'On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
   
@@ -72,7 +72,7 @@ Err_Handler:
 End Function
 
 Sub cmp_View_Create(ByVal szView_name As String, ByVal szView_definition As String)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szCreateStr As String
 
   szCreateStr = "CREATE VIEW " & szView_name & " AS " & szView_definition
@@ -99,7 +99,7 @@ Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As 
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_ForEach, szTrigger_Executes, szTrigger_Event )
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, "", "", "", szTrigger_type)
 
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szQueryStr As String
 
     ' if trigger_type defined
@@ -145,13 +145,13 @@ Err_Handler:
 End Sub
 
 Sub cmp_Trigger_DropIfExists(ByVal lngTrigger_OID As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String)
- 'On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szDropStr As String
     
     ' Test existence of trigger
     If cmp_Trigger_Exists(lngTrigger_OID, szTrigger_name & "", szTrigger_table & "") Then
         ' Retrieve name and table is we only know the OID
-        If lngTrigger_OID <> 0 Then cmp_Trigger_GetValues lngTrigger_OID, szTrigger_name, szTrigger_table
+        If lngTrigger_OID <> 0 And ((szTrigger_name = "") Or (szTrigger_table = "")) Then cmp_Trigger_GetValues lngTrigger_OID, szTrigger_name, szTrigger_table
         
         ' Create drop query
         szDropStr = "DROP TRIGGER " & QUOTE & szTrigger_name & QUOTE & " ON " & szTrigger_table
@@ -170,7 +170,7 @@ Err_Handler:
 End Sub
 
 Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_Event As String)
- 'On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     Dim iTrigger_type As Integer
@@ -229,7 +229,7 @@ Err_Handler:
 End Sub
 
 Function cmp_Trigger_Exists(ByVal lngTrigger_OID As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String) As Boolean
- 'On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
   
@@ -276,7 +276,7 @@ End Function
 '****
 
 Public Function cmp_Function_Exists(ByVal szFunction_OID As Long, Optional ByVal szFunction_name As String, Optional ByVal szFunction_arguments As String) As Boolean
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
@@ -318,7 +318,7 @@ Err_Handler:
 End Function
 
 Public Sub cmp_Function_DropIfExists(ByVal szFunction_OID As Long, Optional ByVal szFunction_name As String, Optional ByVal szFunction_arguments As String)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szDropStr As String
     
     'Drop function if exists
@@ -343,7 +343,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Function_Create(ByVal szFunction_name As String, ByVal szFunction_argumentlist As String, ByVal szFunction_returns As String, ByVal szFunction_source As String, ByVal szFunction_language As String)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szCreateStr As String
 
   szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
@@ -367,7 +367,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Function_Compile(ByVal lngFunction_OID As Long)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
@@ -406,7 +406,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Function_Dependency_Initialize(ByVal lngFunction_OID As Long, ByVal szFunction_name As String)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szDependencyStr As String
     Dim rsComp As New Recordset
     
@@ -446,7 +446,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Function_Dependency_DropIfExists(ByVal lngFunction_OID As Long)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szDependencyStr As String
     Dim rsComp As New Recordset
     
@@ -474,7 +474,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Function_SetIsCompiled(ByVal szFunction_name As String, ByVal szFunction_arguments As String)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szQueryStr As String
 
     szQueryStr = "UPDATE pgadmin_dev_functions SET function_iscompiled = 't'"
@@ -491,7 +491,7 @@ Err_Handler:
 End Sub
 
 Public Function cmp_Function_HasSatisfiedDependencies(ByVal lngFunction_OID As Long) As Boolean
-    'On Error GoTo Err_Handler
+    On Error GoTo Err_Handler
     
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -522,7 +522,7 @@ Err_Handler:
 End Function
 
 Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String)
- 'On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
@@ -560,7 +560,7 @@ End Sub
 '****
 '****
 Public Sub cmp_Table_DropIfExists(ByVal szTable_name As String)
-    'On Error GoTo Err_Handler
+    On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
@@ -581,7 +581,7 @@ Err_Handler:
 End Sub
 
 Public Function cmp_Table_Exists(ByVal szTable_name As String) As Boolean
-    'On Error GoTo Err_Handler
+    On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
@@ -611,15 +611,60 @@ End Function
 
 Public Sub comp_Project_Initialize()
 'On Error GoTo Err_Handler
-    Dim InitializeStr As String
+    Dim szQuery As String
     Dim rsComp As New Recordset
     
-    Chk_HelperObjects
+    ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
+    ' We first copy pgadmin_functions, pgadmin_triggers, pgadmin_views into them
     
-    ' Fill pgadmin_dev_dependencies table
-    InitializeStr = "SELECT * FROM pgadmin_dev_functions ORDER BY function_OID"
+    szQuery = "TRUNCATE TABLE pgadmin_dev_functions;" & _
+    "  INSERT INTO pgadmin_dev_functions SELECT * " & _
+    "  FROM pgadmin_functions " & _
+    "  WHERE function_name NOT LIKE '%_call_handler' " & _
+    "  AND function_name NOT LIKE 'pgadmin_%' " & _
+    "  AND function_name NOT LIKE 'pg_%' " & _
+    "  AND function_oid > " & LAST_SYSTEM_OID & _
+    "  ORDER BY function_oid ;" & _
+    "  UPDATE pgadmin_dev_functions SET function_iscompiled = 'f';" & _
+    "  UPDATE pgadmin_dev_functions SET function_returns = 'opaque' WHERE function_returns = NULL;"
+    LogMsg "Initializing pgadmin_dev_functions..."
+    LogMsg "Executing: " & szQuery
+    gConnection.Execute szQuery
+    
+    szQuery = "TRUNCATE TABLE pgadmin_dev_triggers;" & _
+    "  INSERT INTO pgadmin_dev_triggers SELECT * " & _
+    "  FROM pgadmin_triggers " & _
+    "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
+    "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
+    "  AND trigger_name NOT LIKE 'pg_%' " & _
+    "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
+    "  ORDER BY trigger_name; " & _
+    "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
+    LogMsg "Initializing pgadmin_dev_triggers..."
+    LogMsg "Executing: " & szQuery
+    gConnection.Execute szQuery
+    
+    szQuery = "TRUNCATE TABLE pgadmin_dev_views;" & _
+    "  INSERT INTO pgadmin_dev_views SELECT * from " & _
+    "  pgadmin_views " & _
+    "  WHERE view_oid > " & LAST_SYSTEM_OID & _
+    "  AND view_name NOT LIKE 'pgadmin_%' " & _
+    "  AND view_name NOT LIKE 'pg_%' " & _
+    "  ORDER BY view_name; " & _
+    "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
+    LogMsg "Initializing pgadmin_dev_views..."
+    LogMsg "Executing: " & szQuery
+    gConnection.Execute szQuery
+    
+    szQuery = "TRUNCATE TABLE pgadmin_dev_dependencies;"
+    LogMsg "Initializing pgadmin_dev_dependencies..."
+    LogMsg "Executing: " & szQuery
+    gConnection.Execute szQuery
+    
+    ' Then, we fill the pgadmin_dev_dependencies table
+    szQuery = "SELECT * FROM pgadmin_dev_functions ORDER BY function_OID"
     If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open InitializeStr, gConnection, adOpenDynamic
+    rsComp.Open szQuery, gConnection, adOpenDynamic
     
     While Not rsComp.EOF
         cmp_Function_Dependency_Initialize rsComp!function_OID, rsComp!Function_name
@@ -632,7 +677,7 @@ Err_Handler:
 End Sub
 
 Public Function comp_Project_FindNextFunctionToCompile() As Long
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
@@ -661,7 +706,7 @@ Err_Handler:
 End Function
 
 Public Sub comp_Project_RelinkTriggers()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim rsTrigger As New Recordset
     Dim szQueryStr As String
     ' Obviously this does not work
@@ -676,7 +721,7 @@ Public Sub comp_Project_RelinkTriggers()
     
     While Not rsTrigger.EOF
         ' Drop trigger if exists and then recreate it
-        cmp_Trigger_DropIfExists rsTrigger!trigger_oid, rsTrigger!trigger_name, rsTrigger!trigger_table
+        cmp_Trigger_DropIfExists rsTrigger!trigger_OID, rsTrigger!trigger_name, rsTrigger!trigger_table
         cmp_Trigger_Create rsTrigger!trigger_name, rsTrigger!trigger_table, rsTrigger!trigger_function & "", rsTrigger!trigger_arguments & "", "", "", "", rsTrigger!trigger_type
         rsTrigger.MoveNext
     Wend
@@ -687,7 +732,7 @@ Err_Handler:
 End Sub
 
 Public Sub comp_Project_RelinkViews()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
     ' Obviously this does not work
@@ -713,7 +758,7 @@ Err_Handler:
 End Sub
 
 Public Sub comp_Project_Compile()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim lngNextFunctionToCompile_OID As Long
     
     bContinueCompilation = True
