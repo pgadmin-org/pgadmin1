@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmSQL 
@@ -7,20 +7,29 @@ Begin VB.Form frmSQL
    ClientHeight    =   3195
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   6555
+   ClientWidth     =   7245
    Icon            =   "frmSQL.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
    ScaleHeight     =   3195
-   ScaleWidth      =   6555
+   ScaleWidth      =   7245
+   Begin VB.CommandButton cmdExplain 
+      Caption         =   "E&xplain"
+      Height          =   330
+      Left            =   2565
+      TabIndex        =   4
+      ToolTipText     =   "Execute the SQL query to the selected output option."
+      Top             =   2835
+      Width           =   810
+   End
    Begin HighlightBox.HBX txtSQL 
       Height          =   2805
       Left            =   0
-      TabIndex        =   5
+      TabIndex        =   0
       ToolTipText     =   "Enter an SQL query or statement to execute."
       Top             =   0
-      Width           =   6540
-      _ExtentX        =   11536
+      Width           =   7215
+      _ExtentX        =   12726
       _ExtentY        =   4948
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
@@ -38,7 +47,7 @@ Begin VB.Form frmSQL
       Caption         =   "&Wizard"
       Height          =   330
       Left            =   1710
-      TabIndex        =   2
+      TabIndex        =   3
       ToolTipText     =   "Run the SQL Wizard."
       Top             =   2835
       Width           =   810
@@ -47,7 +56,7 @@ Begin VB.Form frmSQL
       Caption         =   "&Load"
       Height          =   330
       Left            =   0
-      TabIndex        =   0
+      TabIndex        =   1
       ToolTipText     =   "Load a query."
       Top             =   2835
       Width           =   810
@@ -56,7 +65,7 @@ Begin VB.Form frmSQL
       Caption         =   "&Save"
       Height          =   330
       Left            =   855
-      TabIndex        =   1
+      TabIndex        =   2
       ToolTipText     =   "Save the current query."
       Top             =   2835
       Width           =   795
@@ -64,8 +73,8 @@ Begin VB.Form frmSQL
    Begin VB.CommandButton cmdExecute 
       Caption         =   "&Execute to:"
       Height          =   330
-      Left            =   2565
-      TabIndex        =   3
+      Left            =   3420
+      TabIndex        =   5
       ToolTipText     =   "Execute the SQL query to the selected output option."
       Top             =   2835
       Width           =   1035
@@ -81,12 +90,12 @@ Begin VB.Form frmSQL
    End
    Begin vsAdoSelector.VS_AdoSelector vssExporters 
       Height          =   315
-      Left            =   3645
-      TabIndex        =   4
+      Left            =   4500
+      TabIndex        =   6
       ToolTipText     =   "Select where to execute the query to."
       Top             =   2835
-      Width           =   2895
-      _ExtentX        =   5106
+      Width           =   2715
+      _ExtentX        =   4789
       _ExtentY        =   556
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
@@ -165,6 +174,22 @@ Dim szQuery As String
 Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmSQL, cmdExecute_Click"
+End Sub
+
+Private Sub cmdExplain_Click()
+On Error GoTo Err_Handler
+Dim QueryPlanForm As New frmQueryPlan
+
+  'Check for blank query
+  If txtSQL.Text = "" Then Exit Sub
+
+  Load QueryPlanForm
+  QueryPlanForm.Explain txtSQL.Text
+  QueryPlanForm.Show
+  QueryPlanForm.ZOrder 0
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "frmSQL, cmdExplain_Click"
 End Sub
 
 Private Sub cmdLoad_Click()
@@ -265,13 +290,14 @@ Private Sub Form_Resize()
 On Error GoTo Err_Handler
   If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
-      If Me.Width < 6705 Then Me.Width = 6705
+      If Me.Width < 7365 Then Me.Width = 7365
       If Me.Height < 3600 Then Me.Height = 3600
     End If
     
     txtSQL.Width = Me.ScaleWidth
     txtSQL.Height = Me.ScaleHeight - cmdExecute.Height - 50
     cmdExecute.Top = Me.ScaleHeight - cmdExecute.Height
+    cmdExplain.Top = cmdExecute.Top
     cmdLoad.Top = cmdExecute.Top
     cmdSave.Top = cmdExecute.Top
     cmdSQLWizard.Top = cmdExecute.Top

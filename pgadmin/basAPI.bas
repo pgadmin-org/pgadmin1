@@ -24,12 +24,16 @@ Public Declare Function SQLConfigDataSource Lib "ODBCCP32.DLL" (ByVal hwndParent
 Public Declare Function SQLDataSources Lib "odbc32.dll" (ByVal henv&, ByVal fDirection%, ByVal szDSN$, ByVal cbDSNMax%, pcbDSN%, ByVal szDescription$, ByVal cbDescriptionMax%, pcbDescription%) As Integer
 Public Declare Function SQLAllocConnect Lib "odbc32.dll" (ByVal henv&, phdbc&) As Integer
 Public Declare Function SQLAllocEnv Lib "odbc32.dll" (phenv&) As Integer
+Public Declare Function SQLAllocStmt Lib "odbc32.dll" (ByVal hdbc&, phstmt&) As Integer
 Public Declare Function SQLFreeConnect Lib "odbc32.dll" (ByVal hdbc&) As Integer
 Public Declare Function SQLFreeEnv Lib "odbc32.dll" (ByVal henv&) As Integer
 Public Declare Function SQLDisconnect Lib "odbc32.dll" (ByVal hdbc&) As Integer
 Public Declare Function SQLDriverConnect Lib "odbc32.dll" (ByVal hdbc&, ByVal hWnd As Long, ByVal szCSIn$, ByVal cbCSIn%, ByVal szCSOut$, ByVal cbCSMax%, cbCSOut%, ByVal fDrvrComp%) As Integer
 Public Declare Function SQLGetInfo Lib "odbc32.dll" (ByVal hdbc&, ByVal fInfoType%, ByRef rgbInfoValue As Any, ByVal cbInfoMax%, cbInfoOut%) As Integer
 Public Declare Function SQLGetInfoString Lib "odbc32.dll" Alias "SQLGetInfo" (ByVal hdbc&, ByVal fInfoType%, ByVal rgbInfoValue As String, ByVal cbInfoMax%, cbInfoOut%) As Integer
+Public Declare Function SQLError Lib "odbc32.dll" (ByVal henv&, ByVal hdbc&, ByVal hstmt&, ByVal szSqlState$, pfNativeError&, ByVal szErrorMsg$, ByVal cbErrorMsgMax%, pcbErrorMsg%) As Integer
+Public Declare Function SQLExecDirect Lib "odbc32.dll" (ByVal hstmt&, ByVal szSqlStr$, ByVal cbSqlStr&) As Integer
+
 
 Public Const SW_SHOWNORMAL = 1
 Public Const ODBC_ADD_DSN = 1            ' Add data source

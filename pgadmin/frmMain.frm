@@ -1,14 +1,14 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H80000010&
    Caption         =   "pgAdmin"
-   ClientHeight    =   7380
+   ClientHeight    =   7725
    ClientLeft      =   165
    ClientTop       =   735
-   ClientWidth     =   8775
+   ClientWidth     =   8715
    Icon            =   "frmMain.frx":0000
    LinkTopic       =   "MDIForm1"
    StartUpPosition =   3  'Windows Default
@@ -23,10 +23,19 @@ Begin VB.MDIForm frmMain
       Height          =   1425
       Left            =   0
       ScaleHeight     =   1425
-      ScaleWidth      =   8775
+      ScaleWidth      =   8715
       TabIndex        =   2
-      Top             =   5685
-      Width           =   8775
+      Top             =   6030
+      Width           =   8715
+      Begin VB.CommandButton cmdExplain 
+         Caption         =   "&Explain"
+         Height          =   330
+         Left            =   45
+         TabIndex        =   11
+         ToolTipText     =   "Copy the contents of the SQL pane to the clipboard."
+         Top             =   540
+         Width           =   1095
+      End
       Begin HighlightBox.TBX txtLog 
          Height          =   1275
          Left            =   3780
@@ -63,7 +72,7 @@ Begin VB.MDIForm frmMain
          Left            =   45
          TabIndex        =   3
          ToolTipText     =   "Copy the contents of the SQL pane to the clipboard."
-         Top             =   540
+         Top             =   900
          Width           =   1095
       End
       Begin HighlightBox.HBX txtSQLPane 
@@ -134,9 +143,9 @@ Begin VB.MDIForm frmMain
       Align           =   3  'Align Left
       BorderStyle     =   0  'None
       DragMode        =   1  'Automatic
-      Height          =   5685
+      Height          =   6030
       Left            =   0
-      ScaleHeight     =   5685
+      ScaleHeight     =   6030
       ScaleWidth      =   1200
       TabIndex        =   1
       Top             =   0
@@ -182,16 +191,16 @@ Begin VB.MDIForm frmMain
       Height          =   270
       Left            =   0
       TabIndex        =   0
-      Top             =   7110
-      Width           =   8775
-      _ExtentX        =   15478
+      Top             =   7455
+      Width           =   8715
+      _ExtentX        =   15372
       _ExtentY        =   476
       _Version        =   393216
       BeginProperty Panels {8E3867A5-8586-11D1-B16A-00C0F0283628} 
          NumPanels       =   5
          BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   1
-            Object.Width           =   8678
+            Object.Width           =   8652
             Text            =   "Status"
             TextSave        =   "Status"
             Key             =   "Status"
@@ -779,6 +788,22 @@ On Error GoTo Err_Handler
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, cmdCopy_Click"
 End Sub
 
+Private Sub cmdExplain_Click()
+On Error GoTo Err_Handler
+Dim QueryPlanForm As New frmQueryPlan
+
+  'Check for blank query
+  If txtSQLPane.Text = "" Then Exit Sub
+
+  Load QueryPlanForm
+  QueryPlanForm.Explain txtSQLPane.Text
+  QueryPlanForm.Show
+  QueryPlanForm.ZOrder 0
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "frmMain, cmdExplain_Click"
+End Sub
+
 Private Sub cmdSQL_Click()
 On Error GoTo Err_Handler
   mnuToolsSQL_Click
@@ -965,7 +990,6 @@ On Error GoTo Err_Handler
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, MDIForm_Unload"
 End Sub
-
 
 Private Sub mnuAdvancedCreateAll_Click()
 On Error GoTo Err_Handler
