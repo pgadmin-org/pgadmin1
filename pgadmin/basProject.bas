@@ -36,7 +36,11 @@ On Error GoTo Err_Handler
     
     ' Initialize dependencies
     
-    szQuery = "TRUNCATE TABLE pgadmin_dev_dependencies; UPDATE pgadmin_dev_functions SET function_iscompiled = 'f';"
+    szQuery = "TRUNCATE TABLE pgadmin_dev_dependencies; " & _
+    "UPDATE pgadmin_dev_functions SET function_iscompiled = 'f'; " & _
+    "UPDATE pgadmin_dev_views SET view_iscompiled = 'f'; " & _
+    "UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f'; "
+
     LogMsg "Initializing pgadmin_dev_dependencies..."
     LogMsg "Executing: " & szQuery
     gConnection.Execute szQuery
@@ -164,7 +168,6 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Move_Functions"
 End Sub
 
-
 Public Sub cmp_Project_Move_Triggers(szTrigger_source_table As String, szTrigger_source_clause As String, szTrigger_target_table As String)
 On Error GoTo Err_Handler
     Dim szQuery As String
@@ -210,6 +213,44 @@ Exit Sub
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Move_Triggers"
 End Sub
+
+Public Function cmp_Project_FindNextViewToCompile() As String
+On Error GoTo Err_Handler
+    Dim szQueryStr As String
+    Dim szFunc() As Variant
+    Dim iLoop As Long
+    Dim iUbound As Long
+    Dim rsFunc As New Recordset
+    Dim szView_name As String
+    
+    szQueryStr = "SELECT view_name From pgadmin_dev_Views WHERE view_iscompiled = 'f' ORDER BY view_name"
+    
+    LogMsg "Looking for next view to compile..."
+    LogMsg "Executing: " & szQueryStr
+    
+    If rsFunc.State <> adStateClosed Then rsFunc.Close
+    rsFunc.Open szQueryStr, gConnection, adOpenForwardOnly, adLockReadOnly
+    
+    cmp_Project_FindNextViewToCompile = ""
+    If Not (rsFunc.EOF) Then
+      szFunc = rsFunc.GetRows
+      rsFunc.Close
+      iUbound = UBound(szFunc, 2)
+      For iLoop = 0 To iUbound
+           szView_name = szFunc(0, iLoop)
+           If cmp_View_HasSatisfiedDependencies("pgadmin_dev_Views", "pgadmin_dev_dependencies", szView_name) = True Then
+                cmp_Project_FindNextViewToCompile = szView_name
+                LogMsg "Next vailable View to compile is " & cmp_Project_FindNextViewToCompile & "..."
+                Exit Function
+            End If
+      Next iLoop
+      Erase szFunc
+    End If
+   
+    Exit Function
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_FindNextViewToCompile"
+End Function
 
 Public Sub cmp_Project_Move_Views(szView_source_table As String, szView_source_clause As String, szView_target_table As String)
 On Error GoTo Err_Handler
@@ -257,24 +298,43 @@ End Sub
 
 Public Sub cmp_Project_Compile()
 On Error GoTo Err_Handler
-    Dim szNextFunctionToCompile_name As String
+    Dim szNextObject_name As String
     Dim szFunction_name As String
     Dim szFunction_arguments As String
+    Dim szView_name As String
     
     bContinueRebuilding = True
-    szNextFunctionToCompile_name = cmp_Project_FindNextFunctionToCompile
-    cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
+    szFunction_name = "Go on"
+    szView_name = "Go on"
     
-    While (szFunction_name <> "") And (bContinueRebuilding = True)
-        cmp_Function_Move "pgadmin_dev_functions", "pgadmin_functions", szFunction_name, szFunction_arguments, False
-        szNextFunctionToCompile_name = cmp_Project_FindNextFunctionToCompile
-        cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
+    While ((szFunction_name <> "") Or (szView_name <> "")) And (bContinueRebuilding = True)
+
+    ' Rebuild functions
+    '
+        While (szFunction_name <> "") And (bContinueRebuilding = True)
+            szNextObject_name = cmp_Project_FindNextFunctionToCompile
+            cmp_Function_ParseName szNextObject_name, szFunction_name, szFunction_arguments
+            If szFunction_name <> "" Then
+                cmp_Function_Move "pgadmin_dev_functions", "pgadmin_functions", szFunction_name, szFunction_arguments, False
+            End If
+        Wend
+    
+        ' Rebuild views
+        '
+        While (szView_name <> "") And (bContinueRebuilding = True)
+            szNextObject_name = cmp_Project_FindNextViewToCompile
+            szView_name = szNextObject_name & ""
+            If szView_name <> "" Then
+                cmp_View_Move "pgadmin_dev_Views", "pgadmin_Views", szView_name, False
+            End If
+        Wend
+        
+        szFunction_name = cmp_Project_FindNextFunctionToCompile
+        szView_name = cmp_Project_FindNextViewToCompile
     Wend
-      
-    ' We must always relink triggers and views
-    ' even if function compilation was aborted
-    cmp_Project_Move_Triggers gDevPostgresqlTables & "_triggers", "", "pgadmin_triggers"
-    cmp_Project_Move_Views gDevPostgresqlTables & "_views", "", "pgadmin_views"
+    
+     ' Rebuild triggers
+    If bContinueRebuilding = True Then cmp_Project_Move_Triggers gDevPostgresqlTables & "_triggers", "", "pgadmin_triggers"
     
     If bContinueRebuilding = True Then
         MsgBox ("Rebuilding successfull")

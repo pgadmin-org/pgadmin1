@@ -262,21 +262,6 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basFunction, cmp_View_CopyToDev_New"
 End Sub
 
-Public Sub cmp_View_SetIsCompiled(ByVal szview_dev_table As String, ByVal szView_name As String)
-On Error GoTo Err_Handler
-    Dim szQueryStr As String
-    
-    If szView_name & "" = "" Then Exit Sub
-    
-    szQueryStr = "UPDATE " & szview_dev_table & " SET view_iscompiled = 't'"
-    szQueryStr = szQueryStr & " WHERE view_name = '" & szView_name & "'"
-     
-    LogMsg "Executing: " & szQueryStr
-    gConnection.Execute szQueryStr
-Exit Sub
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_SetIsCompiled"
-End Sub
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Dependencies
@@ -322,8 +307,57 @@ On Error GoTo Err_Handler
     End If
   Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Dependency_Initialize"
+  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_Dependency_Initialize"
 End Sub
+
+Public Sub cmp_View_SetIsCompiled(ByVal szView_dev_table As String, ByVal szView_name As String)
+On Error GoTo Err_Handler
+    Dim szQueryStr As String
+    
+    If szView_name & "" = "" Then Exit Sub
+    
+    szQueryStr = "UPDATE " & szView_dev_table & " SET view_iscompiled = 't'"
+    szQueryStr = szQueryStr & " WHERE view_name = '" & szView_name & "'"
+     
+    LogMsg "Executing: " & szQueryStr
+    gConnection.Execute szQueryStr
+Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_SetIsCompiled"
+End Sub
+
+Public Function cmp_View_HasSatisfiedDependencies(ByVal szView_dev_table As String, ByVal szDependency_table As String, ByVal szView_name As String) As Boolean
+    On Error GoTo Err_Handler
+    
+    Dim szQueryStr As String
+    Dim rsComp As New Recordset
+    
+    ' Test existence of unsatisfied dependencies
+    szQueryStr = "SELECT " & szView_dev_table & ".View_name, " & szView_dev_table & ".View_iscompiled"
+    szQueryStr = szQueryStr & " From " & szView_dev_table
+    szQueryStr = szQueryStr & "    INNER JOIN " & szDependency_table
+    szQueryStr = szQueryStr & "    ON " & szView_dev_table & ".View_name = " & szDependency_table & ".dependency_child_name"
+    szQueryStr = szQueryStr & "    INNER JOIN " & szView_dev_table & " AS " & szView_dev_table & "_1"
+    szQueryStr = szQueryStr & "    ON " & szDependency_table & ".dependency_parent_name =  " & szView_dev_table & "_1.View_name"
+    szQueryStr = szQueryStr & "    WHERE (" & szView_dev_table & ".View_name = '" & szView_name & "') "
+    szQueryStr = szQueryStr & "    AND (" & szDependency_table & ".dependency_child_object = 'view')"
+    szQueryStr = szQueryStr & "    AND (" & szView_dev_table & "_1.View_iscompiled = 'f')"
+    szQueryStr = szQueryStr & ";"
+    
+    LogMsg "Executing: " & szQueryStr
+  
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szQueryStr, gConnection
+    
+    cmp_View_HasSatisfiedDependencies = False
+    If rsComp.EOF Then
+        cmp_View_HasSatisfiedDependencies = True
+    End If
+    
+    Exit Function
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_HasSatisfiedDependencies"
+End Function
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Tree
@@ -484,7 +518,7 @@ Public Sub cmp_view_tree_drop(Tree As TreeToy)
 On Error GoTo Err_Handler
     Dim szview_table As String
     Dim szView_name As String
-    Dim szview_arguments As String
+    Dim szView_arguments As String
     Dim nodX As Node
     Dim bDrop As Boolean
     
@@ -541,7 +575,7 @@ On Error GoTo Err_Handler
   Dim szview_oid As String
   Dim szView_name As String
   Dim szView_definition As String
-  Dim szview_iscompiled As String
+  Dim szview_iscompiled As Boolean
   
   Dim rsView As New Recordset
   
@@ -627,12 +661,16 @@ On Error GoTo Err_Handler
             szview_oid = szView(0, iLoop) & ""
             szView_name = szView(1, iLoop) & ""
             szView_definition = szView(2, iLoop) & ""
-            szview_iscompiled = szView(3, iLoop) & ""
-            
+            If IsNull(szView(3, iLoop)) Then
+                szview_iscompiled = False
+             Else
+                szview_iscompiled = szView(3, iLoop)
+             End If
+             
             Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szView_name, szView_name, 2)
             NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
             
-            If szview_iscompiled = "" Then
+            If szview_iscompiled = False Then
                 NodeX.Image = 3
             Else
                 NodeX.Image = 2

@@ -599,7 +599,7 @@ On Error GoTo Err_Handler
   Dim szFunction_returns As String
   Dim szFunction_source As String
   Dim szFunction_language As String
-  Dim szFunction_iscompiled As String
+  Dim szFunction_iscompiled As Boolean
   
   Dim rsFunc As New Recordset
   
@@ -698,14 +698,18 @@ On Error GoTo Err_Handler
              szFunction_returns = szFunc(3, iLoop) & ""
              szFunction_source = szFunc(4, iLoop) & ""
              szFunction_language = szFunc(5, iLoop) & ""
-             szFunction_iscompiled = szFunc(6, iLoop) & ""
+             If IsNull(szFunc(6, iLoop)) Then
+                szFunction_iscompiled = False
+             Else
+                szFunction_iscompiled = szFunc(6, iLoop)
+             End If
             If szFunction_arguments <> "" Then
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 2)
             Else
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szFunction_name, szFunction_name, 2)
             End If
             NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
-            If szFunction_iscompiled = "" Then
+            If szFunction_iscompiled = False Then
                 NodeX.Image = 3
             Else
                 NodeX.Image = 2

@@ -596,7 +596,7 @@ On Error GoTo Err_Handler
   Dim szTrigger_Event As String
   Dim szTrigger_Comments As String
   
-  Dim szTrigger_iscompiled As String
+  Dim szTrigger_iscompiled As Boolean
   
   Dim rsTrigger As New Recordset
   
@@ -695,14 +695,22 @@ On Error GoTo Err_Handler
             szTrigger_Function = szTrigger(2, iLoop) & ""
             szTrigger_Arguments = szTrigger(3, iLoop) & ""
             szTrigger_type = szTrigger(4, iLoop) & ""
-            szTrigger_iscompiled = szTrigger(5, iLoop) & ""
+            
+            If IsNull(szTrigger(5, iLoop)) Then
+                szTrigger_iscompiled = False
+             Else
+                szTrigger_iscompiled = szTrigger(5, iLoop)
+             End If
+            
             If szTrigger_Table <> "" Then
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szTrigger_Name & " on " & szTrigger_Table, szTrigger_Name & " on " & szTrigger_Table, 2)
              Else
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szTrigger_Name, szTrigger_Name, 2)
             End If
             NodeX.Tag = cmp_Trigger_CreateSQL(szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event)
-            If szTrigger_iscompiled = "" Then
+            
+            
+            If szTrigger_iscompiled = False Then
                 NodeX.Image = 3
             Else
                 NodeX.Image = 2
