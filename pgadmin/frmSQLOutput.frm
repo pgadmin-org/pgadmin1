@@ -759,7 +759,6 @@ Dim ItmX As ListItem
   lvData.ListItems.Clear
   lblInfo.Caption = "Record 0 of 0"
   If Not (rsSQL.EOF And rsSQL.BOF) Then
-    rsSQL.MoveFirst
     While Not rsSQL.EOF
     
       'Add the listitem

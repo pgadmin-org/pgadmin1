@@ -40,7 +40,7 @@ Public Enum ObjectTypes
 End Enum
 
 Public Const SSO_VERSION = 2
-Public Const DEVELOPMENT = False
+Public Const DEVELOPMENT = True
 Public Const QUOTE = """"
 Public Const LAST_SYSTEM_OID = 18655
 Public Const MIN_PGSQL_VERSION = 7
