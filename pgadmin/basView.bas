@@ -626,7 +626,7 @@ On Error GoTo Err_Handler
          ' ---------------------------------------------------------------------
          ' If it is a system view, add it to "S:" System node
          ' ---------------------------------------------------------------------
-            Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szView_name, szView_name, 2)
+            Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szView_name, szView_name, 5)
             iSys_Count = iSys_Count + 1
         Else
          ' ---------------------------------------------------------------------
@@ -634,9 +634,10 @@ On Error GoTo Err_Handler
          ' ---------------------------------------------------------------------
             Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szView_name, szView_name, 4)
             iPro_Count = iPro_Count + 1
+            If DevMode = False Then NodeX.Image = 6
         End If
         NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
-        NodeX.Image = 4
+        
     Next iLoop
   End If
   
@@ -672,11 +673,7 @@ On Error GoTo Err_Handler
             Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szView_name, szView_name, 2)
             NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
             
-            If szview_iscompiled = False Then
-                NodeX.Image = 3
-            Else
-                NodeX.Image = 2
-            End If
+            If DevMode = True And szview_iscompiled = False Then NodeX.Image = 3
         Next iLoop
       End If
       Erase szView

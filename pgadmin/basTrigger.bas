@@ -609,17 +609,8 @@ On Error GoTo Err_Handler
   iPro_Count = 0
   iDev_Count = 0
   iSys_Count = 0
-
-  If DevMode = False Then
-    szPro_Text = "User Triggers"
-  Else
-    szPro_Text = "Production Triggers"
-  End If
-  
-  Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
-  iPro_Index = NodeX.Index
-  NodeX.Expanded = False
-  
+ 
+  ' Developement triggers
   szDev_Text = "Development Triggers"
   If DevMode = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Dev:", szDev_Text, 1)
@@ -627,6 +618,17 @@ On Error GoTo Err_Handler
     NodeX.Expanded = False
   End If
   
+  ' Production triggers
+  If DevMode = False Then
+    szPro_Text = "User Triggers"
+  Else
+    szPro_Text = "Production Triggers"
+  End If
+  Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
+  iPro_Index = NodeX.Index
+  NodeX.Expanded = False
+
+  ' System triggers
   szSys_Text = "System Triggers"
   If bShowSystem = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Sys:", szSys_Text, 1)
@@ -663,9 +665,9 @@ On Error GoTo Err_Handler
          ' If it is a system Trigger, add it to "S:" System node
          ' ---------------------------------------------------------------------
             If szTrigger_Table <> "" Then
-                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szTrigger_Name & " on " & szTrigger_Table, szTrigger_Name & " on " & szTrigger_Table, 2)
+                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szTrigger_Name & " on " & szTrigger_Table, szTrigger_Name & " on " & szTrigger_Table, 5)
             Else
-                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szTrigger_Name, szTrigger_Name, 2)
+                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szTrigger_Name, szTrigger_Name, 5)
             End If
             iSys_Count = iSys_Count + 1
           Else
@@ -678,9 +680,9 @@ On Error GoTo Err_Handler
                 Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szTrigger_Name, szTrigger_Name, 4)
              End If
             iPro_Count = iPro_Count + 1
+            If DevMode = False Then NodeX.Image = 6
           End If
           NodeX.Tag = cmp_Trigger_CreateSQL(szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event)
-          NodeX.Image = 4
     Next iLoop
   End If
   
@@ -722,11 +724,7 @@ On Error GoTo Err_Handler
             End If
             NodeX.Tag = cmp_Trigger_CreateSQL(szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event)
                        
-            If szTrigger_iscompiled = False Then
-                NodeX.Image = 3
-            Else
-                NodeX.Image = 2
-            End If
+            If DevMode = True And szTrigger_iscompiled = False Then NodeX.Image = 3
         Next iLoop
       End If
       Erase szTrigger

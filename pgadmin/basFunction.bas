@@ -636,9 +636,9 @@ On Error GoTo Err_Handler
          ' ---------------------------------------------------------------------
             iSys_Count = iSys_Count + 1
             If szFunction_arguments <> "" Then
-                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 4)
+                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 5)
             Else
-                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name, szFunction_name, 4)
+                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name, szFunction_name, 5)
             End If
         Else
          ' ---------------------------------------------------------------------
@@ -650,9 +650,9 @@ On Error GoTo Err_Handler
             Else
                 Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szFunction_name, szFunction_name, 4)
             End If
+            If DevMode = False Then NodeX.Image = 6
         End If
         NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
-        NodeX.Image = 4
     Next iLoop
     Tree.Nodes.Item(iPro_Index).Text = Tree.Nodes.Item(iPro_Index).Text & " (" & CStr(iPro_Count) & ")"
     If iSys_Count > 0 Then Tree.Nodes.Item(iSys_Index).Text = Tree.Nodes.Item(iSys_Index).Text & " (" & CStr(iSys_Count) & ")"
@@ -690,11 +690,7 @@ On Error GoTo Err_Handler
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szFunction_name, szFunction_name, 2)
             End If
             NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
-            If szFunction_iscompiled = False Then
-                NodeX.Image = 3
-            Else
-                NodeX.Image = 2
-            End If
+            If DevMode = True And szFunction_iscompiled = False Then NodeX.Image = 3
         Next iLoop
       End If
       Erase szFunc

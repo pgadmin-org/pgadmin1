@@ -16,7 +16,7 @@ Begin VB.Form frmTables
       Caption         =   "&Serialize Column"
       Height          =   330
       Left            =   45
-      TabIndex        =   75
+      TabIndex        =   64
       ToolTipText     =   "Convert this column into a (non primary key) serial column."
       Top             =   2205
       Width           =   1380
@@ -79,7 +79,7 @@ Begin VB.Form frmTables
       Caption         =   "Show System:"
       Height          =   705
       Left            =   45
-      TabIndex        =   42
+      TabIndex        =   37
       Top             =   3285
       Width           =   1380
       Begin VB.CheckBox chkFields 
@@ -180,489 +180,11 @@ Begin VB.Form frmTables
       ImageList       =   "ilBrowser"
       Appearance      =   1
    End
-   Begin VB.Frame fraUnique 
-      Caption         =   "Unique Constraint Details"
-      Height          =   3975
-      Left            =   4500
-      TabIndex        =   72
-      Top             =   0
-      Width           =   3660
-      Begin HighlightBox.HBX txtUniqueColumns 
-         Height          =   3300
-         Left            =   90
-         TabIndex        =   34
-         Top             =   585
-         Width           =   3480
-         _ExtentX        =   6138
-         _ExtentY        =   5821
-         BackColor       =   -2147483633
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Columns"
-      End
-      Begin VB.TextBox txtUniqueOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   33
-         Top             =   225
-         Width           =   2400
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Index OID"
-         Height          =   195
-         Index           =   35
-         Left            =   90
-         TabIndex        =   74
-         Top             =   270
-         Width           =   720
-      End
-   End
-   Begin VB.Frame fraPrimary 
-      Caption         =   "Primary Key Details"
-      Height          =   3975
-      Left            =   4500
-      TabIndex        =   71
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtPrimaryOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   35
-         Top             =   225
-         Width           =   2400
-      End
-      Begin HighlightBox.HBX txtPrimaryColumns 
-         Height          =   3300
-         Left            =   90
-         TabIndex        =   76
-         Top             =   585
-         Width           =   3480
-         _ExtentX        =   6138
-         _ExtentY        =   5821
-         BackColor       =   -2147483633
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Columns"
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Index OID"
-         Height          =   195
-         Index           =   33
-         Left            =   90
-         TabIndex        =   73
-         Top             =   270
-         Width           =   720
-      End
-   End
-   Begin VB.Frame fraForeign 
-      Caption         =   "Foreign Key Details"
-      Height          =   3975
-      Left            =   4500
-      TabIndex        =   68
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtForeignTable 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   37
-         Top             =   540
-         Width           =   2400
-      End
-      Begin VB.TextBox txtForeignOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   36
-         Top             =   225
-         Width           =   2400
-      End
-      Begin HighlightBox.HBX txtLocalColumns 
-         Height          =   1500
-         Left            =   90
-         TabIndex        =   38
-         Top             =   855
-         Width           =   3480
-         _ExtentX        =   6138
-         _ExtentY        =   2646
-         BackColor       =   -2147483633
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Local Columns"
-      End
-      Begin HighlightBox.HBX txtForeignColumns 
-         Height          =   1455
-         Left            =   90
-         TabIndex        =   39
-         Top             =   2430
-         Width           =   3480
-         _ExtentX        =   6138
-         _ExtentY        =   2566
-         BackColor       =   -2147483633
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Foreign Columns"
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Foreign Table"
-         Height          =   195
-         Index           =   27
-         Left            =   90
-         TabIndex        =   70
-         Top             =   585
-         Width           =   975
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Trigger OID"
-         Height          =   195
-         Index           =   25
-         Left            =   90
-         TabIndex        =   69
-         Top             =   270
-         Width           =   825
-      End
-   End
-   Begin VB.Frame fraCheck 
-      Caption         =   "Check Details"
-      Height          =   3975
-      Left            =   4500
-      TabIndex        =   66
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtCheckOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   40
-         Top             =   225
-         Width           =   2400
-      End
-      Begin HighlightBox.HBX txtCheckDefinition 
-         Height          =   3300
-         Left            =   90
-         TabIndex        =   41
-         Top             =   585
-         Width           =   3480
-         _ExtentX        =   6138
-         _ExtentY        =   5821
-         BackColor       =   -2147483633
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Definition"
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Check OID"
-         Height          =   195
-         Index           =   28
-         Left            =   90
-         TabIndex        =   67
-         Top             =   270
-         Width           =   795
-      End
-   End
-   Begin VB.Frame fraColumn 
-      Caption         =   "Column Details"
-      Height          =   3975
-      Left            =   4500
-      TabIndex        =   43
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtNotNull 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   30
-         Top             =   1485
-         Width           =   2400
-      End
-      Begin VB.TextBox txtDefault 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   31
-         Top             =   1800
-         Width           =   2400
-      End
-      Begin VB.TextBox txtLength 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   28
-         Top             =   855
-         Width           =   2400
-      End
-      Begin VB.TextBox txtNumber 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   27
-         Top             =   540
-         Width           =   2400
-      End
-      Begin VB.TextBox txtColOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   26
-         Top             =   225
-         Width           =   2400
-      End
-      Begin VB.TextBox txtType 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   29
-         Top             =   1170
-         Width           =   2400
-      End
-      Begin HighlightBox.HBX txtColComments 
-         Height          =   1725
-         Left            =   90
-         TabIndex        =   32
-         Top             =   2160
-         Width           =   3480
-         _ExtentX        =   6138
-         _ExtentY        =   3043
-         BackColor       =   -2147483633
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Locked          =   -1  'True
-         Caption         =   "Comments"
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Default"
-         Height          =   195
-         Index           =   1
-         Left            =   90
-         TabIndex        =   49
-         Top             =   1845
-         Width           =   510
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Not Null"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   48
-         Top             =   1530
-         Width           =   570
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Type"
-         Height          =   195
-         Index           =   18
-         Left            =   90
-         TabIndex        =   47
-         Top             =   1215
-         Width           =   360
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Length"
-         Height          =   195
-         Index           =   19
-         Left            =   90
-         TabIndex        =   46
-         Top             =   900
-         Width           =   495
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Number"
-         Height          =   195
-         Index           =   20
-         Left            =   90
-         TabIndex        =   45
-         Top             =   585
-         Width           =   555
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   21
-         Left            =   90
-         TabIndex        =   44
-         Top             =   270
-         Width           =   285
-      End
-   End
-   Begin VB.Frame fraDatasource 
-      Caption         =   "Datasource Details"
-      Height          =   3975
-      Left            =   4500
-      TabIndex        =   55
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtCompiler 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   15
-         Top             =   1485
-         Width           =   2400
-      End
-      Begin VB.TextBox txtPlatform 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   14
-         Top             =   1170
-         Width           =   2400
-      End
-      Begin VB.TextBox txtdbVer 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   13
-         Top             =   855
-         Width           =   2400
-      End
-      Begin VB.TextBox txtUsername 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   11
-         Top             =   225
-         Width           =   2400
-      End
-      Begin VB.TextBox txtTimeOut 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1170
-         Locked          =   -1  'True
-         TabIndex        =   12
-         Top             =   540
-         Width           =   2400
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Compiler"
-         Height          =   195
-         Index           =   23
-         Left            =   90
-         TabIndex        =   60
-         Top             =   1530
-         Width           =   600
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Platform"
-         Height          =   195
-         Index           =   22
-         Left            =   90
-         TabIndex        =   59
-         Top             =   1215
-         Width           =   570
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "DBMS"
-         Height          =   195
-         Index           =   17
-         Left            =   90
-         TabIndex        =   58
-         Top             =   900
-         Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Username"
-         Height          =   195
-         Index           =   15
-         Left            =   90
-         TabIndex        =   57
-         Top             =   270
-         Width           =   720
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Timeout"
-         Height          =   195
-         Index           =   14
-         Left            =   90
-         TabIndex        =   56
-         Top             =   585
-         Width           =   570
-      End
-   End
    Begin VB.Frame fraTable 
       Caption         =   "Table Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   50
+      TabIndex        =   45
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtPrimaryKey 
@@ -670,7 +192,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   24
+         TabIndex        =   19
          Top             =   2745
          Width           =   2400
       End
@@ -679,7 +201,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   20
+         TabIndex        =   15
          Top             =   1485
          Width           =   2400
       End
@@ -688,7 +210,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   21
+         TabIndex        =   16
          Top             =   1800
          Width           =   2400
       End
@@ -697,7 +219,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   22
+         TabIndex        =   17
          Top             =   2115
          Width           =   2400
       End
@@ -706,7 +228,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   23
+         TabIndex        =   18
          Top             =   2430
          Width           =   2400
       End
@@ -715,7 +237,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   18
+         TabIndex        =   13
          Top             =   855
          Width           =   2400
       End
@@ -724,7 +246,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   19
+         TabIndex        =   14
          Top             =   1170
          Width           =   2400
       End
@@ -733,7 +255,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   16
+         TabIndex        =   11
          Top             =   225
          Width           =   2400
       End
@@ -742,14 +264,14 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   17
+         TabIndex        =   12
          Top             =   540
          Width           =   2400
       End
       Begin HighlightBox.HBX txtComments 
          Height          =   825
          Left            =   90
-         TabIndex        =   25
+         TabIndex        =   20
          Top             =   3060
          Width           =   3480
          _ExtentX        =   6138
@@ -773,7 +295,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   65
+         TabIndex        =   54
          Top             =   2790
          Width           =   915
       End
@@ -783,7 +305,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   10
          Left            =   90
-         TabIndex        =   64
+         TabIndex        =   53
          Top             =   2160
          Width           =   600
       End
@@ -793,7 +315,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   9
          Left            =   90
-         TabIndex        =   63
+         TabIndex        =   52
          Top             =   1845
          Width           =   495
       End
@@ -803,7 +325,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   62
+         TabIndex        =   51
          Top             =   1530
          Width           =   645
       End
@@ -813,7 +335,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   16
          Left            =   90
-         TabIndex        =   61
+         TabIndex        =   50
          Top             =   2475
          Width           =   660
       End
@@ -823,7 +345,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   54
+         TabIndex        =   49
          Top             =   900
          Width           =   300
       End
@@ -833,7 +355,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   53
+         TabIndex        =   48
          Top             =   270
          Width           =   285
       End
@@ -843,7 +365,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   52
+         TabIndex        =   47
          Top             =   585
          Width           =   465
       End
@@ -853,9 +375,384 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   7
          Left            =   90
-         TabIndex        =   51
+         TabIndex        =   46
          Top             =   1215
          Width           =   405
+      End
+   End
+   Begin VB.Frame fraUnique 
+      Caption         =   "Unique Constraint Details"
+      Height          =   3975
+      Left            =   4500
+      TabIndex        =   61
+      Top             =   0
+      Width           =   3660
+      Begin HighlightBox.HBX txtUniqueColumns 
+         Height          =   3300
+         Left            =   90
+         TabIndex        =   29
+         Top             =   585
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   5821
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Columns"
+      End
+      Begin VB.TextBox txtUniqueOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   28
+         Top             =   225
+         Width           =   2400
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Index OID"
+         Height          =   195
+         Index           =   35
+         Left            =   90
+         TabIndex        =   63
+         Top             =   270
+         Width           =   720
+      End
+   End
+   Begin VB.Frame fraPrimary 
+      Caption         =   "Primary Key Details"
+      Height          =   3975
+      Left            =   4500
+      TabIndex        =   60
+      Top             =   0
+      Width           =   3660
+      Begin VB.TextBox txtPrimaryOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   30
+         Top             =   225
+         Width           =   2400
+      End
+      Begin HighlightBox.HBX txtPrimaryColumns 
+         Height          =   3300
+         Left            =   90
+         TabIndex        =   65
+         Top             =   585
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   5821
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Columns"
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Index OID"
+         Height          =   195
+         Index           =   33
+         Left            =   90
+         TabIndex        =   62
+         Top             =   270
+         Width           =   720
+      End
+   End
+   Begin VB.Frame fraForeign 
+      Caption         =   "Foreign Key Details"
+      Height          =   3975
+      Left            =   4500
+      TabIndex        =   57
+      Top             =   0
+      Width           =   3660
+      Begin VB.TextBox txtForeignTable 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   32
+         Top             =   540
+         Width           =   2400
+      End
+      Begin VB.TextBox txtForeignOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   31
+         Top             =   225
+         Width           =   2400
+      End
+      Begin HighlightBox.HBX txtLocalColumns 
+         Height          =   1500
+         Left            =   90
+         TabIndex        =   33
+         Top             =   855
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   2646
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Local Columns"
+      End
+      Begin HighlightBox.HBX txtForeignColumns 
+         Height          =   1455
+         Left            =   90
+         TabIndex        =   34
+         Top             =   2430
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   2566
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Foreign Columns"
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Foreign Table"
+         Height          =   195
+         Index           =   27
+         Left            =   90
+         TabIndex        =   59
+         Top             =   585
+         Width           =   975
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Trigger OID"
+         Height          =   195
+         Index           =   25
+         Left            =   90
+         TabIndex        =   58
+         Top             =   270
+         Width           =   825
+      End
+   End
+   Begin VB.Frame fraCheck 
+      Caption         =   "Check Details"
+      Height          =   3975
+      Left            =   4500
+      TabIndex        =   55
+      Top             =   0
+      Width           =   3660
+      Begin VB.TextBox txtCheckOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   35
+         Top             =   225
+         Width           =   2400
+      End
+      Begin HighlightBox.HBX txtCheckDefinition 
+         Height          =   3300
+         Left            =   90
+         TabIndex        =   36
+         Top             =   585
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   5821
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Definition"
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Check OID"
+         Height          =   195
+         Index           =   28
+         Left            =   90
+         TabIndex        =   56
+         Top             =   270
+         Width           =   795
+      End
+   End
+   Begin VB.Frame fraColumn 
+      Caption         =   "Column Details"
+      Height          =   3975
+      Left            =   4500
+      TabIndex        =   38
+      Top             =   0
+      Width           =   3660
+      Begin VB.TextBox txtNotNull 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   25
+         Top             =   1485
+         Width           =   2400
+      End
+      Begin VB.TextBox txtDefault 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   26
+         Top             =   1800
+         Width           =   2400
+      End
+      Begin VB.TextBox txtLength 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   23
+         Top             =   855
+         Width           =   2400
+      End
+      Begin VB.TextBox txtNumber 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   22
+         Top             =   540
+         Width           =   2400
+      End
+      Begin VB.TextBox txtColOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   21
+         Top             =   225
+         Width           =   2400
+      End
+      Begin VB.TextBox txtType 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   1170
+         Locked          =   -1  'True
+         TabIndex        =   24
+         Top             =   1170
+         Width           =   2400
+      End
+      Begin HighlightBox.HBX txtColComments 
+         Height          =   1725
+         Left            =   90
+         TabIndex        =   27
+         Top             =   2160
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   3043
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Default"
+         Height          =   195
+         Index           =   1
+         Left            =   90
+         TabIndex        =   44
+         Top             =   1845
+         Width           =   510
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Not Null"
+         Height          =   195
+         Index           =   0
+         Left            =   90
+         TabIndex        =   43
+         Top             =   1530
+         Width           =   570
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Type"
+         Height          =   195
+         Index           =   18
+         Left            =   90
+         TabIndex        =   42
+         Top             =   1215
+         Width           =   360
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Length"
+         Height          =   195
+         Index           =   19
+         Left            =   90
+         TabIndex        =   41
+         Top             =   900
+         Width           =   495
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Number"
+         Height          =   195
+         Index           =   20
+         Left            =   90
+         TabIndex        =   40
+         Top             =   585
+         Width           =   555
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "OID"
+         Height          =   195
+         Index           =   21
+         Left            =   90
+         TabIndex        =   39
+         Top             =   270
+         Width           =   285
       End
    End
 End
@@ -1090,18 +987,8 @@ Dim szGetRows As Variant
 Dim lngTable_oid As Long
 Dim szTable_name As String
 Dim szQuery As String
-
-  fraTable.Visible = False
-  fraColumn.Visible = False
-  fraDatasource.Visible = False
-  fraCheck.Visible = False
-  fraForeign.Visible = False
-  fraPrimary.Visible = False
-  fraUnique.Visible = False
-  
+ 
   Me.Refresh
-  txtUsername.Text = Username
-  txtTimeOut.Text = gConnection.ConnectionTimeout
   
   StartMsg "Retrieving Table Definitions..."
   If rsFields.State <> adStateClosed Then rsFields.Close
@@ -1136,14 +1023,7 @@ Dim szQuery As String
       
   trvBrowser.Nodes(1).Expanded = True
   trvBrowser.Nodes(1).Selected = True
-  LogMsg "Executing: SELECT version()"
-  rsDesc.Open "SELECT version()", gConnection, adOpenForwardOnly
-  txtdbVer.Text = Mid(rsDesc!Version, 1, InStr(1, rsDesc!Version, " on ") - 1)
-  txtPlatform.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, " on") + 4, InStr(1, rsDesc!Version, ", compiled by ") - InStr(1, rsDesc!Version, " on") - 4)
-  txtCompiler.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, ", compiled by ") + 14, Len(rsDesc!Version))
-  fraDatasource.Visible = True
-  Set rsDesc = Nothing
-  
+
   ' Retrieve table content
   ' This can be done because optimize with GetRows
   If trvBrowser.Nodes.Count > 1 Then
@@ -1278,29 +1158,29 @@ On Error GoTo Err_Handler
       If frmTables.Width < 8325 Then frmTables.Width = 8325
       If frmTables.Height < 4455 Then frmTables.Height = 4455
     End If
-    
+ 
     trvBrowser.Height = frmTables.ScaleHeight
-    trvBrowser.Width = frmTables.ScaleWidth - trvBrowser.Left - fraDatasource.Width - 25
-    fraDatasource.Left = trvBrowser.Left + trvBrowser.Width + 25
-    fraDatasource.Height = Me.ScaleHeight
-    txtComments.Height = fraDatasource.Height - txtComments.Top - 100
-    txtColComments.Height = fraDatasource.Height - txtColComments.Top - 100
-    txtCheckDefinition.Height = fraDatasource.Height - txtCheckDefinition.Top - 100
-    txtForeignColumns.Height = fraDatasource.Height - txtForeignColumns.Top - 100
-    txtPrimaryColumns.Height = fraDatasource.Height - txtPrimaryColumns.Top - 100
-    txtUniqueColumns.Height = fraDatasource.Height - txtUniqueColumns.Top - 100
-    fraTable.Left = fraDatasource.Left
-    fraTable.Height = fraDatasource.Height
-    fraColumn.Left = fraDatasource.Left
-    fraColumn.Height = fraDatasource.Height
-    fraCheck.Left = fraDatasource.Left
-    fraCheck.Height = fraDatasource.Height
-    fraForeign.Left = fraDatasource.Left
-    fraForeign.Height = fraDatasource.Height
-    fraPrimary.Left = fraDatasource.Left
-    fraPrimary.Height = fraDatasource.Height
-    fraUnique.Left = fraDatasource.Left
-    fraUnique.Height = fraDatasource.Height
+    trvBrowser.Width = frmTables.ScaleWidth - trvBrowser.Left - fraTable.Width - 25
+    
+    fraTable.Left = trvBrowser.Left + trvBrowser.Width + 25
+    fraTable.Height = Me.ScaleHeight
+    
+    txtComments.Height = fraTable.Height - txtComments.Top - 100
+    txtColComments.Height = fraTable.Height - txtColComments.Top - 100
+    txtCheckDefinition.Height = fraTable.Height - txtCheckDefinition.Top - 100
+    txtForeignColumns.Height = fraTable.Height - txtForeignColumns.Top - 100
+    txtPrimaryColumns.Height = fraTable.Height - txtPrimaryColumns.Top - 100
+    txtUniqueColumns.Height = fraTable.Height - txtUniqueColumns.Top - 100
+    fraColumn.Left = fraTable.Left
+    fraColumn.Height = fraTable.Height
+    fraCheck.Left = fraTable.Left
+    fraCheck.Height = fraTable.Height
+    fraForeign.Left = fraTable.Left
+    fraForeign.Height = fraTable.Height
+    fraPrimary.Left = fraTable.Left
+    fraPrimary.Height = fraTable.Height
+    fraUnique.Left = fraTable.Left
+    fraUnique.Height = fraTable.Height
 
   End If
   Exit Sub
@@ -1332,13 +1212,12 @@ Dim szGetRows() As Variant
   Select Case Mid(Node.Key, 1, 1)
   Case "T"
     StartMsg "Retrieving Table Info..."
-    fraDatasource.Visible = False
     fraColumn.Visible = False
     fraCheck.Visible = False
     fraForeign.Visible = False
     fraPrimary.Visible = False
     fraUnique.Visible = False
-    
+
     ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ' Tables
     ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1592,7 +1471,6 @@ Dim szGetRows() As Variant
   
   Case "F"
     StartMsg "Retrieving Attribute Definition..."
-    fraDatasource.Visible = False
     fraTable.Visible = False
     fraCheck.Visible = False
     fraForeign.Visible = False
@@ -1640,7 +1518,6 @@ Dim szGetRows() As Variant
   Case "C" 'Check
 
     StartMsg "Retrieving Check Definition..."
-    fraDatasource.Visible = False
     fraTable.Visible = False
     fraColumn.Visible = False
     fraForeign.Visible = False
@@ -1668,7 +1545,6 @@ Dim szGetRows() As Variant
   Case "O" 'Foreign Key
   
     StartMsg "Retrieving Foreign Key Definition..."
-    fraDatasource.Visible = False
     fraTable.Visible = False
     fraColumn.Visible = False
     fraCheck.Visible = False
@@ -1705,7 +1581,6 @@ Dim szGetRows() As Variant
   Case "P" 'Primary Key
 
     StartMsg "Retrieving Primary Key Definition..."
-    fraDatasource.Visible = False
     fraTable.Visible = False
     fraColumn.Visible = False
     fraCheck.Visible = False
@@ -1733,7 +1608,6 @@ Dim szGetRows() As Variant
   Case "U" 'Unique Constraint
 
     StartMsg "Retrieving Unique Constraint Definitions..."
-    fraDatasource.Visible = False
     fraTable.Visible = False
     fraColumn.Visible = False
     fraCheck.Visible = False
@@ -1766,15 +1640,6 @@ Dim szGetRows() As Variant
     fraForeign.Visible = False
     fraPrimary.Visible = False
     fraUnique.Visible = False
-    txtUsername.Text = Username
-    txtTimeOut.Text = gConnection.CommandTimeout
-    fraDatasource.Visible = True
-    LogMsg "Executing: SELECT version()"
-    rsTemp.Open "SELECT version()", gConnection, adOpenForwardOnly
-    txtdbVer.Text = Mid(rsTemp!Version, 1, InStr(1, rsTemp!Version, " on ") - 1)
-    txtPlatform.Text = Mid(rsTemp!Version, InStr(1, rsTemp!Version, " on") + 4, InStr(1, rsTemp!Version, ", compiled by ") - InStr(1, rsTemp!Version, " on") - 4)
-    txtCompiler.Text = Mid(rsTemp!Version, InStr(1, rsTemp!Version, ", compiled by ") + 14, Len(rsTemp!Version))
-  
   End Select
   
   'This stuff can always be done.
