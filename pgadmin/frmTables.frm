@@ -800,6 +800,7 @@ Dim sFieldName As String
 Dim sSQL As String
 Dim rsNextVal As New Recordset
 Dim lNextVal As Long
+Dim szSequenceName As String
 
   ' exit for any crap reasons
   If Left(trvBrowser.SelectedItem.Key, 1) <> "F" Then
@@ -820,17 +821,16 @@ Dim lNextVal As Long
     MsgBox "Only intX, floatX and numeric columns can be serialized!", vbExclamation, "Error"
     Exit Sub
   End If
-  If txtDefault.Text <> "" Then
-    MsgBox "You cannot serialize a column which has a default value!", vbExclamation, "Error"
-    Exit Sub
-  End If
   
   'DJP - Confirm action.
   If MsgBox("Are you sure you wish to serialize " & trvBrowser.SelectedItem.Text & "?", vbYesNo + vbQuestion, "Confirm Serialize Column") = vbNo Then Exit Sub
   
   sFieldName = trvBrowser.SelectedItem.Text
   sTableName = trvBrowser.SelectedItem.Parent.Text
-
+  
+  szSequenceName = InputBox("Enter sequence name:", "Sequence name", sTableName & "_" & sFieldName & "_seq")
+  If szSequenceName = "" Then Exit Sub
+  
   StartMsg "Creating Sequence..."
 
   sSQL = "SELECT MAX(" & QUOTE & sFieldName & QUOTE & ") FROM " & QUOTE & sTableName & QUOTE
@@ -843,11 +843,17 @@ Dim lNextVal As Long
   End If
   If rsNextVal.State <> adStateClosed Then rsNextVal.Close
   Set rsNextVal = Nothing
-  sSQL = "CREATE SEQUENCE " & QUOTE & sTableName & "_" & sFieldName & "_seq" & QUOTE
+  
+  On Error Resume Next
+  sSQL = "DROP SEQUENCE " & QUOTE & szSequenceName & QUOTE
+  gConnection.Execute sSQL, , adCmdText
+  On Error GoTo Err_Handler
+  
+  sSQL = "CREATE SEQUENCE " & QUOTE & szSequenceName & QUOTE
   LogMsg "Executing: " & sSQL
   gConnection.Execute sSQL, , adCmdText
   LogQuery sSQL
-  sSQL = "SELECT setval('" & sTableName & "_" & sFieldName & "_seq', " & lNextVal & ");" & vbCrLf
+  sSQL = "SELECT setval('" & szSequenceName & "', " & lNextVal & ");" & vbCrLf
  
   ' MsgBox sSQL
   LogMsg "Executing: " & sSQL
@@ -855,7 +861,7 @@ Dim lNextVal As Long
   LogQuery sSQL
   sSQL = "ALTER TABLE " & QUOTE & sTableName & QUOTE
   sSQL = sSQL & " ALTER COLUMN " & QUOTE & sFieldName & QUOTE
-  sSQL = sSQL & " SET DEFAULT nextval('" & sTableName & "_" & sFieldName & "_seq');"
+  sSQL = sSQL & " SET DEFAULT nextval('" & szSequenceName & "');"
   LogMsg "Executing: " & sSQL
   gConnection.Execute sSQL, , adCmdText
   LogQuery sSQL
