@@ -271,7 +271,7 @@ On Error GoTo Err_Handler
     Dim szTriggerExecutes As String
     Dim szTriggerEvent As String
     
-    Form_txtSave False, szTriggerName & "", szTriggerTable & "", szTriggerFunction & "", szTriggerArguments & "", szTriggerForeach & "", szTriggerExecutes & "", szTriggerEvent & ""
+    Form_txtSave False, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent
     fMainForm.txtSQLPane.Text = cmp_Trigger_CreateSQL(szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent)
 
     Exit Sub
@@ -426,10 +426,10 @@ Err_Handler:
 End Sub
 
 Private Function Form_txtSave(bWarn As Boolean, szTriggerName As String, szTriggerTable As String, szTriggerFunction As String, szTriggerArguments As String, szTriggerForeach As String, szTriggerExecutes As String, szTriggerEvent As String) As Boolean
-    On Error GoTo Err_Handler
-    Dim iLoop As Integer
-    iLoop = 0
-    Form_txtSave = False
+On Error GoTo Err_Handler
+      Dim iLoop As Integer
+      iLoop = 0
+      Form_txtSave = False
     
       'Trigger Name
       If bWarn And txtName.Text = "" Then
