@@ -249,7 +249,7 @@ Dim TipImage As StdPicture
                         End If
                     End If
                     
-                    frmToolTip.ShowToolTip TipText, TipImage
+                    If TipText <> "" Then frmToolTip.ShowToolTip TipText, TipImage
                 Else
                     Unload frmToolTip
                 End If
@@ -275,6 +275,8 @@ Dim TipImage As StdPicture
                                 TipText = nodX.Key
                         End Select
                         
+                        If TipText = "" Then Exit Sub
+                        
                         If ShowIconsInScrollTips Then
                             If Not IsEmpty(nodX.Image) Then
                                 Set TipImage = mTree.ImageList.ListImages(nodX.Image).ExtractIcon
@@ -288,7 +290,7 @@ Dim TipImage As StdPicture
                             frmToolTip.SetText TipText
                             
                         Else
-                            frmToolTip.ShowToolTip TipText, TipImage
+                            If TipText <> "" Then frmToolTip.ShowToolTip TipText, TipImage
                             bVisible = True
                         End If
                     End If

@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{08E1427B-087B-4D9B-B883-6C4E0DF90DEA}#9.0#0"; "TreeToys.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmMain 
    Caption         =   "TreeToys Demo"
    ClientHeight    =   7920
@@ -13,13 +13,12 @@ Begin VB.Form frmMain
    StartUpPosition =   2  'CenterScreen
    Begin TreeToys.TreeToy TreeToy1 
       Height          =   7845
-      Left            =   2835
+      Left            =   2790
       TabIndex        =   15
       Top             =   45
-      Width           =   7215
-      _ExtentX        =   12726
+      Width           =   7260
+      _ExtentX        =   12806
       _ExtentY        =   13838
-      Checkboxes      =   -1  'True
       Indentation     =   566.929
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
