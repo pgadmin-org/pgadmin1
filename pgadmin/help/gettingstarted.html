@@ -1,0 +1,56 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<title>pgAdmin Getting Started Guide</title>
+</head>
+
+<body>
+
+<h1>pgAdmin Getting Started Guide</h1>
+
+<p>Contributed by: francl with updates from Jean-Michel Poure &amp; Dave Page</p>
+<p>I spent a lot of time trying to setup pgAdmin to run under Windows and
+thought this might help some newbies like me. Anyway here is what I did !</p>
+<ol>
+  <li>IMPORTANT: Backup your system in case something goes wrong.</li>
+  <li>If you are running on Windows 95</li>
+  <li>Install the MDAC 2.6 RTM (not the Software development kit).
+    http://www.microsoft.com/data/download_260rtm.htm</li>
+  <li>Get the PostgreSQL ODBC driver: <a href="ftp://ftp.greatbridge.org/pub/pgadmin/stable/psqlodbc-07_01_0003.zip">ftp://ftp.greatbridge.org/pub/pgadmin/stable/psqlodbc-07_01_0003.zip</a>.
+    Copy the contents of the archive (ie. psqlodbc.dll) to you Windows System
+    directory.</li>
+  <li>Get the PostgreSQL ODBC driver registry settings: <a href="ftp://ftp.greatbridge.org/pub/pgadmin/stable/psqlodbc-07_01_0003.zip">ftp://ftp.greatbridge.org/pub/pgadmin/stable/psqlodbc-registry.zip</a>.
+    Unzip the enclosed Regedit file and import it to the registry by double
+    clicking it.</li>
+  <li>Download and install the &quot;Windows Installer&quot; file &quot;InstMsi.exe&quot;
+    ver1.1 from microsoft. This will be used to install the &quot;pgAdmin&quot;
+    software after you have unzipped it: <a href="http://www.microsoft.com/downloads/search.asp">http://www.microsoft.com/downloads/search.asp</a>&nbsp;
+  </li>
+  <li>Unzip the latest &quot;pgAdmin&quot; software and you will get a file
+    &quot;pgAdmin.msi&quot;. You should be able to double click this to install
+    it.</li>
+  <li>Make sure you have the postmaster running on your PostgreSQL server in
+    order to connect. Either ensure that the postmaster process was started with
+    the -i option, or, new PostgreSQL's have a data/postgresql.conf file. Open
+    the file in you preferred editor and uncomment #tcpip_socket=false and write
+    tcpip_socket=true. You will need to restart PostgreSQL for this change to
+    take effect.</li>
+  <li>You may have to add a line to your &quot;data/pg_hba.conf&quot; file on
+    your server to allow your windows PC to connect to the PostgreSQL Database.
+    See below for sample line I added. Just replace 192.168.1.1 with your windows PC's IP
+    address. You can allow access from a group of hosts or subnet by adjusting
+    the subnet mask as appropriate.<br>
+  </li>
+<blockquote>host 192.168.1.1 255.255.255.255 password</blockquote>
+  <li>Once all this is down you can start pgAdmin and add a new datasource from
+    the Login Prompt, or use the ODBC data source administrator in the Control Panel.</li>
+  <li>Once you are running pgAdmin, go into Utilities and try to run
+&quot;psql&quot;. If it doesn't run, make sure the full path name to the &quot;psql.exe&quot; is
+specified (should be something like &quot;C:\Program Files\pgAdmin\psql.exe&quot;)</li>
+</ol>
+
+</body>
+
+</html>
