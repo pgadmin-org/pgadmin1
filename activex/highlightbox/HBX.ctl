@@ -18,7 +18,6 @@ Begin VB.UserControl HBX
       _ExtentX        =   5054
       _ExtentY        =   661
       _Version        =   393217
-      Enabled         =   -1  'True
       ScrollBars      =   3
       AutoVerbMenu    =   -1  'True
       TextRTF         =   $"HBX.ctx":0113
@@ -638,5 +637,6 @@ End Property
 Public Property Let Wordlist(ByVal New_Wordlist As String)
   m_Wordlist = New_Wordlist
   PropertyChanged "Wordlist"
+  BuildCache
 End Property
 
