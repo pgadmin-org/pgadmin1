@@ -180,10 +180,11 @@ Dim bCreated As Boolean
   End If
   frmODBCLogon.GetDSNsAndDrivers
   bCreated = False
-  For X = 1 To frmODBCLogon.cboDSNList.ListCount
+  For X = 0 To frmODBCLogon.cboDSNList.ListCount - 1
     If frmODBCLogon.cboDSNList.List(X) = txtName.Text Then
       frmODBCLogon.cboDSNList.ListIndex = X
       bCreated = True
+      Exit For
     End If
   Next
   If bCreated = False Then
