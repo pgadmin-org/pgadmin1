@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportAdd 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Add Report"
@@ -35,8 +35,7 @@ Begin VB.Form frmReportAdd
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "SQL"
-      Text            =   ""
-      BorderStyle     =   1
+      AutoColour      =   -1  'True
    End
    Begin VB.TextBox txtAuthor 
       Height          =   285
@@ -142,8 +141,7 @@ Begin VB.Form frmReportAdd
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "Description"
-      Text            =   ""
-      BorderStyle     =   1
+      AutoColour      =   -1  'True
    End
    Begin VB.Label Label1 
       AutoSize        =   -1  'True

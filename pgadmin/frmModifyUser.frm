@@ -26,7 +26,7 @@ Begin VB.Form frmModifyUser
       ForeColor       =   -2147483630
       BackColor       =   -2147483633
       Appearance      =   1
-      StartOfWeek     =   22675458
+      StartOfWeek     =   22806530
       CurrentDate     =   36587
    End
    Begin VB.CommandButton cmdApply 

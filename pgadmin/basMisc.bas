@@ -81,7 +81,7 @@ Dim x As Long
     Print #fNum, Now & vbTab; Msg
     Close #fNum
   End If
-  If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
+  If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 16384 Then
     fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
   End If
   x = Len(fMainForm.txtLog.Text)
@@ -96,7 +96,7 @@ End Sub
 Public Sub LogMsg(ByVal Msg As String)
 Dim fNum As Integer
 Dim x As Long
-  If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
+  If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 16384 Then
     fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
   End If
   x = Len(fMainForm.txtLog.Text)
@@ -145,7 +145,7 @@ Dim x As Long
       Print #fNum, Now & vbTab & "Done - " & Fix((Timer - QryTimer) * 100) / 100 & " Secs."
       Close #fNum
     End If
-    If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
+    If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 16384 Then
       fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
     End If
     x = Len(fMainForm.txtLog.Text)

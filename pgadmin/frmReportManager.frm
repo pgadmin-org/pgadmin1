@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportManager 
    Caption         =   "Report Manager"
    ClientHeight    =   4050
@@ -39,6 +39,7 @@ Begin VB.Form frmReportManager
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Description"
+         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtAuthor 
          BackColor       =   &H8000000F&

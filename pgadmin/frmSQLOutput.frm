@@ -182,7 +182,7 @@ Dim szWhere As String
 Dim bUpdateable As Boolean
 
 Private Sub cmdAdd_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   BuildEditBox
   lblInfo.Caption = "Add Record"
   Exit Sub
@@ -190,16 +190,16 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, cmdAdd_Click"
 End Sub
 
 Private Sub cmdCancel_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   HideEditBox
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, cmdCancel_Click"
 End Sub
 
 Private Sub cmdDelete_Click()
-On Error GoTo Err_Handler
-Dim X As Integer
-Dim Y As Integer
+'On Error GoTo Err_Handler
+Dim x As Integer
+Dim y As Integer
 Dim Z As Integer
 Dim szCriteria As String
 Dim rsCount As New Recordset
@@ -211,27 +211,27 @@ Dim bFlag As Boolean
   
   'Build the most concise WHERE clause we can. adDate and adDBDate fields should be
   'formatted as ISO dates.
-  For X = 0 To lvData.ColumnHeaders.Count - 1
-    If X = 0 Then
+  For x = 0 To lvData.ColumnHeaders.Count - 1
+    If x = 0 Then
       If lvData.SelectedItem.Text <> "" Then
-        Select Case Val(Mid(lvData.ColumnHeaders(X + 1).Key, InStr(1, lvData.ColumnHeaders(X + 1).Key, ":") + 1))
+        Select Case Val(Mid(lvData.ColumnHeaders(x + 1).Key, InStr(1, lvData.ColumnHeaders(x + 1).Key, ":") + 1))
           Case adDate
-            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
           Case adDBDate
-            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
           Case Else
-            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.Text) & "' AND "
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.Text) & "' AND "
         End Select
       End If
     Else
-      If lvData.SelectedItem.SubItems(X) <> "" Then
-        Select Case Val(Mid(lvData.ColumnHeaders(X + 1).Key, InStr(1, lvData.ColumnHeaders(X + 1).Key, ":") + 1))
+      If lvData.SelectedItem.SubItems(x) <> "" Then
+        Select Case Val(Mid(lvData.ColumnHeaders(x + 1).Key, InStr(1, lvData.ColumnHeaders(x + 1).Key, ":") + 1))
           Case adDate
-            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(X), "yyyy-MM-dd") & "' AND "
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
           Case adDBDate
-            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(X), "yyyy-MM-dd") & "' AND "
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
           Case Else
-            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.SubItems(X)) & "' AND "
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.SubItems(x)) & "' AND "
         End Select
       End If
     End If
@@ -269,27 +269,27 @@ Dim bFlag As Boolean
         
         'Get all the values in the selected row, then iterate through all rows and delete matching
         ReDim szValues(lvData.ColumnHeaders.Count - 1)
-        For X = 0 To lvData.ColumnHeaders.Count - 1
-          If X = 0 Then
-            szValues(X) = lvData.SelectedItem.Text
+        For x = 0 To lvData.ColumnHeaders.Count - 1
+          If x = 0 Then
+            szValues(x) = lvData.SelectedItem.Text
           Else
-            szValues(X) = lvData.SelectedItem.SubItems(X)
+            szValues(x) = lvData.SelectedItem.SubItems(x)
           End If
-        Next X
+        Next x
         
         'Delete matching rows.
-        For X = lvData.ListItems.Count To 1 Step -1
+        For x = lvData.ListItems.Count To 1 Step -1
           bFlag = False
-          For Y = 1 To lvData.ColumnHeaders.Count - 1
-            If szValues(Y) <> lvData.ListItems(X).SubItems(Y) Then
+          For y = 1 To lvData.ColumnHeaders.Count - 1
+            If szValues(y) <> lvData.ListItems(x).SubItems(y) Then
               bFlag = True
               Exit For
             End If
-          Next Y
-          If Not (bFlag Or szValues(0) <> lvData.ListItems(X).Text) Then
-            lvData.ListItems.Remove lvData.ListItems(X).Index
+          Next y
+          If Not (bFlag Or szValues(0) <> lvData.ListItems(x).Text) Then
+            lvData.ListItems.Remove lvData.ListItems(x).Index
           End If
-        Next X
+        Next x
         GoTo Done
     End Select
   End If
@@ -312,35 +312,35 @@ Err_Handler:
 End Sub
 
 Private Sub cmdSave_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim szQuery As String
 Dim szColumns As String
 Dim szValues As String
 Dim szCriteria As String
 Dim szCells() As String
-Dim X As Integer
-Dim Y As Integer
+Dim x As Integer
+Dim y As Integer
 Dim Z As Integer
 Dim bFlag As Boolean
-Dim ItmX As ListItem
+Dim itmX As ListItem
 Dim rsCount As New Recordset
   If lblInfo.Caption = "Add Record" Then
     'Add new record
     'First build lists of columns and values
     LogMsg "Adding new record..."
-    For X = 0 To lblField.Count - 1
-      If txtField(X).Text <> "" Then
-        szColumns = szColumns & QUOTE & lblField(X).Caption & QUOTE & ", "
-        Select Case Val(Mid(lvData.ColumnHeaders(X + 1).Key, InStr(1, lvData.ColumnHeaders(X + 1).Key, ":") + 1))
+    For x = 0 To lblField.Count - 1
+      If txtField(x).Text <> "" Then
+        szColumns = szColumns & QUOTE & lblField(x).Caption & QUOTE & ", "
+        Select Case Val(Mid(lvData.ColumnHeaders(x + 1).Key, InStr(1, lvData.ColumnHeaders(x + 1).Key, ":") + 1))
           Case adDate
-            szValues = szValues & "'" & Format(txtField(X).Text, "yyyy-MM-dd") & "', "
+            szValues = szValues & "'" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
           Case adDBDate
-            szValues = szValues & "'" & Format(txtField(X).Text, "yyyy-MM-dd") & "', "
+            szValues = szValues & "'" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
           Case Else
-            szValues = szValues & "'" & dbSZ(txtField(X).Text) & "', "
+            szValues = szValues & "'" & dbSZ(txtField(x).Text) & "', "
         End Select
       End If
-    Next X
+    Next x
     
     'Check the data, then trim the ', ' from the end of each string and create the SQL query
     If szColumns = "" Then
@@ -358,50 +358,50 @@ Dim rsCount As New Recordset
     
     'Now add the record to the grid. If the query failed, we won't get to here 'cos
     'we'll be in the error handler.
-    Set ItmX = lvData.ListItems.Add(, , txtField(0).Text)
-    For X = 1 To lblField.Count - 1
-      ItmX.SubItems(X) = txtField(X).Text
-    Next X
+    Set itmX = lvData.ListItems.Add(, , txtField(0).Text)
+    For x = 1 To lblField.Count - 1
+      itmX.SubItems(x) = txtField(x).Text
+    Next x
     GoTo Done
   Else
     'Update record
     'First build lists of columns and values
-    For X = 0 To lblField.Count - 1
-      If txtField(X).Tag = "Y" Then
-        Select Case Val(Mid(lvData.ColumnHeaders(X + 1).Key, InStr(1, lvData.ColumnHeaders(X + 1).Key, ":") + 1))
+    For x = 0 To lblField.Count - 1
+      If txtField(x).Tag = "Y" Then
+        Select Case Val(Mid(lvData.ColumnHeaders(x + 1).Key, InStr(1, lvData.ColumnHeaders(x + 1).Key, ":") + 1))
           Case adDate
-            szValues = szValues & QUOTE & lblField(X).Caption & QUOTE & " = '" & Format(txtField(X).Text, "yyyy-MM-dd") & "', "
+            szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
           Case adDBDate
-            szValues = szValues & QUOTE & lblField(X).Caption & QUOTE & " = '" & Format(txtField(X).Text, "yyyy-MM-dd") & "', "
+            szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
           Case Else
-            szValues = szValues & QUOTE & lblField(X).Caption & QUOTE & " = '" & dbSZ(txtField(X).Text) & "', "
+            szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & dbSZ(txtField(x).Text) & "', "
         End Select
       End If
-    Next X
+    Next x
     
     'Build the most concise WHERE clause we can. adDate and adDBDate fields should be
     'formatted as ISO dates.
-    For X = 0 To lvData.ColumnHeaders.Count - 1
-      If X = 0 Then
+    For x = 0 To lvData.ColumnHeaders.Count - 1
+      If x = 0 Then
         If lvData.SelectedItem.Text <> "" Then
-          Select Case Val(Mid(lvData.ColumnHeaders(X + 1).Key, InStr(1, lvData.ColumnHeaders(X + 1).Key, ":") + 1))
+          Select Case Val(Mid(lvData.ColumnHeaders(x + 1).Key, InStr(1, lvData.ColumnHeaders(x + 1).Key, ":") + 1))
             Case adDate
-              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
             Case adDBDate
-              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
             Case Else
-              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.Text) & "' AND "
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.Text) & "' AND "
           End Select
         End If
       Else
-        If lvData.SelectedItem.SubItems(X) <> "" Then
-          Select Case Val(Mid(lvData.ColumnHeaders(X + 1).Key, InStr(1, lvData.ColumnHeaders(X + 1).Key, ":") + 1))
+        If lvData.SelectedItem.SubItems(x) <> "" Then
+          Select Case Val(Mid(lvData.ColumnHeaders(x + 1).Key, InStr(1, lvData.ColumnHeaders(x + 1).Key, ":") + 1))
             Case adDate
-              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(X), "yyyy-MM-dd") & "' AND "
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
             Case adDBDate
-              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(X), "yyyy-MM-dd") & "' AND "
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
             Case Else
-              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(X + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.SubItems(X)) & "' AND "
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.SubItems(x)) & "' AND "
           End Select
         End If
       End If
@@ -438,13 +438,13 @@ Dim rsCount As New Recordset
           LogMsg "Executing: " & szQuery
           gConnection.Execute szQuery
           'Update the grid
-          For X = 0 To lblField.Count - 1
-            If X = 0 Then
-              lvData.SelectedItem.Text = txtField(X).Text
+          For x = 0 To lblField.Count - 1
+            If x = 0 Then
+              lvData.SelectedItem.Text = txtField(x).Text
             Else
-              lvData.SelectedItem.SubItems(X) = txtField(X).Text
+              lvData.SelectedItem.SubItems(x) = txtField(x).Text
             End If
-          Next X
+          Next x
           GoTo Done
         Case Else
           If MsgBox("The selected record could not be uniquely identified. " & rsCount!Count & " records match, and will all be updated if you proceed. Do you wish to continue?", vbQuestion + vbYesNo, "Update Multiple Records") = vbNo Then Exit Sub
@@ -454,33 +454,33 @@ Dim rsCount As New Recordset
 
           'Get all the values in the selected row, then iterate through all rows and update matching
           ReDim szCells(lvData.ColumnHeaders.Count - 1)
-          For X = 0 To lvData.ColumnHeaders.Count - 1
-            If X = 0 Then
-              szCells(X) = lvData.SelectedItem.Text
+          For x = 0 To lvData.ColumnHeaders.Count - 1
+            If x = 0 Then
+              szCells(x) = lvData.SelectedItem.Text
             Else
-              szCells(X) = lvData.SelectedItem.SubItems(X)
+              szCells(x) = lvData.SelectedItem.SubItems(x)
             End If
-          Next X
+          Next x
           
           'Update matching rows.
-          For X = lvData.ListItems.Count To 1 Step -1
+          For x = lvData.ListItems.Count To 1 Step -1
             bFlag = False
-            For Y = 1 To lvData.ColumnHeaders.Count - 1
-              If szCells(Y) <> lvData.ListItems(X).SubItems(Y) Then
+            For y = 1 To lvData.ColumnHeaders.Count - 1
+              If szCells(y) <> lvData.ListItems(x).SubItems(y) Then
                 bFlag = True
                 Exit For
               End If
-            Next Y
-            If Not (bFlag Or szCells(0) <> lvData.ListItems(X).Text) Then
+            Next y
+            If Not (bFlag Or szCells(0) <> lvData.ListItems(x).Text) Then
               For Z = 0 To lblField.Count - 1
                 If Z = 0 Then
-                  lvData.ListItems(X).Text = txtField(Z).Text
+                  lvData.ListItems(x).Text = txtField(Z).Text
                 Else
-                  lvData.ListItems(X).SubItems(Z) = txtField(Z).Text
+                  lvData.ListItems(x).SubItems(Z) = txtField(Z).Text
                 End If
               Next Z
             End If
-          Next X
+          Next x
           GoTo Done
       End Select
     End If
@@ -504,23 +504,23 @@ Err_Handler:
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-On Error Resume Next
+'On Error Resume Next
   Set rsSQL = Nothing
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Load"
 End Sub
 
 Public Sub Display(rsQuery As Recordset)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim iStart As Integer
 Dim iEnd As Integer
 Dim iTemp As Integer
-Dim X As Integer
+Dim x As Integer
 Dim szQuery As String
 Dim szChar As String
 Dim szBits() As String
@@ -538,8 +538,8 @@ Dim bFlag As Boolean
   'should never appear in the SQL
   szQuery = ""
   bInQuotes = False
-  For X = 1 To Len(rsSQL.Source)
-    szChar = Mid(rsSQL.Source, X, 1)
+  For x = 1 To Len(rsSQL.Source)
+    szChar = Mid(rsSQL.Source, x, 1)
     If szChar = QUOTE Then
       szQuery = szQuery & QUOTE
       bInQuotes = Not bInQuotes
@@ -548,7 +548,7 @@ Dim bFlag As Boolean
     Else
       szQuery = szQuery & szChar
     End If
-  Next X
+  Next x
   
   'Find the FROM clause. If it is inside single quotes then we
   'should try again - it won't in doubles as there are no spaces
@@ -561,9 +561,9 @@ Dim bFlag As Boolean
     If iStart = 0 Then 'No FROMs found
       bFlag = True
     Else 'Found a FROM, check it's not in quotes
-      For X = 1 To iStart
-        If Mid(szQuery, X, 1) = "'" Then bInQuotes = Not bInQuotes
-      Next X
+      For x = 1 To iStart
+        If Mid(szQuery, x, 1) = "'" Then bInQuotes = Not bInQuotes
+      Next x
       If Not bInQuotes Then bFlag = True
     End If
   Wend
@@ -607,28 +607,28 @@ Dim bFlag As Boolean
   '1) A trailing , on any element
   '2) An element containing JOIN INNER OUTER LEFT RIGHT FULL CROSS or [(]SELECT
   szBits = Split(Mid(szQuery, iStart, iEnd - iStart), " ")
-  For X = 0 To UBound(szBits)
-    If Right(szBits(X), 1) = "," Then
+  For x = 0 To UBound(szBits)
+    If Right(szBits(x), 1) = "," Then
       szTable = ""
       szWhere = ""
       bUpdateable = False
       GoTo GotInfo
     End If
-    If UCase(szBits(X)) = "JOIN" Or _
-       UCase(szBits(X)) = "INNER" Or _
-       UCase(szBits(X)) = "OUTER" Or _
-       UCase(szBits(X)) = "LEFT" Or _
-       UCase(szBits(X)) = "RIGHT" Or _
-       UCase(szBits(X)) = "FULL" Or _
-       UCase(szBits(X)) = "CROSS" Or _
-       UCase(szBits(X)) = "SELECT" Or _
-       UCase(szBits(X)) = "(SELECT" Then
+    If UCase(szBits(x)) = "JOIN" Or _
+       UCase(szBits(x)) = "INNER" Or _
+       UCase(szBits(x)) = "OUTER" Or _
+       UCase(szBits(x)) = "LEFT" Or _
+       UCase(szBits(x)) = "RIGHT" Or _
+       UCase(szBits(x)) = "FULL" Or _
+       UCase(szBits(x)) = "CROSS" Or _
+       UCase(szBits(x)) = "SELECT" Or _
+       UCase(szBits(x)) = "(SELECT" Then
       szTable = ""
       szWhere = ""
       bUpdateable = False
       GoTo GotInfo
     End If
-  Next X
+  Next x
 
   'If we got this far then we should only have one table so we should
   'get it's name. It should be the first item in the array unless
@@ -663,9 +663,9 @@ Dim bFlag As Boolean
     If iStart = 0 Then 'No WHEREs found
       bFlag = True
     Else 'Found a WHERE, check it's not in quotes
-      For X = 1 To iStart
-        If Mid(szQuery, X, 1) = "'" Then bInQuotes = Not bInQuotes
-      Next X
+      For x = 1 To iStart
+        If Mid(szQuery, x, 1) = "'" Then bInQuotes = Not bInQuotes
+      Next x
       If Not bInQuotes Then bFlag = True
     End If
   Wend
@@ -719,7 +719,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 5820 Then Me.Width = 5820
@@ -741,9 +741,9 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Resize"
 End Sub
 
 Private Sub LoadGrid()
-On Error GoTo Err_Handler
-Dim X As Long
-Dim ItmX As ListItem
+'On Error GoTo Err_Handler
+Dim x As Long
+Dim itmX As ListItem
 
   cmdSave.Visible = False
   cmdCancel.Visible = False
@@ -751,9 +751,9 @@ Dim ItmX As ListItem
   'Load Headers
   StartMsg "Loading Data..."
   lvData.ColumnHeaders.Clear
-  For X = 0 To rsSQL.Fields.Count - 1
-    lvData.ColumnHeaders.Add , "C" & X & ":" & rsSQL.Fields(X).Type, rsSQL.Fields(X).Name & ""
-  Next X
+  For x = 0 To rsSQL.Fields.Count - 1
+    lvData.ColumnHeaders.Add , "C" & x & ":" & rsSQL.Fields(x).Type, rsSQL.Fields(x).Name & ""
+  Next x
       
   'Load Data
   lvData.ListItems.Clear
@@ -764,18 +764,18 @@ Dim ItmX As ListItem
       'Add the listitem
       Select Case rsSQL.Fields(0).Type
         Case adDBTime
-          Set ItmX = lvData.ListItems.Add(, , Format(rsSQL.Fields(0).Value & "", "ttttt"))
+          Set itmX = lvData.ListItems.Add(, , Format(rsSQL.Fields(0).Value & "", "ttttt"))
         Case Else
-          Set ItmX = lvData.ListItems.Add(, , rsSQL.Fields(0).Value & "")
+          Set itmX = lvData.ListItems.Add(, , rsSQL.Fields(0).Value & "")
       End Select
         
       'Add the extra fields
-      For X = 1 To rsSQL.Fields.Count - 1
-        Select Case rsSQL.Fields(X).Type
+      For x = 1 To rsSQL.Fields.Count - 1
+        Select Case rsSQL.Fields(x).Type
           Case adDBTime
-            ItmX.SubItems(X) = Format(rsSQL.Fields(X).Value & "", "ttttt")
+            itmX.SubItems(x) = Format(rsSQL.Fields(x).Value & "", "ttttt")
           Case Else
-            ItmX.SubItems(X) = rsSQL.Fields(X).Value & ""
+            itmX.SubItems(x) = rsSQL.Fields(x).Value & ""
         End Select
       Next
       rsSQL.MoveNext
@@ -793,15 +793,15 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, LoadGrid"
 End Sub
 
 Private Sub lvData_ItemClick(ByVal Item As MSComctlLib.ListItem)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   lblInfo.Caption = "Record " & lvData.SelectedItem.Index & " of " & lvData.ListItems.Count
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, lvData_ItemClick"
 End Sub
 
 Private Sub BuildEditBox()
-On Error GoTo Err_Handler
-Dim X As Integer
+'On Error GoTo Err_Handler
+Dim x As Integer
   lblField(0).Top = 3
   txtField(0).Top = lblField(0).Top + lblField(0).Height
   txtField(0).Width = picScroll.Width - 6
@@ -816,28 +816,28 @@ Dim X As Integer
   Else
     txtField(0).Locked = False
   End If
-  For X = 2 To lvData.ColumnHeaders.Count
-    Load lblField(X - 1)
-    Load txtField(X - 1)
-    lblField(X - 1).Visible = True
-    txtField(X - 1).Visible = True
-    lblField(X - 1).Top = txtField(X - 2).Top + txtField(X - 2).Height + 1
-    txtField(X - 1).Top = lblField(X - 1).Top + lblField(X - 1).Height
-    txtField(X - 1).Width = picScroll.Width - 6
-    txtField(X - 1).TabIndex = txtField(X - 2).TabIndex + 1
-    lblField(X - 1).Caption = lvData.ColumnHeaders(X).Text
-    If lblField(X - 1).Caption = "oid" Or _
+  For x = 2 To lvData.ColumnHeaders.Count
+    Load lblField(x - 1)
+    Load txtField(x - 1)
+    lblField(x - 1).Visible = True
+    txtField(x - 1).Visible = True
+    lblField(x - 1).Top = txtField(x - 2).Top + txtField(x - 2).Height + 1
+    txtField(x - 1).Top = lblField(x - 1).Top + lblField(x - 1).Height
+    txtField(x - 1).Width = picScroll.Width - 6
+    txtField(x - 1).TabIndex = txtField(x - 2).TabIndex + 1
+    lblField(x - 1).Caption = lvData.ColumnHeaders(x).Text
+    If lblField(x - 1).Caption = "oid" Or _
        lblField(0).Caption = "cmax" Or _
        lblField(0).Caption = "xmax" Or _
        lblField(0).Caption = "cmin" Or _
        lblField(0).Caption = "xmin" Or _
        lblField(0).Caption = "ctid" Then
-      txtField(X - 1).Locked = True
+      txtField(x - 1).Locked = True
     Else
-      txtField(X - 1).Locked = False
+      txtField(x - 1).Locked = False
     End If
   Next
-  picScroll.Height = txtField(X - 2).Top + txtField(X - 2).Height + 1
+  picScroll.Height = txtField(x - 2).Top + txtField(x - 2).Height + 1
   picEdit.Visible = True
   scScroll.Max = picScroll.ScaleHeight - picEdit.ScaleHeight
   cmdAdd.Visible = False
@@ -851,16 +851,16 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, BuildEditBox"
 End Sub
 
 Private Sub cmdEdit_Click()
-On Error GoTo Err_Handler
-Dim X As Long
+'On Error GoTo Err_Handler
+Dim x As Long
   BuildEditBox
-  For X = 0 To lvData.ColumnHeaders.Count - 1
-    If X = 0 Then
-      txtField(X).Text = lvData.SelectedItem.Text
+  For x = 0 To lvData.ColumnHeaders.Count - 1
+    If x = 0 Then
+      txtField(x).Text = lvData.SelectedItem.Text
     Else
-      txtField(X).Text = lvData.SelectedItem.SubItems(X)
+      txtField(x).Text = lvData.SelectedItem.SubItems(x)
     End If
-    txtField(X).Tag = ""
+    txtField(x).Tag = ""
   Next
   lblInfo.Caption = "Edit Record"
   Exit Sub
@@ -868,27 +868,27 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, cmdEdit_Click"
 End Sub
 
 Private Sub scScroll_Change()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   picScroll.Top = -scScroll.Value
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, scScroll_Change"
 End Sub
 
 Private Sub txtField_Change(Index As Integer)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   txtField(Index).Tag = "Y"
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, txtField_Change"
 End Sub
 
 Private Sub txtField_GotFocus(Index As Integer)
-On Error GoTo Err_Handler
-Dim X As Long
-  For X = 0 To txtField.Count - 1
-    If X = Index Then
-      txtField(X).BackColor = &H8000000E
+'On Error GoTo Err_Handler
+Dim x As Long
+  For x = 0 To txtField.Count - 1
+    If x = Index Then
+      txtField(x).BackColor = &H8000000E
     Else
-      txtField(X).BackColor = &H8000000F
+      txtField(x).BackColor = &H8000000F
     End If
   Next
   If txtField(Index).Top + txtField(Index).Height > picEdit.ScaleHeight - picScroll.Top Then
@@ -905,13 +905,13 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, txtField_GotFo
 End Sub
 
 Private Sub HideEditBox()
-On Error GoTo Err_Handler
-Dim X As Integer
+'On Error GoTo Err_Handler
+Dim x As Integer
   txtField(0).Text = ""
   txtField(0).Tag = ""
-  For X = 2 To lvData.ColumnHeaders.Count
-    Unload lblField(X - 1)
-    Unload txtField(X - 1)
+  For x = 2 To lvData.ColumnHeaders.Count
+    Unload lblField(x - 1)
+    Unload txtField(x - 1)
   Next
   cmdAdd.Visible = True
   cmdEdit.Visible = True

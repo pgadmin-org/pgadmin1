@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.Form frmSequences 
    Caption         =   "Sequences"
    ClientHeight    =   4050
@@ -64,6 +64,7 @@ Begin VB.Form frmSequences
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
+         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtACL 
          BackColor       =   &H8000000F&

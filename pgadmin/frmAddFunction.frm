@@ -1,6 +1,7 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{A2AC1247-5A60-11D5-A887-0001020F24EF}#1.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+
 Begin VB.Form frmAddFunction 
    Caption         =   "Function"
    ClientHeight    =   5595
@@ -38,6 +39,7 @@ Begin VB.Form frmAddFunction
             Strikethrough   =   0   'False
          EndProperty
          Caption         =   "Comments"
+         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
@@ -209,6 +211,7 @@ Begin VB.Form frmAddFunction
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "Function Definition"
+      AutoColour      =   -1  'True
    End
 End
 Attribute VB_Name = "frmAddFunction"

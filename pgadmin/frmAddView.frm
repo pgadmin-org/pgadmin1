@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddView 
    Caption         =   "Create View"
    ClientHeight    =   4050
@@ -37,7 +37,7 @@ Begin VB.Form frmAddView
             Strikethrough   =   0   'False
          EndProperty
          Caption         =   "Comments"
-         Text            =   ""
+         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
@@ -136,7 +136,7 @@ Begin VB.Form frmAddView
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "View Definition"
-      Text            =   ""
+      AutoColour      =   -1  'True
    End
 End
 Attribute VB_Name = "frmAddView"

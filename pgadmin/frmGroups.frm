@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adoDataGrid.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.Form frmGroups 
    Caption         =   "Groups"
    ClientHeight    =   4815
@@ -34,6 +34,7 @@ Begin VB.Form frmGroups
       EndProperty
       Locked          =   -1  'True
       Caption         =   "Group Members"
+      AutoColour      =   -1  'True
    End
    Begin vsAdoSelector.VS_AdoSelector vssUsers 
       Height          =   315

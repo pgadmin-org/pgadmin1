@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H80000010&
    Caption         =   "pgAdmin"
@@ -65,8 +65,8 @@ Begin VB.MDIForm frmMain
          EndProperty
          Locked          =   -1  'True
          Caption         =   "SQL View"
-         Text            =   ""
          Wordlist        =   $"frmMain.frx":030A
+         AutoColour      =   -1  'True
       End
       Begin HighlightBox.HBX txtLog 
          Height          =   1275
@@ -87,8 +87,8 @@ Begin VB.MDIForm frmMain
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Log View"
-         Text            =   ""
          Wordlist        =   $"frmMain.frx":03E4
+         AutoColour      =   -1  'True
       End
       Begin VB.Label lblVersion 
          Alignment       =   1  'Right Justify
@@ -827,7 +827,6 @@ Dim x As Printer
   picSideBar.Align = CInt(RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Button Bar Pos", 3))
   picSQLPane.Align = CInt(RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "SQL Pane Pos", 2))
   txtSQLPane.Wordlist = TextColours
-  txtLog.Wordlist = TextColours
 
   'Allow the user to login to the correct datasource
   

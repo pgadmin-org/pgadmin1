@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
 Begin VB.Form frmComments 
    Caption         =   "Comments"
    ClientHeight    =   2820
@@ -29,9 +29,8 @@ Begin VB.Form frmComments
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Text            =   ""
-      BorderStyle     =   1
       ControlBarVisible=   0   'False
+      AutoColour      =   -1  'True
    End
    Begin VB.CommandButton cmdSave 
       Caption         =   "&Save"
