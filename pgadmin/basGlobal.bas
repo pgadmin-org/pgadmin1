@@ -73,4 +73,4 @@ Public CallingForm As String
 Public SecondLogon As Boolean
 Public rptList() As rptDef
 Public Exporters() As pgExporter
-
+Public gPostgresOBJ_OID As Long
