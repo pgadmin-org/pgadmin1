@@ -27,6 +27,10 @@ Private iPro_Index As Integer
 Private iDev_Index As Integer
 Private iSys_Index As Integer
 
+Private iPro_Count As Long
+Private iDev_Count As Long
+Private iSys_Count As Long
+
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' General
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -370,7 +374,7 @@ On Error GoTo Err_Handler
     "Beware that if the required functions are used by other functions, " & vbCrLf & _
     "triggers or views, dependencies are broken. " & vbCrLf & vbCrLf & _
     "If you are not sure whether you might break dependencies" & vbCrLf & _
-    "or not, use the Rebuild Project button instread." & vbCrLf & vbCrLf & _
+    "or not, use the Rebuild Project button instead." & vbCrLf & vbCrLf & _
     "Continue?"
     
     If MsgBox(szMsgboxMessage, vbYesNo) = vbYes Then
@@ -574,24 +578,26 @@ On Error GoTo Err_Handler
   
   Tree.Nodes.Clear
   
-  If DevMode = False Then
-    szPro_Text = "User functions"
-  Else
-    szPro_Text = "2 - Production functions"
-  End If
-  
-  Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
-  iPro_Index = NodeX.Index
-  NodeX.Expanded = False
-  
-  szDev_Text = "1 - Development functions"
+  ' Development functions
+  szDev_Text = "Development functions"
   If DevMode = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Dev:", szDev_Text, 1)
     iDev_Index = NodeX.Index
     NodeX.Expanded = False
   End If
   
-  szSys_Text = "3 - System functions"
+  ' Production functions
+  If DevMode = False Then
+    szPro_Text = "User functions"
+  Else
+    szPro_Text = "Production functions"
+  End If
+  Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
+  iPro_Index = NodeX.Index
+  NodeX.Expanded = False
+  
+  ' System functions
+  szSys_Text = "System functions"
   If bShowSystem = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Sys:", szSys_Text, 1)
     iSys_Index = NodeX.Index
@@ -613,6 +619,8 @@ On Error GoTo Err_Handler
   If Not (rsFunc.EOF) Then
     szFunc = rsFunc.GetRows
     iUbound = UBound(szFunc, 2)
+    iPro_Count = 0
+    iSys_Count = 0
     For iLoop = 0 To iUbound
          szFunction_oid = szFunc(0, iLoop) & ""
          szFunction_name = szFunc(1, iLoop) & ""
@@ -625,15 +633,17 @@ On Error GoTo Err_Handler
          ' ---------------------------------------------------------------------
          ' If it is a system function, add it to "S:" System node
          ' ---------------------------------------------------------------------
+            iSys_Count = iSys_Count + 1
             If szFunction_arguments <> "" Then
-                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 2)
-             Else
-                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name, szFunction_name, 2)
+                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name & " (" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 4)
+            Else
+                Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szFunction_name, szFunction_name, 4)
             End If
         Else
          ' ---------------------------------------------------------------------
          ' Else it is a user function, add it to "P:" Production node
          ' ---------------------------------------------------------------------
+            iPro_Count = iPro_Count + 1
             If szFunction_arguments <> "" Then
                 Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szFunction_name & "(" & szFunction_arguments & ")", szFunction_name & " (" & szFunction_arguments & ")", 4)
             Else
@@ -643,6 +653,8 @@ On Error GoTo Err_Handler
         NodeX.Tag = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
         NodeX.Image = 4
     Next iLoop
+    Tree.Nodes.Item(iPro_Index).Text = Tree.Nodes.Item(iPro_Index).Text & " (" & CStr(iPro_Count) & ")"
+    If iSys_Count > 0 Then Tree.Nodes.Item(iSys_Index).Text = Tree.Nodes.Item(iSys_Index).Text & " (" & CStr(iSys_Count) & ")"
   End If
   Erase szFunc
   
@@ -658,6 +670,7 @@ On Error GoTo Err_Handler
       If Not (rsFunc.EOF) Then
         szFunc = rsFunc.GetRows
         iUbound = UBound(szFunc, 2)
+        iDev_Count = iUbound
         For iLoop = 0 To iUbound
              szFunction_oid = szFunc(0, iLoop) & ""
              szFunction_name = szFunc(1, iLoop) & ""
@@ -684,10 +697,13 @@ On Error GoTo Err_Handler
         Next iLoop
       End If
       Erase szFunc
+      
+    Tree.Nodes.Item(iDev_Index).Text = Tree.Nodes.Item(iDev_Index).Text & " (" & CStr(iDev_Count) & ")"
   End If
   
   Set rsFunc = Nothing
-    
+  Tree.Refresh
+  
   EndMsg
 Exit Sub
 

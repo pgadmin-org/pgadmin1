@@ -15,6 +15,36 @@ Begin VB.Form frmFunctions
    ScaleHeight     =   5595
    ScaleMode       =   0  'User
    ScaleWidth      =   9000
+   Begin MSComctlLib.ImageList ilBrowser 
+      Left            =   585
+      Top             =   2295
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   4
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":030A
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":0624
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":077E
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmFunctions.frx":08D8
+            Key             =   ""
+         EndProperty
+      EndProperty
+   End
    Begin TreeToys.TreeToy trvBrowser 
       Height          =   5505
       Left            =   1485
@@ -30,7 +60,6 @@ Begin VB.Form frmFunctions
       Indentation     =   299.906
       LabelEdit       =   1
       LineStyle       =   1
-      Sorted          =   -1  'True
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -301,36 +330,6 @@ Begin VB.Form frmFunctions
       Top             =   45
       Width           =   1410
    End
-   Begin MSComctlLib.ImageList ilBrowser 
-      Left            =   585
-      Top             =   2250
-      _ExtentX        =   1005
-      _ExtentY        =   1005
-      BackColor       =   -2147483643
-      ImageWidth      =   16
-      ImageHeight     =   16
-      MaskColor       =   12632256
-      _Version        =   393216
-      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   4
-         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmFunctions.frx":030A
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmFunctions.frx":0624
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmFunctions.frx":077E
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmFunctions.frx":08D8
-            Key             =   ""
-         EndProperty
-      EndProperty
-   End
 End
 Attribute VB_Name = "frmFunctions"
 Attribute VB_GlobalNameSpace = False
@@ -374,7 +373,8 @@ On Error GoTo Err_Handler
   Me.Height = 6000
   
   txtFunction.Wordlist = TextColours
-  Set trvBrowser.ImageList = ilBrowser
+  Set trvBrowser.ImageList = Me.ilBrowser
+  trvBrowser.Refresh
   cmdRefresh_Click
 
 Exit Sub
