@@ -1,0 +1,47 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<title>pgAdmin Custom Reports</title>
+</head>
+
+<body>
+
+<h1>pgAdmin Custom Reports</h1>
+
+<p>The pgAdmin Report Browser has an 'Add' button that allows you to add custom
+reports to pgAdmin. The following steps show you (the user) what is required to
+achieve this. To create new reports you will require Seagate Crystal Reports v7
+or v8. Newer versions have yet to be tested.</p>
+<ol>
+  <li>Create a new report in Crystal Reports - specify an 'Active Data' data source 
+      using either ADO or RDO (ADO has been known to crash Crystal, but RDO seems
+    OK).</li>
+  <li>Select a DSN and then Add either the RDO or ADO table to the report.
+  <li>You will be prompted to either select a Table or View, or enter an SQL
+query. Use an SQL query, and copy it into Notepad for reference later.</li>
+  <li>Design the report as required.</li>
+  <li>Under File -&gt; Summary Info, set the Author, Comments, Title and
+Subject. These fields are used by pgAdmin to display the Browse Info.&nbsp;</li>
+  <li> In the
+Template field, paste/type the SQL query you entered earlier (without any
+&lt;CR&gt;'s), or SELECT * FROM &lt;Table&gt;/&lt;View&gt;. The is used by
+pgAdmin to retrieve the data for the report.</li>
+  <li>Save the report.</li>
+  <li>In the pgAdmin Report Browser, select Add, then click the '...' button to
+browse for your new report. The default value for each field will be extracted
+from the report. You may want to alter values to allow the use of the same .rpt
+file for multiple reports.</li>
+  <li>If you have used either pgadmin_table_cache or pgadmin_seq_cache in your
+report, click the relevant 'Refresh...' option to ensure they are updated.</li>
+  <li>If the Report has Groups defined, you may want to check 'Show Group
+Tree...' which will default the Group Tree in the report viewer to On. It may
+still be toggled by the user at runtime.</li>
+  <li>Click 'Add Report' and away you go!</li>
+  <li>If you write any useful reports that others may benefit from feel free to
+email them to me for inclusion if you like! All will be gratefully received!</li>
+</ol>
+</body>
+
+</html>
