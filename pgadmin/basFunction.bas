@@ -55,7 +55,6 @@ On Error GoTo Err_Handler
     ' retrieve name and arguments of function to drop
     LogMsg "Executing: " & szQueryStr
  
-
     If rsComp.State <> adStateClosed Then rsComp.Close
     rsComp.Open szQueryStr, gConnection
         
@@ -91,7 +90,9 @@ On Error GoTo Err_Handler
     
     ' Execute drop query and close log
     gConnection.Execute szDropStr
-    If (szFunction_table = "pgadmin_functions") Then LogQuery szDropStr
+    If (szFunction_table = "pgadmin_functions") Then
+        LogQuery szDropStr
+    End If
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_DropIfExists"
@@ -157,7 +158,6 @@ On Error GoTo Err_Handler
         szQuery = "COMMENT ON FUNCTION " & szFunction_name & " (" & szFunction_arguments & ") IS '" & Replace(szFunction_comments, "'", "''") & "'"
         LogQuery szQuery
         gConnection.Execute szQuery
-        
     End If
 Exit Sub
 Err_Handler:
@@ -227,8 +227,9 @@ On Error GoTo Err_Handler
     Dim rsComp As New Recordset
     
     ' Scan pgadmin_dev_functions for dependencies
-    szDependencyStr = "SELECT * FROM " & szFunction_dev_table & " WHERE function_source ILIKE '%" & szFunction_name & "%'"
-     
+    szDependencyStr = "SELECT * FROM " & szFunction_dev_table & " WHERE "
+    szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
+  
     If rsComp.State <> adStateClosed Then rsComp.Close
     rsComp.Open szDependencyStr, gConnection, adOpenDynamic
   
@@ -237,7 +238,7 @@ On Error GoTo Err_Handler
         szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_to, dependency_from) "
         szDependencyStr = szDependencyStr & " SELECT '" & szFunction_name & "' AS dependency_to, function_name as dependency_from "
         szDependencyStr = szDependencyStr & " FROM " & szFunction_dev_table & " WHERE "
-        szDependencyStr = szDependencyStr & " function_source ilike '%" & szFunction_name & "%'; "
+        szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
         
         ' Log
         LogMsg "Executing: " & szDependencyStr
@@ -615,7 +616,7 @@ On Error GoTo Err_Handler
   If bShowSystem = True Then
      szQuery = "SELECT function_oid, function_name, function_arguments, Function_returns, Function_source, Function_language FROM pgadmin_functions ORDER BY function_name"
   Else
-     szQuery = "SELECT function_oid, function_name, function_arguments, Function_returns, Function_source, Function_language FROM pgadmin_functions WHERE function_oid > " & LAST_SYSTEM_OID & " AND function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' ORDER BY function_name"
+     szQuery = "SELECT function_oid, function_name, function_arguments, Function_returns, Function_source, Function_language FROM pgadmin_functions WHERE function_oid > " & LAST_SYSTEM_OID & " AND function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_name NOT LIKE 'int4eq' ORDER BY function_name"
   End If
   LogMsg "Executing: " & szQuery
   rsFunc.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
@@ -631,7 +632,7 @@ On Error GoTo Err_Handler
          szFunction_source = szFunc(4, iLoop) & ""
          szFunction_language = szFunc(5, iLoop) & ""
          
-         If CLng(szFunction_oid) < LAST_SYSTEM_OID Or Left(szFunction_name, 8) = "pgadmin_" Or Left(szFunction_name, 3) = "pg_" Then
+         If CLng(szFunction_oid) < LAST_SYSTEM_OID Or Left(szFunction_name, 8) = "pgadmin_" Or Left(szFunction_name, 3) = "pg_" Or szFunction_name = "int4eq" Then
          ' ---------------------------------------------------------------------
          ' If it is a system function, add it to "S:" System node
          ' ---------------------------------------------------------------------
