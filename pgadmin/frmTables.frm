@@ -132,31 +132,31 @@ Begin VB.Form frmTables
          NumListImages   =   7
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":030A
-            Key             =   ""
+            Key             =   "Server"
          EndProperty
          BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":0624
-            Key             =   ""
+            Key             =   "Table"
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":093E
-            Key             =   ""
+            Key             =   "Column"
          EndProperty
          BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":0C58
-            Key             =   ""
+            Key             =   "Check"
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":0DB2
-            Key             =   ""
+            Key             =   "ForeignKey"
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":0F0C
-            Key             =   ""
+            Key             =   "PrimaryKey"
          EndProperty
          BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmTables.frx":1066
-            Key             =   ""
+            Key             =   "Unique"
          EndProperty
       EndProperty
    End
