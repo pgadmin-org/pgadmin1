@@ -26,7 +26,7 @@ Option Compare Text
 '****
 
 Public Sub cmp_Project_Initialize()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     Dim szFunc() As Variant
     Dim iLoop As Long
     Dim iUbound As Long
@@ -56,18 +56,14 @@ On Error GoTo Err_Handler
       Next iLoop
       Erase szFunc
     End If
-    
-    ' Drop all before compilation
-    cmp_Function_DropAll
-    cmp_View_DropAll
-    cmp_Trigger_DropAll
+
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Initialize"
 End Sub
 
 Public Function cmp_Project_FindNextFunctionToCompile() As String
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim szFunc() As Variant
     Dim iLoop As Long
@@ -107,7 +103,7 @@ Err_Handler:
 End Function
 
 Public Sub cmp_Project_RebuildTriggers()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     Dim rsTrigger As New Recordset
     Dim szQueryStr As String
     ' Obviously this does not work
@@ -134,7 +130,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Project_RebuildViews()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
     Dim szViewDefinition As String
@@ -159,7 +155,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Project_Compile()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     Dim szNextFunctionToCompile_name As String
     Dim szFunction_name As String
     Dim szFunction_arguments As String
@@ -205,7 +201,7 @@ Dim iResult As Long
 End Function
 
 Public Sub cmp_Project_Rebuild()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     If MsgBox("Rebuilding feature does not keep comments and ACL." & vbCrLf & "Please confirm you wish to continue.", vbYesNo + vbQuestion, _
             "Rebuild project") = vbYes Then
         cmp_Project_Initialize
