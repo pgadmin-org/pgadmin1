@@ -34,9 +34,10 @@ On Error GoTo Err_Handler
     If cmp_View_Exists(szview_table, lngView_oid, szview_name) = True Then
         cmp_View_Drop szview_table, 0, szview_name
     End If
-  Exit Sub
+
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
+If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
 End Sub
 
 Sub cmp_View_Drop(szview_table As String, ByVal lngView_oid As Long, Optional ByVal szview_name As String)
@@ -53,21 +54,17 @@ On Error GoTo Err_Handler
     ' create drop query
     If (szview_table = "pgadmin_views") Then
         szDropStr = "DROP VIEW " & QUOTE & szview_name & QUOTE
-        LogMsg "Executing: " & szDropStr
-        gConnection.Execute szDropStr
-        LogQuery szDropStr
     Else
         szDropStr = "DELETE FROM " & szview_table & " WHERE view_name ='" & szview_name & "'"
-        LogMsg "Executing: " & szDropStr
-        gConnection.Execute szDropStr
     End If
-     
+
     LogMsg "Executing: " & szDropStr
     gConnection.Execute szDropStr
     LogQuery szDropStr
-  Exit Sub
+        
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
+If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
 End Sub
 
 Function cmp_View_Exists(szview_table As String, ByVal lngView_oid As Long, ByVal szview_name As String) As Boolean
@@ -103,10 +100,10 @@ On Error GoTo Err_Handler
         cmp_View_Exists = True
         rsComp.Close
     End If
-  Exit Function
-  
+
+Exit Function
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
+If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
 End Function
 
 Sub cmp_View_Create(szview_table As String, ByVal szview_name As String, ByVal szview_definition As String)
@@ -124,7 +121,7 @@ On Error GoTo Err_Handler
         szCreateStr = "INSERT INTO " & szview_table & " (View_name, View_definition)"
         szCreateStr = szCreateStr & "VALUES ("
         szCreateStr = szCreateStr & "'" & szview_name & "', "
-        szCreateStr = szCreateStr & "'" & Replace(szview_definition, "'", "''") & "' "
+        szCreateStr = szCreateStr & "'" & Trim(Replace(szview_definition, "'", "''")) & "' "
         szCreateStr = szCreateStr & ");"
     End If
     
@@ -135,21 +132,23 @@ On Error GoTo Err_Handler
     gConnection.Execute szCreateStr
     LogQuery szCreateStr
 
-  Exit Sub
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basView, cmp_Views_Create"
-  If Err.Number = -2147467259 Then MsgBox "View " & szview_name & " could not be compiled." & vbCrLf & "Check source code and compile again."
-  bContinueRebuilding = False
+If Err.Number <> 0 Then LogError Err, "basView, cmp_Views_Create"
+If Err.Number = -2147467259 Then MsgBox "View " & szview_name & " could not be compiled." & vbCrLf & "Check source code and compile again."
+bContinueRebuilding = False
 End Sub
 
 Function cmp_View_CreateSQL(ByVal szview_name As String, ByVal szview_definition As String) As String
 On Error GoTo Err_Handler
   Dim szQuery As String
-    szQuery = "CREATE VIEW " & szview_name & vbCrLf & " AS " & szview_definition & "; "
+    szQuery = Trim("CREATE VIEW " & QUOTE & szview_name & QUOTE & vbCrLf & " AS " & szview_definition)
+    If Right(szQuery, 1) <> ";" Then szQuery = szQuery & ";"
     cmp_View_CreateSQL = szQuery
-  Exit Function
+
+Exit Function
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basView, cmp_Views_Create"
+If Err.Number <> 0 Then LogError Err, "basView, cmp_Views_Create"
 End Function
 
 Sub cmp_View_GetValues(szview_table As String, lngView_oid As Long, Optional szview_name As String, Optional szview_definition As String, Optional szview_owner As String, Optional szView_acl As String, Optional szview_comments As String)
@@ -238,12 +237,11 @@ On Error GoTo Err_Handler
     
     If cmp_View_Exists(szView_source_table, 0, szview_name) Then
         cmp_View_GetValues szView_source_table, 0, szview_name, szview_definition
-        
-        If cmp_View_Exists(szView_target_table, 0, szview_name) = True Then
-            If (MsgBox("Replace existing target view " & vbCrLf & szview_name & " ?", vbYesNo) = vbYes) Then
-                cmp_View_Drop szView_target_table, 0, szview_name
-                cmp_View_Create szView_target_table, szview_name, szview_definition
-            End If
+        If cmp_View_Exists(szView_target_table, 0, szview_name) Then
+             If (MsgBox("Replace existing target view " & vbCrLf & szview_name & " ?", vbYesNo) = vbYes) Then
+                 cmp_View_Drop szView_target_table, 0, szview_name
+                 cmp_View_Create szView_target_table, szview_name, szview_definition
+             End If
         Else
              cmp_View_Create szView_target_table, szview_name, szview_definition
         End If
@@ -252,52 +250,6 @@ On Error GoTo Err_Handler
 Exit Sub
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basFunction, cmp_View_CopyToDev_New"
-End Sub
-
-Public Sub cmp_View_DropAll(Optional szview_table As String)
-On Error GoTo Err_Handler
-    Dim szQuery As String
-    Dim szView() As Variant
-    Dim iLoop As Long
-    Dim iUbound As Long
-    Dim rsView As New Recordset
-    Dim szview_name As String
-    
-    If IsMissing(szview_table) Or (szview_table = "") Then szview_table = "pgadmin_views"
-        
-    If (szview_table = "pgadmin_views") Then
-        szQuery = "SELECT view_name FROM pgadmin_views " & _
-        "  WHERE view_oid > " & LAST_SYSTEM_OID & _
-        "  AND view_name NOT LIKE 'pgadmin_%' " & _
-        "  AND view_name NOT LIKE 'pg_%' " & _
-        "  ORDER BY view_name; "
-        
-        LogMsg "Dropping all views in pgadmin_views..."
-        LogMsg "Executing: " & szQuery
-        
-        If rsView.State <> adStateClosed Then rsView.Close
-        rsView.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
-    
-        If Not (rsView.EOF) Then
-            szView = rsView.GetRows
-            rsView.Close
-            iUbound = UBound(szView, 2)
-                For iLoop = 0 To iUbound
-                     szview_name = szView(0, iLoop)
-                     cmp_View_DropIfExists "", 0, szview_name
-                Next iLoop
-            Erase szView
-        End If
-    Else
-        szQuery = "TRUNCATE " & szview_table
-        LogMsg "Truncating " & szview_table & "..."
-        LogMsg "Executing: " & szQuery
-        gConnection.Execute szQuery
-    End If
-   
-    Exit Sub
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, cmp_View_DropAll"
 End Sub
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -331,7 +283,7 @@ On Error GoTo Err_Handler
         For Each nodX In Tree.Nodes
             If (nodX.Checked = True) Then
                 If nodX.Parent Is Nothing Then
-                   szParentKey = nodX.Key
+                   szParentKey = "" ' skip
                 Else
                    szParentKey = nodX.Parent.Key
                 End If

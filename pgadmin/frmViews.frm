@@ -346,10 +346,10 @@ Public dragNode As Node, dropNode As Node
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Form
-' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++s++++++++++++++++++++++++++
 
 Private Sub Form_Load()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 8325
   Me.Height = 4980
@@ -362,7 +362,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
@@ -383,7 +383,7 @@ End Sub
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Private Sub cmdExportView_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
     cmp_view_tree_export trvBrowser, CommonDialog1
     
@@ -392,7 +392,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdExportView_Clic
 End Sub
 
 Public Sub cmdModifyView_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 Dim szview_name As String
 
@@ -408,14 +408,14 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdModifyView_Clic
 End Sub
 
 Private Sub cmdRebuild_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     cmp_Project_Rebuild
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildProject_Click"
 End Sub
 
 Private Sub cmdCopyDevToPro_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     cmp_view_tree_copy_devtopro trvBrowser
     cmdRefresh_Click
     
@@ -424,7 +424,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCopyDevToPr
 End Sub
 
 Private Sub cmdCopyProToDev_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     cmp_view_tree_copy_protodev trvBrowser
     cmdRefresh_Click
     
@@ -433,14 +433,14 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCopyProToDe
 End Sub
 
 Private Sub chkSystem_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, ChkSystem_Click"
 End Sub
 
 Public Sub cmdViewData_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim Response As Integer
 Dim Tuples As Long
 Dim rsQuery As New Recordset
@@ -452,21 +452,14 @@ Dim szQuery As String
     MsgBox "You must select a view to view!", vbExclamation, "Error"
     Exit Sub
   End If
-  If rsQuery.State <> adStateClosed Then rsQuery.Close
   szQuery = "SELECT count(*) As records FROM " & QUOTE & szview_name & QUOTE
-  LogMsg "Executing: " & szQuery
-  rsQuery.Open szQuery, adOpenForwardOnly
-  If Not rsQuery.EOF Then
-    Tuples = rsQuery!Records
-  Else
-    Tuples = 0
-  End If
-  If rsQuery.State <> adStateClosed Then rsQuery.Close
+  Tuples = CLng(RsExecuteGetResult(szQuery))
   If Tuples > 1000 Then
     Response = MsgBox("That table contains " & Tuples & " rows which may take some time to load! Do you wish to continue?", _
     vbExclamation + vbYesNo, "Warning")
     If Response = vbNo Then Exit Sub
   End If
+  
   Dim DataForm As New frmSQLOutput
   LogMsg "Executing: SELECT * FROM " & QUOTE & szview_name & QUOTE
   rsQuery.Open "SELECT * FROM " & QUOTE & szview_name & QUOTE, gConnection, adOpenForwardOnly, adLockReadOnly
@@ -479,7 +472,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdViewData_Click"
 End Sub
 
 Public Sub cmdComment_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim szview_name As String
 
     szview_name = trvBrowser.SelectedItem.Text & ""
@@ -497,7 +490,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdComment_Click"
 End Sub
 
 Public Sub cmdCreateView_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
   gView_Name = ""
   Load frmAddView
   frmAddView.Show
@@ -506,7 +499,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdCreateView_Clic
 End Sub
 
 Public Sub cmdDropView_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
   If MsgBox("Are you sure you wish to delete Views?", vbYesNo + vbQuestion, _
             "Confirm View(s) Delete") = vbYes Then
@@ -522,7 +515,7 @@ If Err.Number <> 0 Then LogError Err, "frmViews, cmdDropView_Click"
 End Sub
 
 Public Sub cmdRefresh_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 cmp_view_tree_refresh trvBrowser, CBool(chkSystem)
 
@@ -537,7 +530,7 @@ If Err.Number <> 0 Then LogError Err, "frmViews, cmdRefresh_Click"
 End Sub
 
 Public Sub CmdViewButton()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 Dim iSelected As Integer
 Dim sz_key As String
@@ -559,7 +552,7 @@ End Sub
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Private Sub trvBrowser_NodeCheck(ByVal Node As MSComctlLib.Node)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 trvBrowser.FreezeCtl
 trvBrowser.TreeSelectiveCheck Node
@@ -573,7 +566,7 @@ If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_NodeCheck"
 End Sub
 
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
     Dim NodeX As Node
     Dim lOID As Long
@@ -644,7 +637,7 @@ If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_NodeClick"
 End Sub
 
 Private Sub trvBrowser_dblClick()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
     If trvBrowser.SelectedItem Is Nothing Then Exit Sub
     
@@ -659,7 +652,7 @@ End Sub
 
 Private Sub trvBrowser_OLEStartDrag(Data As MSComctlLib.DataObject, _
 AllowedEffects As Long)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 Set dragNode = trvBrowser.SelectedItem
 
@@ -670,7 +663,7 @@ End Sub
 
 Private Sub trvBrowser_MouseDown(Button As Integer, Shift As Integer, _
 x As Single, y As Single)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
     Set dragNode = trvBrowser.HitTest(x, y)
     Set dropNode = Nothing
@@ -684,7 +677,7 @@ If Err.Number <> 0 Then LogError Err, "frmviews, trvBrowser_MouseDown"
 End Sub
 
 Private Sub trvBrowser_OLEDragDrop(Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 
 Dim sz_drag_key As String
 Dim sz_drop_key As String
