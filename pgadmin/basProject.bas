@@ -134,7 +134,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmp_Project_RebuildViews()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
     Dim szViewDefinition As String
@@ -155,7 +155,7 @@ Public Sub cmp_Project_RebuildViews()
 
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildTriggers"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildViews"
 End Sub
 
 Public Sub cmp_Project_Compile()
