@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
 Begin VB.Form frmMigration 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Database Migration Wizard"
@@ -126,33 +126,33 @@ Begin VB.Form frmMigration
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmMigration.frx":130E
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "Label1(1)"
-      Tab(1).Control(1)=   "cmdDeselect(0)"
-      Tab(1).Control(2)=   "cmdSelect(0)"
-      Tab(1).Control(3)=   "lstTables"
+      Tab(1).Control(0)=   "lstTables"
+      Tab(1).Control(1)=   "cmdSelect(0)"
+      Tab(1).Control(2)=   "cmdDeselect(0)"
+      Tab(1).Control(3)=   "Label1(1)"
       Tab(1).ControlCount=   4
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmMigration.frx":132A
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "Label1(9)"
-      Tab(2).Control(1)=   "cmdDeselect(1)"
-      Tab(2).Control(2)=   "cmdSelect(1)"
-      Tab(2).Control(3)=   "lstData"
+      Tab(2).Control(0)=   "lstData"
+      Tab(2).Control(1)=   "cmdSelect(1)"
+      Tab(2).Control(2)=   "cmdDeselect(1)"
+      Tab(2).Control(3)=   "Label1(9)"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmMigration.frx":1346
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "Label1(8)"
-      Tab(3).Control(1)=   "Label1(10)"
+      Tab(3).Control(0)=   "lstForeignKeys"
+      Tab(3).Control(1)=   "cmdSelect(2)"
       Tab(3).Control(2)=   "cmdDeselect(2)"
-      Tab(3).Control(3)=   "cmdSelect(2)"
-      Tab(3).Control(4)=   "lstForeignKeys"
+      Tab(3).Control(3)=   "Label1(10)"
+      Tab(3).Control(4)=   "Label1(8)"
       Tab(3).ControlCount=   5
       TabCaption(4)   =   " "
       TabPicture(4)   =   "frmMigration.frx":1362
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "pbStatus"
-      Tab(4).Control(1)=   "txtStatus"
+      Tab(4).Control(0)=   "txtStatus"
+      Tab(4).Control(1)=   "pbStatus"
       Tab(4).ControlCount=   2
       Begin VB.TextBox txtStatus 
          Height          =   3480
@@ -899,6 +899,15 @@ Dim Values As String
 Dim lTransLevel As Long
 Dim fNum As Integer
 
+'   06/29/01 Matthew MacSuga (AutoIncrement Fix)
+'   Check for existance of an auto increment field
+Dim auto_increment_on As Integer
+Dim auto_increment_field_name As String
+Dim auto_increment_count As Integer
+Dim auto_increment_table As String
+Dim auto_increment_query As String
+Dim auto_increment_rs As New Recordset
+
 
   StartMsg "Migrating database..."
   pbStatus.Max = lstData.ListCount
@@ -928,6 +937,60 @@ Dim fNum As Integer
     Else
       szQryStr = "CREATE TABLE " & QUOTE & LCase(lstData.List(x)) & QUOTE & " ( "
     End If
+    
+    '   06/29/01 Matthew MacSuga (AutoIncrement Fix)
+    '   Check for existance of an auto increment field
+    auto_increment_on = 0
+    auto_increment_count = 0
+    auto_increment_field_name = ""
+    If chkLCaseTables.Value = 0 Then
+      auto_increment_table = lstData.List(x)
+    Else
+      auto_increment_table = LCase(lstData.List(x))
+    End If
+    auto_increment_query = ""
+    
+    '   Only do this if it's an access database
+    If InStr(1, cnLocal.ConnectionString, "MSDASQL") = 0 Then
+      For y = 0 To catLocal.Tables(lstData.List(x)).Columns.Count - 1
+        If catLocal.Tables(lstData.List(x)).Columns(y).Type = adInteger Then
+          If catLocal.Tables(lstData.List(x)).Columns(y).Properties("AutoIncrement") = True Then
+            auto_increment_on = 1
+            
+            If chkLCaseColumns.Value = 0 Then
+              auto_increment_field_name = catLocal.Tables(lstData.List(x)).Columns(y).Name
+            Else
+              auto_increment_field_name = LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name)
+            End If
+                    
+            Exit For
+          End If
+        End If
+      Next y
+    
+      If auto_increment_on = 1 Then
+        auto_increment_query = "SELECT MAX(" & szQuoteChar & auto_increment_field_name & szQuoteChar & ") AS RECCOUNT FROM " & szQuoteChar & auto_increment_table & szQuoteChar
+            
+        '   Perform the query
+        auto_increment_rs.Open auto_increment_query, cnLocal, 3, 1
+        If auto_increment_rs.RecordCount = 1 Then
+          '   Set auto_increment_count = MAX(fieldname) + 1 (to start at next record)
+          auto_increment_count = auto_increment_rs("RECCOUNT") + 1
+        End If
+            
+        '   Destroy what I created
+        If auto_increment_rs.State <> adStateClosed Then auto_increment_rs.Close
+        Set auto_increment_rs = Nothing
+        
+        '   Set the PostgreSQL query
+        auto_increment_query = "CREATE SEQUENCE " & QUOTE & auto_increment_table & "_" & auto_increment_field_name & "_key" & QUOTE & " START " & auto_increment_count
+      Else
+        auto_increment_query = ""
+      End If
+    End If
+    '   End Part 1 AutoIncrement Fix
+            
+    '   Return to original code
     For y = 0 To catLocal.Tables(lstData.List(x)).Columns.Count - 1
       If chkLCaseColumns.Value = 0 Then
         szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(x)).Columns(y).Name & QUOTE
@@ -1034,6 +1097,14 @@ Dim fNum As Integer
       If szTemp2 = "numeric" Then
         szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).NumericScale & "," & catLocal.Tables(lstData.List(x)).Columns(y).Precision & ")"
       End If
+      
+      ' Matthew MacSuga Auto Increment Fix
+      If auto_increment_on = 1 Then
+        If LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) = LCase(auto_increment_field_name) Then
+            szTemp2 = "int4 DEFAULT nextval('" & auto_increment_table & "_" & auto_increment_field_name & "_key')"
+        End If
+      End If
+      
       szTemp1 = szTemp1 & " " & szTemp2
       If chkNotNull.Value = 1 Then
         If catLocal.Tables(lstData.List(x)).Columns(y).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
@@ -1084,8 +1155,16 @@ Dim fNum As Integer
       End If
        
       szQryStr = szQryStr & " )"
-            
+    
       lTransLevel = gConnection.BeginTrans
+      
+      ' Matthew MacSuga Auto-Increment Fix
+      If auto_increment_on = 1 Then
+        LogMsg "Executing: " & auto_increment_query
+        gConnection.Execute auto_increment_query
+      End If
+      ' End Auto-Increment Fix
+      
       LogMsg "Executing: " & szQryStr
       gConnection.Execute szQryStr
       LogQuery szQryStr
