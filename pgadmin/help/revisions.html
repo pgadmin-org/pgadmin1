@@ -13,7 +13,8 @@
 <p>Key to contributors:</p>
 
 <p>DP - Dave Page<br>
-RC - Rod Childers</p>
+RC - Rod Childers<br>
+KR - Kirk Roybal</p>
 <h4>v7.1.1 Fixes/Updates</h4>
 <ul>
   <li>(DP) ADO connection objects used by the Migration Wizard now have the UID/PWD
@@ -22,6 +23,10 @@ RC - Rod Childers</p>
     SQL Server and Oracle whilst PostgreSQL, Access and Informix seem OK).</li>
   <li>(DP) Fixed a bug that caused the DataGrid to report all Boolean values in
     the first row as being False.</li>
+  <li>(DP) Added quotes around objects names in the SQL used to refresh the Sequence &amp; Table caches (Bug #196)</li>
+  <li>(KR) Added 'Serialize Column' option to table browser. This option allows
+    columns of suitable types (ie. int, float etc.) to be converted to
+    pseudo-serial columns.</li>
 </ul>
 <h4>v7.1.0 Fixes/Updates</h4>
 <ul>

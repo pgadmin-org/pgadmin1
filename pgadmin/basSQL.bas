@@ -624,8 +624,8 @@ Dim rsCount As New Recordset
   While Not rsTables.EOF
     If rsTables!table_name <> "pg_log" And rsTables!table_name <> "pg_variable" And rsTables!table_name <> "pg_xactlock" Then
       If rsCount.State <> adStateClosed Then rsCount.Close
-      LogMsg "Executing: SELECT count(*) AS rows FROM " & rsTables!table_name
-      rsCount.Open "SELECT count(*) AS rows FROM " & rsTables!table_name, gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT count(*) AS rows FROM " & QUOTE & rsTables!table_name & QUOTE
+      rsCount.Open "SELECT count(*) AS rows FROM " & QUOTE & rsTables!table_name & QUOTE, gConnection, adOpenForwardOnly
       LogMsg "Executing: INSERT INTO pgadmin_table_cache(table_oid, table_rows) VALUES(" & rsTables!table_oid & ", " & rsCount!Rows & ")"
       gConnection.Execute "INSERT INTO pgadmin_table_cache(table_oid, table_rows) VALUES(" & rsTables!table_oid & ", " & rsCount!Rows & ")"
     End If
@@ -652,8 +652,8 @@ Dim szIsCycled As String
   gConnection.Execute "DELETE FROM pgadmin_seq_cache WHERE sequence_timestamp >= '" & Format(Date, "yyyy-mm-dd") & " 00:00:00' AND sequence_timestamp <= '" & Format(Date, "yyyy-mm-dd") & " 23:59:59'"
   While Not rsSeqs.EOF
     If rsData.State <> adStateClosed Then rsData.Close
-    LogMsg "Executing: SELECT * FROM " & rsSeqs!sequence_name
-    rsData.Open "SELECT * FROM " & rsSeqs!sequence_name, gConnection, adOpenForwardOnly
+    LogMsg "Executing: SELECT * FROM " & QUOTE & rsSeqs!sequence_name & QUOTE
+    rsData.Open "SELECT * FROM " & QUOTE & rsSeqs!sequence_name & QUOTE, gConnection, adOpenForwardOnly
     If rsData!is_cycled = 1 Or rsData!is_cycled = True Then
       szIsCycled = "Yes"
     Else
