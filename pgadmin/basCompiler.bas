@@ -23,20 +23,20 @@ Option Compare Text
 '**** Views
 '****
 
-Sub cmp_View_DropIfExists(ByVal lngView_OID As Long, Optional ByVal szView_Name As String)
+Sub cmp_View_DropIfExists(ByVal lngView_oid As Long, Optional ByVal szView_name As String)
  On Error GoTo Err_Handler
     Dim szDropStr As String
   
     ' Test existence of view
-    If cmp_View_Exists(lngView_OID, szView_Name & "") = True Then
+    If cmp_View_Exists(lngView_oid, szView_name & "") = True Then
     
-        If szView_Name = "" Then cmp_View_GetValues lngView_OID, "", szView_Name
+        If szView_name = "" Then cmp_View_GetValues lngView_oid, "", szView_name
     
         ' create drop query
-        szDropStr = "DROP VIEW " & QUOTE & szView_Name & QUOTE
+        szDropStr = "DROP VIEW " & QUOTE & szView_name & QUOTE
                
         ' Log information
-        LogMsg "Dropping view " & szView_Name & "..."
+        LogMsg "Dropping view " & szView_name & "..."
         LogMsg "Executing: " & szDropStr
         
         ' Execute drop query and close log
@@ -48,26 +48,26 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_View_DropIfExists"
 End Sub
 
-Function cmp_View_Exists(ByVal lngView_OID As Long, ByVal szView_Name As String) As Boolean
+Function cmp_View_Exists(ByVal lngView_oid As Long, ByVal szView_name As String) As Boolean
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
   
     cmp_View_Exists = False
-    If lngView_OID <> 0 Then
+    If lngView_oid <> 0 Then
         szQueryStr = "SELECT * FROM pgadmin_views "
-        szQueryStr = szQueryStr & "WHERE view_OID = " & Str(lngView_OID)
+        szQueryStr = szQueryStr & "WHERE view_OID = " & Str(lngView_oid)
     Else
-        If szView_Name <> "" Then
+        If szView_name <> "" Then
             szQueryStr = "SELECT * FROM pgadmin_views "
-            szQueryStr = szQueryStr & "WHERE view_name = '" & szView_Name & "' "
+            szQueryStr = szQueryStr & "WHERE view_name = '" & szView_name & "' "
         Else
             Exit Function
         End If
     End If
     
       ' retrieve name and arguments of function to drop
-    LogMsg "Testing existence of view " & szView_Name & "..."
+    LogMsg "Testing existence of view " & szView_name & "..."
     LogMsg "Executing: " & szQueryStr
 
     If rsComp.State <> adStateClosed Then rsComp.Close
@@ -84,12 +84,12 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_View_DropIfExists"
 End Function
 
-Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_Definition As String)
+Sub cmp_View_Create(ByVal szView_name As String, ByVal szView_definition As String)
 On Error GoTo Err_Handler
   Dim szCreateStr As String
 
-    szCreateStr = cmp_View_CreateSQL(szView_Name, szView_Definition)
-    LogMsg "Creating view " & szView_Name & "..."
+    szCreateStr = cmp_View_CreateSQL(szView_name, szView_definition)
+    LogMsg "Creating view " & szView_name & "..."
     LogMsg "Executing: " & szCreateStr
     
     ' Execute drop query and close log
@@ -99,22 +99,22 @@ On Error GoTo Err_Handler
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Views_Create"
-  If Err.Number = -2147467259 Then MsgBox "View " & szView_Name & " could not be compiled." & vbCrLf & "Check source code and compile again."
+  If Err.Number = -2147467259 Then MsgBox "View " & szView_name & " could not be compiled." & vbCrLf & "Check source code and compile again."
   bContinueCompilation = False
 End Sub
 
-Function cmp_View_CreateSQL(ByVal szView_Name As String, ByVal szView_Definition As String) As String
+Function cmp_View_CreateSQL(ByVal szView_name As String, ByVal szView_definition As String) As String
 On Error GoTo Err_Handler
   Dim szQuery As String
 
-    szQuery = "CREATE VIEW " & szView_Name & " AS " & szView_Definition & "; "
+    szQuery = "CREATE VIEW " & szView_name & " AS " & szView_definition & "; "
     cmp_View_CreateSQL = szQuery
   Exit Function
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Views_Create"
 End Function
 
-Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_PostgreSQLtable As String, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
+Sub cmp_View_GetValues(lngView_oid As Long, Optional szView_PostgreSQLtable As String, Optional szView_name As String, Optional szView_definition As String, Optional szView_owner As String, Optional szView_acl As String, Optional szView_comments As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -125,13 +125,13 @@ Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_PostgreSQLtabl
     End If
         
     ' Select query
-    If lngView_OID <> 0 Then
+    If lngView_oid <> 0 Then
         szQueryStr = "SELECT * from " & szView_PostgreSQLtable
-        szQueryStr = szQueryStr & " WHERE view_OID = " & lngView_OID
-        LogMsg "Retrieving values from view OID =" & lngView_OID & "..."
+        szQueryStr = szQueryStr & " WHERE view_OID = " & lngView_oid
+        LogMsg "Retrieving values from view OID =" & lngView_oid & "..."
     Else
-        ' to be written
-        Exit Sub
+        If IsMissing(szView_name) Or szView_name = "" Then Exit Sub
+        szQueryStr = "SELECT * from " & szView_PostgreSQLtable & " WHERE view_name = '" & szView_name & "'"
     End If
     
     LogMsg "Executing: " & szQueryStr
@@ -141,10 +141,11 @@ Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_PostgreSQLtabl
     rsComp.Open szQueryStr, gConnection
     
     If Not rsComp.EOF Then
-        If Not (IsMissing(szView_Name)) Then szView_Name = rsComp!view_name & ""
-        If Not (IsMissing(szView_Owner)) Then szView_Owner = rsComp!view_owner & ""
-        If Not (IsMissing(szView_Acl)) Then szView_Acl = rsComp!view_acl & ""
-        If Not (IsMissing(szView_Definition)) Then szView_Definition = cmp_View_GetViewDef(szView_Name)
+        lngView_oid = rsComp!view_oid
+        If Not (IsMissing(szView_name)) Then szView_name = rsComp!view_name & ""
+        If Not (IsMissing(szView_owner)) Then szView_owner = rsComp!view_owner & ""
+        If Not (IsMissing(szView_acl)) Then szView_acl = rsComp!view_acl & ""
+        If Not (IsMissing(szView_definition)) Then szView_definition = cmp_View_GetViewDef(szView_name)
         rsComp.Close
     End If
   Exit Sub
@@ -182,7 +183,7 @@ End Function
 '****
 '****
 
-Function cmp_Trigger_CreateSQL(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer) As String
+Function cmp_Trigger_CreateSQL(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_foreach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer) As String
 ' Two syntaxes
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_ForEach, szTrigger_Executes, szTrigger_Event )
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, "", "", "", szTrigger_type)
@@ -196,9 +197,9 @@ On Error GoTo Err_Handler
             ' retrieve values from trigger
             
             If (iTrigger_type And 1) = 1 Then
-              szTrigger_ForEach = " Row"
+              szTrigger_foreach = " Row"
             Else
-              szTrigger_ForEach = " Statement"
+              szTrigger_foreach = " Statement"
             End If
             
             If (iTrigger_type And 2) = 2 Then
@@ -216,7 +217,7 @@ On Error GoTo Err_Handler
      
     szQueryStr = "CREATE TRIGGER " & QUOTE & szTrigger_name & QUOTE
     szQueryStr = szQueryStr & " " & szTrigger_Executes & " " & szTrigger_event
-    szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_ForEach
+    szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_foreach
     szQueryStr = szQueryStr & " EXECUTE PROCEDURE " & szTrigger_function & "(" & szTrigger_arguments & ")"
     
     cmp_Trigger_CreateSQL = szQueryStr
@@ -226,16 +227,16 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_CreateSQL"
 End Function
 
-Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
+Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_foreach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
 ' Two syntaxes
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_ForEach, szTrigger_Executes, szTrigger_Event )
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, "", "", "", szTrigger_type)
     Dim szQueryStr As String
     
     If (IsMissing(iTrigger_type)) Then
-      szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_ForEach, szTrigger_Executes, szTrigger_event)
+      szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event)
     Else
-      szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_ForEach, szTrigger_Executes, szTrigger_event, iTrigger_type)
+      szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, iTrigger_type)
     End If
     
     ' Log information
@@ -278,8 +279,8 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_DropIfExists"
 End Sub
 
-Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_PostgreSQLtable As String, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_event As String)
- On Error GoTo Err_Handler
+Sub cmp_Trigger_GetValues(lngTrigger_OID As Long, Optional szTrigger_PostgreSQLtable As String, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_foreach As String, Optional szTrigger_Executes As String, Optional szTrigger_event As String, Optional szTrigger_Comments As String)
+ ' On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     Dim iTrigger_type As Integer
@@ -291,13 +292,16 @@ Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_Postg
         
     ' Select query
     If lngTrigger_OID <> 0 Then
-        
         szQueryStr = "SELECT * from " & szTrigger_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE trigger_OID = " & lngTrigger_OID
         LogMsg "Retrieving name and table from trigger OID =" & lngTrigger_OID & "..."
     Else
-        ' to be written
-        Exit Sub
+        If IsMissing(szTrigger_name) Then Exit Sub
+        szQueryStr = "SELECT * from " & szTrigger_PostgreSQLtable & " WHERE "
+        szQueryStr = szQueryStr & " trigger_name = '" & szTrigger_name & "' "
+        If Not (IsMissing(szTrigger_table)) And szTrigger_table <> "" Then
+            szQueryStr = szQueryStr & " AND trigger_table = '" & szTrigger_table & "'"
+        End If
     End If
     
     LogMsg "Executing: " & szQueryStr
@@ -307,17 +311,18 @@ Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_Postg
     rsComp.Open szQueryStr, gConnection
     
     If Not rsComp.EOF Then
+        lngTrigger_OID = rsComp!trigger_oid
         If Not (IsMissing(szTrigger_name)) Then szTrigger_name = rsComp!trigger_name & ""
         If Not (IsMissing(szTrigger_table)) Then szTrigger_table = rsComp!trigger_table & ""
         If Not (IsMissing(szTrigger_function)) Then szTrigger_function = rsComp!trigger_function & ""
         If Not (IsMissing(szTrigger_arguments)) Then szTrigger_arguments = rsComp!trigger_arguments & ""
         iTrigger_type = rsComp!trigger_type
         If iTrigger_type <> 0 Then
-            If Not (IsMissing(szTrigger_ForEach)) Then
+            If Not (IsMissing(szTrigger_foreach)) Then
                 If (iTrigger_type And 1) = 1 Then
-                  szTrigger_ForEach = "Row"
+                  szTrigger_foreach = "Row"
                 Else
-                  szTrigger_ForEach = "Statement"
+                  szTrigger_foreach = "Statement"
                 End If
             End If
             
@@ -649,7 +654,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_HasSatisfiedDependencies"
 End Function
 
-Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_PostgreSQLtable As String, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String)
+Sub cmp_Function_GetValues(lngFunction_OID As Long, Optional szFunction_PostgreSQLtable As String, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String, Optional szFunction_comments As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -664,11 +669,11 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_Po
         szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE function_OID = " & lngFunction_OID
     Else
-        If IsMissing(szFunction_name) Or IsMissing(szFunction_name) Then Exit Sub
+        If IsMissing(szFunction_name) Then Exit Sub
         If szFunction_name <> "" Then
             szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
             szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
-            If szFunction_arguments <> "" Then
+            If Not (IsMissing(szFunction_arguments)) And szFunction_arguments <> "" Then
                 szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
             End If
         End If
@@ -683,12 +688,14 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_Po
     rsComp.Open szQueryStr, gConnection
     
     If Not rsComp.EOF Then
-        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
-        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
+        lngFunction_OID = rsComp!function_oid
+        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!function_name & ""
+        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!function_arguments & ""
         If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
         If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
         If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
         If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
+        If Not (IsMissing(szFunction_comments)) Then szFunction_comments = rsComp!function_comments & ""
        
         If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
         szFunction_source = Replace(szFunction_source, "'", "''")
@@ -772,7 +779,7 @@ End Function
 Public Sub comp_Project_BackupViews(Optional ByVal Function_OldName, Optional ByVal Function_NewName, Optional ByVal Table_OldName, Optional ByVal Table_NewName)
 'On Error GoTo Err_Handler
     Dim szQuery As String
-    Dim szView_Definition As String
+    Dim szView_definition As String
     Dim rsComp As New Recordset
     
     ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
@@ -797,24 +804,24 @@ Public Sub comp_Project_BackupViews(Optional ByVal Function_OldName, Optional By
     
     While Not rsComp.EOF
         'Copy view definition
-        szView_Definition = Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''")
+        szView_definition = Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''")
         
         ' Rename underlying functions if needed
         If Not (IsMissing(Function_NewName)) And Not (IsMissing(Function_OldName)) Then
             If (Function_OldName <> "") And (Function_NewName <> "") And (Function_NewName <> Function_OldName) Then
-                szView_Definition = Replace(szView_Definition, Function_OldName, Function_NewName)
+                szView_definition = Replace(szView_definition, Function_OldName, Function_NewName)
             End If
         End If
         
         ' Rename underlying table if needed
         If Not (IsMissing(Table_NewName)) And Not (IsMissing(Table_OldName)) Then
             If (Table_OldName <> "") And (Table_NewName <> "") And (Table_NewName <> Table_OldName) Then
-                szView_Definition = Replace(szView_Definition, Table_OldName, Table_NewName)
+                szView_definition = Replace(szView_definition, Table_OldName, Table_NewName)
             End If
         End If
         
         ' Update definition of view
-        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & szView_Definition & "' WHERE view_oid = '" & rsComp!view_oid & "'"
+        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & szView_definition & "' WHERE view_oid = '" & rsComp!view_oid & "'"
         gConnection.Execute szQuery
         rsComp.MoveNext
     Wend
@@ -935,7 +942,7 @@ Public Sub comp_Project_BackupFunctions(Optional ByVal Function_OldName, Optiona
     rsComp.Open szQuery, gConnection, adOpenDynamic
     
     While Not rsComp.EOF
-        cmp_Function_Dependency_Initialize rsComp!function_OID, rsComp!Function_name
+        cmp_Function_Dependency_Initialize rsComp!function_oid, rsComp!function_name
         rsComp.MoveNext
     Wend
     
@@ -977,7 +984,7 @@ Public Sub comp_Project_BackupFunctions(Optional ByVal Function_OldName, Optiona
                 szFunction_source = Replace(rsComp!Function_source, "'", "''")
                 szFunction_source = Replace(szFunction_source, Function_OldName, Function_NewName)
                 szQuery = "UPDATE pgadmin_dev_functions SET szFunction_source = '" & szFunction_source & "'"
-                szQuery = szQuery & " WHERE function_oid = " & Str(rsComp!function_OID)
+                szQuery = szQuery & " WHERE function_oid = " & Str(rsComp!function_oid)
                 
                 LogMsg "Updating function_source in " & Function_OldName & " with " & szFunction_source & "..."
                 LogMsg "Executing: " & szQuery
@@ -1021,8 +1028,8 @@ On Error GoTo Err_Handler
     
     comp_Project_FindNextFunctionToCompile = 0
     While Not rsComp.EOF
-        If cmp_Function_HasSatisfiedDependencies(rsComp!function_OID) = True Then
-            comp_Project_FindNextFunctionToCompile = rsComp!function_OID
+        If cmp_Function_HasSatisfiedDependencies(rsComp!function_oid) = True Then
+            comp_Project_FindNextFunctionToCompile = rsComp!function_oid
             LogMsg "Next vailable function to compile has OID = " & Str(comp_Project_FindNextFunctionToCompile) & "..."
             Exit Function
         End If
