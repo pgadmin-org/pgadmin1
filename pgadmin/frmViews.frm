@@ -80,6 +80,7 @@ Begin VB.Form frmViews
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected View."
       Top             =   1485
+      Visible         =   0   'False
       Width           =   1410
    End
    Begin VB.CommandButton cmdRefresh 

@@ -114,6 +114,7 @@ Begin VB.Form frmFunctions
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected function."
       Top             =   1485
+      Visible         =   0   'False
       Width           =   1410
    End
    Begin VB.CommandButton cmdRefresh 

@@ -89,6 +89,7 @@ Begin VB.Form frmTriggers
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected Trigger."
       Top             =   1485
+      Visible         =   0   'False
       Width           =   1410
    End
    Begin VB.CommandButton cmdRefresh 
