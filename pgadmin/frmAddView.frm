@@ -173,7 +173,7 @@ On Error GoTo Err_Handler
     MsgBox "You must enter a name for the View!", vbExclamation, "Error"
     Exit Sub
   End If
-  If txtSQL.Text = "" Then
+  If txtSQL.Text = "" Or txtSQL.Text = "Not a view" Then
     MsgBox "You must enter an SQL query for the View!", vbExclamation, "Error"
     Exit Sub
   End If

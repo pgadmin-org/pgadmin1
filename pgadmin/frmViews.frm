@@ -416,8 +416,8 @@ On Error GoTo Err_Handler
     txtName.Text = rsView!view_name & ""
     txtOwner.Text = rsView!view_owner & ""
     txtACL.Text = rsView!view_acl & ""
-    txtDefinition.Text = rsView!view_definition & ""
     txtComments.Text = rsView!view_comments & ""
+    txtDefinition.Text = cmp_View_GetViewDef(txtName.Text)
     EndMsg
   End If
   Exit Sub

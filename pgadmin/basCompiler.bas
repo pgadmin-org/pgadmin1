@@ -124,9 +124,9 @@ Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String
     
     If Not rsComp.EOF Then
         If Not (IsMissing(szView_Name)) Then szView_Name = rsComp!view_name & ""
-        If Not (IsMissing(szView_Definition)) Then szView_Definition = rsComp!view_definition & ""
         If Not (IsMissing(szView_Owner)) Then szView_Owner = rsComp!view_owner & ""
         If Not (IsMissing(szView_Acl)) Then szView_Acl = rsComp!view_acl & ""
+        If Not (IsMissing(szView_Definition)) Then szView_Definition = cmp_View_GetViewDef(lngView_OID)
         rsComp.Close
     End If
   Exit Sub
@@ -134,12 +134,37 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Views_GetValues"
 End Sub
 
+Public Function cmp_View_GetViewDef(ByVal lngView_Name As String) As String
+ On Error GoTo Err_Handler
+    Dim szQueryStr As String
+    Dim rsTemp As New Recordset
+    cmp_View_GetViewDef = ""
+    
+    If lngView_Name = "" Then Exit Function
+    
+    szQueryStr = "SELECT pg_get_viewdef ('" & lngView_Name & "') as Result"
+    LogMsg "Executing: " & szQueryStr
+    
+    ' open
+    If rsTemp.State <> adStateClosed Then rsTemp.Close
+    rsTemp.Open szQueryStr, gConnection
+    
+    If Not rsTemp.EOF Then
+        cmp_View_GetViewDef = rsTemp!Result
+    End If
+    
+    Exit Function
+Err_Handler:
+  cmp_View_GetViewDef = "Not a view"
+End Function
+
+
 '****
 '**** Triggers
 '****
 '****
 
-Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_Event As String, Optional iTrigger_type As Integer)
+Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
 ' Two syntaxes
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_ForEach, szTrigger_Executes, szTrigger_Event )
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, "", "", "", szTrigger_type)
@@ -164,15 +189,15 @@ On Error GoTo Err_Handler
               szTrigger_Executes = " After"
             End If
             
-            If (iTrigger_type And 4) = 4 Then szTrigger_Event = szTrigger_Event & "Insert OR "
-            If (iTrigger_type And 8) = 8 Then szTrigger_Event = szTrigger_Event & "Delete OR "
-            If (iTrigger_type And 16) = 16 Then szTrigger_Event = szTrigger_Event & "Update OR "
-            szTrigger_Event = Left(szTrigger_Event, Len(szTrigger_Event) - 3)
+            If (iTrigger_type And 4) = 4 Then szTrigger_event = szTrigger_event & "Insert OR "
+            If (iTrigger_type And 8) = 8 Then szTrigger_event = szTrigger_event & "Delete OR "
+            If (iTrigger_type And 16) = 16 Then szTrigger_event = szTrigger_event & "Update OR "
+            szTrigger_event = Left(szTrigger_event, Len(szTrigger_event) - 3)
         End If
     End If
      
     szQueryStr = "CREATE TRIGGER " & QUOTE & szTrigger_name & QUOTE
-    szQueryStr = szQueryStr & " " & szTrigger_Executes & " " & szTrigger_Event
+    szQueryStr = szQueryStr & " " & szTrigger_Executes & " " & szTrigger_event
     szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_ForEach
     szQueryStr = szQueryStr & " EXECUTE PROCEDURE " & szTrigger_function & "(" & szTrigger_arguments & ")"
     
@@ -216,7 +241,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_DropIfExists"
 End Sub
 
-Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_Event As String)
+Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_event As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -260,11 +285,11 @@ Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name 
                 End If
             End If
             
-            If Not (IsMissing(szTrigger_Event)) Then
-                If (iTrigger_type And 4) = 4 Then szTrigger_Event = szTrigger_Event & "Insert OR "
-                If (iTrigger_type And 8) = 8 Then szTrigger_Event = szTrigger_Event & "Delete OR "
-                If (iTrigger_type And 16) = 16 Then szTrigger_Event = szTrigger_Event & "Update OR "
-                szTrigger_Event = Left(szTrigger_Event, Len(szTrigger_Event) - 3)
+            If Not (IsMissing(szTrigger_event)) Then
+                If (iTrigger_type And 4) = 4 Then szTrigger_event = szTrigger_event & "Insert OR "
+                If (iTrigger_type And 8) = 8 Then szTrigger_event = szTrigger_event & "Delete OR "
+                If (iTrigger_type And 16) = 16 Then szTrigger_event = szTrigger_event & "Update OR "
+                szTrigger_event = Left(szTrigger_event, Len(szTrigger_event) - 3)
             End If
         End If
         rsComp.Close

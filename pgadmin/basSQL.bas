@@ -176,7 +176,6 @@ SQL_PGADMIN_VIEWS = _
   "  c.relname AS view_name, " & _
   "  pg_get_userbyid(c.relowner) AS view_owner, " & _
   "  c.relacl AS view_acl, " & _
-  "  pg_get_viewdef(c.relname) AS view_definition, " & _
   "  CASE WHEN c.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(c.oid) ELSE pgadmin_get_desc(c.oid) END AS view_comments " & _
   "FROM " & _
   "  pg_class c " & _

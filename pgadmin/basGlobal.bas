@@ -39,7 +39,7 @@ Public Enum ObjectTypes
   tLanguage = 6
 End Enum
 
-Public Const SSO_VERSION = 2.01
+Public Const SSO_VERSION = 2.02
 Public Const DEVELOPMENT = True
 Public Const QUOTE = """"
 Public Const LAST_SYSTEM_OID = 18655
