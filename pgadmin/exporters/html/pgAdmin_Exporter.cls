@@ -102,7 +102,6 @@ Dim szTemp As String
   Print #1, "    <TR>"
   
   'Print the data
-  If Not rsData.BOF Then rsData.MoveFirst
   While Not rsData.EOF
     szTemp = ""
     For X = 0 To rsData.Fields.Count - 1

@@ -62,8 +62,7 @@ Dim Y As Integer
   Next
 
   'Enter Data
-  
-  rsData.MoveFirst
+
   Y = 2
   While Not rsData.EOF
     For X = 0 To rsData.Fields.Count - 1
