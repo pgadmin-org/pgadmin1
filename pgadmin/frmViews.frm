@@ -384,12 +384,15 @@ On Error GoTo Err_Handler
     rsView.Open "SELECT view_name FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name", gConnection, adOpenDynamic
   End If
   
-  szView = rsView.GetRows
-  iUbound = UBound(szView, 2)
-  For iLoop = 0 To iUbound
-    szView_name = szView(0, iLoop)
-    lstView.AddItem szView_name
-  Next iLoop
+  If Not (rsView.EOF) Then
+    szView = rsView.GetRows
+    iUbound = UBound(szView, 2)
+    For iLoop = 0 To iUbound
+      szView_name = szView(0, iLoop)
+      lstView.AddItem szView_name
+    Next iLoop
+  End If
+  
   Erase szView
   
   EndMsg

@@ -61,13 +61,22 @@ Begin VB.Form frmTriggers
       TabIndex        =   13
       Top             =   0
       Width           =   3660
+      Begin VB.TextBox txtName 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   810
+         Locked          =   -1  'True
+         TabIndex        =   24
+         Top             =   540
+         Width           =   2760
+      End
       Begin VB.TextBox txtForEach 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
          TabIndex        =   11
-         Top             =   1800
+         Top             =   2115
          Width           =   2760
       End
       Begin VB.TextBox txtEvent 
@@ -76,7 +85,7 @@ Begin VB.Form frmTriggers
          Left            =   810
          Locked          =   -1  'True
          TabIndex        =   10
-         Top             =   1485
+         Top             =   1800
          Width           =   2760
       End
       Begin VB.TextBox txtExecutes 
@@ -85,7 +94,7 @@ Begin VB.Form frmTriggers
          Left            =   810
          Locked          =   -1  'True
          TabIndex        =   9
-         Top             =   1170
+         Top             =   1485
          Width           =   2760
       End
       Begin VB.TextBox txtFunction 
@@ -94,7 +103,7 @@ Begin VB.Form frmTriggers
          Left            =   810
          Locked          =   -1  'True
          TabIndex        =   8
-         Top             =   855
+         Top             =   1170
          Width           =   2760
       End
       Begin VB.TextBox txtOID 
@@ -112,19 +121,29 @@ Begin VB.Form frmTriggers
          Left            =   810
          Locked          =   -1  'True
          TabIndex        =   7
-         Top             =   540
+         Top             =   855
          Width           =   2760
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   1590
+         Height          =   1230
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   12
-         Top             =   2340
+         Top             =   2700
          Width           =   3480
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Name"
+         Height          =   195
+         Index           =   1
+         Left            =   90
+         TabIndex        =   25
+         Top             =   585
+         Width           =   420
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -143,7 +162,7 @@ Begin VB.Form frmTriggers
          Index           =   2
          Left            =   90
          TabIndex        =   19
-         Top             =   585
+         Top             =   900
          Width           =   405
       End
       Begin VB.Label Label1 
@@ -153,7 +172,7 @@ Begin VB.Form frmTriggers
          Index           =   3
          Left            =   90
          TabIndex        =   18
-         Top             =   900
+         Top             =   1215
          Width           =   615
       End
       Begin VB.Label Label1 
@@ -163,7 +182,7 @@ Begin VB.Form frmTriggers
          Index           =   4
          Left            =   90
          TabIndex        =   17
-         Top             =   1215
+         Top             =   1530
          Width           =   660
       End
       Begin VB.Label Label1 
@@ -173,7 +192,7 @@ Begin VB.Form frmTriggers
          Index           =   5
          Left            =   90
          TabIndex        =   16
-         Top             =   1530
+         Top             =   1845
          Width           =   420
       End
       Begin VB.Label Label1 
@@ -183,7 +202,7 @@ Begin VB.Form frmTriggers
          Index           =   6
          Left            =   90
          TabIndex        =   15
-         Top             =   1845
+         Top             =   2160
          Width           =   645
       End
       Begin VB.Label Label1 
@@ -193,7 +212,7 @@ Begin VB.Form frmTriggers
          Index           =   8
          Left            =   90
          TabIndex        =   14
-         Top             =   2115
+         Top             =   2430
          Width           =   735
       End
    End
@@ -351,6 +370,7 @@ On Error GoTo Err_Handler
   StartMsg "Retrieving Trigger Names..."
   lstTrig.Clear
   txtOID.Text = ""
+  txtName.Text = ""
   txtTable.Text = ""
   txtComments.Text = ""
   txtFunction.Text = ""
@@ -365,14 +385,19 @@ On Error GoTo Err_Handler
     LogMsg "Executing: SELECT trigger_name, trigger_table FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name"
     rsTrig.Open "SELECT trigger_name, trigger_table FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name", gConnection, adOpenDynamic
   End If
-  szTrigger = rsTrig.GetRows
-  iUbound = UBound(szTrigger, 2)
-  For iLoop = 0 To iUbound
-    szTrigger_name = szTrigger(0, iLoop)
-    szTrigger_table = szTrigger(1, iLoop)
-    lstTrig.AddItem szTrigger_name & " ON " & szTrigger_table
-  Next iLoop
+  
+  If Not (rsTrig.EOF) Then
+    szTrigger = rsTrig.GetRows
+    iUbound = UBound(szTrigger, 2)
+    For iLoop = 0 To iUbound
+      szTrigger_name = szTrigger(0, iLoop)
+      szTrigger_table = szTrigger(1, iLoop)
+      lstTrig.AddItem szTrigger_name & " ON " & szTrigger_table
+    Next iLoop
+  End If
+  
   Erase szTrigger
+  
   EndMsg
   Exit Sub
 Err_Handler:
@@ -446,6 +471,7 @@ Dim iInstr As Integer
     szTrigger_oid = 0
     cmp_Trigger_GetValues szTrigger_oid, "pgadmin_triggers", szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, szTrigger_Comments
     txtOID.Text = Trim(Str(szTrigger_oid))
+    txtName.Text = szTrigger_name
     txtTable.Text = szTrigger_table
     txtFunction.Text = szTrigger_function
     txtForEach.Text = szTrigger_foreach
@@ -459,3 +485,4 @@ Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmTriggers, lstTrig_Click"
 End Sub
+

@@ -486,17 +486,19 @@ Public Sub cmdRefresh_Click()
     LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name"
     rsFunc.Open "SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
   End If
-  szFunc = rsFunc.GetRows
-  iUbound = UBound(szFunc, 2)
-  For iLoop = 0 To iUbound
-       szFunction_name = szFunc(0, iLoop)
-       szFunction_arguments = szFunc(1, iLoop)
-      If szFunction_arguments <> "" Then
-          lstFunc.AddItem szFunction_name & " (" & szFunction_arguments & ")"
-      Else
-          lstFunc.AddItem szFunction_name
-      End If
-  Next iLoop
+  If Not (rsFunc.EOF) Then
+    szFunc = rsFunc.GetRows
+    iUbound = UBound(szFunc, 2)
+    For iLoop = 0 To iUbound
+         szFunction_name = szFunc(0, iLoop)
+         szFunction_arguments = szFunc(1, iLoop)
+        If szFunction_arguments <> "" Then
+            lstFunc.AddItem szFunction_name & " (" & szFunction_arguments & ")"
+        Else
+            lstFunc.AddItem szFunction_name
+        End If
+    Next iLoop
+  End If
   Erase szFunc
   txtName.Text = lstFunc
   EndMsg
