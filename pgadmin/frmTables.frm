@@ -1145,7 +1145,7 @@ Dim szQuery As String
   Set rsDesc = Nothing
   
   ' Retrieve table content
-  ' This can be done as we use GetRows
+  ' This can be done because optimize with GetRows
   If trvBrowser.Nodes.Count > 1 Then
     trvBrowser_NodeClick trvBrowser.Nodes.Item(2)
     trvBrowser.Nodes.Item(2).Expanded = False
