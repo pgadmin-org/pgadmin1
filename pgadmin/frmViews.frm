@@ -362,9 +362,6 @@ End Sub
 Private Sub cmdRebuildViews_Click()
 On Error GoTo Err_Handler
     cmp_Project_RebuildViews
-        If bContinueRebuilding = True Then
-        cmp_View_CopyToDev
-    End If
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildViews_Click"
 End Sub

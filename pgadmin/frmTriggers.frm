@@ -394,9 +394,6 @@ End Sub
 Private Sub cmdRebuildTriggers_Click()
 On Error GoTo Err_Handler
     cmp_Project_RebuildTriggers
-    If bContinueRebuilding = True Then
-        cmp_Trigger_CopyToDev
-    End If
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuildTriggers_Click"
 End Sub
