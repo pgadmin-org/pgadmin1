@@ -52,7 +52,7 @@ Begin VB.Form frmFunctions
    End
    Begin VB.CommandButton cmdCopyDevToPro 
       BackColor       =   &H80000018&
-      Caption         =   "Unsafe compile"
+      Caption         =   "Compile unsafe"
       Height          =   330
       Left            =   45
       TabIndex        =   27
