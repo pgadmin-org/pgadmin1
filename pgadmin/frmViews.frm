@@ -406,6 +406,10 @@ On Error GoTo Err_Handler
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Resize"
 End Sub
 
+Public Sub lstView_dblClick()
+    cmdModifyView_Click
+End Sub
+
 Public Sub lstView_Click()
 On Error GoTo Err_Handler
   If lstView.Text <> "" Then

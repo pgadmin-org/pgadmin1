@@ -438,6 +438,10 @@ Private Sub Form_Resize()
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Resize"
 End Sub
 
+Public Sub lstFunc_dblClick()
+    cmdModifyFunc_Click
+End Sub
+
 Public Sub lstFunc_Click()
 ' On Error GoTo Err_Handler
   If lstFunc.Text <> "" Then

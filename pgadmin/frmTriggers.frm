@@ -384,6 +384,10 @@ On Error GoTo Err_Handler
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, Form_Resize"
 End Sub
 
+Public Sub lstTrig_dblClick()
+    cmdModifyTrig_Click
+End Sub
+
 Public Sub lstTrig_Click()
 On Error GoTo Err_Handler
 Dim iTrigger_type As Integer
