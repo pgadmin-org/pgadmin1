@@ -221,6 +221,71 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Move"
 End Sub
 
+
+Sub cmp_Function_GetValues(szFunction_table As String, szFunction_name As String, szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String, Optional szFunction_comments As String)
+ On Error GoTo Err_Handler
+    Dim szQueryStr As String
+    Dim rsComp As New Recordset
+    
+    If (szFunction_table = "") Then szFunction_table = "pgadmin_functions"
+
+    ' Select query
+
+    szQueryStr = "SELECT * from " & szFunction_table
+    szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
+    szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
+     
+    ' open
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szQueryStr, gConnection
+    
+    If Not rsComp.EOF Then
+        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!function_name & ""
+        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
+        If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
+        If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!function_source & ""
+        If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!function_language & ""
+        If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
+        If Not (IsMissing(szFunction_comments)) Then szFunction_comments = rsComp!function_comments & ""
+       
+        If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
+        rsComp.Close
+    Else
+        If Not (IsMissing(szFunction_name)) Then szFunction_name = ""
+        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = ""
+        If Not (IsMissing(szFunction_returns)) Then szFunction_returns = ""
+        If Not (IsMissing(szFunction_source)) Then szFunction_source = ""
+        If Not (IsMissing(szFunction_language)) Then szFunction_language = ""
+        If Not (IsMissing(szFunction_owner)) Then szFunction_owner = ""
+        If Not (IsMissing(szFunction_comments)) Then szFunction_comments = ""
+    End If
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_GetValues"
+End Sub
+
+Public Sub cmp_Function_ParseName(szInput As String, szFunction_name As String, szFunction_arguments As String)
+On Error GoTo Err_Handler
+
+Dim iInstr As Integer
+    iInstr = InStr(szInput, "(")
+    If iInstr > 0 Then
+        szFunction_name = Trim(Left(szInput, iInstr - 1))
+        szFunction_arguments = Trim(Mid(szInput, iInstr + 1, Len(szInput) - iInstr - 1))
+    Else
+        szFunction_name = Trim(szInput)
+        szFunction_arguments = ""
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
+End Sub
+
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Dependencies
+' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 Public Sub cmp_Function_Dependency_Initialize(ByVal szDependency_table As String, ByVal szFunction_dev_table As String, ByVal szFunction_name As String)
 On Error GoTo Err_Handler
     Dim szDependencyStr As String
@@ -297,66 +362,6 @@ Public Function cmp_Function_HasSatisfiedDependencies(ByVal szFunction_dev_table
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_HasSatisfiedDependencies"
 End Function
-
-Sub cmp_Function_GetValues(szFunction_table As String, szFunction_name As String, szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String, Optional szFunction_comments As String)
- On Error GoTo Err_Handler
-    Dim szQueryStr As String
-    Dim rsComp As New Recordset
-    
-    If (szFunction_table = "") Then szFunction_table = "pgadmin_functions"
-
-    ' Select query
-
-    szQueryStr = "SELECT * from " & szFunction_table
-    szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
-    szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
-     
-    ' open
-    If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szQueryStr, gConnection
-    
-    If Not rsComp.EOF Then
-        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!function_name & ""
-        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
-        If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
-        If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!function_source & ""
-        If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!function_language & ""
-        If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
-        If Not (IsMissing(szFunction_comments)) Then szFunction_comments = rsComp!function_comments & ""
-       
-        If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
-        rsComp.Close
-    Else
-        If Not (IsMissing(szFunction_name)) Then szFunction_name = ""
-        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = ""
-        If Not (IsMissing(szFunction_returns)) Then szFunction_returns = ""
-        If Not (IsMissing(szFunction_source)) Then szFunction_source = ""
-        If Not (IsMissing(szFunction_language)) Then szFunction_language = ""
-        If Not (IsMissing(szFunction_owner)) Then szFunction_owner = ""
-        If Not (IsMissing(szFunction_comments)) Then szFunction_comments = ""
-    End If
-  Exit Sub
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_GetValues"
-End Sub
-
-Public Sub cmp_Function_ParseName(szInput As String, szFunction_name As String, szFunction_arguments As String)
-On Error GoTo Err_Handler
-
-Dim iInstr As Integer
-    iInstr = InStr(szInput, "(")
-    If iInstr > 0 Then
-        szFunction_name = Trim(Left(szInput, iInstr - 1))
-        szFunction_arguments = Trim(Mid(szInput, iInstr + 1, Len(szInput) - iInstr - 1))
-    Else
-        szFunction_name = Trim(szInput)
-        szFunction_arguments = ""
-    End If
-    
-Exit Sub
-Err_Handler:
-If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
-End Sub
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Tree
