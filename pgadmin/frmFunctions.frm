@@ -315,7 +315,6 @@ Dim rsFunc As New Recordset
 Private Sub cmdExportFunc_Click()
     Dim iLoop As Long
     Dim iListCount As Long
-    Dim iSelCount As Long
     Dim szExport As String
     Dim bExport As Boolean
     Dim szHeader As String
@@ -332,8 +331,6 @@ Private Sub cmdExportFunc_Click()
     bExport = False
     szExport = ""
 
-    iSelCount = lstFunc.SelCount
-    If iSelCount = 0 Then Exit Sub
     iListCount = lstFunc.ListCount
         
     For iLoop = 0 To iListCount - 1
@@ -360,7 +357,7 @@ Private Sub cmdExportFunc_Click()
         szHeader = "/*" & vbCrLf
         szHeader = szHeader & Format(Now, "d mmmm yyyy") & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of freedom, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "The choice of the best developers, " & Format(Now, "d mmmm yyyy") & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
         szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
@@ -443,34 +440,33 @@ Public Sub cmdDropFunc_Click()
     Dim szDropStr As String
     Dim iLoop As Long
     Dim iListCount As Long
-    Dim iSelCount As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
    
-  If MsgBox("Are you sure you wish to drop Function(s)?", vbYesNo + vbQuestion, _
+    If MsgBox("Are you sure you wish to drop Function(s)?", vbYesNo + vbQuestion, _
             "Confirm Function Deletion") = vbYes Then
-            
-    iSelCount = lstFunc.SelCount
-    If iSelCount = 0 Then Exit Sub
-    iListCount = lstFunc.ListCount
         
-    For iLoop = 0 To iListCount - 1
-        If lstFunc.Selected(iLoop) = True Then
-            ParseFunction lstFunc.List(iLoop), szFunction_name, szFunction_arguments
-            cmp_Function_GetValues 0, "", szFunction_name, szFunction_arguments
-            
-            szDropStr = "DROP FUNCTION " & QUOTE & szFunction_name & QUOTE & " (" & szFunction_arguments & ")"
-            fMainForm.txtSQLPane.Text = szDropStr
-            StartMsg "Dropping Function..."
-            LogMsg "Executing: " & szDropStr
-            gConnection.Execute szDropStr
-            LogQuery szDropStr
-         End If
-    Next iLoop
+        StartMsg "Dropping Function(s)..."
+        
+        iListCount = lstFunc.ListCount
+        For iLoop = 0 To iListCount - 1
+            If lstFunc.Selected(iLoop) = True Then
+                ParseFunction lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+                cmp_Function_GetValues 0, "", szFunction_name, szFunction_arguments
+                
+                szDropStr = "DROP FUNCTION " & QUOTE & szFunction_name & QUOTE & " (" & szFunction_arguments & ")"
+                fMainForm.txtSQLPane.Text = szDropStr
+                LogMsg "Executing: " & szDropStr
+                gConnection.Execute szDropStr
+                LogQuery szDropStr
+             End If
+        Next iLoop
+        
+        EndMsg
+        
+        cmdRefresh_Click
+    End If
     
-    cmdRefresh_Click
-    EndMsg
-  End If
   Exit Sub
 Err_Handler:
   EndMsg

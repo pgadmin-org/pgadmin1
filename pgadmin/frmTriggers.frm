@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmTriggers 
    Caption         =   "Triggers"
    ClientHeight    =   4050
@@ -11,7 +12,6 @@ Begin VB.Form frmTriggers
    ScaleWidth      =   8205
    Begin VB.CommandButton cmdExportTrig 
       Caption         =   "Export Trigger"
-      Enabled         =   0   'False
       Height          =   330
       Left            =   45
       TabIndex        =   23
@@ -253,6 +253,15 @@ Begin VB.Form frmTriggers
       Top             =   45
       Width           =   1410
    End
+   Begin MSComDlg.CommonDialog CommonDialog1 
+      Left            =   45
+      Top             =   3150
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+      DialogTitle     =   "Select SQL File"
+      Filter          =   "All Files (*.*)|*.*"
+   End
 End
 Attribute VB_Name = "frmTriggers"
 Attribute VB_GlobalNameSpace = False
@@ -278,6 +287,59 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsTrig As New Recordset
+Private Sub cmdExportTrig_Click()
+    Dim iLoop As Long
+    Dim iListCount As Long
+    Dim szExport As String
+    Dim bExport As Boolean
+    Dim szHeader As String
+    
+    Dim szTrigger_oid As Long
+    Dim szTrigger_name As String
+    Dim szTrigger_table As String
+    Dim szTrigger_function As String
+    Dim szTrigger_arguments As String
+    Dim szTrigger_foreach As String
+    Dim szTrigger_event As String
+    Dim szTrigger_Executes As String
+    Dim szTrigger_Comments As String
+    
+    bExport = False
+    szExport = ""
+
+    iListCount = lstTrig.ListCount
+        
+    For iLoop = 0 To iListCount - 1
+        If lstTrig.Selected(iLoop) = True Then
+            bExport = True
+            ParseTrigger lstTrig.List(iLoop), szTrigger_name, szTrigger_table
+            cmp_Trigger_GetValues 0, "", szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, szTrigger_Comments
+            
+            ' Header
+            szExport = szExport & "/*" & vbCrLf
+            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+            szExport = szExport & szTrigger_name & " ON " & szTrigger_table & vbCrLf
+            If szTrigger_Comments <> "" Then szExport = szExport & szTrigger_Comments & vbCrLf
+            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+            szExport = szExport & "*/" & vbCrLf
+            
+            ' Function
+            szExport = szExport & Replace(cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event), vbCrLf, " ") & vbCrLf & vbCrLf
+        End If
+    Next iLoop
+    
+    If bExport Then
+        szHeader = "/*" & vbCrLf
+        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
+        szHeader = szHeader & "The choice of a GNU generation, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
+        szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
+        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
+        szHeader = szHeader & "*/" & vbCrLf & vbCrLf
+        szExport = szHeader & szExport
+        MsgExportToFile CommonDialog1, szExport, "sql", "Export triggers"
+    End If
+End Sub
 
 Public Sub cmdModifyTrig_Click()
 ' On Error GoTo Err_Handler
@@ -338,21 +400,37 @@ End Sub
 Public Sub cmdDropTrig_Click()
 On Error GoTo Err_Handler
 Dim szDropStr As String
-  If lstTrig.Text = "" Then
-    MsgBox "Select a Trigger to drop!", vbExclamation, "Error"
-    Exit Sub
+Dim szTrigger_name As String
+Dim szTrigger_table As String
+Dim iLoop As Long
+Dim iListCount As Long
+
+  If MsgBox("Are you sure you wish to drop Trigger(s)?", vbYesNo + vbQuestion, _
+            "Confirm Trigger(s) deletion") = vbYes Then
+                   
+         StartMsg "Dropping Trigger..."
+         
+         iListCount = lstTrig.ListCount
+         For iLoop = 0 To iListCount - 1
+            If lstTrig.Selected(iLoop) = True Then
+                ParseTrigger lstTrig.List(iLoop), szTrigger_name, szTrigger_table
+                cmp_Trigger_GetValues 0, "", szTrigger_name, szTrigger_table
+                
+                szDropStr = "DROP TRIGGER " & QUOTE & szTrigger_name & QUOTE & " ON " & QUOTE & szTrigger_table & QUOTE
+   
+                fMainForm.txtSQLPane.Text = szDropStr
+                StartMsg "Dropping Function..."
+                LogMsg "Executing: " & szDropStr
+                gConnection.Execute szDropStr
+                LogQuery szDropStr
+             End If
+          Next iLoop
+          
+          EndMsg
+          
+          cmdRefresh_Click
   End If
-  If MsgBox("Are you sure you wish to drop this Trigger?", vbYesNo + vbQuestion, _
-            "Confirm Trigger deletion") = vbYes Then
-    StartMsg "Dropping Trigger..."
-    szDropStr = "DROP TRIGGER " & QUOTE & txtName.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
-    fMainForm.txtSQLPane.Text = szDropStr
-    LogMsg "Executing: DROP TRIGGER " & QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
-    gConnection.Execute szDropStr
-    LogQuery szDropStr
-    cmdRefresh_Click
-    EndMsg
-  End If
+
   Exit Sub
 Err_Handler:
   EndMsg
@@ -451,14 +529,7 @@ Dim iInstr As Integer
     ' Parse trigger name and arguments from List
     '----------------------------------------------------------------------------------
     If lstTrig.SelCount > 0 Then
-        iInstr = InStr(lstTrig.Text, "ON")
-        If iInstr > 0 Then
-            szTrigger_name = Left(lstTrig.Text, iInstr - 2)
-            szTrigger_table = Mid(lstTrig.Text, iInstr + 3, Len(lstTrig.Text) - iInstr - 2)
-        Else
-            szTrigger_name = lstTrig.Text
-            szTrigger_table = ""
-        End If
+        ParseTrigger lstTrig.Text, szTrigger_name, szTrigger_table
     Else
         szTrigger_name = ""
         szTrigger_table = ""
@@ -479,6 +550,9 @@ Dim iInstr As Integer
     txtExecutes.Text = szTrigger_Executes
     txtEvent.Text = szTrigger_event
     txtComments.Text = szTrigger_Comments
+    
+    CmdTrigButton
+    
     EndMsg
 
   Exit Sub
@@ -487,3 +561,18 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "frmTriggers, lstTrig_Click"
 End Sub
 
+Private Sub ParseTrigger(szInput As String, szTrigger_name As String, szTrigger_table As String)
+    Dim iInstr As Integer
+    iInstr = InStr(szInput, "ON")
+    If iInstr > 0 Then
+        szTrigger_name = Left(szInput, iInstr - 2)
+        szTrigger_table = Mid(szInput, iInstr + 3, Len(szInput) - iInstr - 2)
+    Else
+        szTrigger_name = szInput
+        szTrigger_table = ""
+    End If
+End Sub
+
+Public Sub CmdTrigButton()
+    cmdButtonActivate lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
+End Sub
