@@ -270,7 +270,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsView As New Recordset
-Dim szView_PostgreSQLtable As String
+Dim szView_PostgreSqlTable As String
 
 Private Sub cmdExportView_Click()
     Dim iLoop As Long
@@ -295,7 +295,7 @@ Private Sub cmdExportView_Click()
         If lstView.Selected(iLoop) = True Then
             bExport = True
             szView_name = lstView.List(iLoop)
-            cmp_View_GetValues szView_PostgreSQLtable, 0, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+            cmp_View_GetValues szView_PostgreSqlTable, 0, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
             
             ' Header
             szExport = szExport & "/*" & vbCrLf
@@ -338,7 +338,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdModifyView_Clic
 End Sub
 
 Private Sub cmdRebuild_Click()
-    comp_Project_Rebuild
+    cmp_Project_Rebuild
 End Sub
 
 Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -432,7 +432,7 @@ On Error GoTo Err_Handler
         For iLoop = 0 To iListCount - 1
            If lstView.Selected(iLoop) = True Then
             szTrigger_name = lstView.List(iLoop)
-            cmp_View_DropIfExists szView_PostgreSQLtable, 0, szTrigger_name
+            cmp_View_DropIfExists szView_PostgreSqlTable, 0, szTrigger_name
             End If
         Next iLoop
             
@@ -462,13 +462,13 @@ On Error GoTo Err_Handler
   txtOwner.Text = ""
   If rsView.State <> adStateClosed Then rsView.Close
   If chkSystem.Value = 1 Then
-    szView_PostgreSQLtable = "pgadmin_views"
-    szQuery = "SELECT view_name FROM " & szView_PostgreSQLtable & " WHERE view_oid < " & LAST_SYSTEM_OID & " OR view_name LIKE 'pgadmin_%'OR view_name LIKE 'pg_%' ORDER BY view_name"
+    szView_PostgreSqlTable = "pgadmin_views"
+    szQuery = "SELECT view_name FROM " & szView_PostgreSqlTable & " WHERE view_oid < " & LAST_SYSTEM_OID & " OR view_name LIKE 'pgadmin_%'OR view_name LIKE 'pg_%' ORDER BY view_name"
     LogMsg "Executing: " & szQuery
     rsView.Open szQuery, gConnection, adOpenDynamic
   Else
-    szView_PostgreSQLtable = "pgadmin_dev_views"
-    szQuery = "SELECT view_name FROM " & szView_PostgreSQLtable & " WHERE view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
+    szView_PostgreSqlTable = "pgadmin_dev_views"
+    szQuery = "SELECT view_name FROM " & szView_PostgreSqlTable & " WHERE view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
     LogMsg "Executing: " & szQuery
     rsView.Open szQuery, gConnection, adOpenDynamic
   End If
@@ -540,7 +540,7 @@ On Error GoTo Err_Handler
     
     StartMsg "Retrieving View Info..."
     lngView_oid = 0
-    cmp_View_GetValues szView_PostgreSQLtable, lngView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+    cmp_View_GetValues szView_PostgreSqlTable, lngView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
     
     txtOID.Text = Trim(Str(lngView_oid))
     If txtOID.Text = 0 Then txtOID.Text = ""

@@ -30,7 +30,7 @@ Begin VB.Form frmReportViewer
       EnableRefreshButton=   0   'False
       EnableDrillDown =   -1  'True
       EnableAnimationControl=   0   'False
-      EnableSelectExpertButton=   -1  'True
+      EnableSelectExpertButton=   0   'False
       EnableToolbar   =   -1  'True
       DisplayBorder   =   0   'False
       DisplayTabs     =   -1  'True
@@ -38,7 +38,7 @@ Begin VB.Form frmReportViewer
       SelectionFormula=   ""
       EnablePopupMenu =   -1  'True
       EnableExportButton=   0   'False
-      EnableSearchExpertButton=   -1  'True
+      EnableSearchExpertButton=   0   'False
       EnableHelpButton=   0   'False
    End
 End
@@ -79,8 +79,8 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
-    CRViewer.Height = Me.ScaleHeight
-    CRViewer.Width = Me.ScaleWidth
+    crViewer.Height = Me.ScaleHeight
+    crViewer.Width = Me.ScaleWidth
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmReportViewer, Form_Resize"
@@ -99,14 +99,14 @@ On Error GoTo Err_Handler
   CryRpt.DisplayProgressDialog = True
   CryRpt.Database.SetDataSource rs, 3, 1
   If bShowTree = True Then
-    CRViewer.EnableGroupTree = True
-    CRViewer.DisplayGroupTree = True
+    crViewer.EnableGroupTree = True
+    crViewer.DisplayGroupTree = True
   Else
-    CRViewer.EnableGroupTree = False
-    CRViewer.DisplayGroupTree = False
+    crViewer.EnableGroupTree = False
+    crViewer.DisplayGroupTree = False
   End If
-  CRViewer.ReportSource = CryRpt
-  CRViewer.ViewReport
+  crViewer.ReportSource = CryRpt
+  crViewer.ViewReport
   Set CryRpt = Nothing
   Set CryApp = Nothing
   EndMsg

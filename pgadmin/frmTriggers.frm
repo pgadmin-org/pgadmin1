@@ -297,7 +297,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsTrig As New Recordset
-Dim szTrigger_PostgreSQLtable As String
+Dim szTrigger_PostgreSqlTable As String
 Private Sub cmdExportTrig_Click()
     Dim iLoop As Long
     Dim iListCount As Long
@@ -324,7 +324,7 @@ Private Sub cmdExportTrig_Click()
         If lstTrig.Selected(iLoop) = True Then
             bExport = True
             cmp_Trigger_ParseName lstTrig.List(iLoop), szTrigger_name, szTrigger_table
-            cmp_Trigger_GetValues szTrigger_PostgreSQLtable, 0, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
+            cmp_Trigger_GetValues szTrigger_PostgreSqlTable, 0, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
             
             ' Header
             szExport = szExport & "/*" & vbCrLf
@@ -369,7 +369,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_
 End Sub
 
 Private Sub cmdRebuild_Click()
-    comp_Project_Rebuild
+    cmp_Project_Rebuild
 End Sub
 
 Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -432,8 +432,8 @@ Dim iListCount As Long
          For iLoop = 0 To iListCount - 1
             If lstTrig.Selected(iLoop) = True Then
                 cmp_Trigger_ParseName lstTrig.List(iLoop), szTrigger_name, szTrigger_table
-                cmp_Trigger_GetValues szTrigger_PostgreSQLtable, 0, szTrigger_name, szTrigger_table
-                cmp_Trigger_DropIfExists szTrigger_PostgreSQLtable, 0, szTrigger_name, szTrigger_table
+                cmp_Trigger_GetValues szTrigger_PostgreSqlTable, 0, szTrigger_name, szTrigger_table
+                cmp_Trigger_DropIfExists szTrigger_PostgreSqlTable, 0, szTrigger_name, szTrigger_table
              End If
           Next iLoop
 
@@ -463,13 +463,13 @@ On Error GoTo Err_Handler
   
   If rsTrig.State <> adStateClosed Then rsTrig.Close
   If chkSystem.Value = 1 Then
-    szTrigger_PostgreSQLtable = "pgadmin_triggers"
-    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSQLtable & " WHERE trigger_oid < " & LAST_SYSTEM_OID & " OR trigger_name LIKE 'pgadmin_%' OR trigger_name  LIKE 'pg_%' OR trigger_name LIKE 'RI_%' ORDER BY trigger_name"
+    szTrigger_PostgreSqlTable = "pgadmin_triggers"
+    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSqlTable & " WHERE trigger_oid < " & LAST_SYSTEM_OID & " OR trigger_name LIKE 'pgadmin_%' OR trigger_name  LIKE 'pg_%' OR trigger_name LIKE 'RI_%' ORDER BY trigger_name"
     LogMsg "Executing: " & szQuery
     rsTrig.Open szQuery, gConnection, adOpenDynamic
   Else
-    szTrigger_PostgreSQLtable = "pgadmin_dev_triggers"
-    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSQLtable & " WHERE trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_%' ORDER BY trigger_name"
+    szTrigger_PostgreSqlTable = "pgadmin_dev_triggers"
+    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSqlTable & " WHERE trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_%' ORDER BY trigger_name"
     LogMsg "Executing: " & szQuery
     rsTrig.Open szQuery, gConnection, adOpenDynamic
   End If
@@ -555,7 +555,7 @@ Dim iInstr As Integer
 
     StartMsg "Retrieving trigger info..."
     szTrigger_oid = 0
-    cmp_Trigger_GetValues szTrigger_PostgreSQLtable, szTrigger_oid, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
+    cmp_Trigger_GetValues szTrigger_PostgreSqlTable, szTrigger_oid, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
     txtOID.Text = Trim(Str(szTrigger_oid))
     If szTrigger_name <> "" Then
         If txtOID.Text = "0" Then txtOID.Text = "N.S."

@@ -43,7 +43,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_CreateSQL"
 End Function
 
-Sub cmp_Trigger_Create(szTrigger_PostgreSQLtable As String, ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_foreach As String, ByVal szTrigger_executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
+Sub cmp_Trigger_Create(szTrigger_PostgreSqlTable As String, ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_foreach As String, ByVal szTrigger_executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
 On Error GoTo Err_Handler
     
     Dim szQueryStr As String
@@ -51,7 +51,7 @@ On Error GoTo Err_Handler
     Dim szTrigger_Query_oid As Variant
     
     ' Where should we get the values ?
-    If (szTrigger_PostgreSQLtable = "") Then szTrigger_PostgreSQLtable = "pgadmin_triggers"
+    If (szTrigger_PostgreSqlTable = "") Then szTrigger_PostgreSqlTable = "pgadmin_triggers"
     
     If (IsMissing(iTrigger_type)) Then
       szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event)
@@ -59,11 +59,11 @@ On Error GoTo Err_Handler
       szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, iTrigger_type)
     End If
    
-    If (szTrigger_PostgreSQLtable <> "pgadmin_triggers") Then
+    If (szTrigger_PostgreSqlTable <> "pgadmin_triggers") Then
         szTrigger_arguments = Replace(szTrigger_arguments, "'", "''")
         szTrigger_arguments = Replace(szTrigger_arguments, vbCrLf, "\n")
         
-        szQueryStr = "INSERT INTO " & szTrigger_PostgreSQLtable & " (Trigger_name, Trigger_table, Trigger_function, Trigger_arguments, Trigger_foreach, Trigger_executes, Trigger_event)"
+        szQueryStr = "INSERT INTO " & szTrigger_PostgreSqlTable & " (Trigger_name, Trigger_table, Trigger_function, Trigger_arguments, Trigger_foreach, Trigger_executes, Trigger_event)"
         szQueryStr = szQueryStr & " VALUES ("
         szQueryStr = szQueryStr & "'" & szTrigger_name & "', "
         szQueryStr = szQueryStr & "'" & szTrigger_table & "', "
@@ -76,7 +76,7 @@ On Error GoTo Err_Handler
     End If
     
     ' Log information
-    LogMsg "Creating trigger " & szTrigger_name & " on " & szTrigger_table & " in " & szTrigger_PostgreSQLtable & "..."
+    LogMsg "Creating trigger " & szTrigger_name & " on " & szTrigger_table & " in " & szTrigger_PostgreSqlTable & "..."
     LogMsg "Executing: " & szQueryStr
       
     ' Execute drop query and close log
@@ -91,55 +91,55 @@ Err_Handler:
   bContinueRebuilding = False
 End Sub
 
-Sub cmp_Trigger_DropIfExists(szTrigger_PostgreSQLtable As String, ByVal lngTrigger_oid As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String)
+Sub cmp_Trigger_DropIfExists(szTrigger_PostgreSqlTable As String, ByVal lngTrigger_oid As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String)
  On Error GoTo Err_Handler
     Dim szDropStr As String
     
     ' Where should we get the values ?
-    If (szTrigger_PostgreSQLtable = "") Then szTrigger_PostgreSQLtable = "pgadmin_triggers"
+    If (szTrigger_PostgreSqlTable = "") Then szTrigger_PostgreSqlTable = "pgadmin_triggers"
     
     ' Test existence of trigger
-    If cmp_Trigger_Exists(szTrigger_PostgreSQLtable, lngTrigger_oid, szTrigger_name & "", szTrigger_table & "") Then
+    If cmp_Trigger_Exists(szTrigger_PostgreSqlTable, lngTrigger_oid, szTrigger_name & "", szTrigger_table & "") Then
         ' Retrieve name and table is we only know the OID
-        If lngTrigger_oid <> 0 And ((szTrigger_name = "") Or (szTrigger_table = "")) Then cmp_Trigger_GetValues szTrigger_PostgreSQLtable, lngTrigger_oid, szTrigger_name, szTrigger_table
+        If lngTrigger_oid <> 0 And ((szTrigger_name = "") Or (szTrigger_table = "")) Then cmp_Trigger_GetValues szTrigger_PostgreSqlTable, lngTrigger_oid, szTrigger_name, szTrigger_table
         
         ' Create drop query
-        If (szTrigger_PostgreSQLtable = "pgadmin_triggers") Then
+        If (szTrigger_PostgreSqlTable = "pgadmin_triggers") Then
             szDropStr = "DROP TRIGGER " & QUOTE & szTrigger_name & QUOTE & " ON " & szTrigger_table
         Else
-            szDropStr = "DELETE FROM " & szTrigger_PostgreSQLtable & " WHERE "
+            szDropStr = "DELETE FROM " & szTrigger_PostgreSqlTable & " WHERE "
             szDropStr = szDropStr & "trigger_name='" & szTrigger_name & "' AND trigger_table='" & szTrigger_table & "'"
         End If
         
         ' Log information
-        LogMsg "Dropping trigger " & szTrigger_name & " on table " & szTrigger_table & " in " & szTrigger_PostgreSQLtable & "..."
+        LogMsg "Dropping trigger " & szTrigger_name & " on table " & szTrigger_table & " in " & szTrigger_PostgreSqlTable & "..."
         LogMsg "Executing: " & szDropStr
         
         ' Execute drop query and close log
         gConnection.Execute szDropStr
-        If (szTrigger_PostgreSQLtable = "pgadmin_triggers") Then LogQuery szDropStr
+        If (szTrigger_PostgreSqlTable = "pgadmin_triggers") Then LogQuery szDropStr
     End If
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_DropIfExists"
 End Sub
 
-Sub cmp_Trigger_GetValues(szTrigger_PostgreSQLtable As String, lngTrigger_oid As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_foreach As String, Optional szTrigger_executes As String, Optional szTrigger_event As String, Optional szTrigger_Comments As String)
+Sub cmp_Trigger_GetValues(szTrigger_PostgreSqlTable As String, lngTrigger_oid As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_foreach As String, Optional szTrigger_executes As String, Optional szTrigger_event As String, Optional szTrigger_Comments As String)
 On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     Dim iTrigger_type As Integer
     
     ' Where should we get the values ?
-    If (szTrigger_PostgreSQLtable = "") Then szTrigger_PostgreSQLtable = "pgadmin_triggers"
+    If (szTrigger_PostgreSqlTable = "") Then szTrigger_PostgreSqlTable = "pgadmin_triggers"
       
     ' Select query
     If lngTrigger_oid <> 0 Then
-        szQueryStr = "SELECT * from " & szTrigger_PostgreSQLtable
+        szQueryStr = "SELECT * from " & szTrigger_PostgreSqlTable
         szQueryStr = szQueryStr & " WHERE trigger_OID = " & lngTrigger_oid
     Else
         If IsMissing(szTrigger_name) Then szTrigger_name = ""
-        szQueryStr = "SELECT * from " & szTrigger_PostgreSQLtable & " WHERE "
+        szQueryStr = "SELECT * from " & szTrigger_PostgreSqlTable & " WHERE "
         szQueryStr = szQueryStr & " trigger_name = '" & szTrigger_name & "' "
         If Not (IsMissing(szTrigger_table)) And szTrigger_table <> "" Then
             szQueryStr = szQueryStr & " AND trigger_table = '" & szTrigger_table & "'"
@@ -163,7 +163,7 @@ On Error GoTo Err_Handler
         If Not (IsMissing(szTrigger_function)) Then szTrigger_function = rsComp!trigger_function & ""
         If Not (IsMissing(szTrigger_arguments)) Then szTrigger_arguments = rsComp!Trigger_arguments & ""
         
-        If (szTrigger_PostgreSQLtable = "pgadmin_triggers") Then
+        If (szTrigger_PostgreSqlTable = "pgadmin_triggers") Then
             iTrigger_type = rsComp!Trigger_type
             If iTrigger_type <> 0 Then cmp_Trigger_Ctype iTrigger_type, szTrigger_foreach, szTrigger_executes, szTrigger_event
         Else
@@ -190,29 +190,29 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_GetValues"
 End Sub
 
-Function cmp_Trigger_Exists(szTrigger_PostgreSQLtable As String, ByVal lngTrigger_oid As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String) As Boolean
+Function cmp_Trigger_Exists(szTrigger_PostgreSqlTable As String, ByVal lngTrigger_oid As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String) As Boolean
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
   
     ' Where should we get the values ?
-    If (szTrigger_PostgreSQLtable = "") Then szTrigger_PostgreSQLtable = "pgadmin_triggers"
+    If (szTrigger_PostgreSqlTable = "") Then szTrigger_PostgreSqlTable = "pgadmin_triggers"
     cmp_Trigger_Exists = False
     
     If lngTrigger_oid <> 0 Then
-        szQueryStr = "SELECT * FROM " & szTrigger_PostgreSQLtable
+        szQueryStr = "SELECT * FROM " & szTrigger_PostgreSqlTable
         szQueryStr = szQueryStr & " WHERE Trigger_OID = " & lngTrigger_oid
         
         ' Logging
-        LogMsg "Testing existence of trigger OID = " & lngTrigger_oid & " in table " & szTrigger_PostgreSQLtable & "..."
+        LogMsg "Testing existence of trigger OID = " & lngTrigger_oid & " in table " & szTrigger_PostgreSqlTable & "..."
     Else
         If szTrigger_table = "" Or szTrigger_name = "" Then Exit Function
-        szQueryStr = "SELECT * FROM " & szTrigger_PostgreSQLtable
+        szQueryStr = "SELECT * FROM " & szTrigger_PostgreSqlTable
         szQueryStr = szQueryStr & " WHERE Trigger_name = '" & szTrigger_name & "'"
         szQueryStr = szQueryStr & " AND Trigger_table = '" & szTrigger_table & "'"
         
         ' Logging
-        LogMsg "Testing existence of trigger " & szTrigger_name & " on table " & szTrigger_table & " in " & szTrigger_PostgreSQLtable & "..."
+        LogMsg "Testing existence of trigger " & szTrigger_name & " on table " & szTrigger_table & " in " & szTrigger_PostgreSqlTable & "..."
     End If
     
       ' retrieve name and arguments of function to drop
@@ -231,7 +231,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_DropIfExists"
 End Function
 
-Public Sub comp_Trigger_CopyToDev()
+Public Sub cmp_Trigger_CopyToDev()
 On Error GoTo Err_Handler
     Dim szQuery As String
     Dim rsComp As New Recordset
@@ -296,7 +296,7 @@ On Error GoTo Err_Handler
     End If
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basTrigger, comp_Trigger_CopyToDev"
+  If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_CopyToDev"
 End Sub
 
 Sub cmp_Trigger_Ctype(iTrigger_type As Integer, szTrigger_foreach As String, szTrigger_executes As String, szTrigger_event As String)
@@ -344,4 +344,53 @@ On Error GoTo Err_Handler
     
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_ParseName"
+End Sub
+
+Public Sub cmp_Trigger_DropAll(Optional szTrigger_PostgreSqlTable As String)
+On Error GoTo Err_Handler
+    Dim szQuery As String
+    Dim szTrigger() As Variant
+    Dim iLoop As Long
+    Dim iUbound As Long
+    Dim rsTrigger As New Recordset
+    Dim szTrigger_name As String
+    Dim szTrigger_table As String
+    
+    If IsMissing(szTrigger_PostgreSqlTable) Or (szTrigger_PostgreSqlTable = "") Then szTrigger_PostgreSqlTable = "pgadmin_triggers"
+        
+    If (szTrigger_PostgreSqlTable = "pgadmin_triggers") Then
+        szQuery = "SELECT trigger_name, trigger_table FROM pgadmin_triggers " & _
+        "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
+        "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
+        "  AND trigger_name NOT LIKE 'pg_%' " & _
+        "  AND trigger_name NOT LIKE 'RI_%' " & _
+        "  ORDER BY trigger_name; "
+    
+        LogMsg "Dropping all triggers in pgadmin_triggers..."
+        LogMsg "Executing: " & szQuery
+        
+        If rsTrigger.State <> adStateClosed Then rsTrigger.Close
+        rsTrigger.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
+    
+        If Not (rsTrigger.EOF) Then
+            szTrigger = rsTrigger.GetRows
+            rsTrigger.Close
+            iUbound = UBound(szTrigger, 2)
+                For iLoop = 0 To iUbound
+                     szTrigger_name = szTrigger(0, iLoop)
+                     szTrigger_table = szTrigger(1, iLoop)
+                     cmp_Trigger_DropIfExists "", 0, szTrigger_name, szTrigger_table
+                Next iLoop
+            Erase szTrigger
+        End If
+    Else
+        szQuery = "TRUNCATE " & szTrigger_PostgreSqlTable
+        LogMsg "Truncating " & szTrigger_PostgreSqlTable & "..."
+        LogMsg "Executing: " & szQuery
+        gConnection.Execute szQuery
+    End If
+   
+    Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Trigger_DropAll"
 End Sub

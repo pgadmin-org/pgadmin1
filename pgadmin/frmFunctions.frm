@@ -338,7 +338,7 @@ Private Sub cmdExportFunc_Click()
         If lstFunc.Selected(iLoop) = True Then
             bExport = True
             szFunction_oid = 0
-            comp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+            cmp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
             cmp_Function_GetValues szFunction_PostgreSqlTable, szFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
             
             ' Header
@@ -373,7 +373,7 @@ On Error GoTo Err_Handler
 
 If txtOID <> "" Then
     ' Get name and arguments
-    comp_Function_ParseName lstFunc.Text, gFunction_Name, gFunction_Arguments
+    cmp_Function_ParseName lstFunc.Text, gFunction_Name, gFunction_Arguments
  
     ' Load form
     Load frmAddFunction
@@ -385,7 +385,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_
 End Sub
 
 Private Sub cmdRebuild_Click()
-    comp_Project_Rebuild
+    cmp_Project_Rebuild
 End Sub
 
 Private Sub lstFunc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -449,7 +449,7 @@ Public Sub cmdDropFunc_Click()
         iListCount = lstFunc.ListCount
         For iLoop = 0 To iListCount - 1
             If lstFunc.Selected(iLoop) = True Then
-                comp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+                cmp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
                 cmp_Function_GetValues szFunction_PostgreSqlTable, 0, szFunction_name, szFunction_arguments
                 cmp_Function_DropIfExists szFunction_PostgreSqlTable, 0, szFunction_name, szFunction_arguments
              End If
@@ -561,7 +561,7 @@ On Error GoTo Err_Handler
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
     If lstFunc.SelCount > 0 Then
-        comp_Function_ParseName lstFunc.Text, szFunction_name, szFunction_arguments
+        cmp_Function_ParseName lstFunc.Text, szFunction_name, szFunction_arguments
     Else
         szFunction_name = ""
         szFunction_arguments = ""

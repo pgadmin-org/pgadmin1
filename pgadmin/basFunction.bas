@@ -152,11 +152,9 @@ On Error GoTo Err_Handler
     szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
     szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") " & vbCrLf
     szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " " & vbCrLf
-    szCreateStr = szCreateStr & "AS '" & vbCrLf
-    szCreateStr = szCreateStr & szFunction_source & vbCrLf
+    szCreateStr = szCreateStr & "AS '" & szFunction_source & vbCrLf
     szCreateStr = szCreateStr & "' " & vbCrLf
     szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
-    'szCreateStr = Replace(szCreateStr, vbCrLf, "\n ")
     
     cmp_Function_CreateSQL = szCreateStr
   Exit Function
@@ -180,6 +178,20 @@ On Error GoTo Err_Handler
  
     ' Compile function if exists
     If szFunction_name <> "" Then
+    
+        ' Attempt to create a temporary function to see if it compiles
+        LogMsg "Checking if " & szFunction_name & " (" & szFunction_arguments & ") can be compiled ..."
+        cmp_Function_DropIfExists "", 0, "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments
+        cmp_Function_Create "", "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
+ 
+        If (cmp_Function_Exists("", 0, "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments) = True) Then
+            cmp_Function_DropIfExists "", 0, "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments
+        Else
+            bContinueRebuilding = False
+            MsgBox "Function " & szFunction_name & "(" & szFunction_arguments & ") could not be compiled." & vbCrLf & "Check source code and rebuild project again.", vbOKOnly
+        End If
+        
+       If bContinueRebuilding = True Then
             cmp_Function_DropIfExists "", 0, szFunction_name, szFunction_arguments
             cmp_Function_Create "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
         
@@ -188,6 +200,7 @@ On Error GoTo Err_Handler
                 cmp_Function_SetIsCompiled szFunction_name, szFunction_arguments
                 LogMsg szFunction_name & " (" & szFunction_arguments & ") was successfuly compiled."
             End If
+        End If
     End If
   Exit Sub
 Err_Handler:
@@ -277,9 +290,7 @@ Sub cmp_Function_GetValues(szFunction_PostgreSqlTable As String, lngFunction_oid
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
-    If (szFunction_PostgreSqlTable = "") Then
-        szFunction_PostgreSqlTable = "pgadmin_functions"
-    End If
+    If (szFunction_PostgreSqlTable = "") Then szFunction_PostgreSqlTable = "pgadmin_functions"
 
     ' Select query
     If lngFunction_oid <> 0 Then
@@ -329,7 +340,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_GetValues"
 End Sub
 
-Public Sub comp_Function_CopyToDev()
+Public Sub cmp_Function_CopyToDev()
 On Error GoTo Err_Handler
     Dim szQuery As String
     Dim rsComp As New Recordset
@@ -353,10 +364,10 @@ On Error GoTo Err_Handler
         
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, comp_Func_CopyToDev"
+  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
 End Sub
 
-Public Sub comp_Function_ParseName(szInput As String, szFunction_name As String, szFunction_arguments As String)
+Public Sub cmp_Function_ParseName(szInput As String, szFunction_name As String, szFunction_arguments As String)
 On Error GoTo Err_Handler
 
 Dim iInstr As Integer
@@ -371,5 +382,55 @@ Dim iInstr As Integer
     
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, comp_Func_CopyToDev"
+  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
+End Sub
+
+Public Sub cmp_Function_DropAll(Optional szFunction_PostgreSqlTable As String)
+On Error GoTo Err_Handler
+    Dim szQuery As String
+    Dim szFunc() As Variant
+    Dim iLoop As Long
+    Dim iUbound As Long
+    Dim rsFunc As New Recordset
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    
+    If IsMissing(szFunction_PostgreSqlTable) Or (szFunction_PostgreSqlTable = "") Then szFunction_PostgreSqlTable = "pgadmin_functions"
+        
+    If (szFunction_PostgreSqlTable = "pgadmin_functions") Then
+        szQuery = " SELECT function_name, function_arguments " & _
+        "  FROM pgadmin_functions " & _
+        "  WHERE function_name NOT LIKE '%_call_handler' " & _
+        "  AND function_name NOT LIKE 'pgadmin_%' " & _
+        "  AND function_name NOT LIKE 'pg_%' " & _
+        "  AND function_oid > " & LAST_SYSTEM_OID & _
+        "  ORDER BY function_oid ;"
+        
+        LogMsg "Dropping all functions in pgadmin_functions..."
+        LogMsg "Executing: " & szQuery
+        
+        If rsFunc.State <> adStateClosed Then rsFunc.Close
+        rsFunc.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
+    
+        If Not (rsFunc.EOF) Then
+            szFunc = rsFunc.GetRows
+            rsFunc.Close
+            iUbound = UBound(szFunc, 2)
+                For iLoop = 0 To iUbound
+                     szFunction_name = szFunc(0, iLoop)
+                     szFunction_arguments = szFunc(1, iLoop)
+                     cmp_Function_DropIfExists "", 0, szFunction_name, szFunction_arguments
+                Next iLoop
+            Erase szFunc
+        End If
+    Else
+        szQuery = "TRUNCATE " & szFunction_PostgreSqlTable
+        LogMsg "Truncate " & szFunction_PostgreSqlTable & "..."
+        LogMsg "Executing: " & szQuery
+        gConnection.Execute szQuery
+    End If
+   
+    Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Function_DropAll"
 End Sub

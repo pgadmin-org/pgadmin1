@@ -653,9 +653,9 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  comp_Function_CopyToDev
-  comp_Trigger_CopyToDev
-  comp_View_CopyToDev
+  cmp_Function_CopyToDev
+  cmp_Trigger_CopyToDev
+  cmp_View_CopyToDev
   
   'Set the SSO Version on the server
   LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Str(SSO_VERSION) & "' WHERE param_id = 1"

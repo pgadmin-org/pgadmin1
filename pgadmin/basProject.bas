@@ -25,7 +25,7 @@ Option Compare Text
 '****
 '****
 
-Public Sub comp_Project_Initialize()
+Public Sub cmp_Project_Initialize()
 On Error GoTo Err_Handler
     Dim szFunc() As Variant
     Dim iLoop As Long
@@ -34,6 +34,8 @@ On Error GoTo Err_Handler
     Dim rsFunc As New Recordset
     Dim szFunction_source As String
     Dim szFunction_name As String
+    
+    ' Initialize dependencies
     
     szQuery = "TRUNCATE TABLE pgadmin_dev_dependencies; UPDATE pgadmin_dev_functions SET function_iscompiled = 'f';"
     LogMsg "Initializing pgadmin_dev_dependencies..."
@@ -55,12 +57,16 @@ On Error GoTo Err_Handler
       Erase szFunc
     End If
     
+    ' Drop all before compilation
+    cmp_Function_DropAll
+    cmp_View_DropAll
+    cmp_Trigger_DropAll
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, comp_Project_Initialize"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Initialize"
 End Sub
 
-Public Function comp_Project_FindNextFunctionToCompile() As String
+Public Function cmp_Project_FindNextFunctionToCompile() As String
 On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim szFunc() As Variant
@@ -78,7 +84,7 @@ On Error GoTo Err_Handler
     If rsFunc.State <> adStateClosed Then rsFunc.Close
     rsFunc.Open szQueryStr, gConnection, adOpenForwardOnly, adLockReadOnly
     
-    comp_Project_FindNextFunctionToCompile = ""
+    cmp_Project_FindNextFunctionToCompile = ""
     If Not (rsFunc.EOF) Then
       szFunc = rsFunc.GetRows
       rsFunc.Close
@@ -87,8 +93,8 @@ On Error GoTo Err_Handler
            szFunction_name = szFunc(0, iLoop)
            szFunction_arguments = szFunc(1, iLoop)
            If cmp_Function_HasSatisfiedDependencies(szFunction_name) = True Then
-                comp_Project_FindNextFunctionToCompile = szFunction_name & "(" & szFunction_arguments & ")"
-                LogMsg "Next vailable function to compile is " & comp_Project_FindNextFunctionToCompile & "..."
+                cmp_Project_FindNextFunctionToCompile = szFunction_name & "(" & szFunction_arguments & ")"
+                LogMsg "Next vailable function to compile is " & cmp_Project_FindNextFunctionToCompile & "..."
                 Exit Function
             End If
       Next iLoop
@@ -97,10 +103,10 @@ On Error GoTo Err_Handler
    
     Exit Function
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, comp_Project_FindNextFunctionToCompile"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_FindNextFunctionToCompile"
 End Function
 
-Public Sub comp_Project_RebuildTriggers()
+Public Sub cmp_Project_RebuildTriggers()
 On Error GoTo Err_Handler
     Dim rsTrigger As New Recordset
     Dim szQueryStr As String
@@ -124,10 +130,10 @@ On Error GoTo Err_Handler
 
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, comp_Project_RebuildTriggers"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildTriggers"
 End Sub
 
-Public Sub comp_Project_RebuildViews()
+Public Sub cmp_Project_RebuildViews()
 'On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
@@ -149,47 +155,47 @@ Public Sub comp_Project_RebuildViews()
 
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, comp_Project_RebuildTriggers"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildTriggers"
 End Sub
 
-Public Sub comp_Project_Compile()
+Public Sub cmp_Project_Compile()
 On Error GoTo Err_Handler
     Dim szNextFunctionToCompile_name As String
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     
     bContinueRebuilding = True
-    szNextFunctionToCompile_name = comp_Project_FindNextFunctionToCompile
-    comp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
+    szNextFunctionToCompile_name = cmp_Project_FindNextFunctionToCompile
+    cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
     
     While (szFunction_name <> "") And (bContinueRebuilding = True)
         cmp_Function_Compile szFunction_name, szFunction_arguments
-        szNextFunctionToCompile_name = comp_Project_FindNextFunctionToCompile
-        comp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
+        szNextFunctionToCompile_name = cmp_Project_FindNextFunctionToCompile
+        cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
     Wend
       
     ' We must always relink triggers and views
     ' even if function compilation was aborted
-    comp_Project_RebuildTriggers
-    comp_Project_RebuildViews
+    cmp_Project_RebuildTriggers
+    cmp_Project_RebuildViews
     
     If bContinueRebuilding = True Then MsgBox ("Rebuilding successfull")
     
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, comp_Project_Compile"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Compile"
 End Sub
 
-Public Sub comp_Project_Rebuild()
+Public Sub cmp_Project_Rebuild()
 On Error GoTo Err_Handler
     If MsgBox("Rebuilding feature does not keep comments and ACL." & vbCrLf & "Please confirm you wish to continue.", vbYesNo + vbQuestion, _
             "Rebuild project") = vbYes Then
-        comp_Project_Initialize
-        comp_Project_Compile
+        cmp_Project_Initialize
+        cmp_Project_Compile
     End If
     
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, comp_Project_Rebuild"
+  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Rebuild"
 End Sub
 
