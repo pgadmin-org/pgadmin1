@@ -1,266 +1,285 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
 Begin VB.Form frmOptions 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Options"
-   ClientHeight    =   3195
+   ClientHeight    =   5430
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   4680
+   ClientWidth     =   5805
    Icon            =   "frmOptions.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
-   ScaleHeight     =   3195
-   ScaleWidth      =   4680
+   ScaleHeight     =   5430
+   ScaleWidth      =   5805
    Begin VB.CommandButton cmdOK 
       Caption         =   "&OK"
       Height          =   330
-      Left            =   3330
-      TabIndex        =   4
+      Left            =   4410
+      TabIndex        =   7
       ToolTipText     =   "Accept the changes."
-      Top             =   2835
+      Top             =   4995
       Width           =   1320
    End
    Begin TabDlg.SSTab tabOptions 
-      Height          =   2715
-      Left            =   0
+      Height          =   4785
+      Left            =   90
       TabIndex        =   6
-      Top             =   45
-      Width           =   4650
-      _ExtentX        =   8202
-      _ExtentY        =   4789
+      Top             =   90
+      Width           =   5640
+      _ExtentX        =   9948
+      _ExtentY        =   8440
       _Version        =   393216
       Style           =   1
       TabHeight       =   520
-      TabCaption(0)   =   "&Logging"
+      TabCaption(0)   =   "Logging/Tracking"
       TabPicture(0)   =   "frmOptions.frx":128A
       Tab(0).ControlEnabled=   -1  'True
-      Tab(0).Control(0)=   "Label1"
+      Tab(0).Control(0)=   "CommonDialog1"
       Tab(0).Control(0).Enabled=   0   'False
-      Tab(0).Control(1)=   "chkEnableLogging"
+      Tab(0).Control(1)=   "fraTracking"
       Tab(0).Control(1).Enabled=   0   'False
-      Tab(0).Control(2)=   "chkMaskPassword"
+      Tab(0).Control(2)=   "Loggin"
       Tab(0).Control(2).Enabled=   0   'False
-      Tab(0).Control(3)=   "txtLogfile"
-      Tab(0).Control(3).Enabled=   0   'False
-      Tab(0).Control(4)=   "cmdBrowse"
-      Tab(0).Control(4).Enabled=   0   'False
-      Tab(0).Control(5)=   "CommonDialog1"
-      Tab(0).Control(5).Enabled=   0   'False
-      Tab(0).ControlCount=   6
-      TabCaption(1)   =   "&Colours"
+      Tab(0).ControlCount=   3
+      TabCaption(1)   =   "&Syntax Highlight"
       TabPicture(1)   =   "frmOptions.frx":12A6
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "Label2"
-      Tab(1).Control(1)=   "lvWords"
-      Tab(1).Control(2)=   "chkItalic"
-      Tab(1).Control(3)=   "chkBold"
-      Tab(1).Control(4)=   "cmdChangeCol"
-      Tab(1).Control(5)=   "cmdAddNew"
-      Tab(1).Control(6)=   "txtWord"
-      Tab(1).Control(7)=   "cmdRemove"
-      Tab(1).ControlCount=   8
-      TabCaption(2)   =   "&Developer"
+      Tab(1).Control(0)=   "Frame2"
+      Tab(1).ControlCount=   1
+      TabCaption(2)   =   "&Project"
       TabPicture(2)   =   "frmOptions.frx":12C2
       Tab(2).ControlEnabled=   0   'False
       Tab(2).Control(0)=   "fraMode"
-      Tab(2).Control(1)=   "fraTracking"
-      Tab(2).ControlCount=   2
+      Tab(2).Control(0).Enabled=   0   'False
+      Tab(2).ControlCount=   1
+      Begin VB.Frame Frame2 
+         Caption         =   "Colour"
+         Height          =   4065
+         Left            =   -74820
+         TabIndex        =   1
+         Top             =   495
+         Width           =   5235
+         Begin VB.CheckBox chkItalic 
+            Caption         =   "Italic"
+            Height          =   285
+            Left            =   990
+            TabIndex        =   15
+            ToolTipText     =   "Should the word be made italic?"
+            Top             =   840
+            Width           =   675
+         End
+         Begin VB.CheckBox chkBold 
+            Caption         =   "Bold"
+            Height          =   285
+            Left            =   135
+            TabIndex        =   14
+            ToolTipText     =   "Should the word be made bold?"
+            Top             =   840
+            Width           =   690
+         End
+         Begin VB.CommandButton cmdChangeCol 
+            Caption         =   "Change Colour"
+            Height          =   330
+            Left            =   2295
+            Style           =   1  'Graphical
+            TabIndex        =   16
+            ToolTipText     =   "Select a colour for the word."
+            Top             =   795
+            Width           =   1800
+         End
+         Begin VB.CommandButton cmdAddNew 
+            Caption         =   "Add"
+            Height          =   345
+            Left            =   4185
+            TabIndex        =   13
+            ToolTipText     =   "Add the selected word."
+            Top             =   360
+            Width           =   900
+         End
+         Begin VB.TextBox txtWord 
+            Height          =   285
+            Left            =   630
+            TabIndex        =   12
+            ToolTipText     =   "Enter a word to highlight."
+            Top             =   390
+            Width           =   3450
+         End
+         Begin VB.CommandButton cmdRemove 
+            Caption         =   "Remove"
+            Height          =   345
+            Left            =   4185
+            TabIndex        =   17
+            ToolTipText     =   "Remove the selected word."
+            Top             =   795
+            Width           =   900
+         End
+         Begin MSComctlLib.ListView lvWords 
+            Height          =   2625
+            Left            =   90
+            TabIndex        =   18
+            ToolTipText     =   "Displays the Text Formatting rules."
+            Top             =   1260
+            Width           =   5055
+            _ExtentX        =   8916
+            _ExtentY        =   4630
+            View            =   3
+            LabelEdit       =   1
+            LabelWrap       =   -1  'True
+            HideSelection   =   -1  'True
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+         Begin VB.Label Label2 
+            Caption         =   "Word"
+            Height          =   255
+            Left            =   135
+            TabIndex        =   2
+            Top             =   435
+            Width           =   465
+         End
+      End
+      Begin VB.Frame Loggin 
+         Caption         =   "Logging"
+         Height          =   1815
+         Left            =   180
+         TabIndex        =   3
+         Top             =   495
+         Width           =   5235
+         Begin VB.CheckBox chkEnableLogging 
+            Caption         =   "Enable &advanced logging"
+            Height          =   195
+            Left            =   135
+            TabIndex        =   8
+            Top             =   360
+            Width           =   3570
+         End
+         Begin VB.CheckBox chkMaskPassword 
+            Caption         =   "&Mask password in logfile"
+            Height          =   195
+            Left            =   135
+            TabIndex        =   9
+            Top             =   630
+            Width           =   3435
+         End
+         Begin VB.TextBox txtLogfile 
+            Height          =   285
+            Left            =   135
+            TabIndex        =   10
+            Top             =   1215
+            Width           =   3165
+         End
+         Begin VB.CommandButton cmdBrowse 
+            Caption         =   "..."
+            Height          =   330
+            Left            =   3375
+            TabIndex        =   11
+            Top             =   1215
+            Width           =   375
+         End
+         Begin VB.Label Label1 
+            AutoSize        =   -1  'True
+            Caption         =   "Logfile"
+            Height          =   195
+            Left            =   135
+            TabIndex        =   0
+            Top             =   990
+            Width           =   465
+         End
+      End
       Begin VB.Frame fraTracking 
          Caption         =   "Revision Tracking"
-         Height          =   1005
-         Left            =   -74775
-         TabIndex        =   18
-         Top             =   1485
-         Width           =   4155
+         Height          =   1185
+         Left            =   180
+         TabIndex        =   4
+         Top             =   2430
+         Width           =   5235
          Begin VB.TextBox txtTrackVer 
             Height          =   285
-            Left            =   2385
+            Left            =   2565
             TabIndex        =   20
             ToolTipText     =   "Enter the last Revision Version Number."
-            Top             =   540
+            Top             =   630
             Width           =   915
          End
          Begin VB.CheckBox chkTracking 
             Alignment       =   1  'Right Justify
             Caption         =   "Revision Tracking enabled?"
             Height          =   240
-            Left            =   765
+            Left            =   180
             TabIndex        =   19
             ToolTipText     =   "Check to enable the Revision Tracking System."
-            Top             =   270
-            Width           =   2535
+            Top             =   360
+            Width           =   2580
          End
          Begin VB.Label Label3 
             Caption         =   "Last Release Version"
             Height          =   195
-            Left            =   810
-            TabIndex        =   21
-            Top             =   585
+            Left            =   225
+            TabIndex        =   5
+            Top             =   675
             Width           =   1545
          End
       End
       Begin VB.Frame fraMode 
-         Caption         =   "Database Mode"
-         Height          =   870
-         Left            =   -74775
-         TabIndex        =   15
+         Caption         =   "Mode"
+         Height          =   2220
+         Left            =   -74820
+         TabIndex        =   21
          Top             =   495
-         Width           =   4155
+         Width           =   5235
          Begin VB.OptionButton optMode 
-            Caption         =   "&Production"
+            Caption         =   "Production"
             Height          =   240
             Index           =   1
-            Left            =   1170
-            TabIndex        =   17
+            Left            =   135
+            TabIndex        =   24
             ToolTipText     =   "Select to put the Database in Production Mode."
-            Top             =   540
-            Width           =   1905
+            Top             =   315
+            Width           =   4965
          End
          Begin VB.OptionButton optMode 
-            Caption         =   "D&evelopment"
+            Caption         =   "Development"
             Height          =   240
             Index           =   0
-            Left            =   1170
-            TabIndex        =   16
+            Left            =   180
+            TabIndex        =   25
             ToolTipText     =   "Select to put the Database in Development mode."
-            Top             =   270
-            Width           =   1905
+            Top             =   1260
+            Width           =   4965
          End
-      End
-      Begin VB.CommandButton cmdRemove 
-         Caption         =   "Remove"
-         Height          =   345
-         Left            =   -71355
-         TabIndex        =   9
-         ToolTipText     =   "Remove the selected word."
-         Top             =   848
-         Width           =   900
-      End
-      Begin VB.TextBox txtWord 
-         Height          =   285
-         Left            =   -74415
-         TabIndex        =   7
-         ToolTipText     =   "Enter a word to highlight."
-         Top             =   450
-         Width           =   2970
-      End
-      Begin VB.CommandButton cmdAddNew 
-         Caption         =   "Add"
-         Height          =   345
-         Left            =   -71355
-         TabIndex        =   8
-         ToolTipText     =   "Add the selected word."
-         Top             =   420
-         Width           =   900
-      End
-      Begin VB.CommandButton cmdChangeCol 
-         Caption         =   "Change Colour"
-         Height          =   330
-         Left            =   -73245
-         Style           =   1  'Graphical
-         TabIndex        =   12
-         ToolTipText     =   "Select a colour for the word."
-         Top             =   855
-         Width           =   1800
-      End
-      Begin VB.CheckBox chkBold 
-         Caption         =   "Bold"
-         Height          =   285
-         Left            =   -74910
-         TabIndex        =   10
-         ToolTipText     =   "Should the word be made bold?"
-         Top             =   900
-         Width           =   690
-      End
-      Begin VB.CheckBox chkItalic 
-         Caption         =   "Italic"
-         Height          =   285
-         Left            =   -74055
-         TabIndex        =   11
-         ToolTipText     =   "Should the word be made italic?"
-         Top             =   900
-         Width           =   675
+         Begin VB.Label Label5 
+            Caption         =   $"frmOptions.frx":12DE
+            Height          =   645
+            Left            =   360
+            TabIndex        =   23
+            Top             =   1530
+            Width           =   4785
+         End
+         Begin VB.Label Label4 
+            Caption         =   $"frmOptions.frx":1390
+            Height          =   645
+            Left            =   360
+            TabIndex        =   22
+            Top             =   585
+            Width           =   4650
+         End
       End
       Begin MSComDlg.CommonDialog CommonDialog1 
          Left            =   45
-         Top             =   2160
+         Top             =   4230
          _ExtentX        =   847
          _ExtentY        =   847
          _Version        =   393216
-      End
-      Begin VB.CommandButton cmdBrowse 
-         Caption         =   "..."
-         Height          =   330
-         Left            =   3690
-         TabIndex        =   3
-         Top             =   1800
-         Width           =   375
-      End
-      Begin VB.TextBox txtLogfile 
-         Height          =   285
-         Left            =   495
-         TabIndex        =   2
-         Top             =   1845
-         Width           =   3165
-      End
-      Begin VB.CheckBox chkMaskPassword 
-         Caption         =   "&Mask password in logfile"
-         Height          =   195
-         Left            =   495
-         TabIndex        =   1
-         Top             =   1260
-         Width           =   3435
-      End
-      Begin VB.CheckBox chkEnableLogging 
-         Caption         =   "&Enable advanced logging"
-         Height          =   195
-         Left            =   495
-         TabIndex        =   0
-         Top             =   810
-         Width           =   3435
-      End
-      Begin MSComctlLib.ListView lvWords 
-         Height          =   1365
-         Left            =   -74955
-         TabIndex        =   14
-         ToolTipText     =   "Displays the Text Formatting rules."
-         Top             =   1260
-         Width           =   4560
-         _ExtentX        =   8043
-         _ExtentY        =   2408
-         View            =   3
-         LabelEdit       =   1
-         LabelWrap       =   -1  'True
-         HideSelection   =   -1  'True
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin VB.Label Label2 
-         Caption         =   "Word"
-         Height          =   255
-         Left            =   -74910
-         TabIndex        =   13
-         Top             =   495
-         Width           =   870
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Logfile"
-         Height          =   195
-         Left            =   495
-         TabIndex        =   5
-         Top             =   1620
-         Width           =   465
       End
    End
 End
@@ -269,7 +288,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -287,6 +306,9 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+
+
+
 
 Private Sub chkTracking_Click()
 On Error GoTo Err_Handler
@@ -363,9 +385,9 @@ Dim szTextColours As String
   Logging = chkEnableLogging.Value
   MaskPassword = chkMaskPassword.Value
   LogFile = txtLogfile.Text
-  RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "Logging", ValString, CStr(Logging)
-  RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "Mask Password", ValString, CStr(MaskPassword)
-  RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "Log File", ValString, CStr(LogFile)
+  RegWrite HKEY_CURRENT_USER, "Software\pgadmin", "Logging", ValString, CStr(Logging)
+  RegWrite HKEY_CURRENT_USER, "Software\pgadmin", "Mask Password", ValString, CStr(MaskPassword)
+  RegWrite HKEY_CURRENT_USER, "Software\pgadmin", "Log File", ValString, CStr(LogFile)
   
   'Rebuild the Text Colour String
   For Each itmX In lvWords.ListItems
@@ -383,7 +405,7 @@ Dim szTextColours As String
     szTextColours = szTextColours & itmX.SubItems(1) & ";"
   Next itmX
   TextColours = szTextColours
-  RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "Text Colours", ValString, CStr(TextColours)
+  RegWrite HKEY_CURRENT_USER, "Software\pgadmin", "Text Colours", ValString, CStr(TextColours)
   
   'Save the Developer options...
   If optMode(0).Value = True Then
@@ -426,21 +448,21 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-Dim X As Printer
+Dim x As Printer
 Dim iLoop As Integer
 Dim itmX As ListItem
 Dim szStrings() As String
 Dim szValues() As String
-  Me.Width = 4770
-  Me.Height = 3570
+  Me.Width = 5900
+  Me.Height = 5800
   txtWord.ForeColor = RGB(0, 0, 0)
   lvWords.ColumnHeaders.Add , , "Wordlist", (lvWords.Width / 11) * 4
   lvWords.ColumnHeaders.Add , , "Colour", (lvWords.Width / 11) * 3
   lvWords.ColumnHeaders.Add , , "B", (lvWords.Width / 11)
   lvWords.ColumnHeaders.Add , , "I", (lvWords.Width / 11)
-  chkEnableLogging.Value = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Logging", 0)
-  chkMaskPassword.Value = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Mask Password", 1)
-  txtLogfile.Text = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Log File", "C:\pgAdmin.log")
+  chkEnableLogging.Value = RegRead(HKEY_CURRENT_USER, "Software\pgadmin", "Logging", 0)
+  chkMaskPassword.Value = RegRead(HKEY_CURRENT_USER, "Software\pgadmin", "Mask Password", 1)
+  txtLogfile.Text = RegRead(HKEY_CURRENT_USER, "Software\pgadmin", "Log File", "C:\pgadmin.log")
   
   'Load the text colours into the grid.
   lvWords.ListItems.Clear
