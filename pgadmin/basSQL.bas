@@ -594,13 +594,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  If ObjectExists("pgadmin_dev_functions", tTable) <> 0 Then
-    If Not SuperuserChk Then Exit Sub
-    StartMsg "Dropping corrupted pgAdmin_dev_functions table..."
-    LogMsg "Executing: DROP TABLE pgadmin_dev_functions"
-    gConnection.Execute "DROP TABLE pgadmin_dev_functions"
-    EndMsg
-  End If
   If ObjectExists("pgadmin_dev_functions", tTable) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin_dev_functions table..."
@@ -611,13 +604,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  If ObjectExists("pgadmin_dev_triggers", tTable) <> 0 Then
-    If Not SuperuserChk Then Exit Sub
-    StartMsg "Dropping corrupted pgAdmin_dev_triggers table..."
-    LogMsg "Executing: DROP TABLE pgAdmin_dev_triggers"
-    gConnection.Execute "DROP TABLE pgAdmin_dev_triggers"
-    EndMsg
-  End If
   If ObjectExists("pgadmin_dev_triggers", tTable) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin_dev_triggers table..."
@@ -628,13 +614,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  If ObjectExists("pgadmin_dev_views", tTable) <> 0 Then
-    If Not SuperuserChk Then Exit Sub
-    StartMsg "Dropping corrupted pgadmin_dev_views table..."
-    LogMsg "Executing: DROP TABLE pgadmin_dev_views"
-    gConnection.Execute "DROP TABLE pgadmin_dev_views"
-    EndMsg
-  End If
   If ObjectExists("pgadmin_dev_views", tTable) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin_dev_triggers table..."
@@ -645,13 +624,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  If ObjectExists("pgadmin_dev_dependencies", tTable) <> 0 Then
-    If Not SuperuserChk Then Exit Sub
-    StartMsg "Dropping corrupted pgadmin_dev_dependencies table..."
-    LogMsg "Executing: DROP TABLE pgadmin_dev_dependencies"
-    gConnection.Execute "DROP TABLE pgadmin_dev_dependencies"
-    EndMsg
-  End If
   If ObjectExists("pgadmin_dev_dependencies", tTable) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin_dev_triggers table..."
@@ -862,6 +834,7 @@ Public Function RsExecuteGetResult(ByVal szQuery As String) As Variant
     Dim rsTemp As New Recordset
     
     If rsTemp.State <> adStateClosed Then rsTemp.Close
+    LogMsg "Executing: " & szQuery
     rsTemp.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
     
     If Not (rsTemp.EOF) Then
