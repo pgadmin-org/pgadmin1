@@ -152,8 +152,7 @@ On Error GoTo Err_Handler
     szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
     szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") " & vbCrLf
     szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " " & vbCrLf
-    szCreateStr = szCreateStr & "AS '" & szFunction_source & vbCrLf
-    szCreateStr = szCreateStr & "' " & vbCrLf
+    szCreateStr = szCreateStr & "AS '" & szFunction_source & "' " & vbCrLf
     szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
     
     cmp_Function_CreateSQL = szCreateStr
