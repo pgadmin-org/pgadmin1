@@ -19,6 +19,7 @@ Attribute VB_Name = "basSQL"
 Option Explicit
 Dim SQL_PGADMIN_SELECT_CLAUSE_FUNCTIONS As String
 Dim SQL_PGADMIN_SELECT_CLAUSE_VIEWS As String
+Dim SQL_PGADMIN_SELECT_CLAUSE_INDEXES As String
 Dim SQL_PGADMIN_SELECT_CLAUSE_TRIGGERS As String
 
 Public Sub Chk_HelperObjects()
@@ -57,6 +58,7 @@ Dim SQL_PGADMIN_DEV_FUNCTIONS As String
 Dim SQL_PGADMIN_DEV_TRIGGERS As String
 Dim SQL_PGADMIN_DEV_VIEWS As String
 Dim SQL_PGADMIN_DEV_DEPENDENCIES As String
+Dim SQL_PGADMIN_DEV_INDEXES As String
 
 SQL_PGADMIN_PARAM = "CREATE TABLE pgadmin_param(param_id int4, param_value text, param_desc text)"
 SQL_INS_PGADMIN_PARAM1 = "INSERT INTO pgadmin_param VALUES ('1', '" & Str(SSO_VERSION) & "', 'SSO Version')"
@@ -210,6 +212,12 @@ SQL_PGADMIN_SELECT_CLAUSE_VIEWS = "view_oid > " & LAST_SYSTEM_OID & _
   "  AND view_name NOT LIKE 'pg_%' " & _
   "  ORDER BY view_name; "
 
+' SQL_PGADMIN_SELECT_CLAUSE_VIEWS is used later in cmp_Project_Move_Indexes
+SQL_PGADMIN_SELECT_CLAUSE_INDEXES = "index_oid > " & LAST_SYSTEM_OID & _
+  "  AND index_name NOT LIKE 'pgadmin_%' " & _
+  "  AND index_name NOT LIKE 'pg_%' " & _
+  "  ORDER BY index_name; "
+  
 SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT " & _
   "  view_oid, view_name, view_owner, view_comments " & _
   "  FROM pgadmin_views WHERE " & SQL_PGADMIN_SELECT_CLAUSE_VIEWS & _
@@ -218,6 +226,17 @@ SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT " & _
   "  ALTER TABLE pgadmin_dev_views ADD view_iscompiled boolean DEFAULT 'f'  ;" & _
   "  TRUNCATE TABLE pgadmin_dev_views ;"
 
+SQL_PGADMIN_DEV_INDEXES = "CREATE TABLE pgadmin_dev_indexes AS SELECT " & _
+  "  index_oid,index_name, index_table, index_owner, index_comments, " & _
+  "  column_name, column_position, column_length, column_comments" & _
+  "  FROM pgadmin_indexes WHERE " & SQL_PGADMIN_SELECT_CLAUSE_INDEXES & _
+  "  ALTER TABLE pgadmin_dev_indexes ADD index_definition text;  " & _
+  "  ALTER TABLE pgadmin_dev_indexes ADD index_is_lossy boolean DEFAULT 'f';  " & _
+  "  ALTER TABLE pgadmin_dev_indexes ADD index_is_unique boolean DEFAULT 'f';  " & _
+  "  ALTER TABLE pgadmin_dev_indexes ADD index_is_primary boolean DEFAULT 'f';  " & _
+  "  ALTER TABLE pgadmin_dev_indexes ADD index_iscompiled boolean DEFAULT 'f'  ;" & _
+  "  TRUNCATE TABLE pgadmin_dev_indexes ;"
+  
 SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   " dependency_project_oid int4," & _
   " dependency_parent_object text," & _
@@ -638,6 +657,18 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
+  If ObjectExists("pgadmin_dev_indexes", tTable) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin_dev_indexes table..."
+    LogMsg "Executing: " & SQL_PGADMIN_DEV_INDEXES
+    gConnection.Execute SQL_PGADMIN_DEV_INDEXES
+    LogMsg "Executing: GRANT all ON pgadmin_dev_indexes TO public"
+    gConnection.Execute "GRANT all ON pgadmin_dev_indexes TO public"
+    'cmp_Project_Move_indexes "pgadmin_temp_indexes", "", "pgadmin_dev_indexes"
+    'cmp_Table_DropIfExists "pgadmin_temp_indexes"
+    EndMsg
+  End If
+  
   If ObjectExists("pgadmin_dev_dependencies", tTable) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin_dev_triggers table..."
@@ -676,7 +707,7 @@ On Error Resume Next
   cmp_Project_Move_Functions "pgadmin_dev_functions", "", "pgadmin_temp_functions"
   cmp_Project_Move_Triggers "pgadmin_dev_triggers", "", "pgadmin_temp_triggers"
   cmp_Project_Move_Views "pgadmin_dev_views", "", "pgadmin_temp_views"
-
+  'cmp_Project_Move_Views "pgadmin_dev_indexes", "", "pgadmin_temp_indexes"
  
   'Drop tables
   If bDropAll = True Then
