@@ -22,7 +22,7 @@ Begin VB.Form frmFunctions
    End
    Begin VB.CommandButton cmdRebuild 
       BackColor       =   &H80000018&
-      Caption         =   "&Rebuild project"
+      Caption         =   "Rebuild &project"
       Height          =   330
       Left            =   45
       TabIndex        =   22

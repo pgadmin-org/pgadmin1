@@ -203,6 +203,7 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+Option Compare Text
 Dim szTriggerName_old As String
 Dim szTriggerTable_old As String
 
@@ -261,7 +262,7 @@ End Sub
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
 
-    Dim szTrigger_PostgreSQLtable As String
+    Dim szTrigger_PostgreSqlTable As String
     Dim szTriggerName As String
     Dim szTriggerTable As String
     Dim szTriggerFunction As String
@@ -406,9 +407,9 @@ On Error GoTo Err_Handler
      optExecution(1).Value = True
     End If
     
-    If InStr(szTriggerEvent, "INSERT") > 0 Then chkEvent(0).Value = 1 ' Insert
-    If InStr(szTriggerEvent, "UPDATE") > 0 Then chkEvent(1).Value = 1 ' Update
-    If InStr(szTriggerEvent, "DELETE") > 0 Then chkEvent(2).Value = 1 ' Delete
+    If InStr(szTriggerEvent, "Insert") > 0 Then chkEvent(0).Value = 1 ' Insert
+    If InStr(szTriggerEvent, "Update") > 0 Then chkEvent(1).Value = 1 ' Update
+    If InStr(szTriggerEvent, "Delete") > 0 Then chkEvent(2).Value = 1 ' Delete
       
     ' Check if trigger is not broken because function was dropped
 
@@ -446,9 +447,9 @@ Private Function Form_txtSave(bWarn As Boolean, szTriggerName As String, szTrigg
       
       'Event
       szTriggerEvent = ""
-      If chkEvent(0).Value = 1 Then szTriggerEvent = szTriggerEvent & " INSERT OR"
-      If chkEvent(1).Value = 1 Then szTriggerEvent = szTriggerEvent & " UPDATE OR"
-      If chkEvent(2).Value = 1 Then szTriggerEvent = szTriggerEvent & " DELETE OR"
+      If chkEvent(0).Value = 1 Then szTriggerEvent = szTriggerEvent & " Insert OR"
+      If chkEvent(1).Value = 1 Then szTriggerEvent = szTriggerEvent & " Update OR"
+      If chkEvent(2).Value = 1 Then szTriggerEvent = szTriggerEvent & " Delete OR"
       If bWarn And szTriggerEvent = "" Then
         MsgBox "You must select at least one trigger event!", vbExclamation, "Error"
         Exit Function

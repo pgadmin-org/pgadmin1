@@ -53,7 +53,7 @@ On Error GoTo Err_Handler
     ' Where should we get the values ?
     If (szTrigger_PostgreSqlTable = "") Then szTrigger_PostgreSqlTable = "pgadmin_triggers"
     
-    If (IsMissing(iTrigger_type)) Then
+    If (IsMissing(iTrigger_type)) Or (iTrigger_type = 0) Then
       szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event)
     Else
       szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, iTrigger_type)
@@ -301,6 +301,10 @@ End Sub
 
 Sub cmp_Trigger_Ctype(iTrigger_type As Integer, szTrigger_foreach As String, szTrigger_executes As String, szTrigger_event As String)
 On Error GoTo Err_Handler
+        szTrigger_event = ""
+        szTrigger_foreach = ""
+        szTrigger_executes = ""
+            
         If iTrigger_type <> 0 Then
             ' retrieve values from trigger
             
@@ -320,10 +324,6 @@ On Error GoTo Err_Handler
             If (iTrigger_type And 8) = 8 Then szTrigger_event = szTrigger_event & "Delete OR "
             If (iTrigger_type And 16) = 16 Then szTrigger_event = szTrigger_event & "Update OR "
             szTrigger_event = Trim(Left(szTrigger_event, Len(szTrigger_event) - 3))
-        Else
-            szTrigger_foreach = ""
-            szTrigger_executes = ""
-            szTrigger_event = ""
         End If
         
 Err_Handler:
