@@ -896,7 +896,7 @@ Private Sub cmdSerialize_Click()
 ' Machine: KIRK
 ' set the next sequence id to the highest value contained in the data + 1.
 '-------------------------------------------------------------------------------
-''On Error GoTo Err_Handler
+'on error GoTo Err_Handler
 Dim sTableName As String
 Dim sFieldName As String
 Dim sSQL As String
@@ -973,13 +973,13 @@ Err_Handler:
 End Sub
 
 Private Sub trvBrowser_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXTables
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, trvBrowser_MouseUp"
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-'On Error Resume Next
+On Error Resume Next
   Set rsTables = Nothing
   Set rsFields = Nothing
   Set rsChecks = Nothing
@@ -989,21 +989,21 @@ Private Sub Form_Unload(Cancel As Integer)
 End Sub
 
 Private Sub chkFields_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, chkFields_Click"
 End Sub
 
 Private Sub chkTables_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, chkTables_Click"
 End Sub
 
 Public Sub cmdAddColumn_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If Left(trvBrowser.SelectedItem.Key, 1) <> "T" Then
     MsgBox "That object is not a table!", vbExclamation, "Error"
     Exit Sub
@@ -1019,7 +1019,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdAddColumn_Clic
 End Sub
 
 Public Sub cmdAddTable_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   Load frmAddTable
   frmAddTable.Show
   Exit Sub
@@ -1027,7 +1027,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdAddTable_Click
 End Sub
 
 Public Sub cmdComment_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If fraTable.Visible Then
     If txtOID.Text = "" Then
       MsgBox "You must select a table to edit the comment for.", vbExclamation, "Error"
@@ -1053,7 +1053,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdComment_Click"
 End Sub
 
 Public Sub cmdDropTable_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If Left(trvBrowser.SelectedItem.Key, 1) <> "T" Then
     MsgBox "That object is not a table!", vbExclamation, "Error"
     Exit Sub
@@ -1080,7 +1080,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRefresh_Click()
-''On Error GoTo Err_Handler
+'on error GoTo Err_Handler
 Dim NodeX As Node
 Dim rsDesc As New Recordset
 Dim iUbound As Long
@@ -1151,7 +1151,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRenColumn_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim NewName As String
 Dim AlterStr As String
   If Left(trvBrowser.SelectedItem.Key, 1) <> "F" Then
@@ -1180,7 +1180,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRenTable_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim NewName As String
 Dim AlterStr As String
   If Left(trvBrowser.SelectedItem.Key, 1) <> "T" Then
@@ -1208,7 +1208,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdData_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim Response As Integer
 Dim Tuples As Long
 Dim rsQuery As New Recordset
@@ -1245,7 +1245,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdData_Click"
 End Sub
 
 Private Sub Form_Load()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   Me.Width = 8325
   Me.Height = 4455
   LogMsg "Loading Form: " & Me.Name
@@ -1255,7 +1255,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If frmTables.Width < 8325 Then frmTables.Width = 8325
@@ -1289,7 +1289,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Resize"
 End Sub
 
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
-''On Error GoTo Err_Handler
+'on error GoTo Err_Handler
 Dim NodeX As Node
 Dim lOID As Long
 Dim rsTemp As New Recordset
@@ -1419,7 +1419,7 @@ Dim szGetRows() As Variant
             rsFields.MoveFirst
        End If
       
-      'On Error GoTo Err_Handler
+      On Error GoTo Err_Handler
     End If
     
     ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1434,7 +1434,7 @@ Dim szGetRows() As Variant
       szQuery = "SELECT check_oid, check_name, check_table_oid, check_table_name, check_definition, check_comments FROM pgadmin_checks ORDER BY check_table_name, check_name;"
       LogMsg "Executing: " & szQuery
       rsChecks.Open szQuery, gConnection, adOpenStatic
-      'On Error Resume Next
+      On Error Resume Next
       If Not (rsChecks.EOF) Then
             szGetRows = rsChecks.GetRows
             iUbound = UBound(szGetRows, 2)
@@ -1452,7 +1452,7 @@ Dim szGetRows() As Variant
             Erase szGetRows
             rsChecks.MoveFirst
        End If
-      'On Error GoTo Err_Handler
+      On Error GoTo Err_Handler
     End If
     
     ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1466,7 +1466,7 @@ Dim szGetRows() As Variant
       szQuery = "SELECT oid, tgrelid, tgconstrname, tgnargs, tgargs, pgadmin_get_desc(oid) AS comments FROM pg_trigger WHERE tgisconstraint = TRUE AND tgtype = 21"
       LogMsg szQuery
       rsForeign.Open szQuery, gConnection, adOpenStatic
-      'On Error Resume Next
+      On Error Resume Next
       
       If Not (rsForeign.EOF) Then
             szGetRows = rsForeign.GetRows
@@ -1485,7 +1485,7 @@ Dim szGetRows() As Variant
             Erase szGetRows
             rsForeign.MoveFirst
        End If
-      'On Error GoTo Err_Handler
+      On Error GoTo Err_Handler
     End If
     
     ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1500,7 +1500,7 @@ Dim szGetRows() As Variant
       szQuery = "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_primary = 'Yes'"
       LogMsg szQuery
       rsPrimary.Open szQuery, gConnection, adOpenStatic
-      'On Error Resume Next
+      On Error Resume Next
      
       If Not (rsPrimary.EOF) Then
             szGetRows = rsPrimary.GetRows
@@ -1524,7 +1524,7 @@ Dim szGetRows() As Variant
             Erase szGetRows
             rsPrimary.MoveFirst
        End If
-      'On Error GoTo Err_Handler
+      On Error GoTo Err_Handler
     End If
   
     ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1540,7 +1540,7 @@ Dim szGetRows() As Variant
       szQuery = "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_unique = 'Yes' AND index_is_primary = 'No'"
       LogMsg szQuery
       rsUnique.Open szQuery, gConnection, adOpenStatic
-      'On Error Resume Next
+      On Error Resume Next
       
         If Not (rsUnique.EOF) Then
             szGetRows = rsUnique.GetRows
@@ -1563,7 +1563,7 @@ Dim szGetRows() As Variant
             Erase szGetRows
             rsUnique.MoveFirst
        End If
-      'On Error GoTo Err_Handler
+      On Error GoTo Err_Handler
     End If
   
     EndMsg
