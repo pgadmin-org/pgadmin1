@@ -422,18 +422,27 @@ End Sub
 
 Public Sub lstView_Click()
 On Error GoTo Err_Handler
-  If lstView.Text <> "" Then
-    StartMsg "Retrieving View Info..."
-    If rsView.BOF <> True Then rsView.MoveFirst
-    MoveRS rsView, lstView.ListIndex
-    txtOID.Text = rsView!view_oid & ""
-    txtName.Text = rsView!view_name & ""
-    txtOwner.Text = rsView!view_owner & ""
-    txtACL.Text = rsView!view_acl & ""
-    txtComments.Text = rsView!view_comments & ""
-    txtDefinition.Text = cmp_View_GetViewDef(txtName.Text)
-    EndMsg
-  End If
+    Dim lngView_oid As Long
+    Dim szView_name As String
+    Dim szView_owner As String
+    Dim szView_acl As String
+    Dim szView_comments As String
+    Dim szView_definition As String
+    
+    szView_name = lstView.Text
+    
+    If szView_name <> "" Then
+      StartMsg "Retrieving View Info..."
+      lngView_oid = 0
+      cmp_View_GetValues lngView_oid, "pgadmin_views", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+      txtOID.Text = Trim(Str(lngView_oid))
+      txtName.Text = szView_name
+      txtOwner.Text = szView_owner
+      txtACL.Text = szView_acl
+      txtComments.Text = szView_comments
+      txtDefinition.Text = szView_definition
+      EndMsg
+    End If
   Exit Sub
 Err_Handler:
   EndMsg

@@ -360,7 +360,7 @@ On Error GoTo Err_Handler
     rsTrig.Open "SELECT * FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name", gConnection, adOpenDynamic
   End If
   While Not rsTrig.EOF
-    lstTrig.AddItem rsTrig!trigger_name & ""
+    lstTrig.AddItem rsTrig!trigger_name & " ON " & rsTrig!trigger_table
     rsTrig.MoveNext
   Wend
   EndMsg
@@ -404,30 +404,44 @@ Public Sub lstTrig_Click()
 On Error GoTo Err_Handler
 Dim iTrigger_type As Integer
 Dim iTemp As Integer
-  If lstTrig.Text <> "" Then
+
+Dim szTrigger_oid As Long
+Dim szTrigger_name As String
+Dim szTrigger_table As String
+Dim szTrigger_function As String
+Dim szTrigger_arguments As String
+Dim szTrigger_foreach As String
+Dim szTrigger_event As String
+Dim szTrigger_Executes As String
+Dim szTrigger_Comments As String
+Dim iInstr As Integer
+
+    '----------------------------------------------------------------------------------
+    ' Parse trigger name and arguments from List
+    '----------------------------------------------------------------------------------
+    iInstr = InStr(lstTrig.Text, "ON")
+    If iInstr > 0 Then
+        szTrigger_name = Left(lstTrig.Text, iInstr - 2)
+        szTrigger_table = Mid(lstTrig.Text, iInstr + 3, Len(lstTrig.Text) - iInstr - 2)
+    Else
+        szTrigger_name = lstTrig.Text
+        szTrigger_table = ""
+    End If
+    
+    '----------------------------------------------------------------------------------
+    ' Lookup database
+    '----------------------------------------------------------------------------------
+  If szTrigger_name <> "" Then
     StartMsg "Retrieving trigger info..."
-    If rsTrig.BOF <> True Then rsTrig.MoveFirst
-    MoveRS rsTrig, lstTrig.ListIndex
-    txtEvent.Text = ""
-    txtOID.Text = rsTrig!trigger_oid & ""
-    txtTable.Text = rsTrig!trigger_table & ""
-    txtFunction.Text = rsTrig!trigger_function & ""
-    iTrigger_type = CInt(rsTrig!trigger_type)
-    If (iTrigger_type And 1) = 1 Then
-      txtForEach.Text = "Row"
-    Else
-      txtForEach.Text = "Statement"
-    End If
-    If (iTrigger_type And 2) = 2 Then
-      txtExecutes.Text = "Before"
-    Else
-      txtExecutes.Text = "After"
-    End If
-    If (iTrigger_type And 4) = 4 Then txtEvent.Text = txtEvent.Text & "Insert "
-    If (iTrigger_type And 8) = 8 Then txtEvent.Text = txtEvent.Text & "Delete "
-    If (iTrigger_type And 16) = 16 Then txtEvent.Text = txtEvent.Text & "Update "
-    txtComments.Text = rsTrig!trigger_comments & ""
-    If rsTrig.BOF <> True Then rsTrig.MoveFirst
+    szTrigger_oid = 0
+    cmp_Trigger_GetValues szTrigger_oid, "pgadmin_triggers", szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, szTrigger_Comments
+    txtOID.Text = Trim(Str(szTrigger_oid))
+    txtTable.Text = szTrigger_table
+    txtFunction.Text = szTrigger_function
+    txtForEach.Text = szTrigger_foreach
+    txtExecutes.Text = szTrigger_Executes
+    txtEvent.Text = szTrigger_event
+    txtComments.Text = szTrigger_Comments
     EndMsg
   End If
   Exit Sub

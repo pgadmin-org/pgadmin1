@@ -174,6 +174,7 @@ Begin VB.Form frmFunctions
          Width           =   4245
          _ExtentX        =   7488
          _ExtentY        =   1931
+         BackColor       =   -2147483633
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -403,7 +404,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRefresh_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
   StartMsg "Retrieving Function Names..."
   lstFunc.Clear
   txtOID.Text = ""
@@ -422,7 +423,11 @@ Public Sub cmdRefresh_Click()
     rsFunc.Open "SELECT * FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
   End If
   While Not rsFunc.EOF
-    lstFunc.AddItem rsFunc!Function_name & ""
+    If rsFunc!function_arguments <> "" Then
+        lstFunc.AddItem rsFunc!function_name & " (" & rsFunc!function_arguments & ")"
+    Else
+        lstFunc.AddItem rsFunc!function_name
+    End If
     rsFunc.MoveNext
   Wend
   txtName.Text = lstFunc
@@ -465,21 +470,45 @@ Public Sub lstFunc_dblClick()
 End Sub
 
 Public Sub lstFunc_Click()
-' On Error GoTo Err_Handler
-  If lstFunc.Text <> "" Then
+On Error GoTo Err_Handler
+    Dim szFunction_OID As Long
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    Dim szFunction_returns As String
+    Dim szFunction_source As String
+    Dim szFunction_language As String
+    Dim szFunction_owner As String
+    Dim szFunction_comments As String
+
+    Dim iInstr As Integer
+    
+    '----------------------------------------------------------------------------------
+    ' Retrieve function name and arguments from List
+    '----------------------------------------------------------------------------------
+    iInstr = InStr(lstFunc.Text, "(")
+    If iInstr > 0 Then
+        szFunction_name = Left(lstFunc.Text, iInstr - 2)
+        szFunction_arguments = Mid(lstFunc.Text, iInstr + 1, Len(lstFunc.Text) - iInstr - 1)
+    Else
+        szFunction_name = lstFunc.Text
+        szFunction_arguments = ""
+    End If
+    
+    '----------------------------------------------------------------------------------
+    ' Lookup database
+    '----------------------------------------------------------------------------------
+  If szFunction_name <> "" Then
     StartMsg "Retrieving Function Info..."
-    If rsFunc.BOF <> True Then rsFunc.MoveFirst
-    MoveRS rsFunc, lstFunc.ListIndex
-    txtOID.Text = rsFunc!function_OID & ""
-    txtOwner.Text = rsFunc!function_owner & ""
-    txtReturns.Text = rsFunc!Function_returns & ""
-    If txtReturns.Text = "" Then txtReturns.Text = "opaque" ' Strange
-    txtArguments.Text = rsFunc!Function_arguments & ""
-    txtFunction.Text = rsFunc!Function_source & ""
-    txtLanguage.Text = rsFunc!Function_language & ""
-    txtComments.Text = rsFunc!function_comments & ""
-    txtName.Text = lstFunc
-    If rsFunc.BOF <> True Then rsFunc.MoveFirst
+    szFunction_OID = 0
+    cmp_Function_GetValues szFunction_OID, "pgadmin_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    txtOID.Text = Trim(Str(szFunction_OID))
+    txtOwner.Text = szFunction_owner
+    txtReturns.Text = szFunction_returns
+    txtArguments.Text = szFunction_arguments
+    txtFunction.Text = szFunction_source
+    txtLanguage.Text = szFunction_language
+    txtComments.Text = szFunction_comments
+    txtName.Text = szFunction_name
     EndMsg
   End If
   Exit Sub
