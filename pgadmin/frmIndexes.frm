@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmIndexes 
    Caption         =   "Indexes"
    ClientHeight    =   4050
@@ -109,6 +110,214 @@ Begin VB.Form frmIndexes
          EndProperty
       EndProperty
    End
+   Begin VB.Frame fraIndex 
+      Caption         =   "Index Details"
+      Height          =   4020
+      Left            =   4500
+      TabIndex        =   25
+      Top             =   0
+      Width           =   3660
+      Begin HighlightBox.HBX txtComments 
+         Height          =   2130
+         Left            =   90
+         TabIndex        =   11
+         Top             =   1800
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   3757
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
+      End
+      Begin VB.TextBox txtLossy 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   10
+         Top             =   1485
+         Width           =   2625
+      End
+      Begin VB.TextBox txtTable 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   7
+         Top             =   540
+         Width           =   2625
+      End
+      Begin VB.TextBox txtOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   6
+         Top             =   225
+         Width           =   2625
+      End
+      Begin VB.TextBox txtUnique 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   8
+         Top             =   855
+         Width           =   2625
+      End
+      Begin VB.TextBox txtPrimary 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   9
+         Top             =   1170
+         Width           =   2625
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Lossy?"
+         Height          =   195
+         Index           =   6
+         Left            =   90
+         TabIndex        =   38
+         Top             =   1530
+         Width           =   495
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Primary?"
+         Height          =   195
+         Index           =   11
+         Left            =   90
+         TabIndex        =   29
+         Top             =   1215
+         Width           =   600
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Unique?"
+         Height          =   195
+         Index           =   10
+         Left            =   90
+         TabIndex        =   28
+         Top             =   900
+         Width           =   600
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Table"
+         Height          =   195
+         Index           =   5
+         Left            =   90
+         TabIndex        =   27
+         Top             =   585
+         Width           =   405
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "OID"
+         Height          =   195
+         Index           =   4
+         Left            =   90
+         TabIndex        =   26
+         Top             =   315
+         Width           =   285
+      End
+   End
+   Begin VB.Frame fraColumn 
+      Caption         =   "Column Details"
+      Height          =   4020
+      Left            =   4500
+      TabIndex        =   30
+      Top             =   0
+      Width           =   3660
+      Begin VB.TextBox txtType 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   15
+         Top             =   1170
+         Width           =   2625
+      End
+      Begin VB.TextBox txtColOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   12
+         Top             =   225
+         Width           =   2625
+      End
+      Begin VB.TextBox txtNumber 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   13
+         Top             =   540
+         Width           =   2625
+      End
+      Begin VB.TextBox txtLength 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   945
+         Locked          =   -1  'True
+         TabIndex        =   14
+         Top             =   855
+         Width           =   2625
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "OID"
+         Height          =   195
+         Index           =   21
+         Left            =   90
+         TabIndex        =   34
+         Top             =   270
+         Width           =   285
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Number"
+         Height          =   195
+         Index           =   20
+         Left            =   90
+         TabIndex        =   33
+         Top             =   585
+         Width           =   555
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Length"
+         Height          =   240
+         Index           =   19
+         Left            =   90
+         TabIndex        =   32
+         Top             =   900
+         Width           =   495
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Type"
+         Height          =   195
+         Index           =   18
+         Left            =   90
+         TabIndex        =   31
+         Top             =   1215
+         Width           =   360
+      End
+   End
    Begin VB.Frame fraDatasource 
       Caption         =   "Datasource Details"
       Height          =   4020
@@ -167,7 +376,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   17
          Left            =   90
-         TabIndex        =   38
+         TabIndex        =   37
          Top             =   900
          Width           =   465
       End
@@ -177,7 +386,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   22
          Left            =   90
-         TabIndex        =   37
+         TabIndex        =   36
          Top             =   1215
          Width           =   570
       End
@@ -187,7 +396,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   23
          Left            =   90
-         TabIndex        =   36
+         TabIndex        =   35
          Top             =   1530
          Width           =   600
       End
@@ -210,214 +419,6 @@ Begin VB.Form frmIndexes
          TabIndex        =   23
          Top             =   270
          Width           =   720
-      End
-   End
-   Begin VB.Frame fraIndex 
-      Caption         =   "Index Details"
-      Height          =   4020
-      Left            =   4500
-      TabIndex        =   25
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtLossy 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   10
-         Top             =   1485
-         Width           =   2625
-      End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   1860
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   11
-         Top             =   2070
-         Width           =   3480
-      End
-      Begin VB.TextBox txtTable 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   7
-         Top             =   540
-         Width           =   2625
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   6
-         Top             =   225
-         Width           =   2625
-      End
-      Begin VB.TextBox txtUnique 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   8
-         Top             =   855
-         Width           =   2625
-      End
-      Begin VB.TextBox txtPrimary 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   9
-         Top             =   1170
-         Width           =   2625
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Lossy?"
-         Height          =   195
-         Index           =   6
-         Left            =   90
-         TabIndex        =   39
-         Top             =   1530
-         Width           =   495
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   12
-         Left            =   90
-         TabIndex        =   30
-         Top             =   1845
-         Width           =   735
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Primary?"
-         Height          =   195
-         Index           =   11
-         Left            =   90
-         TabIndex        =   29
-         Top             =   1215
-         Width           =   600
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Unique?"
-         Height          =   195
-         Index           =   10
-         Left            =   90
-         TabIndex        =   28
-         Top             =   900
-         Width           =   600
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Table"
-         Height          =   195
-         Index           =   5
-         Left            =   90
-         TabIndex        =   27
-         Top             =   585
-         Width           =   405
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   4
-         Left            =   90
-         TabIndex        =   26
-         Top             =   315
-         Width           =   285
-      End
-   End
-   Begin VB.Frame fraColumn 
-      Caption         =   "Column Details"
-      Height          =   4020
-      Left            =   4500
-      TabIndex        =   31
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtType 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   15
-         Top             =   1170
-         Width           =   2625
-      End
-      Begin VB.TextBox txtColOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   12
-         Top             =   225
-         Width           =   2625
-      End
-      Begin VB.TextBox txtNumber 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   13
-         Top             =   540
-         Width           =   2625
-      End
-      Begin VB.TextBox txtLength 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   945
-         Locked          =   -1  'True
-         TabIndex        =   14
-         Top             =   855
-         Width           =   2625
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   21
-         Left            =   90
-         TabIndex        =   35
-         Top             =   270
-         Width           =   285
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Number"
-         Height          =   195
-         Index           =   20
-         Left            =   90
-         TabIndex        =   34
-         Top             =   585
-         Width           =   555
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Length"
-         Height          =   240
-         Index           =   19
-         Left            =   90
-         TabIndex        =   33
-         Top             =   900
-         Width           =   495
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Type"
-         Height          =   195
-         Index           =   18
-         Left            =   90
-         TabIndex        =   32
-         Top             =   1215
-         Width           =   360
       End
    End
 End
@@ -447,7 +448,7 @@ Option Explicit
 Dim rsIndexes As New Recordset
 Dim rsFields As New Recordset
 
-Private Sub trvBrowser_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub trvBrowser_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXIndexes
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmIndexes, trvBrowser_MouseUp"
@@ -572,6 +573,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtComments.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If frmIndexes.Width < 8325 Then frmIndexes.Width = 8325
@@ -597,7 +599,7 @@ Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
 On Error GoTo Err_Handler
 Dim NodeX As Node
 Dim lOID As Long
-Dim X As Integer
+Dim x As Integer
 Dim rsTemp As New Recordset
 
   'If a index was clicked, set the data in the grid, and create children
@@ -648,8 +650,8 @@ Dim rsTemp As New Recordset
         txtColOID.Text = rsFields!column_oid & ""
         txtNumber.Text = rsFields!column_position & ""
         If rsFields!column_type & "" = "numeric" Then
-          X = Hex((rsFields!column_length - 4) And &HFFFF)
-          txtLength.Text = CLng("&H" & Mid(X, 1, Len(X) - 4)) & "," & CLng("&H" & Mid(X, Len(X) - 3, Len(X)))
+          x = Hex((rsFields!column_length - 4) And &HFFFF)
+          txtLength.Text = CLng("&H" & Mid(x, 1, Len(x) - 4)) & "," & CLng("&H" & Mid(x, Len(x) - 3, Len(x)))
         Else
           txtLength.Text = rsFields!column_length & ""
         End If

@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmDatabases 
    Caption         =   "Databases"
    ClientHeight    =   4050
@@ -32,7 +33,7 @@ Begin VB.Form frmDatabases
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   17
+      TabIndex        =   16
       Top             =   2205
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -61,16 +62,26 @@ Begin VB.Form frmDatabases
       TabIndex        =   12
       Top             =   0
       Width           =   3660
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   2580
+      Begin HighlightBox.HBX txtComments 
+         Height          =   2850
          Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
          TabIndex        =   11
-         Top             =   1305
+         Top             =   1080
          Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   5027
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
       End
       Begin VB.TextBox txtPath 
          BackColor       =   &H8000000F&
@@ -98,16 +109,6 @@ Begin VB.Form frmDatabases
          TabIndex        =   8
          Top             =   225
          Width           =   2940
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   3
-         Left            =   90
-         TabIndex        =   16
-         Top             =   1080
-         Width           =   735
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -277,7 +278,7 @@ Dim szName As String
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmDatabases, cmdUserDSN_Click"
 End Sub
 
-Private Sub lstDB_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lstDB_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXDatabases
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmDatabases, lstDB_MouseUp"
@@ -370,6 +371,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtComments.Minimise
   If Me.WindowState <> 1 Then
     If Me.Width < 8325 Then Me.Width = 8325
     If Me.Height < 4455 Then Me.Height = 4455

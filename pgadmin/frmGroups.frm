@@ -1,6 +1,7 @@
 VERSION 5.00
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adoDataGrid.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmGroups 
    Caption         =   "Groups"
    ClientHeight    =   4815
@@ -12,6 +13,28 @@ Begin VB.Form frmGroups
    MDIChild        =   -1  'True
    ScaleHeight     =   4815
    ScaleWidth      =   5730
+   Begin HighlightBox.HBX txtUsers 
+      Height          =   1995
+      Left            =   0
+      TabIndex        =   1
+      ToolTipText     =   "List the users that are members of the selected group."
+      Top             =   2025
+      Width           =   5730
+      _ExtentX        =   10107
+      _ExtentY        =   3519
+      BackColor       =   -2147483633
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Locked          =   -1  'True
+      Caption         =   "Group Members"
+   End
    Begin vsAdoSelector.VS_AdoSelector vssUsers 
       Height          =   315
       Left            =   0
@@ -49,18 +72,6 @@ Begin VB.Form frmGroups
       ToolTipText     =   "Add the selected user to the selected group."
       Top             =   4095
       Width           =   1170
-   End
-   Begin VB.TextBox txtUsers 
-      BackColor       =   &H8000000F&
-      Height          =   2025
-      Left            =   0
-      Locked          =   -1  'True
-      MultiLine       =   -1  'True
-      ScrollBars      =   2  'Vertical
-      TabIndex        =   1
-      ToolTipText     =   "List the users that are members of the selected group."
-      Top             =   2025
-      Width           =   5730
    End
    Begin adoDataGrid.DataGrid dgGroups 
       Align           =   1  'Align Top
@@ -130,7 +141,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsGroups As New Recordset
 
-Private Sub dgGroups_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub dgGroups_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXGroups
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmGroups, dgGroups_MouseUp"
@@ -141,15 +152,15 @@ On Error GoTo Err_Handler
 Dim szUsers() As String
 Dim szUserList As String
 Dim rsTemp As New Recordset
-Dim X As Integer
+Dim x As Integer
   If Not rsGroups.EOF Then
     StartMsg "Retrieving Group Members..."
     If rsGroups!group_members <> "" Then
       szUsers = Split(Mid(rsGroups!group_members, 2, Len(rsGroups!group_members) - 2), ",")
-      For X = 0 To UBound(szUsers)
+      For x = 0 To UBound(szUsers)
         If rsTemp.State <> adStateClosed Then rsTemp.Close
-        LogMsg "Executing: SELECT pg_get_userbyid('" & szUsers(X) & "') AS username"
-        rsTemp.Open "SELECT pg_get_userbyid('" & szUsers(X) & "') AS username", gConnection, adOpenForwardOnly
+        LogMsg "Executing: SELECT pg_get_userbyid('" & szUsers(x) & "') AS username"
+        rsTemp.Open "SELECT pg_get_userbyid('" & szUsers(x) & "') AS username", gConnection, adOpenForwardOnly
         szUserList = szUserList & rsTemp!Username & ", "
       Next
     End If
@@ -207,6 +218,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtUsers.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 5850 Then Me.Width = 5850

@@ -1,7 +1,8 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{304F6B90-5346-11D5-A885-0001020F24EF}#1.0#0"; "TreeToys.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
+Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmViews 
    Caption         =   "Views"
    ClientHeight    =   4575
@@ -18,7 +19,7 @@ Begin VB.Form frmViews
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
-      TabIndex        =   23
+      TabIndex        =   19
       ToolTipText     =   "Checks and rebuilds project dependencies."
       Top             =   3510
       Width           =   1410
@@ -28,7 +29,7 @@ Begin VB.Form frmViews
       Caption         =   "Compile unsafe"
       Height          =   330
       Left            =   45
-      TabIndex        =   22
+      TabIndex        =   18
       ToolTipText     =   "Compiles a repository function."
       Top             =   3870
       Visible         =   0   'False
@@ -39,7 +40,7 @@ Begin VB.Form frmViews
       Caption         =   "Load->Developt"
       Height          =   330
       Left            =   45
-      TabIndex        =   21
+      TabIndex        =   17
       ToolTipText     =   "Compiles a repository function."
       Top             =   4230
       Visible         =   0   'False
@@ -49,7 +50,7 @@ Begin VB.Form frmViews
       Caption         =   "Export View"
       Height          =   330
       Left            =   45
-      TabIndex        =   19
+      TabIndex        =   15
       ToolTipText     =   "Modify the selected View."
       Top             =   1125
       Width           =   1410
@@ -58,7 +59,7 @@ Begin VB.Form frmViews
       Caption         =   "&Modify View"
       Height          =   330
       Left            =   45
-      TabIndex        =   18
+      TabIndex        =   14
       ToolTipText     =   "Modify the selected View."
       Top             =   405
       Width           =   1410
@@ -80,113 +81,6 @@ Begin VB.Form frmViews
       ToolTipText     =   "Edit the comment for the selected View."
       Top             =   1485
       Width           =   1410
-   End
-   Begin VB.Frame fraDetails 
-      Caption         =   "View Details"
-      Height          =   4560
-      Left            =   4500
-      TabIndex        =   10
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtName 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   16
-         Top             =   225
-         Width           =   2670
-      End
-      Begin VB.TextBox txtACL 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   7
-         Top             =   855
-         Width           =   2670
-      End
-      Begin VB.TextBox txtDefinition 
-         BackColor       =   &H8000000F&
-         Height          =   1455
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   8
-         Top             =   1530
-         Width           =   3480
-      End
-      Begin VB.TextBox txtOwner 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   6
-         Top             =   540
-         Width           =   2670
-      End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   1230
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   9
-         Top             =   3285
-         Width           =   3480
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Name"
-         Height          =   195
-         Index           =   3
-         Left            =   90
-         TabIndex        =   17
-         Top             =   270
-         Width           =   420
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "ACL"
-         Height          =   195
-         Index           =   2
-         Left            =   90
-         TabIndex        =   15
-         Top             =   900
-         Width           =   300
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Owner"
-         Height          =   195
-         Index           =   1
-         Left            =   90
-         TabIndex        =   13
-         Top             =   585
-         Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Definition"
-         Height          =   195
-         Index           =   5
-         Left            =   90
-         TabIndex        =   12
-         Top             =   1260
-         Width           =   660
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   11
-         Top             =   3060
-         Width           =   735
-      End
    End
    Begin VB.CommandButton cmdRefresh 
       Caption         =   "&Refresh"
@@ -219,7 +113,7 @@ Begin VB.Form frmViews
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   14
+      TabIndex        =   10
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -244,7 +138,7 @@ Begin VB.Form frmViews
    Begin TreeToys.TreeToy trvBrowser 
       Height          =   4560
       Left            =   1485
-      TabIndex        =   20
+      TabIndex        =   16
       Top             =   0
       Width           =   2985
       _ExtentX        =   5265
@@ -253,7 +147,7 @@ Begin VB.Form frmViews
       BorderStyle     =   1
       Checkboxes      =   -1  'True
       FullRowSelect   =   -1  'True
-      Indentation     =   99,78
+      Indentation     =   566.929
       LabelEdit       =   1
       LineStyle       =   1
       Sorted          =   -1  'True
@@ -297,6 +191,113 @@ Begin VB.Form frmViews
          EndProperty
       EndProperty
    End
+   Begin VB.Frame fraDetails 
+      Caption         =   "View Details"
+      Height          =   4560
+      Left            =   4500
+      TabIndex        =   8
+      Top             =   0
+      Width           =   3660
+      Begin HighlightBox.HBX txtDefinition 
+         Height          =   1815
+         Left            =   90
+         TabIndex        =   20
+         Top             =   1215
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   3201
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Definition"
+      End
+      Begin VB.TextBox txtName 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   12
+         Top             =   225
+         Width           =   2670
+      End
+      Begin VB.TextBox txtACL 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   7
+         Top             =   855
+         Width           =   2670
+      End
+      Begin VB.TextBox txtOwner 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   6
+         Top             =   540
+         Width           =   2670
+      End
+      Begin HighlightBox.HBX txtComments 
+         Height          =   1365
+         Left            =   90
+         TabIndex        =   21
+         Top             =   3105
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   2408
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Name"
+         Height          =   195
+         Index           =   3
+         Left            =   90
+         TabIndex        =   13
+         Top             =   270
+         Width           =   420
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "ACL"
+         Height          =   195
+         Index           =   2
+         Left            =   90
+         TabIndex        =   11
+         Top             =   900
+         Width           =   300
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Owner"
+         Height          =   195
+         Index           =   1
+         Left            =   90
+         TabIndex        =   9
+         Top             =   585
+         Width           =   465
+      End
+   End
 End
 Attribute VB_Name = "frmViews"
 Attribute VB_GlobalNameSpace = False
@@ -338,7 +339,7 @@ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 8325
   Me.Height = 4980
-
+  txtDefinition.Wordlist = TextColours
   Set trvBrowser.ImageList = ilBrowser
   cmdRefresh_Click
 
@@ -348,6 +349,8 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtDefinition.Minimise
+  txtComments.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325

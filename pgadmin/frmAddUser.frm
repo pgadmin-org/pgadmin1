@@ -25,7 +25,7 @@ Begin VB.Form frmAddUser
       ForeColor       =   -2147483630
       BackColor       =   -2147483633
       Appearance      =   1
-      StartOfWeek     =   60948482
+      StartOfWeek     =   79757314
       CurrentDate     =   36587
    End
    Begin vsAdoSelector.VS_AdoSelector vssUser 

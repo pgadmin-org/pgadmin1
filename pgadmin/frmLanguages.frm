@@ -27,6 +27,40 @@ Begin VB.Form frmLanguages
          Width           =   1155
       End
    End
+   Begin VB.ListBox lstLang 
+      Height          =   3960
+      Left            =   1485
+      TabIndex        =   4
+      Top             =   45
+      Width           =   2985
+   End
+   Begin VB.CommandButton cmdRefresh 
+      Caption         =   "&Refresh"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   2
+      ToolTipText     =   "Refresh the list of languages."
+      Top             =   765
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdDropLang 
+      Caption         =   "&Drop Language"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   1
+      ToolTipText     =   "Delete the selected language."
+      Top             =   405
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCreateLang 
+      Caption         =   "&Create Language"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   0
+      ToolTipText     =   "Create a new language."
+      Top             =   45
+      Width           =   1410
+   End
    Begin VB.Frame fraDetails 
       Caption         =   "Language Details"
       Height          =   4020
@@ -111,40 +145,6 @@ Begin VB.Form frmLanguages
          Width           =   600
       End
    End
-   Begin VB.ListBox lstLang 
-      Height          =   3960
-      Left            =   1485
-      TabIndex        =   4
-      Top             =   45
-      Width           =   2985
-   End
-   Begin VB.CommandButton cmdRefresh 
-      Caption         =   "&Refresh"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   2
-      ToolTipText     =   "Refresh the list of languages."
-      Top             =   765
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdDropLang 
-      Caption         =   "&Drop Language"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   1
-      ToolTipText     =   "Delete the selected language."
-      Top             =   405
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdCreateLang 
-      Caption         =   "&Create Language"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   0
-      ToolTipText     =   "Create a new language."
-      Top             =   45
-      Width           =   1410
-   End
 End
 Attribute VB_Name = "frmLanguages"
 Attribute VB_GlobalNameSpace = False
@@ -171,7 +171,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsLang As New Recordset
 
-Private Sub lstLang_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lstLang_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXLanguages
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmLanguages, lstLang_MouseUp"

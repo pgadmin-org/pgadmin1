@@ -1,71 +1,93 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddFunction 
    Caption         =   "Function"
    ClientHeight    =   5595
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8880
+   Icon            =   "frmAddFunction.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
    ScaleHeight     =   5595
-   ScaleMode       =   0  'User
-   ScaleWidth      =   8931.034
+   ScaleWidth      =   8880
    Begin VB.Frame fraDetails 
       Caption         =   "Function Details"
       Height          =   5595
       Left            =   4500
-      TabIndex        =   1
+      TabIndex        =   13
       Top             =   0
       Width           =   4335
+      Begin HighlightBox.HBX txtComments 
+         Height          =   2085
+         Left            =   135
+         TabIndex        =   12
+         ToolTipText     =   "Enter or update the comment for this object."
+         Top             =   3420
+         Width           =   4110
+         _ExtentX        =   7250
+         _ExtentY        =   3678
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "Comments"
+         Text            =   ""
+         BorderStyle     =   1
+      End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   18
+         TabIndex        =   2
          Top             =   225
          Width           =   3345
       End
       Begin VB.ListBox lstArguments 
-         Height          =   1230
+         Height          =   1425
          Left            =   900
-         TabIndex        =   16
+         TabIndex        =   7
          ToolTipText     =   "List of input arguments."
-         Top             =   2205
+         Top             =   1890
          Width           =   2355
       End
       Begin VB.CommandButton cmdAdd 
          Caption         =   "&Add"
          Height          =   330
          Left            =   3330
-         TabIndex        =   15
-         Top             =   1845
+         TabIndex        =   8
+         Top             =   1890
          Width           =   915
       End
       Begin VB.CommandButton cmdUp 
          Caption         =   "&Up"
          Height          =   330
          Left            =   3330
-         TabIndex        =   14
-         Top             =   2205
+         TabIndex        =   9
+         Top             =   2250
          Width           =   915
       End
       Begin VB.CommandButton cmdRemove 
          Caption         =   "&Remove"
          Height          =   330
          Left            =   3330
-         TabIndex        =   13
-         Top             =   3105
+         TabIndex        =   11
+         Top             =   2970
          Width           =   915
       End
       Begin VB.CommandButton cmdDown 
          Caption         =   "&Down"
          Height          =   330
          Left            =   3330
-         TabIndex        =   12
-         Top             =   2565
+         TabIndex        =   10
+         Top             =   2610
          Width           =   915
       End
       Begin VB.ComboBox cboArguments 
@@ -73,7 +95,7 @@ Begin VB.Form frmAddFunction
          Left            =   900
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
-         TabIndex        =   11
+         TabIndex        =   6
          ToolTipText     =   "Input arguments of your function."
          Top             =   1530
          Width           =   2310
@@ -83,7 +105,7 @@ Begin VB.Form frmAddFunction
          Left            =   900
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
-         TabIndex        =   9
+         TabIndex        =   5
          Top             =   1170
          Width           =   3345
       End
@@ -91,23 +113,14 @@ Begin VB.Form frmAddFunction
          Height          =   285
          Left            =   900
          MaxLength       =   31
-         TabIndex        =   7
+         TabIndex        =   4
          Top             =   855
-         Width           =   3345
-      End
-      Begin VB.TextBox txtComments 
-         Height          =   2010
-         Left            =   900
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   2
-         Top             =   3525
          Width           =   3345
       End
       Begin vsAdoSelector.VS_AdoSelector vssLanguage 
          Height          =   315
          Left            =   900
-         TabIndex        =   5
+         TabIndex        =   3
          Top             =   540
          Width           =   3345
          _ExtentX        =   5900
@@ -129,7 +142,7 @@ Begin VB.Form frmAddFunction
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   19
+         TabIndex        =   18
          Top             =   270
          Width           =   465
       End
@@ -138,7 +151,7 @@ Begin VB.Form frmAddFunction
          Caption         =   "Returns"
          Height          =   195
          Left            =   90
-         TabIndex        =   10
+         TabIndex        =   17
          Top             =   1215
          Width           =   510
       End
@@ -147,7 +160,7 @@ Begin VB.Form frmAddFunction
          Caption         =   "Name"
          Height          =   195
          Left            =   90
-         TabIndex        =   8
+         TabIndex        =   16
          Top             =   900
          Width           =   420
       End
@@ -156,19 +169,9 @@ Begin VB.Form frmAddFunction
          Caption         =   "Language"
          Height          =   195
          Left            =   90
-         TabIndex        =   6
+         TabIndex        =   15
          Top             =   585
          Width           =   810
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   4
-         Top             =   3510
-         Width           =   735
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -176,7 +179,7 @@ Begin VB.Form frmAddFunction
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   3
+         TabIndex        =   14
          Top             =   1530
          Width           =   780
       End
@@ -192,7 +195,8 @@ Begin VB.Form frmAddFunction
    Begin HighlightBox.HBX txtPath 
       Height          =   5520
       Left            =   1477
-      TabIndex        =   17
+      TabIndex        =   1
+      ToolTipText     =   "Enter the Object path or Function code."
       Top             =   45
       Width           =   2968
       _ExtentX        =   5239
@@ -206,9 +210,9 @@ Begin VB.Form frmAddFunction
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Function Definition"
       Text            =   ""
-      ScrollBars      =   2
-      MultiLine       =   -1  'True
+      BorderStyle     =   1
    End
 End
 Attribute VB_Name = "frmAddFunction"
@@ -395,34 +399,43 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtPath.Minimise
+  txtComments.Minimise
   If Me.WindowState = 0 Then
     If Me.Width < 9000 Then Me.Width = 9000
     If Me.Height < 6000 Then Me.Height = 6000
   End If
-    txtPath.Height = Me.ScaleHeight
-    txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
-    fraDetails.Left = txtPath.Left + txtPath.Width + 25
-    fraDetails.Height = Me.ScaleHeight
-    txtPath.Height = fraDetails.Height - txtPath.Top - 100
+  txtPath.Height = Me.ScaleHeight
+  txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
+  fraDetails.Left = txtPath.Left + txtPath.Width + 25
+  fraDetails.Height = Me.ScaleHeight
+  txtPath.Height = fraDetails.Height - txtPath.Top - 100
+  txtComments.Height = fraDetails.Height - txtComments.Top - 100
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Form_Resize"
 End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-    Dim rsTypes As New Recordset
+Dim rsTypes As New Recordset
     
-    Dim temp_arg_list As Variant
-    Dim temp_arg_item As Variant
+Dim temp_arg_list As Variant
+Dim temp_arg_item As Variant
     
-    Dim szFunction_pgTable As String
-    Dim szFunction_name As String
-    Dim szFunction_arguments As String
-    Dim szFunction_returns As String
-    Dim szFunction_source As String
-    Dim szFunction_language As String
-    Dim szFunction_owner As String
-    Dim szFunction_comments As String
+Dim szFunction_pgTable As String
+Dim szFunction_name As String
+Dim szFunction_arguments As String
+Dim szFunction_returns As String
+Dim szFunction_source As String
+Dim szFunction_language As String
+Dim szFunction_owner As String
+Dim szFunction_comments As String
+   
+  ' Log
+  LogMsg "Loading Form: " & Me.Name
+  Me.Height = 4110
+  Me.Width = 4275
+  txtPath.Wordlist = TextColours
     
     ' Remember initial values of function_name and function_arguments
     szFunction_name_old = gFunction_Name
@@ -433,12 +446,7 @@ On Error GoTo Err_Handler
     
     gFunction_Name = ""
     gFunction_Arguments = ""
-    
-    ' Log
-    LogMsg "Loading Form: " & Me.Name
-    Me.Height = 4110
-    Me.Width = 4275
-    
+      
     ' Retrieve data types
     StartMsg "Retrieving data types and languages..."
     If rsTypes.State <> adStateClosed Then rsTypes.Close

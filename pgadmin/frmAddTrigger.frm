@@ -1,38 +1,44 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddTrigger 
    Caption         =   "Trigger"
-   ClientHeight    =   5595
+   ClientHeight    =   5535
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   4230
+   Icon            =   "frmAddTrigger.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   5595
+   ScaleHeight     =   5535
    ScaleWidth      =   4230
-   Begin VB.Frame Frame4 
-      Caption         =   "Comments"
-      Height          =   1590
+   Begin HighlightBox.HBX txtComments 
+      Height          =   1725
       Left            =   90
-      TabIndex        =   17
-      Top             =   3375
-      Width           =   4110
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H80000009&
-         Height          =   1290
-         Left            =   90
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   18
-         Top             =   225
-         Width           =   3930
-      End
+      TabIndex        =   10
+      ToolTipText     =   "Enter or update the comment for this object."
+      Top             =   3330
+      Width           =   4065
+      _ExtentX        =   7170
+      _ExtentY        =   3043
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "Comments"
+      Text            =   ""
+      BorderStyle     =   1
    End
    Begin VB.Frame Frame3 
       Caption         =   "For Each"
       Height          =   600
       Left            =   90
-      TabIndex        =   12
+      TabIndex        =   16
       Top             =   1800
       Width           =   4065
       Begin VB.OptionButton optForEach 
@@ -40,7 +46,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   0
          Left            =   810
-         TabIndex        =   14
+         TabIndex        =   6
          ToolTipText     =   "Specify that the Trigger will execute for each affected row."
          Top             =   270
          Value           =   -1  'True
@@ -52,7 +58,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   1
          Left            =   2340
-         TabIndex        =   13
+         TabIndex        =   7
          ToolTipText     =   "Specify that the Trigger will execute once for a single statement."
          Top             =   270
          Width           =   1320
@@ -62,7 +68,7 @@ Begin VB.Form frmAddTrigger
       Height          =   315
       Left            =   1035
       Style           =   2  'Dropdown List
-      TabIndex        =   11
+      TabIndex        =   9
       ToolTipText     =   "Select the function that the trigger will execute."
       Top             =   2925
       Width           =   3120
@@ -71,7 +77,7 @@ Begin VB.Form frmAddTrigger
       Caption         =   "Event"
       Height          =   600
       Left            =   90
-      TabIndex        =   6
+      TabIndex        =   14
       Top             =   1080
       Width           =   4065
       Begin VB.CheckBox chkEvent 
@@ -79,7 +85,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   1
          Left            =   3105
-         TabIndex        =   9
+         TabIndex        =   5
          ToolTipText     =   "Specify that the trigger will occur before or after an Update."
          Top             =   270
          Width           =   870
@@ -89,7 +95,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   2
          Left            =   1620
-         TabIndex        =   8
+         TabIndex        =   4
          ToolTipText     =   "Specify that the trigger will occur before or after a Deletion."
          Top             =   270
          Width           =   1140
@@ -99,7 +105,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   0
          Left            =   135
-         TabIndex        =   7
+         TabIndex        =   3
          ToolTipText     =   "Specify that the trigger will occur before or after an Insert."
          Top             =   270
          Width           =   1140
@@ -109,7 +115,7 @@ Begin VB.Form frmAddTrigger
       Caption         =   "Execution Time"
       Height          =   555
       Left            =   90
-      TabIndex        =   3
+      TabIndex        =   13
       Top             =   405
       Width           =   4065
       Begin VB.OptionButton optExecution 
@@ -117,7 +123,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   1
          Left            =   2340
-         TabIndex        =   5
+         TabIndex        =   2
          ToolTipText     =   "Specify that the Trigger will execute after the event."
          Top             =   270
          Width           =   1320
@@ -127,7 +133,7 @@ Begin VB.Form frmAddTrigger
          Height          =   195
          Index           =   0
          Left            =   810
-         TabIndex        =   4
+         TabIndex        =   1
          ToolTipText     =   "Specify that the Trigger will execute before the event."
          Top             =   270
          Value           =   -1  'True
@@ -137,10 +143,10 @@ Begin VB.Form frmAddTrigger
    Begin VB.CommandButton cmdCreate 
       Caption         =   "&Save Trigger"
       Height          =   375
-      Left            =   2700
-      TabIndex        =   2
+      Left            =   2655
+      TabIndex        =   11
       ToolTipText     =   "Saves trigger."
-      Top             =   5175
+      Top             =   5130
       Width           =   1500
    End
    Begin VB.TextBox txtName 
@@ -154,7 +160,7 @@ Begin VB.Form frmAddTrigger
    Begin vsAdoSelector.VS_AdoSelector vssTable 
       Height          =   315
       Left            =   1035
-      TabIndex        =   15
+      TabIndex        =   8
       ToolTipText     =   "Select the table that the trigger will be created on."
       Top             =   2520
       Width           =   3120
@@ -175,7 +181,7 @@ Begin VB.Form frmAddTrigger
       Height          =   240
       Index           =   1
       Left            =   135
-      TabIndex        =   16
+      TabIndex        =   17
       Top             =   2565
       Width           =   735
    End
@@ -184,7 +190,7 @@ Begin VB.Form frmAddTrigger
       Height          =   240
       Index           =   2
       Left            =   135
-      TabIndex        =   10
+      TabIndex        =   15
       Top             =   2970
       Width           =   780
    End
@@ -193,7 +199,7 @@ Begin VB.Form frmAddTrigger
       Height          =   195
       Index           =   0
       Left            =   90
-      TabIndex        =   1
+      TabIndex        =   12
       Top             =   90
       Width           =   1095
    End
@@ -296,6 +302,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtComments.Minimise
   If Me.WindowState = 0 Then
     If Me.Height < 6000 Then Me.Height = 6000
     If Me.Width < 4350 Then Me.Width = 4350
@@ -310,15 +317,16 @@ Dim rsFuncs As New Recordset
 Dim szQuery As String
 Dim szFunction_table As String
 
+  LogMsg "Loading Form: " & Me.Name
+  Me.Width = 4365
+  Me.Height = 3855
+  
   szTriggerName_old = gTrigger_Name
   szTriggerTable_old = gTrigger_Table
   
   gTrigger_Name = ""
   gTrigger_Table = ""
   
-  LogMsg "Loading Form: " & Me.Name
-  Me.Width = 4365
-  Me.Height = 3855
   StartMsg "Retrieving Table & Function names..."
   vssTable.Connect = Connect
   vssTable.SQL = "SELECT DISTINCT ON(table_name) table_name, table_name FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name"

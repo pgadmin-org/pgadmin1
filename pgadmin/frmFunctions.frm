@@ -1,8 +1,8 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
-Object = "{304F6B90-5346-11D5-A885-0001020F24EF}#1.0#0"; "TreeToys.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
+Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
    ClientHeight    =   5595
@@ -17,7 +17,7 @@ Begin VB.Form frmFunctions
    Begin TreeToys.TreeToy trvBrowser 
       Height          =   5505
       Left            =   1485
-      TabIndex        =   9
+      TabIndex        =   11
       Top             =   45
       Width           =   3135
       _ExtentX        =   5530
@@ -26,7 +26,7 @@ Begin VB.Form frmFunctions
       BorderStyle     =   1
       Checkboxes      =   -1  'True
       FullRowSelect   =   -1  'True
-      Indentation     =   99,78
+      Indentation     =   566.929
       LabelEdit       =   1
       LineStyle       =   1
       Sorted          =   -1  'True
@@ -45,7 +45,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Load->Developt"
       Height          =   330
       Left            =   45
-      TabIndex        =   26
+      TabIndex        =   23
       ToolTipText     =   "Compiles a repository function."
       Top             =   4275
       Visible         =   0   'False
@@ -56,7 +56,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Compile unsafe"
       Height          =   330
       Left            =   45
-      TabIndex        =   25
+      TabIndex        =   22
       ToolTipText     =   "Compiles a repository function."
       Top             =   3915
       Visible         =   0   'False
@@ -66,7 +66,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Export Function(s)"
       Height          =   330
       Left            =   45
-      TabIndex        =   24
+      TabIndex        =   21
       ToolTipText     =   "Delete the selected function."
       Top             =   1125
       Width           =   1410
@@ -76,7 +76,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
-      TabIndex        =   20
+      TabIndex        =   18
       ToolTipText     =   "Checks and rebuilds project dependencies."
       Top             =   3555
       Width           =   1410
@@ -85,7 +85,7 @@ Begin VB.Form frmFunctions
       Caption         =   "&Modify Function"
       Height          =   330
       Left            =   45
-      TabIndex        =   19
+      TabIndex        =   17
       ToolTipText     =   "Create a new function."
       Top             =   405
       Width           =   1410
@@ -94,7 +94,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   18
+      TabIndex        =   16
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkFunctions 
@@ -138,7 +138,7 @@ Begin VB.Form frmFunctions
       Caption         =   "Function Details"
       Height          =   5595
       Left            =   4680
-      TabIndex        =   11
+      TabIndex        =   12
       Top             =   0
       Width           =   4155
       Begin VB.TextBox txtName 
@@ -146,7 +146,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   22
+         TabIndex        =   20
          Top             =   855
          Width           =   3210
       End
@@ -155,7 +155,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   8
+         TabIndex        =   10
          Top             =   540
          Width           =   3210
       End
@@ -164,7 +164,7 @@ Begin VB.Form frmFunctions
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   1185
          Width           =   3210
       End
@@ -177,36 +177,14 @@ Begin VB.Form frmFunctions
          Top             =   225
          Width           =   3210
       End
-      Begin VB.TextBox txtArguments 
-         BackColor       =   &H8000000F&
-         Height          =   1680
-         Left            =   900
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   6
-         Top             =   1530
-         Width           =   3165
-      End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   1020
-         Left            =   900
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   10
-         Top             =   3240
-         Width           =   3165
-      End
       Begin HighlightBox.HBX txtFunction 
-         Height          =   1005
-         Left            =   45
-         TabIndex        =   23
-         Top             =   4545
-         Width           =   4020
-         _ExtentX        =   7091
-         _ExtentY        =   1773
+         Height          =   1275
+         Left            =   90
+         TabIndex        =   8
+         Top             =   2880
+         Width           =   3975
+         _ExtentX        =   7011
+         _ExtentY        =   2249
          BackColor       =   -2147483633
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
@@ -217,7 +195,56 @@ Begin VB.Form frmFunctions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         ScrollBars      =   2
+         Locked          =   -1  'True
+         Caption         =   "Function/Path to Object Code"
+         Text            =   ""
+         BorderStyle     =   1
+      End
+      Begin HighlightBox.HBX txtComments 
+         Height          =   1275
+         Left            =   90
+         TabIndex        =   9
+         Top             =   4230
+         Width           =   3975
+         _ExtentX        =   7011
+         _ExtentY        =   2249
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
+         Text            =   ""
+         BorderStyle     =   1
+      End
+      Begin HighlightBox.HBX txtArguments 
+         Height          =   1275
+         Left            =   90
+         TabIndex        =   7
+         Top             =   1530
+         Width           =   3975
+         _ExtentX        =   7011
+         _ExtentY        =   2249
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Arguments"
+         Text            =   ""
+         BorderStyle     =   1
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -225,7 +252,7 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   7
          Left            =   90
-         TabIndex        =   21
+         TabIndex        =   19
          Top             =   900
          Width           =   780
       End
@@ -235,19 +262,9 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   17
+         TabIndex        =   15
          Top             =   270
          Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Arguments"
-         Height          =   195
-         Index           =   2
-         Left            =   90
-         TabIndex        =   16
-         Top             =   1530
-         Width           =   780
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -255,19 +272,9 @@ Begin VB.Form frmFunctions
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   15
+         TabIndex        =   14
          Top             =   1215
          Width           =   645
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Function"
-         Height          =   195
-         Index           =   4
-         Left            =   90
-         TabIndex        =   14
-         Top             =   4275
-         Width           =   870
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -277,16 +284,6 @@ Begin VB.Form frmFunctions
          Left            =   90
          TabIndex        =   13
          Top             =   585
-         Width           =   735
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   12
-         Top             =   3195
          Width           =   735
       End
    End
@@ -380,6 +377,7 @@ On Error GoTo Err_Handler
   Me.Width = 9000
   Me.Height = 6000
   
+  txtFunction.Wordlist = TextColours
   Set trvBrowser.ImageList = ilBrowser
   cmdRefresh_Click
 
@@ -390,6 +388,9 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtArguments.Minimise
+  txtComments.Minimise
+  txtFunction.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 9000 Then Me.Width = 9000
@@ -399,7 +400,7 @@ On Error GoTo Err_Handler
     trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
     fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
     fraDetails.Height = Me.ScaleHeight
-    txtFunction.Height = fraDetails.Height - txtFunction.Top - 100
+    txtComments.Height = fraDetails.Height - txtComments.Top - 100
   End If
 
 Exit Sub

@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportAdd 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Add Report"
@@ -17,15 +17,14 @@ Begin VB.Form frmReportAdd
    ScaleWidth      =   4410
    ShowInTaskbar   =   0   'False
    Begin HighlightBox.HBX txtSQL 
-      Height          =   1590
-      Left            =   945
-      TabIndex        =   16
+      Height          =   1320
+      Left            =   90
+      TabIndex        =   6
       ToolTipText     =   "Enter the SQL required to provide the data for the report. "
-      Top             =   2115
-      Width           =   3390
-      _ExtentX        =   5980
-      _ExtentY        =   2805
-      Enabled         =   -1  'True
+      Top             =   2385
+      Width           =   4245
+      _ExtentX        =   7488
+      _ExtentY        =   2328
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -35,19 +34,9 @@ Begin VB.Form frmReportAdd
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "SQL"
       Text            =   ""
-      ScrollBars      =   2
-      MultiLine       =   -1  'True
-   End
-   Begin VB.TextBox txtDescription 
-      Height          =   735
-      Left            =   945
-      MultiLine       =   -1  'True
-      ScrollBars      =   2  'Vertical
-      TabIndex        =   5
-      ToolTipText     =   "Enter a Description for the Report."
-      Top             =   1350
-      Width           =   3390
+      BorderStyle     =   1
    End
    Begin VB.TextBox txtAuthor 
       Height          =   285
@@ -78,7 +67,7 @@ Begin VB.Form frmReportAdd
       Caption         =   "S&how 'Group Tree' in the Report Viewer?"
       Height          =   195
       Left            =   90
-      TabIndex        =   8
+      TabIndex        =   9
       Top             =   4410
       Width           =   4245
    End
@@ -87,7 +76,7 @@ Begin VB.Form frmReportAdd
       Caption         =   "Refresh the '&Sequence Cache' before execution?"
       Height          =   195
       Left            =   90
-      TabIndex        =   7
+      TabIndex        =   8
       Top             =   4095
       Width           =   4245
    End
@@ -96,7 +85,7 @@ Begin VB.Form frmReportAdd
       Caption         =   "Refresh the '&Table Cache' before execution?"
       Height          =   195
       Left            =   90
-      TabIndex        =   6
+      TabIndex        =   7
       Top             =   3780
       Width           =   4245
    End
@@ -120,7 +109,7 @@ Begin VB.Form frmReportAdd
       BackColor       =   &H8000000F&
       Height          =   285
       Left            =   945
-      TabIndex        =   10
+      TabIndex        =   11
       TabStop         =   0   'False
       ToolTipText     =   "Enter the absolute filename for the report."
       Top             =   90
@@ -134,15 +123,27 @@ Begin VB.Form frmReportAdd
       Top             =   4680
       Width           =   1320
    End
-   Begin VB.Label Label1 
-      AutoSize        =   -1  'True
-      Caption         =   "Description"
-      Height          =   195
-      Index           =   5
+   Begin HighlightBox.HBX txtDescription 
+      Height          =   960
       Left            =   90
-      TabIndex        =   15
+      TabIndex        =   5
+      ToolTipText     =   "Enter a description for the report."
       Top             =   1395
-      Width           =   795
+      Width           =   4245
+      _ExtentX        =   7488
+      _ExtentY        =   1693
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "Description"
+      Text            =   ""
+      BorderStyle     =   1
    End
    Begin VB.Label Label1 
       AutoSize        =   -1  'True
@@ -156,21 +157,11 @@ Begin VB.Form frmReportAdd
    End
    Begin VB.Label Label1 
       AutoSize        =   -1  'True
-      Caption         =   "SQL"
-      Height          =   195
-      Index           =   3
-      Left            =   90
-      TabIndex        =   13
-      Top             =   2160
-      Width           =   315
-   End
-   Begin VB.Label Label1 
-      AutoSize        =   -1  'True
       Caption         =   "Category"
       Height          =   195
       Index           =   2
       Left            =   90
-      TabIndex        =   12
+      TabIndex        =   13
       Top             =   765
       Width           =   630
    End
@@ -180,7 +171,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   1
       Left            =   90
-      TabIndex        =   11
+      TabIndex        =   12
       Top             =   450
       Width           =   420
    End
@@ -190,7 +181,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   0
       Left            =   90
-      TabIndex        =   9
+      TabIndex        =   10
       Top             =   135
       Width           =   765
    End
@@ -221,7 +212,7 @@ Option Explicit
 
 Private Sub cmdAdd_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim fNum As Integer
 Dim szData As String
   If txtFile.Text = "" Then
@@ -266,19 +257,19 @@ Dim szData As String
   szData = ""
   fNum = FreeFile
   Open app.Path & "\Reports\Reports.dat" For Binary Access Write As #fNum
-  For X = 1 To UBound(rptList)
-    szData = szData & rptList(X).szName & Chr(253) & rptList(X).szCategory & Chr(253) & rptList(X).szFile & Chr(253) & rptList(X).szSQL & Chr(253) & rptList(X).szAuthor & Chr(253) & rptList(X).szDescription & Chr(253)
-    If rptList(X).bShowTree = True Then
+  For x = 1 To UBound(rptList)
+    szData = szData & rptList(x).szName & Chr(253) & rptList(x).szCategory & Chr(253) & rptList(x).szFile & Chr(253) & rptList(x).szSQL & Chr(253) & rptList(x).szAuthor & Chr(253) & rptList(x).szDescription & Chr(253)
+    If rptList(x).bShowTree = True Then
       szData = szData & "1" & Chr(253)
     Else
       szData = szData & "0" & Chr(253)
     End If
-    If rptList(X).bRefreshTables = True Then
+    If rptList(x).bRefreshTables = True Then
       szData = szData & "1" & Chr(253)
     Else
       szData = szData & "0" & Chr(253)
     End If
-    If rptList(X).bRefreshSequences = True Then
+    If rptList(x).bRefreshSequences = True Then
       szData = szData & "1" & Chr(254)
     Else
       szData = szData & "0" & Chr(254)
@@ -337,6 +328,8 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtDescription.Minimise
+  txtSQL.Minimise
   If Me.WindowState <> 1 Then
     If Me.Width < 4530 Then Me.Width = 4530
     If Me.Height < 5445 Then Me.Height = 5445

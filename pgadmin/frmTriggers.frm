@@ -1,13 +1,15 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{304F6B90-5346-11D5-A885-0001020F24EF}#1.0#0"; "TreeToys.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
+Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmTriggers 
    Caption         =   "Triggers"
    ClientHeight    =   5595
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8880
+   Icon            =   "frmTriggers.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
    ScaleHeight     =   7266.234
@@ -18,7 +20,7 @@ Begin VB.Form frmTriggers
       Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
-      TabIndex        =   26
+      TabIndex        =   24
       ToolTipText     =   "Checks and rebuilds project dependencies."
       Top             =   3555
       Width           =   1410
@@ -28,7 +30,7 @@ Begin VB.Form frmTriggers
       Caption         =   "Compile unsafe"
       Height          =   330
       Left            =   45
-      TabIndex        =   25
+      TabIndex        =   23
       ToolTipText     =   "Compiles a repository function."
       Top             =   3915
       Visible         =   0   'False
@@ -39,7 +41,7 @@ Begin VB.Form frmTriggers
       Caption         =   "Load->Developt"
       Height          =   330
       Left            =   45
-      TabIndex        =   24
+      TabIndex        =   22
       ToolTipText     =   "Compiles a repository function."
       Top             =   4275
       Visible         =   0   'False
@@ -49,7 +51,7 @@ Begin VB.Form frmTriggers
       Caption         =   "Export Trigger"
       Height          =   330
       Left            =   45
-      TabIndex        =   20
+      TabIndex        =   18
       ToolTipText     =   "Modify the selected trigger."
       Top             =   1125
       Width           =   1410
@@ -58,7 +60,7 @@ Begin VB.Form frmTriggers
       Caption         =   "&Modify Trigger"
       Height          =   330
       Left            =   45
-      TabIndex        =   19
+      TabIndex        =   17
       ToolTipText     =   "Modify the selected trigger."
       Top             =   405
       Width           =   1410
@@ -67,7 +69,7 @@ Begin VB.Form frmTriggers
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   18
+      TabIndex        =   16
       Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -89,19 +91,133 @@ Begin VB.Form frmTriggers
       Top             =   1485
       Width           =   1410
    End
+   Begin VB.CommandButton cmdRefresh 
+      Caption         =   "&Refresh"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   3
+      ToolTipText     =   "Refresh the list of Triggers."
+      Top             =   1845
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdDropTrig 
+      Caption         =   "&Drop Trigger"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   1
+      ToolTipText     =   "Delete the selected Trigger."
+      Top             =   765
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdCreateTrig 
+      Caption         =   "&Create Trigger"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   0
+      ToolTipText     =   "Create a new Trigger."
+      Top             =   45
+      Width           =   1410
+   End
+   Begin MSComDlg.CommonDialog CommonDialog1 
+      Left            =   45
+      Top             =   2250
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+      DialogTitle     =   "Select SQL File"
+      Filter          =   "All Files (*.*)|*.*"
+   End
+   Begin TreeToys.TreeToy trvBrowser 
+      Height          =   5505
+      Left            =   1530
+      TabIndex        =   21
+      Top             =   45
+      Width           =   3135
+      _ExtentX        =   5530
+      _ExtentY        =   9710
+      NodeTips        =   1
+      BorderStyle     =   1
+      Checkboxes      =   -1  'True
+      FullRowSelect   =   -1  'True
+      HideSelection   =   0   'False
+      Indentation     =   566.929
+      LabelEdit       =   1
+      LineStyle       =   1
+      Sorted          =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+   End
+   Begin MSComctlLib.ImageList ilBrowser 
+      Left            =   540
+      Top             =   2250
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   4
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":030A
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":0624
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":077E
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmTriggers.frx":08D8
+            Key             =   ""
+         EndProperty
+      EndProperty
+   End
    Begin VB.Frame fraDetails 
       Caption         =   "Trigger Details"
       Height          =   5550
       Left            =   4680
-      TabIndex        =   11
+      TabIndex        =   10
       Top             =   0
       Width           =   4200
+      Begin HighlightBox.HBX txtComments 
+         Height          =   3255
+         Left            =   90
+         TabIndex        =   25
+         Top             =   2205
+         Width           =   4020
+         _ExtentX        =   7091
+         _ExtentY        =   5741
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
+      End
       Begin VB.TextBox txtName 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   810
          Locked          =   -1  'True
-         TabIndex        =   21
+         TabIndex        =   19
          Top             =   270
          Width           =   3300
       End
@@ -150,24 +266,13 @@ Begin VB.Form frmTriggers
          Top             =   585
          Width           =   3300
       End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   2940
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   10
-         Top             =   2520
-         Width           =   4020
-      End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
          Caption         =   "Name"
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   22
+         TabIndex        =   20
          Top             =   315
          Width           =   420
       End
@@ -177,7 +282,7 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   17
+         TabIndex        =   15
          Top             =   630
          Width           =   405
       End
@@ -187,7 +292,7 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   16
+         TabIndex        =   14
          Top             =   945
          Width           =   615
       End
@@ -197,7 +302,7 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   15
+         TabIndex        =   13
          Top             =   1260
          Width           =   660
       End
@@ -207,7 +312,7 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   14
+         TabIndex        =   12
          Top             =   1575
          Width           =   420
       End
@@ -217,113 +322,10 @@ Begin VB.Form frmTriggers
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   13
+         TabIndex        =   11
          Top             =   1890
          Width           =   645
       End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   12
-         Top             =   2250
-         Width           =   735
-      End
-   End
-   Begin VB.CommandButton cmdRefresh 
-      Caption         =   "&Refresh"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   3
-      ToolTipText     =   "Refresh the list of Triggers."
-      Top             =   1845
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdDropTrig 
-      Caption         =   "&Drop Trigger"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   1
-      ToolTipText     =   "Delete the selected Trigger."
-      Top             =   765
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdCreateTrig 
-      Caption         =   "&Create Trigger"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   0
-      ToolTipText     =   "Create a new Trigger."
-      Top             =   45
-      Width           =   1410
-   End
-   Begin MSComDlg.CommonDialog CommonDialog1 
-      Left            =   45
-      Top             =   2250
-      _ExtentX        =   847
-      _ExtentY        =   847
-      _Version        =   393216
-      DialogTitle     =   "Select SQL File"
-      Filter          =   "All Files (*.*)|*.*"
-   End
-   Begin TreeToys.TreeToy trvBrowser 
-      Height          =   5505
-      Left            =   1530
-      TabIndex        =   23
-      Top             =   45
-      Width           =   3135
-      _ExtentX        =   5530
-      _ExtentY        =   9710
-      NodeTips        =   1
-      BorderStyle     =   1
-      Checkboxes      =   -1  'True
-      FullRowSelect   =   -1  'True
-      HideSelection   =   0   'False
-      Indentation     =   99,78
-      LabelEdit       =   1
-      LineStyle       =   1
-      Sorted          =   -1  'True
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-   End
-   Begin MSComctlLib.ImageList ilBrowser 
-      Left            =   540
-      Top             =   2250
-      _ExtentX        =   1005
-      _ExtentY        =   1005
-      BackColor       =   -2147483643
-      ImageWidth      =   16
-      ImageHeight     =   16
-      MaskColor       =   12632256
-      _Version        =   393216
-      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   4
-         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmTriggers.frx":0000
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmTriggers.frx":031A
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmTriggers.frx":0474
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmTriggers.frx":05CE
-            Key             =   ""
-         EndProperty
-      EndProperty
    End
 End
 Attribute VB_Name = "frmTriggers"
@@ -378,6 +380,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtComments.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 9000 Then Me.Width = 9000

@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddView 
    Caption         =   "Create View"
    ClientHeight    =   4050
@@ -19,14 +19,25 @@ Begin VB.Form frmAddView
       TabIndex        =   3
       Top             =   0
       Width           =   3660
-      Begin VB.TextBox txtComments 
-         Height          =   2220
+      Begin HighlightBox.HBX txtComments 
+         Height          =   2400
          Left            =   90
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
          TabIndex        =   10
-         Top             =   1755
+         Top             =   1530
          Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   4233
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "Comments"
+         Text            =   ""
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
@@ -52,16 +63,6 @@ Begin VB.Form frmAddView
          TabIndex        =   5
          Top             =   540
          Width           =   2670
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   11
-         Top             =   1530
-         Width           =   735
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -134,9 +135,8 @@ Begin VB.Form frmAddView
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "View Definition"
       Text            =   ""
-      ScrollBars      =   2
-      MultiLine       =   -1  'True
    End
 End
 Attribute VB_Name = "frmAddView"
@@ -236,6 +236,8 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtSQL.Minimise
+  txtComments.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
@@ -252,48 +254,48 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-    Dim szView_pgTable As String
-    Dim szView_name As String
-    Dim szView_definition As String
-    Dim szView_owner As String
-    Dim szView_acl As String
-    Dim szView_comments As String
+Dim szView_pgTable As String
+Dim szView_name As String
+Dim szView_definition As String
+Dim szView_owner As String
+Dim szView_acl As String
+Dim szView_comments As String
     
-    szView_name_old = gView_Name
-    szView_name = gView_Name
-    gView_Name = ""
+  LogMsg "Loading Form: " & Me.Name
+  Me.Height = 3675
+  Me.Width = 4770
+  txtSQL.Wordlist = TextColours
     
-    LogMsg "Loading Form: " & Me.Name
-    Me.Height = 3675
-    Me.Width = 4770
-    txtSQL.Wordlist = TextColours
+  szView_name_old = gView_Name
+  szView_name = gView_Name
+  gView_Name = ""
     
-    ' Retrieve view if exists
+  ' Retrieve view if exists
 
-    If szView_name_old <> "" Then
-      Me.Caption = "Modify view"
+  If szView_name_old <> "" Then
+    Me.Caption = "Modify view"
       
-      ' Load View data
+    ' Load View data
       If DevMode = True Then
-          szView_pgTable = gDevPostgresqlTables & "_views"
-      Else
-          szView_pgTable = "pgadmin_views"
-      End If
-      cmp_View_GetValues szView_pgTable, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
-      
-      txtName.Text = szView_name
-      txtSQL.Text = szView_definition
-      txtComments.Text = szView_comments
-      txtACL.Text = szView_acl
-      txtOwner.Text = szView_owner
+        szView_pgTable = gDevPostgresqlTables & "_views"
     Else
-      Me.Caption = "Create view"
-      txtOwner.Text = "N.S."
-      txtACL.Text = "N.S."
+        szView_pgTable = "pgadmin_views"
     End If
+    cmp_View_GetValues szView_pgTable, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
     
-    Gen_SQL
-Exit Sub
+    txtName.Text = szView_name
+    txtSQL.Text = szView_definition
+    txtComments.Text = szView_comments
+    txtACL.Text = szView_acl
+    txtOwner.Text = szView_owner
+  Else
+    Me.Caption = "Create view"
+    txtOwner.Text = "N.S."
+    txtACL.Text = "N.S."
+  End If
+   
+  Gen_SQL
+  Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddView, Form_Load"
 End Sub
 

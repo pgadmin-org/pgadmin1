@@ -1,15 +1,16 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmExporters 
    Caption         =   "Exporter Manager"
-   ClientHeight    =   4605
+   ClientHeight    =   4815
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   4665
    Icon            =   "frmExporters.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4605
+   ScaleHeight     =   4815
    ScaleWidth      =   4665
    Begin VB.CommandButton cmdUninstall 
       Caption         =   "&Uninstall Exporter"
@@ -47,21 +48,31 @@ Begin VB.Form frmExporters
    End
    Begin VB.Frame Frame1 
       Caption         =   "Details"
-      Height          =   1545
+      Height          =   1770
       Left            =   0
-      TabIndex        =   7
+      TabIndex        =   6
       Top             =   3015
       Width           =   4650
-      Begin VB.TextBox txtAuthor 
-         BackColor       =   &H8000000F&
-         Height          =   600
-         Left            =   1035
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   6
+      Begin HighlightBox.HBX txtAuthor 
+         Height          =   825
+         Left            =   90
+         TabIndex        =   9
          Top             =   855
-         Width           =   3525
+         Width           =   4470
+         _ExtentX        =   7885
+         _ExtentY        =   1455
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Author"
       End
       Begin VB.TextBox txtVersion 
          BackColor       =   &H8000000F&
@@ -83,21 +94,11 @@ Begin VB.Form frmExporters
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
-         Caption         =   "Author"
-         Height          =   195
-         Index           =   2
-         Left            =   135
-         TabIndex        =   10
-         Top             =   810
-         Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
          Caption         =   "Version"
          Height          =   195
          Index           =   1
          Left            =   135
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   540
          Width           =   525
       End
@@ -107,7 +108,7 @@ Begin VB.Form frmExporters
          Height          =   195
          Index           =   0
          Left            =   135
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   270
          Width           =   795
       End
@@ -146,7 +147,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Sub lstExporters_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lstExporters_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXExporters
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmExporters, lstExporters_MouseUp"
@@ -184,7 +185,7 @@ End Sub
 
 Public Sub cmdUninstall_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim i As Long
 Dim Res As String
 Dim objTemp As pgExporter
@@ -225,7 +226,7 @@ Private Sub Form_Load()
 On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 4785
-  Me.Height = 5010
+  Me.Height = 5220
   ListExporters
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmPlugins, Form_Load"
@@ -233,9 +234,10 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtAuthor.Minimise
   If Me.WindowState = 0 Then
     Me.Width = 4785
-    Me.Height = 5010
+    Me.Height = 5220
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmPlugins, Form_Resize"
@@ -243,7 +245,7 @@ End Sub
 
 Private Sub ListExporters()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim i As Long
 Dim Res As String
   StartMsg "Searching for installed Exporters..."
@@ -262,8 +264,8 @@ Continue:
   Loop
   If UBound(Exporters) > 0 Then
     ReDim Preserve Exporters(UBound(Exporters) - 1)
-    For X = 0 To UBound(Exporters)
-      lstExporters.AddItem Exporters(X).Description
+    For x = 0 To UBound(Exporters)
+      lstExporters.AddItem Exporters(x).Description
     Next
   End If
   txtDescription.Text = ""

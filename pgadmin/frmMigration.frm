@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
 Begin VB.Form frmMigration 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Database Migration Wizard"
@@ -126,27 +126,27 @@ Begin VB.Form frmMigration
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmMigration.frx":130E
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "Label1(1)"
-      Tab(1).Control(1)=   "cmdDeselect(0)"
-      Tab(1).Control(2)=   "cmdSelect(0)"
-      Tab(1).Control(3)=   "lstTables"
+      Tab(1).Control(0)=   "lstTables"
+      Tab(1).Control(1)=   "cmdSelect(0)"
+      Tab(1).Control(2)=   "cmdDeselect(0)"
+      Tab(1).Control(3)=   "Label1(1)"
       Tab(1).ControlCount=   4
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmMigration.frx":132A
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "Label1(9)"
-      Tab(2).Control(1)=   "cmdDeselect(1)"
-      Tab(2).Control(2)=   "cmdSelect(1)"
-      Tab(2).Control(3)=   "lstData"
+      Tab(2).Control(0)=   "lstData"
+      Tab(2).Control(1)=   "cmdSelect(1)"
+      Tab(2).Control(2)=   "cmdDeselect(1)"
+      Tab(2).Control(3)=   "Label1(9)"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmMigration.frx":1346
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "Label1(8)"
-      Tab(3).Control(1)=   "Label1(10)"
+      Tab(3).Control(0)=   "lstForeignKeys"
+      Tab(3).Control(1)=   "cmdSelect(2)"
       Tab(3).Control(2)=   "cmdDeselect(2)"
-      Tab(3).Control(3)=   "cmdSelect(2)"
-      Tab(3).Control(4)=   "lstForeignKeys"
+      Tab(3).Control(3)=   "Label1(10)"
+      Tab(3).Control(4)=   "Label1(8)"
       Tab(3).ControlCount=   5
       TabCaption(4)   =   " "
       TabPicture(4)   =   "frmMigration.frx":1362
@@ -557,7 +557,7 @@ Dim szQuoteChar As String
 
 Private Sub cmdBrowse_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   lstTables.Clear
   With CommonDialog1
     .Flags = cdlOFNFileMustExist + cdlOFNHideReadOnly
@@ -615,23 +615,23 @@ End Function
 
 Private Sub cmdDeSelect_Click(Index As Integer)
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   
 '1/15/2001 Rod Childers
 'Rewrote to use case not Elseif
 
   Select Case Index
     Case 0 'Tables to migrate
-      For X = 0 To lstTables.ListCount - 1
-        lstTables.Selected(X) = False
+      For x = 0 To lstTables.ListCount - 1
+        lstTables.Selected(x) = False
       Next
     Case 1 'Data to migrate
-      For X = 0 To lstData.ListCount - 1
-        lstData.Selected(X) = False
+      For x = 0 To lstData.ListCount - 1
+        lstData.Selected(x) = False
       Next
     Case 2 'Foreign Keys
-      For X = 0 To lstForeignKeys.ListCount - 1
-        lstForeignKeys.Selected(X) = False
+      For x = 0 To lstForeignKeys.ListCount - 1
+        lstForeignKeys.Selected(x) = False
       Next
   End Select
     
@@ -674,23 +674,23 @@ End Sub
 
 Private Sub cmdSelect_Click(Index As Integer)
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   
 '1/15/2001 Rod Childers
 'Rewrote to use case not Elseif
 
   Select Case Index
     Case 0 'Tables to migrate
-      For X = 0 To lstTables.ListCount - 1
-        lstTables.Selected(X) = True
+      For x = 0 To lstTables.ListCount - 1
+        lstTables.Selected(x) = True
       Next
     Case 1 'Data to migrate
-      For X = 0 To lstData.ListCount - 1
-        lstData.Selected(X) = True
+      For x = 0 To lstData.ListCount - 1
+        lstData.Selected(x) = True
       Next
     Case 2 'Foreign Keys
-      For X = 0 To lstForeignKeys.ListCount - 1
-        lstForeignKeys.Selected(X) = True
+      For x = 0 To lstForeignKeys.ListCount - 1
+        lstForeignKeys.Selected(x) = True
       Next
   End Select
   
@@ -823,7 +823,7 @@ End Sub
 
 Private Sub cmdPrevious_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   bButtonPress = True
   
   '1/16/2001 Rod Childers
@@ -861,10 +861,10 @@ Private Sub Load_Data()
 On Error GoTo Err_Handler
 
 lstData.Clear
-Dim X As Integer
-  For X = 0 To lstTables.ListCount - 1
-    If lstTables.Selected(X) = True Then
-      lstData.AddItem lstTables.List(X)
+Dim x As Integer
+  For x = 0 To lstTables.ListCount - 1
+    If lstTables.Selected(x) = True Then
+      lstData.AddItem lstTables.List(x)
     End If
   Next
   Exit Sub
@@ -875,8 +875,8 @@ Private Sub Migrate_Data()
 'On Error GoTo Err_Handler
 
 Dim W As Integer
-Dim X As Integer
-Dim Y As Integer
+Dim x As Integer
+Dim y As Integer
 Dim i As Integer
 Dim j As Integer
 Dim Z As Integer
@@ -911,9 +911,9 @@ Dim fNum As Integer
   If chkLCaseColumns.Value = 1 Then LogMsg "Column names being converted to lowercase."
   If chkLCaseIndexes.Value = 1 Then LogMsg "Index names being converted to lowercase."
 
-  For X = 0 To lstData.ListCount - 1
-    LogMsg "Creating table: " & lstData.List(X)
-    txtStatus.Text = txtStatus.Text & "Creating table: " & lstData.List(X) & vbCrLf
+  For x = 0 To lstData.ListCount - 1
+    LogMsg "Creating table: " & lstData.List(x)
+    txtStatus.Text = txtStatus.Text & "Creating table: " & lstData.List(x) & vbCrLf
     txtStatus.SelStart = Len(txtStatus.Text)
     Me.Refresh
     
@@ -924,17 +924,17 @@ Dim fNum As Integer
     
     loFlag = False
     If chkLCaseTables.Value = 0 Then
-      szQryStr = "CREATE TABLE " & QUOTE & lstData.List(X) & QUOTE & " ( "
+      szQryStr = "CREATE TABLE " & QUOTE & lstData.List(x) & QUOTE & " ( "
     Else
-      szQryStr = "CREATE TABLE " & QUOTE & LCase(lstData.List(X)) & QUOTE & " ( "
+      szQryStr = "CREATE TABLE " & QUOTE & LCase(lstData.List(x)) & QUOTE & " ( "
     End If
-    For Y = 0 To catLocal.Tables(lstData.List(X)).Columns.Count - 1
+    For y = 0 To catLocal.Tables(lstData.List(x)).Columns.Count - 1
       If chkLCaseColumns.Value = 0 Then
-        szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(X)).Columns(Y).Name & QUOTE
+        szTemp1 = szTemp1 & QUOTE & catLocal.Tables(lstData.List(x)).Columns(y).Name & QUOTE
       Else
-        szTemp1 = szTemp1 & QUOTE & LCase(catLocal.Tables(lstData.List(X)).Columns(Y).Name) & QUOTE
+        szTemp1 = szTemp1 & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Columns(y).Name) & QUOTE
       End If
-      Select Case catLocal.Tables(lstData.List(X)).Columns(Y).Type
+      Select Case catLocal.Tables(lstData.List(x)).Columns(y).Type
         Case adBigInt
           szTemp2 = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\Type Map", "BigInt", "int8")
         Case adBinary
@@ -1017,26 +1017,26 @@ Dim fNum As Integer
           szTemp2 = "text"
       End Select
       If szTemp2 = "bpchar" Or szTemp2 = "char" Or szTemp2 = "varchar" Then
-        If catLocal.Tables(lstData.List(X)).Columns(Y).DefinedSize = 0 Then
+        If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize = 0 Then
           szTemp2 = szTemp2 & "(1)"
         Else
           'Varchar cannot exceed 8088 chars!
-          If catLocal.Tables(lstData.List(X)).Columns(Y).DefinedSize > 8088 Then
-            txtStatus.Text = txtStatus.Text & "  The 'varchar' field " & catLocal.Tables(lstData.List(X)).Columns(Y).Name & " is too long and has been converted to type 'text'" & vbCrLf
+          If catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize > 8088 Then
+            txtStatus.Text = txtStatus.Text & "  The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'" & vbCrLf
             txtStatus.SelStart = Len(txtStatus.Text)
-            LogMsg "The 'varchar' field " & catLocal.Tables(lstData.List(X)).Columns(Y).Name & " is too long and has been converted to type 'text'"
+            LogMsg "The 'varchar' field " & catLocal.Tables(lstData.List(x)).Columns(y).Name & " is too long and has been converted to type 'text'"
             szTemp2 = "text"
           Else
-            szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(X)).Columns(Y).DefinedSize & ")"
+            szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).DefinedSize & ")"
           End If
         End If
       End If
       If szTemp2 = "numeric" Then
-        szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(X)).Columns(Y).NumericScale & "," & catLocal.Tables(lstData.List(X)).Columns(Y).Precision & ")"
+        szTemp2 = szTemp2 & "(" & catLocal.Tables(lstData.List(x)).Columns(y).NumericScale & "," & catLocal.Tables(lstData.List(x)).Columns(y).Precision & ")"
       End If
       szTemp1 = szTemp1 & " " & szTemp2
       If chkNotNull.Value = 1 Then
-        If catLocal.Tables(lstData.List(X)).Columns(Y).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
+        If catLocal.Tables(lstData.List(x)).Columns(y).Attributes And adColNullable = False Then szTemp1 = szTemp1 & " NOT NULL"
       End If
       szTemp1 = szTemp1 & ", "
     Next
@@ -1049,8 +1049,8 @@ Dim fNum As Integer
       If chkPrimaryKey.Value = 1 Then
         
         'loop through indexes for table, look for Primary Key
-        For j = 0 To catLocal.Tables(lstData.List(X)).Indexes.Count - 1
-          If catLocal.Tables(lstData.List(X)).Indexes(j).PrimaryKey = True Then
+        For j = 0 To catLocal.Tables(lstData.List(x)).Indexes.Count - 1
+          If catLocal.Tables(lstData.List(x)).Indexes(j).PrimaryKey = True Then
             'Primary Key found, set flag
             bPrimaryKeyAdded = True
             
@@ -1061,11 +1061,11 @@ Dim fNum As Integer
             szQryStr = szQryStr & " PRIMARY KEY("
             
             'Get the field names of the fields in the primary key
-            For i = 0 To catLocal.Tables(lstData.List(X)).Indexes(j).Columns.Count - 1
+            For i = 0 To catLocal.Tables(lstData.List(x)).Indexes(j).Columns.Count - 1
               If chkLCaseColumns.Value = 0 Then
-                szQryStr = szQryStr & QUOTE & catLocal.Tables(lstData.List(X)).Indexes(j).Columns(i).Name & QUOTE & ", "
+                szQryStr = szQryStr & QUOTE & catLocal.Tables(lstData.List(x)).Indexes(j).Columns(i).Name & QUOTE & ", "
               Else
-                szQryStr = szQryStr & QUOTE & LCase(catLocal.Tables(lstData.List(X)).Indexes(j).Columns(i).Name) & QUOTE & ", "
+                szQryStr = szQryStr & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Indexes(j).Columns(i).Name) & QUOTE & ", "
               End If
             Next i
           End If
@@ -1094,7 +1094,7 @@ Dim fNum As Integer
       '
       'Copy the data if required
       '
-      If lstData.Selected(X) = True Then
+      If lstData.Selected(x) = True Then
       
         'Warn that BLOBS are being ignored.
         If loFlag = True Then
@@ -1107,15 +1107,15 @@ Dim fNum As Integer
         txtStatus.Text = txtStatus.Text & "  Copying data..." & vbCrLf
         txtStatus.SelStart = Len(txtStatus.Text)
         Me.Refresh
-        LogMsg "Migrating Data from: " & lstData.List(X)
+        LogMsg "Migrating Data from: " & lstData.List(x)
         lTransLevel = gConnection.BeginTrans
-        LogMsg "Executing: SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar
-        rsTemp.Open "SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar, cnLocal, adOpenForwardOnly
+        LogMsg "Executing: SELECT * FROM " & szQuoteChar & lstData.List(x) & szQuoteChar
+        rsTemp.Open "SELECT * FROM " & szQuoteChar & lstData.List(x) & szQuoteChar, cnLocal, adOpenForwardOnly
         While Not rsTemp.EOF
           If chkLCaseTables.Value = 0 Then
-            szQryStr = "INSERT INTO " & QUOTE & lstData.List(X) & QUOTE
+            szQryStr = "INSERT INTO " & QUOTE & lstData.List(x) & QUOTE
           Else
-            szQryStr = "INSERT INTO " & QUOTE & LCase(lstData.List(X)) & QUOTE
+            szQryStr = "INSERT INTO " & QUOTE & LCase(lstData.List(x)) & QUOTE
           End If
         
           For Z = 0 To rsTemp.Fields.Count - 1
@@ -1196,12 +1196,12 @@ Dim fNum As Integer
       '
       If chkIndexes.Value = 1 Then
              
-        For Y = 0 To catLocal.Tables(lstData.List(X)).Indexes.Count - 1
+        For y = 0 To catLocal.Tables(lstData.List(x)).Indexes.Count - 1
         
           '1/14/2001 Rod Childers
           'If primary keys were created above, check each index
           'if it is a primary key do not recreate the index
-          If chkPrimaryKey.Value = 1 And catLocal.Tables(lstData.List(X)).Indexes(Y).PrimaryKey = True Then
+          If chkPrimaryKey.Value = 1 And catLocal.Tables(lstData.List(x)).Indexes(y).PrimaryKey = True Then
             '------Do nothing, skip this index, it was created above
           Else
                           
@@ -1209,8 +1209,8 @@ Dim fNum As Integer
           'Keep ForeignKeys from being migrated as an index
           'loop throught all the Keys, if this index is a forigen key, don't create
           bIsForeignKey = False
-          For i = 0 To catLocal.Tables(lstData.List(X)).Keys.Count - 1
-            If catLocal.Tables(lstData.List(X)).Keys(i).Name = catLocal.Tables(lstData.List(X)).Indexes(Y) And catLocal.Tables(lstData.List(X)).Keys(i).Type = adKeyForeign Then
+          For i = 0 To catLocal.Tables(lstData.List(x)).Keys.Count - 1
+            If catLocal.Tables(lstData.List(x)).Keys(i).Name = catLocal.Tables(lstData.List(x)).Indexes(y) And catLocal.Tables(lstData.List(x)).Keys(i).Type = adKeyForeign Then
               'This is not an index, it is a ForeignKey, set flag
               bIsForeignKey = True
             End If
@@ -1218,39 +1218,39 @@ Dim fNum As Integer
             
               
           If bIsForeignKey = False Then
-            txtStatus.Text = txtStatus.Text & "Creating index: " & catLocal.Tables(lstData.List(X)).Indexes(Y).Name & vbCrLf
+            txtStatus.Text = txtStatus.Text & "Creating index: " & catLocal.Tables(lstData.List(x)).Indexes(y).Name & vbCrLf
             txtStatus.SelStart = Len(txtStatus.Text)
             Me.Refresh
-            LogMsg "Creating index: " & catLocal.Tables(lstData.List(X)).Indexes(Y).Name
+            LogMsg "Creating index: " & catLocal.Tables(lstData.List(x)).Indexes(y).Name
             szQryStr = "CREATE "
               
-            If catLocal.Tables(lstData.List(X)).Indexes(Y).Unique = True Then
+            If catLocal.Tables(lstData.List(x)).Indexes(y).Unique = True Then
               szQryStr = szQryStr & "UNIQUE "
             End If
                 
-            If Len(lstData.List(X) & "_" & catLocal.Tables(lstData.List(X)).Indexes(Y).Name) > 27 Then
+            If Len(lstData.List(x) & "_" & catLocal.Tables(lstData.List(x)).Indexes(y).Name) > 27 Then
               If chkLCaseIndexes.Value = 0 Then
-                szQryStr = szQryStr & "INDEX " & QUOTE & Mid(lstData.List(X) & "_" & catLocal.Tables(lstData.List(X)).Indexes(Y).Name & "_idx", 1, 26) & "-" & Y & QUOTE
+                szQryStr = szQryStr & "INDEX " & QUOTE & Mid(lstData.List(x) & "_" & catLocal.Tables(lstData.List(x)).Indexes(y).Name & "_idx", 1, 26) & "-" & y & QUOTE
               Else
-                szQryStr = szQryStr & "INDEX " & QUOTE & LCase(Mid(lstData.List(X) & "_" & catLocal.Tables(lstData.List(X)).Indexes(Y).Name & "_idx", 1, 26) & "-" & Y) & QUOTE
+                szQryStr = szQryStr & "INDEX " & QUOTE & LCase(Mid(lstData.List(x) & "_" & catLocal.Tables(lstData.List(x)).Indexes(y).Name & "_idx", 1, 26) & "-" & y) & QUOTE
               End If
             Else
               If chkLCaseIndexes.Value = 0 Then
-                szQryStr = szQryStr & "INDEX " & QUOTE & lstData.List(X) & "_" & catLocal.Tables(lstData.List(X)).Indexes(Y).Name & "_idx" & QUOTE
+                szQryStr = szQryStr & "INDEX " & QUOTE & lstData.List(x) & "_" & catLocal.Tables(lstData.List(x)).Indexes(y).Name & "_idx" & QUOTE
               Else
-                szQryStr = szQryStr & "INDEX " & QUOTE & LCase(lstData.List(X) & "_" & catLocal.Tables(lstData.List(X)).Indexes(Y).Name & "_idx") & QUOTE
+                szQryStr = szQryStr & "INDEX " & QUOTE & LCase(lstData.List(x) & "_" & catLocal.Tables(lstData.List(x)).Indexes(y).Name & "_idx") & QUOTE
               End If
             End If
             If chkLCaseTables.Value = 0 Then
-              szQryStr = szQryStr & " ON " & QUOTE & lstData.List(X) & QUOTE & " USING btree ("
+              szQryStr = szQryStr & " ON " & QUOTE & lstData.List(x) & QUOTE & " USING btree ("
             Else
-              szQryStr = szQryStr & " ON " & QUOTE & LCase(lstData.List(X)) & QUOTE & " USING btree ("
+              szQryStr = szQryStr & " ON " & QUOTE & LCase(lstData.List(x)) & QUOTE & " USING btree ("
             End If
-            For W = 0 To catLocal.Tables(lstData.List(X)).Indexes(Y).Columns.Count - 1
+            For W = 0 To catLocal.Tables(lstData.List(x)).Indexes(y).Columns.Count - 1
               If chkLCaseColumns.Value = 0 Then
-                szQryStr = szQryStr & QUOTE & catLocal.Tables(lstData.List(X)).Indexes(Y).Columns(W).Name & QUOTE & ", "
+                szQryStr = szQryStr & QUOTE & catLocal.Tables(lstData.List(x)).Indexes(y).Columns(W).Name & QUOTE & ", "
               Else
-                szQryStr = szQryStr & QUOTE & LCase(catLocal.Tables(lstData.List(X)).Indexes(Y).Columns(W).Name) & QUOTE & ", "
+                szQryStr = szQryStr & QUOTE & LCase(catLocal.Tables(lstData.List(x)).Indexes(y).Columns(W).Name) & QUOTE & ", "
               End If
             Next
             szQryStr = Mid(szQryStr, 1, Len(szQryStr) - 2) & ")"
@@ -1286,16 +1286,16 @@ Dim fNum As Integer
       LogMsg "Creating Foreign Key: " & lstForeignKeys.List(j)
    
         'loop through the tables and find which table it belongs to
-        For X = 0 To catLocal.Tables.Count - 1
-          If catLocal.Tables(X).Type = "TABLE" Then
+        For x = 0 To catLocal.Tables.Count - 1
+          If catLocal.Tables(x).Type = "TABLE" Then
             'Go through all the Keys in table
-            For i = 0 To (catLocal.Tables(X).Keys.Count - 1)
+            For i = 0 To (catLocal.Tables(x).Keys.Count - 1)
                             
-              If catLocal.Tables(X).Keys(i).Name = lstForeignKeys.List(j) Then
+              If catLocal.Tables(x).Keys(i).Name = lstForeignKeys.List(j) Then
                 If chkLCaseTables.Value = 0 Then
-                  szQryStr = "ALTER TABLE " & QUOTE & catLocal.Tables(X).Name & QUOTE
+                  szQryStr = "ALTER TABLE " & QUOTE & catLocal.Tables(x).Name & QUOTE
                 Else
-                  szQryStr = "ALTER TABLE " & QUOTE & LCase(catLocal.Tables(X).Name) & QUOTE
+                  szQryStr = "ALTER TABLE " & QUOTE & LCase(catLocal.Tables(x).Name) & QUOTE
                 End If
                               
                 'Reduce in size if necessary and ad _fk to end
@@ -1308,34 +1308,34 @@ Dim fNum As Integer
                 
                 'Get Columns involved with FK
                 szRelatedCols = ""
-                For Y = 0 To catLocal.Tables(X).Keys(i).Columns.Count - 1
+                For y = 0 To catLocal.Tables(x).Keys(i).Columns.Count - 1
                   If chkLCaseColumns.Value = 0 Then
-                    szQryStr = szQryStr & QUOTE & catLocal.Tables(X).Keys(i).Columns(Y).Name & QUOTE & ","
+                    szQryStr = szQryStr & QUOTE & catLocal.Tables(x).Keys(i).Columns(y).Name & QUOTE & ","
                   Else
-                    szQryStr = szQryStr & QUOTE & LCase(catLocal.Tables(X).Keys(i).Columns(Y).Name) & QUOTE & ","
+                    szQryStr = szQryStr & QUOTE & LCase(catLocal.Tables(x).Keys(i).Columns(y).Name) & QUOTE & ","
                   End If
                   
                   'Get the related column name while we are on this comumn
                   'The Related column belongs to the Comumns collection in the table collection
                   If chkLCaseColumns.Value = 0 Then
-                    szRelatedCols = szRelatedCols & QUOTE & catLocal.Tables(X).Keys(i).Columns(catLocal.Tables(X).Keys(i).Columns(Y).Name).RelatedColumn & QUOTE & ","
+                    szRelatedCols = szRelatedCols & QUOTE & catLocal.Tables(x).Keys(i).Columns(catLocal.Tables(x).Keys(i).Columns(y).Name).RelatedColumn & QUOTE & ","
                   Else
-                    szRelatedCols = szRelatedCols & QUOTE & LCase(catLocal.Tables(X).Keys(i).Columns(catLocal.Tables(X).Keys(i).Columns(Y).Name).RelatedColumn) & QUOTE & ","
+                    szRelatedCols = szRelatedCols & QUOTE & LCase(catLocal.Tables(x).Keys(i).Columns(catLocal.Tables(x).Keys(i).Columns(y).Name).RelatedColumn) & QUOTE & ","
                   End If
-                Next Y
+                Next y
                 
                 'Trim extra , off end of column names, add ) to end
                 szQryStr = Left(szQryStr, (Len(szQryStr) - 1)) & ")"
                 szRelatedCols = Left(szRelatedCols, (Len(szRelatedCols) - 1)) & ")"
                 If chkLCaseTables.Value = 0 Then
-                  szQryStr = szQryStr & " REFERENCES " & QUOTE & catLocal.Tables(X).Keys(i).RelatedTable & QUOTE & " (" & szRelatedCols
+                  szQryStr = szQryStr & " REFERENCES " & QUOTE & catLocal.Tables(x).Keys(i).RelatedTable & QUOTE & " (" & szRelatedCols
                 Else
-                  szQryStr = szQryStr & " REFERENCES " & QUOTE & LCase(catLocal.Tables(X).Keys(i).RelatedTable) & QUOTE & " (" & szRelatedCols
+                  szQryStr = szQryStr & " REFERENCES " & QUOTE & LCase(catLocal.Tables(x).Keys(i).RelatedTable) & QUOTE & " (" & szRelatedCols
                 End If
                 
                 'Set action to do when referenced row is being deleted
                 szQryStr = szQryStr & " ON DELETE "
-                Select Case catLocal.Tables(X).Keys(i).DeleteRule
+                Select Case catLocal.Tables(x).Keys(i).DeleteRule
                   Case adRINone
                     szQryStr = szQryStr & "NO ACTION"
                   Case adRICascade
@@ -1348,7 +1348,7 @@ Dim fNum As Integer
                 
                 'Set action to do when referenced row is being Updated
                 szQryStr = szQryStr & " ON UPDATE "
-                Select Case catLocal.Tables(X).Keys(i).UpdateRule
+                Select Case catLocal.Tables(x).Keys(i).UpdateRule
                   Case adRINone
                     szQryStr = szQryStr & "NO ACTION"
                   Case adRICascade
@@ -1368,7 +1368,7 @@ Dim fNum As Integer
               End If
             Next i
           End If
-        Next X
+        Next x
     End If
   Next j
     
@@ -1413,30 +1413,30 @@ On Error GoTo Err_Handler
 
 Dim tblTemp As Table
 Dim i As Integer
-Dim X As Integer
+Dim x As Integer
 
 lstForeignKeys.Clear
 
 StartMsg "Searching for Foreign Keys..."
 'Loop Through all Tables in database
-For X = 0 To catLocal.Tables.Count - 1
-  If catLocal.Tables(X).Type = "TABLE" Then
+For x = 0 To catLocal.Tables.Count - 1
+  If catLocal.Tables(x).Type = "TABLE" Then
     'Go through all the Keys in table, find foreign keys
-    For i = 0 To (catLocal.Tables(X).Keys.Count - 1)
-      If catLocal.Tables(X).Keys(i).Type = adKeyForeign Then
+    For i = 0 To (catLocal.Tables(x).Keys.Count - 1)
+      If catLocal.Tables(x).Keys(i).Type = adKeyForeign Then
         'See if both tables needed exist in PostgreSQL, or are to be migrated
         'if so add it to the list
         'If the table with the Forgein key is to be migrated or it is already in the PostgreSQL database
-        If isTableToBeMigrated((catLocal.Tables(X).Name)) = True Or ObjectExists((catLocal.Tables(X).Name), tTable) <> 0 Then
+        If isTableToBeMigrated((catLocal.Tables(x).Name)) = True Or ObjectExists((catLocal.Tables(x).Name), tTable) <> 0 Then
           'If the Related table is to be migrated or it is already in the PostgreSQL database
-          If isTableToBeMigrated((catLocal.Tables(X).Keys(i).RelatedTable)) Or ObjectExists((catLocal.Tables(X).Keys(i).RelatedTable), tTable) Then
-            lstForeignKeys.AddItem catLocal.Tables(X).Keys(i).Name
+          If isTableToBeMigrated((catLocal.Tables(x).Keys(i).RelatedTable)) Or ObjectExists((catLocal.Tables(x).Keys(i).RelatedTable), tTable) Then
+            lstForeignKeys.AddItem catLocal.Tables(x).Keys(i).Name
           End If
         End If
       End If
     Next i
   End If
-Next X
+Next x
 EndMsg
 
 Exit Sub
@@ -1466,16 +1466,16 @@ Private Function isTableToBeMigrated(szTableName As String)
 'were selected to be migrated
 On Error GoTo Err_Handler
 
-Dim X As Integer
+Dim x As Integer
 
 isTableToBeMigrated = False
 
-  For X = 0 To lstData.ListCount - 1
-    If lstData.List(X) = szTableName Then
+  For x = 0 To lstData.ListCount - 1
+    If lstData.List(x) = szTableName Then
       isTableToBeMigrated = True
       Exit For
     End If
-  Next X
+  Next x
 
 Exit Function
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMigration, Load_Data"

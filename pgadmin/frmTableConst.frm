@@ -1,6 +1,7 @@
 VERSION 5.00
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmTableConst 
    Caption         =   "Table Constraints"
    ClientHeight    =   3930
@@ -15,7 +16,7 @@ Begin VB.Form frmTableConst
    Begin vsAdoSelector.VS_AdoSelector vssType 
       Height          =   315
       Left            =   1485
-      TabIndex        =   10
+      TabIndex        =   8
       ToolTipText     =   "Select the type of Constraint to add."
       Top             =   45
       Width           =   2760
@@ -42,6 +43,114 @@ Begin VB.Form frmTableConst
       Top             =   405
       Width           =   2760
    End
+   Begin VB.Frame fraCheck 
+      Caption         =   "Check Constraint"
+      Height          =   3120
+      Left            =   45
+      TabIndex        =   5
+      Top             =   765
+      Visible         =   0   'False
+      Width           =   4785
+      Begin HighlightBox.HBX txtCheck 
+         Height          =   2400
+         Left            =   90
+         TabIndex        =   24
+         ToolTipText     =   "Enter an expression that evaluates to TRUE or FALSE"
+         Top             =   225
+         Width           =   4605
+         _ExtentX        =   8123
+         _ExtentY        =   4233
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "Expression"
+      End
+      Begin VB.CommandButton cmdAddCheck 
+         Caption         =   "&Add Check"
+         Height          =   330
+         Left            =   3240
+         TabIndex        =   7
+         ToolTipText     =   "Add the Check Constraint"
+         Top             =   2700
+         Width           =   1455
+      End
+   End
+   Begin VB.Frame fraPrimaryKey 
+      Caption         =   "Primary Key Constraint"
+      Height          =   3120
+      Left            =   45
+      TabIndex        =   4
+      Top             =   765
+      Visible         =   0   'False
+      Width           =   4785
+      Begin VB.CommandButton cmdAddPrimaryKey 
+         Caption         =   "&Add Primary Key"
+         Height          =   330
+         Left            =   3240
+         TabIndex        =   10
+         ToolTipText     =   "add the Primary Key Constraint"
+         Top             =   2700
+         Width           =   1455
+      End
+      Begin VB.ListBox lstPrimaryKeyCols 
+         Height          =   2085
+         Left            =   90
+         Style           =   1  'Checkbox
+         TabIndex        =   9
+         ToolTipText     =   "Select the columns to include in the Primary Key Constraint"
+         Top             =   540
+         Width           =   4605
+      End
+      Begin VB.Label Label4 
+         Caption         =   "Select the Primary Key Columns"
+         Height          =   195
+         Left            =   90
+         TabIndex        =   13
+         Top             =   270
+         Width           =   2895
+      End
+   End
+   Begin VB.Frame fraUnique 
+      Caption         =   "Unique Constraint"
+      Height          =   3120
+      Left            =   45
+      TabIndex        =   3
+      Top             =   765
+      Visible         =   0   'False
+      Width           =   4785
+      Begin VB.ListBox lstUniqueCols 
+         Height          =   2085
+         Left            =   90
+         Style           =   1  'Checkbox
+         TabIndex        =   14
+         ToolTipText     =   "Select the columns to be included in the Unique Constraint."
+         Top             =   540
+         Width           =   4605
+      End
+      Begin VB.CommandButton cmdAddUnique 
+         Caption         =   "&Add Unique"
+         Height          =   330
+         Left            =   3240
+         TabIndex        =   11
+         ToolTipText     =   "Add the Unique Constraint"
+         Top             =   2700
+         Width           =   1455
+      End
+      Begin VB.Label Label5 
+         Caption         =   "Select the Unique Columns"
+         Height          =   195
+         Left            =   90
+         TabIndex        =   15
+         Top             =   270
+         Width           =   2895
+      End
+   End
    Begin VB.Frame fraForeignKey 
       Caption         =   "Foreign Key Constraint"
       Height          =   3120
@@ -53,7 +162,7 @@ Begin VB.Form frmTableConst
       Begin TabDlg.SSTab SSTab1 
          Height          =   2400
          Left            =   90
-         TabIndex        =   18
+         TabIndex        =   16
          Top             =   225
          Width           =   4605
          _ExtentX        =   8123
@@ -86,14 +195,14 @@ Begin VB.Form frmTableConst
             Left            =   -74100
             List            =   "frmTableConst.frx":0344
             Style           =   1  'Checkbox
-            TabIndex        =   25
+            TabIndex        =   23
             Top             =   1050
             Width           =   3570
          End
          Begin vsAdoSelector.VS_AdoSelector vssTables 
             Height          =   315
             Left            =   -74100
-            TabIndex        =   23
+            TabIndex        =   21
             Top             =   645
             Width           =   3570
             _ExtentX        =   6297
@@ -112,7 +221,7 @@ Begin VB.Form frmTableConst
             Height          =   1635
             Left            =   90
             Style           =   1  'Checkbox
-            TabIndex        =   19
+            TabIndex        =   17
             ToolTipText     =   "Select the columns to include in the Foreign Key Constraint"
             Top             =   645
             Width           =   4425
@@ -121,7 +230,7 @@ Begin VB.Form frmTableConst
             Caption         =   "Columns"
             Height          =   195
             Left            =   -74865
-            TabIndex        =   24
+            TabIndex        =   22
             Top             =   1095
             Width           =   690
          End
@@ -129,7 +238,7 @@ Begin VB.Form frmTableConst
             Caption         =   "Table"
             Height          =   195
             Left            =   -74865
-            TabIndex        =   22
+            TabIndex        =   20
             Top             =   735
             Width           =   690
          End
@@ -137,7 +246,7 @@ Begin VB.Form frmTableConst
             Caption         =   "Select the Referenced table and Columns:"
             Height          =   285
             Left            =   -74955
-            TabIndex        =   21
+            TabIndex        =   19
             Top             =   420
             Width           =   3660
          End
@@ -145,7 +254,7 @@ Begin VB.Form frmTableConst
             Caption         =   "Select the Foreign Key Columns:"
             Height          =   240
             Left            =   45
-            TabIndex        =   20
+            TabIndex        =   18
             Top             =   420
             Width           =   4425
          End
@@ -154,116 +263,10 @@ Begin VB.Form frmTableConst
          Caption         =   "&Add Foreign Key"
          Height          =   330
          Left            =   3240
-         TabIndex        =   14
+         TabIndex        =   12
          ToolTipText     =   "Add the Foreign Key Constraint"
          Top             =   2700
          Width           =   1455
-      End
-   End
-   Begin VB.Frame fraCheck 
-      Caption         =   "Check Constraint"
-      Height          =   3120
-      Left            =   45
-      TabIndex        =   5
-      Top             =   765
-      Visible         =   0   'False
-      Width           =   4785
-      Begin VB.CommandButton cmdAddCheck 
-         Caption         =   "&Add Check"
-         Height          =   330
-         Left            =   3240
-         TabIndex        =   8
-         ToolTipText     =   "Add the Check Constraint"
-         Top             =   2700
-         Width           =   1455
-      End
-      Begin VB.TextBox txtCheck 
-         Height          =   2085
-         Left            =   90
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   7
-         ToolTipText     =   "Enter an expression that evaluates to TRUE or FALSE"
-         Top             =   540
-         Width           =   4605
-      End
-      Begin VB.Label Label2 
-         Caption         =   "Enter a boolean expression for the CHECK constraint to evalute"
-         Height          =   240
-         Left            =   90
-         TabIndex        =   9
-         Top             =   270
-         Width           =   4605
-      End
-   End
-   Begin VB.Frame fraPrimaryKey 
-      Caption         =   "Primary Key Constraint"
-      Height          =   3120
-      Left            =   45
-      TabIndex        =   4
-      Top             =   765
-      Visible         =   0   'False
-      Width           =   4785
-      Begin VB.CommandButton cmdAddPrimaryKey 
-         Caption         =   "&Add Primary Key"
-         Height          =   330
-         Left            =   3240
-         TabIndex        =   12
-         ToolTipText     =   "add the Primary Key Constraint"
-         Top             =   2700
-         Width           =   1455
-      End
-      Begin VB.ListBox lstPrimaryKeyCols 
-         Height          =   2085
-         Left            =   90
-         Style           =   1  'Checkbox
-         TabIndex        =   11
-         ToolTipText     =   "Select the columns to include in the Primary Key Constraint"
-         Top             =   540
-         Width           =   4605
-      End
-      Begin VB.Label Label4 
-         Caption         =   "Select the Primary Key Columns"
-         Height          =   195
-         Left            =   90
-         TabIndex        =   15
-         Top             =   270
-         Width           =   2895
-      End
-   End
-   Begin VB.Frame fraUnique 
-      Caption         =   "Unique Constraint"
-      Height          =   3120
-      Left            =   45
-      TabIndex        =   3
-      Top             =   765
-      Visible         =   0   'False
-      Width           =   4785
-      Begin VB.ListBox lstUniqueCols 
-         Height          =   2085
-         Left            =   90
-         Style           =   1  'Checkbox
-         TabIndex        =   16
-         ToolTipText     =   "Select the columns to be included in the Unique Constraint."
-         Top             =   540
-         Width           =   4605
-      End
-      Begin VB.CommandButton cmdAddUnique 
-         Caption         =   "&Add Unique"
-         Height          =   330
-         Left            =   3240
-         TabIndex        =   13
-         ToolTipText     =   "Add the Unique Constraint"
-         Top             =   2700
-         Width           =   1455
-      End
-      Begin VB.Label Label5 
-         Caption         =   "Select the Unique Columns"
-         Height          =   195
-         Left            =   90
-         TabIndex        =   17
-         Top             =   270
-         Width           =   2895
       End
    End
    Begin VB.Label Label3 
@@ -309,16 +312,16 @@ Option Explicit
 
 Private Sub AddConstraint(szConstraint As String)
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To Forms.Count - 1
-    If Forms(X).Name = "frmAddTable" Then Exit For
+Dim x As Integer
+  For x = 0 To Forms.Count - 1
+    If Forms(x).Name = "frmAddTable" Then Exit For
   Next
-  If X = Forms.Count Then
+  If x = Forms.Count Then
     MsgBox "The create table dialogue appears to have been closed!", vbCritical, "Fatal Error"
     Unload Me
     Exit Sub
   End If
-  Forms(X).lstConstraints.AddItem szConstraint
+  Forms(x).lstConstraints.AddItem szConstraint
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTableConst, AddConstraint"
 End Sub
@@ -338,7 +341,7 @@ End Sub
 Private Sub cmdAddForeignKey_Click()
 On Error GoTo Err_Handler
 Dim szConst As String
-Dim X As Integer
+Dim x As Integer
 Dim Flag As Boolean
   Flag = False
   If txtName.Text = "" Then
@@ -346,9 +349,9 @@ Dim Flag As Boolean
   Else
     szConst = "CONSTRAINT " & QUOTE & txtName.Text & QUOTE & " FOREIGN KEY ("
   End If
-  For X = 0 To lstForeignKeyCols.ListCount - 1
-    If lstForeignKeyCols.Selected(X) = True Then
-      szConst = szConst & QUOTE & lstForeignKeyCols.List(X) & QUOTE & ", "
+  For x = 0 To lstForeignKeyCols.ListCount - 1
+    If lstForeignKeyCols.Selected(x) = True Then
+      szConst = szConst & QUOTE & lstForeignKeyCols.List(x) & QUOTE & ", "
       Flag = True
     End If
   Next
@@ -358,9 +361,9 @@ Dim Flag As Boolean
   End If
   szConst = Mid(szConst, 1, Len(szConst) - 2) & ") REFERENCES " & QUOTE & vssTables.Caption & QUOTE & " ("
   Flag = False
-  For X = 0 To lstReferencedColumns.ListCount - 1
-    If lstReferencedColumns.Selected(X) = True Then
-      szConst = szConst & QUOTE & lstReferencedColumns.List(X) & QUOTE & ", "
+  For x = 0 To lstReferencedColumns.ListCount - 1
+    If lstReferencedColumns.Selected(x) = True Then
+      szConst = szConst & QUOTE & lstReferencedColumns.List(x) & QUOTE & ", "
       Flag = True
     End If
   Next
@@ -378,7 +381,7 @@ End Sub
 Private Sub cmdAddPrimaryKey_Click()
 On Error GoTo Err_Handler
 Dim szConst As String
-Dim X As Integer
+Dim x As Integer
 Dim Flag As Boolean
   Flag = False
   If txtName.Text = "" Then
@@ -386,9 +389,9 @@ Dim Flag As Boolean
   Else
     szConst = "CONSTRAINT " & QUOTE & txtName.Text & QUOTE & " PRIMARY KEY ("
   End If
-  For X = 0 To lstPrimaryKeyCols.ListCount - 1
-    If lstPrimaryKeyCols.Selected(X) = True Then
-      szConst = szConst & QUOTE & lstPrimaryKeyCols.List(X) & QUOTE & ", "
+  For x = 0 To lstPrimaryKeyCols.ListCount - 1
+    If lstPrimaryKeyCols.Selected(x) = True Then
+      szConst = szConst & QUOTE & lstPrimaryKeyCols.List(x) & QUOTE & ", "
       Flag = True
     End If
   Next
@@ -406,7 +409,7 @@ End Sub
 Private Sub cmdAddUnique_Click()
 On Error GoTo Err_Handler
 Dim szConst As String
-Dim X As Integer
+Dim x As Integer
 Dim Flag As Boolean
   Flag = False
   If txtName.Text = "" Then
@@ -414,9 +417,9 @@ Dim Flag As Boolean
   Else
     szConst = "CONSTRAINT " & QUOTE & txtName.Text & QUOTE & " UNIQUE ("
   End If
-  For X = 0 To lstUniqueCols.ListCount - 1
-    If lstUniqueCols.Selected(X) = True Then
-      szConst = szConst & QUOTE & lstUniqueCols.List(X) & QUOTE & ", "
+  For x = 0 To lstUniqueCols.ListCount - 1
+    If lstUniqueCols.Selected(x) = True Then
+      szConst = szConst & QUOTE & lstUniqueCols.List(x) & QUOTE & ", "
       Flag = True
     End If
   Next
@@ -433,20 +436,21 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   LogMsg "Loading Form: " & Me.Name
   Me.Height = 4335
   Me.Width = 4995
+  txtCheck.Wordlist = TextColours
   StartMsg "Retrieving Table Names..."
   LogMsg "Executing: SELECT DISTINCT ON(table_name) table_oid, table_name FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name"
   vssTables.SQL = "SELECT DISTINCT ON(table_name) table_oid, table_name FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name"
   vssTables.Connect = Connect
   vssTables.LoadList
   vssType.LoadList
-  For X = 0 To frmAddTable.lstColumns.ListCount - 1
-    lstPrimaryKeyCols.AddItem Mid(frmAddTable.lstColumns.List(X), 2, InStr(2, frmAddTable.lstColumns.List(X), QUOTE) - 2)
-    lstForeignKeyCols.AddItem Mid(frmAddTable.lstColumns.List(X), 2, InStr(2, frmAddTable.lstColumns.List(X), QUOTE) - 2)
-    lstUniqueCols.AddItem Mid(frmAddTable.lstColumns.List(X), 2, InStr(2, frmAddTable.lstColumns.List(X), QUOTE) - 2)
+  For x = 0 To frmAddTable.lstColumns.ListCount - 1
+    lstPrimaryKeyCols.AddItem Mid(frmAddTable.lstColumns.List(x), 2, InStr(2, frmAddTable.lstColumns.List(x), QUOTE) - 2)
+    lstForeignKeyCols.AddItem Mid(frmAddTable.lstColumns.List(x), 2, InStr(2, frmAddTable.lstColumns.List(x), QUOTE) - 2)
+    lstUniqueCols.AddItem Mid(frmAddTable.lstColumns.List(x), 2, InStr(2, frmAddTable.lstColumns.List(x), QUOTE) - 2)
   Next
   vssType.SelectItem ("Primary Key")
   EndMsg
@@ -458,6 +462,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtCheck.Minimise
   If Me.WindowState = 0 Then
     Me.Height = 4335
     Me.Width = 4995

@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
 Begin VB.Form frmImport 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Import Data"
@@ -109,19 +109,12 @@ Begin VB.Form frmImport
       TabPicture(1)   =   "frmImport.frx":130F
       Tab(1).ControlEnabled=   0   'False
       Tab(1).Control(0)=   "lstOColumns"
-      Tab(1).Control(0).Enabled=   0   'False
       Tab(1).Control(1)=   "cmdUp"
-      Tab(1).Control(1).Enabled=   0   'False
       Tab(1).Control(2)=   "cmdDown"
-      Tab(1).Control(2).Enabled=   0   'False
       Tab(1).Control(3)=   "Frame1"
-      Tab(1).Control(3).Enabled=   0   'False
       Tab(1).Control(4)=   "Frame2"
-      Tab(1).Control(4).Enabled=   0   'False
       Tab(1).Control(5)=   "Frame3"
-      Tab(1).Control(5).Enabled=   0   'False
       Tab(1).Control(6)=   "Label3(1)"
-      Tab(1).Control(6).Enabled=   0   'False
       Tab(1).ControlCount=   7
       Begin VB.ListBox lstOColumns 
          Height          =   3180
@@ -516,7 +509,7 @@ End Sub
 Private Sub cmdBrowse_Click()
 On Error GoTo Err_Handler
 Dim DataLine As String
-Dim X As Integer
+Dim x As Integer
 Dim fNum As Integer
   With CommonDialog1
     .Flags = cdlOFNFileMustExist + cdlOFNHideReadOnly
@@ -527,7 +520,7 @@ Dim fNum As Integer
   txtSample.Text = ""
   fNum = FreeFile
   Open txtFile.Text For Input As #fNum
-  For X = 0 To 4
+  For x = 0 To 4
     If Not EOF(1) Then
       Line Input #fNum, DataLine
       txtSample.Text = txtSample.Text & DataLine & vbCrLf
@@ -540,9 +533,9 @@ End Sub
 
 Private Sub cmdDeSelect_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To lstColumns.ListCount - 1
-    lstColumns.Selected(X) = False
+Dim x As Integer
+  For x = 0 To lstColumns.ListCount - 1
+    lstColumns.Selected(x) = False
   Next
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmImport, cmdDeSelect_Click"
@@ -569,7 +562,7 @@ End Sub
 
 Private Sub cmdImport_Click()
 On Error GoTo Err_Handler
-Dim X As Long
+Dim x As Long
 Dim rsColumns As New Recordset
 Dim Columns As String
 Dim ColCount As Integer
@@ -585,7 +578,7 @@ Dim Tuple() As Variant
 Dim Fields() As String
 Dim Flag As Boolean
 Dim InField As Boolean
-Dim Y As Long
+Dim y As Long
 Dim Temp As String
 Dim Msg As String
 Dim ErrCount As Long
@@ -607,9 +600,9 @@ Dim fNum2 As Integer
   'Build the import column list
   
   ColCount = 0
-  For X = 0 To lstOColumns.ListCount - 1
+  For x = 0 To lstOColumns.ListCount - 1
     ReDim Preserve Fields(ColCount + 1)
-    Fields(ColCount) = lstOColumns.List(X)
+    Fields(ColCount) = lstOColumns.List(x)
     ColCount = ColCount + 1
   Next
   If ColCount = 0 Then
@@ -749,18 +742,18 @@ Dim fNum2 As Integer
       
       Flag = False
       If optQuote(0).Value = False Then
-        X = -1
+        x = -1
         InField = False
-        For Y = 1 To Len(RawLine)
-          If Mid(RawLine, Y, 1) = QuoteChar Then
+        For y = 1 To Len(RawLine)
+          If Mid(RawLine, y, 1) = QuoteChar Then
             If InField = True Then
               InField = False
             Else
               InField = True
-              X = X + 1
+              x = x + 1
             End If
-          ElseIf InField = True And Mid(RawLine, Y, 1) <> QuoteChar Then
-            Tuple(X) = Tuple(X) & Mid(RawLine, Y, 1)
+          ElseIf InField = True And Mid(RawLine, y, 1) <> QuoteChar Then
+            Tuple(x) = Tuple(x) & Mid(RawLine, y, 1)
           End If
         Next
       End If
@@ -768,13 +761,13 @@ Dim fNum2 As Integer
       'Process Delimited
       
       If optQuote(0).Value = True Then
-        X = 0
-        For Y = 1 To Len(RawLine)
-          If Mid(RawLine, Y, 1) = DelimChar Then
-            X = X + 1
+        x = 0
+        For y = 1 To Len(RawLine)
+          If Mid(RawLine, y, 1) = DelimChar Then
+            x = x + 1
           Else
-            If X <= UBound(Tuple) Then
-             Tuple(X) = Tuple(X) & Mid(RawLine, Y, 1)
+            If x <= UBound(Tuple) Then
+             Tuple(x) = Tuple(x) & Mid(RawLine, y, 1)
             End If
           End If
         Next
@@ -783,16 +776,16 @@ Dim fNum2 As Integer
       'Replace Pick MVs
       
       If optPick(0).Value = False Then
-        For X = 0 To UBound(Tuple)
+        For x = 0 To UBound(Tuple)
           Temp = ""
-          For Y = 1 To Len(Tuple(X))
-            If Mid(Tuple(X), Y, 1) = Chr(253) Then
+          For y = 1 To Len(Tuple(x))
+            If Mid(Tuple(x), y, 1) = Chr(253) Then
               Temp = Temp & PickChar
             Else
-              Temp = Temp & Mid(Tuple(X), Y, 1)
+              Temp = Temp & Mid(Tuple(x), y, 1)
             End If
           Next
-          Tuple(X) = Temp
+          Tuple(x) = Temp
         Next
       End If
       
@@ -800,10 +793,10 @@ Dim fNum2 As Integer
       
       DataLine = ""
       Columns = ""
-      For X = 0 To UBound(Tuple)
-        If Tuple(X) <> "" Then
-          DataLine = DataLine & "'" & Tuple(X) & "', "
-          Columns = Columns & QUOTE & Fields(X) & QUOTE & ", "
+      For x = 0 To UBound(Tuple)
+        If Tuple(x) <> "" Then
+          DataLine = DataLine & "'" & Tuple(x) & "', "
+          Columns = Columns & QUOTE & Fields(x) & QUOTE & ", "
         End If
       Next
       DataLine = Mid(DataLine, 1, Len(DataLine) - 2)
@@ -813,8 +806,8 @@ Dim fNum2 As Integer
       gConnection.Execute InsertStr
       TupleCount = TupleCount + 1
 Proc_Next:
-      For X = 0 To UBound(Tuple)
-        Tuple(X) = ""
+      For x = 0 To UBound(Tuple)
+        Tuple(x) = ""
       Next
       fMainForm.StatusBar1.Panels("Status").Text = "Inserting Data - " & TupleCount & " Records"
       fMainForm.StatusBar1.Refresh
@@ -857,16 +850,16 @@ End Sub
 
 Private Sub cmdNext_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   bButtonPress = True
   If tabWizard.Tab = 0 Then
   
     'Transfer selected columns
     
     lstOColumns.Clear
-    For X = 0 To lstColumns.ListCount - 1
-      If lstColumns.Selected(X) = True Then
-        lstOColumns.AddItem lstColumns.List(X)
+    For x = 0 To lstColumns.ListCount - 1
+      If lstColumns.Selected(x) = True Then
+        lstOColumns.AddItem lstColumns.List(x)
       End If
     Next
     tabWizard.Tab = 1
@@ -893,9 +886,9 @@ End Sub
 
 Private Sub cmdSelect_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To lstColumns.ListCount - 1
-    lstColumns.Selected(X) = True
+Dim x As Integer
+  For x = 0 To lstColumns.ListCount - 1
+    lstColumns.Selected(x) = True
   Next
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmImport, cmdSelect_Click"

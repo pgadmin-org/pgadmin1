@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{0006467F-5D0B-11D2-AD1C-0060978DBC90}#1.0#0"; "vsrexec.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmRexec 
    Caption         =   "Remote Execute"
    ClientHeight    =   3210
@@ -12,6 +13,27 @@ Begin VB.Form frmRexec
    ScaleHeight     =   214
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   321
+   Begin HighlightBox.HBX txtOP 
+      Height          =   1680
+      Left            =   0
+      TabIndex        =   9
+      ToolTipText     =   "This textbox displays the output received from the host."
+      Top             =   1485
+      Width           =   4740
+      _ExtentX        =   8361
+      _ExtentY        =   2963
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Locked          =   -1  'True
+      Caption         =   "Command Output"
+   End
    Begin vsRExec.VS_rExec vsRexec 
       Left            =   4230
       Top             =   495
@@ -23,29 +45,10 @@ Begin VB.Form frmRexec
       Default         =   -1  'True
       Height          =   375
       Left            =   2745
-      TabIndex        =   10
+      TabIndex        =   8
       ToolTipText     =   "Execute the command on the remote host."
       Top             =   540
       Width           =   1410
-   End
-   Begin VB.TextBox txtOP 
-      BeginProperty Font 
-         Name            =   "Fixedsys"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   1365
-      Left            =   0
-      MultiLine       =   -1  'True
-      ScrollBars      =   3  'Both
-      TabIndex        =   8
-      ToolTipText     =   "This textbox displays the output received from the host."
-      Top             =   1800
-      Width           =   4785
    End
    Begin VB.TextBox txtCmd 
       Height          =   285
@@ -81,14 +84,6 @@ Begin VB.Form frmRexec
       ToolTipText     =   "Enter the TCP/IP node name of the remote host."
       Top             =   45
       Width           =   3075
-   End
-   Begin VB.Label lblOutput 
-      Caption         =   "Command Output:"
-      Height          =   240
-      Left            =   90
-      TabIndex        =   9
-      Top             =   1530
-      Width           =   1455
    End
    Begin VB.Label lblCommand 
       Caption         =   "Command:"
@@ -176,9 +171,10 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
+  LogMsg "Loading Form: " & Me.Name
   Me.Width = 4365
   Me.Height = 3075
-  LogMsg "Loading Form: " & Me.Name
+  txtOP.Wordlist = TextColours
   txtUID.Text = Username
   txtPWD.Text = Password
   txtHost.Text = gConnection.Properties("Server Name").Value
@@ -188,6 +184,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtOP.Minimise
   If Me.WindowState = 0 Then
     If Me.Width < 4365 Then Me.Width = 4365
     If Me.Height < 3075 Then Me.Height = 3075

@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmSequences 
    Caption         =   "Sequences"
    ClientHeight    =   4050
@@ -14,7 +15,7 @@ Begin VB.Form frmSequences
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   26
+      TabIndex        =   24
       Top             =   1485
       Width           =   1380
       Begin VB.CheckBox chkSystem 
@@ -40,9 +41,30 @@ Begin VB.Form frmSequences
       Caption         =   "Sequence Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   16
+      TabIndex        =   15
       Top             =   0
       Width           =   3660
+      Begin HighlightBox.HBX txtComments 
+         Height          =   825
+         Left            =   90
+         TabIndex        =   26
+         Top             =   3105
+         Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   1455
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Comments"
+      End
       Begin VB.TextBox txtACL 
          BackColor       =   &H8000000F&
          Height          =   285
@@ -124,24 +146,13 @@ Begin VB.Form frmSequences
          Top             =   1170
          Width           =   2670
       End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   600
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   15
-         Top             =   3330
-         Width           =   3480
-      End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
          Caption         =   "ACL"
          Height          =   195
          Index           =   9
          Left            =   90
-         TabIndex        =   27
+         TabIndex        =   25
          Top             =   900
          Width           =   300
       End
@@ -151,7 +162,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   0
          Left            =   90
-         TabIndex        =   25
+         TabIndex        =   23
          Top             =   270
          Width           =   285
       End
@@ -161,7 +172,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   24
+         TabIndex        =   22
          Top             =   585
          Width           =   465
       End
@@ -171,7 +182,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   23
+         TabIndex        =   21
          Top             =   1215
          Width           =   750
       End
@@ -181,7 +192,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   22
+         TabIndex        =   20
          Top             =   1530
          Width           =   705
       End
@@ -191,7 +202,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   21
+         TabIndex        =   19
          Top             =   1845
          Width           =   660
       End
@@ -201,7 +212,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   20
+         TabIndex        =   18
          Top             =   2160
          Width           =   615
       End
@@ -211,7 +222,7 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   19
+         TabIndex        =   17
          Top             =   2475
          Width           =   465
       End
@@ -221,19 +232,9 @@ Begin VB.Form frmSequences
          Height          =   195
          Index           =   7
          Left            =   90
-         TabIndex        =   18
+         TabIndex        =   16
          Top             =   2790
          Width           =   480
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   17
-         Top             =   3105
-         Width           =   735
       End
    End
    Begin VB.ListBox lstSeq 
@@ -296,7 +297,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsSeq As New Recordset
 
-Private Sub lstSeq_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lstSeq_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXSequences
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSequences, lstSeq_MouseUp"
@@ -398,6 +399,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtComments.Minimise
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
 Begin VB.Form frmSQLWizard 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "SQL Wizard"
@@ -56,76 +56,130 @@ Begin VB.Form frmSQLWizard
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmSQLWizard.frx":0326
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "Frame2"
-      Tab(1).Control(1)=   "Frame1"
-      Tab(1).Control(2)=   "txtPrimaryTable"
-      Tab(1).Control(3)=   "cboJColumn2"
-      Tab(1).Control(4)=   "chkSystemColumns1"
-      Tab(1).Control(5)=   "cboJColumn1"
+      Tab(1).Control(0)=   "Label1(1)"
+      Tab(1).Control(0).Enabled=   0   'False
+      Tab(1).Control(1)=   "Label2(0)"
+      Tab(1).Control(1).Enabled=   0   'False
+      Tab(1).Control(2)=   "Label2(7)"
+      Tab(1).Control(2).Enabled=   0   'False
+      Tab(1).Control(3)=   "Label2(1)"
+      Tab(1).Control(3).Enabled=   0   'False
+      Tab(1).Control(4)=   "cmdRemoveJoin"
+      Tab(1).Control(4).Enabled=   0   'False
+      Tab(1).Control(5)=   "cmdAddJoin"
+      Tab(1).Control(5).Enabled=   0   'False
       Tab(1).Control(6)=   "lstJoins"
-      Tab(1).Control(7)=   "cmdAddJoin"
-      Tab(1).Control(8)=   "cmdRemoveJoin"
-      Tab(1).Control(9)=   "Label2(1)"
-      Tab(1).Control(10)=   "Label2(7)"
-      Tab(1).Control(11)=   "Label2(0)"
-      Tab(1).Control(12)=   "Label1(1)"
+      Tab(1).Control(6).Enabled=   0   'False
+      Tab(1).Control(7)=   "cboJColumn1"
+      Tab(1).Control(7).Enabled=   0   'False
+      Tab(1).Control(8)=   "chkSystemColumns1"
+      Tab(1).Control(8).Enabled=   0   'False
+      Tab(1).Control(9)=   "cboJColumn2"
+      Tab(1).Control(9).Enabled=   0   'False
+      Tab(1).Control(10)=   "txtPrimaryTable"
+      Tab(1).Control(10).Enabled=   0   'False
+      Tab(1).Control(11)=   "Frame1"
+      Tab(1).Control(11).Enabled=   0   'False
+      Tab(1).Control(12)=   "Frame2"
+      Tab(1).Control(12).Enabled=   0   'False
       Tab(1).ControlCount=   13
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmSQLWizard.frx":0342
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "cboCustomColumn"
-      Tab(2).Control(1)=   "cmdAddCustomColumn"
-      Tab(2).Control(2)=   "chkSystemColumns2"
-      Tab(2).Control(3)=   "cmdColumnDown"
-      Tab(2).Control(4)=   "cmdColumnUp"
+      Tab(2).Control(0)=   "Label1(2)"
+      Tab(2).Control(0).Enabled=   0   'False
+      Tab(2).Control(1)=   "Label2(4)"
+      Tab(2).Control(1).Enabled=   0   'False
+      Tab(2).Control(2)=   "cmdRemoveColumn"
+      Tab(2).Control(2).Enabled=   0   'False
+      Tab(2).Control(3)=   "cmdAddColumn"
+      Tab(2).Control(3).Enabled=   0   'False
+      Tab(2).Control(4)=   "lstIncColumns"
+      Tab(2).Control(4).Enabled=   0   'False
       Tab(2).Control(5)=   "lstAllColumns"
-      Tab(2).Control(6)=   "lstIncColumns"
-      Tab(2).Control(7)=   "cmdAddColumn"
-      Tab(2).Control(8)=   "cmdRemoveColumn"
-      Tab(2).Control(9)=   "Label2(4)"
-      Tab(2).Control(10)=   "Label1(2)"
+      Tab(2).Control(5).Enabled=   0   'False
+      Tab(2).Control(6)=   "cmdColumnUp"
+      Tab(2).Control(6).Enabled=   0   'False
+      Tab(2).Control(7)=   "cmdColumnDown"
+      Tab(2).Control(7).Enabled=   0   'False
+      Tab(2).Control(8)=   "chkSystemColumns2"
+      Tab(2).Control(8).Enabled=   0   'False
+      Tab(2).Control(9)=   "cmdAddCustomColumn"
+      Tab(2).Control(9).Enabled=   0   'False
+      Tab(2).Control(10)=   "cboCustomColumn"
+      Tab(2).Control(10).Enabled=   0   'False
       Tab(2).ControlCount=   11
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmSQLWizard.frx":035E
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "txtValue"
-      Tab(3).Control(1)=   "cboBoolean"
-      Tab(3).Control(2)=   "cboOperator"
-      Tab(3).Control(3)=   "cmdRemoveCriteria"
-      Tab(3).Control(4)=   "cmdAddCriteria"
-      Tab(3).Control(5)=   "lstCriteria"
+      Tab(3).Control(0)=   "Label1(3)"
+      Tab(3).Control(0).Enabled=   0   'False
+      Tab(3).Control(1)=   "Label2(2)"
+      Tab(3).Control(1).Enabled=   0   'False
+      Tab(3).Control(2)=   "Label2(3)"
+      Tab(3).Control(2).Enabled=   0   'False
+      Tab(3).Control(3)=   "lblBoolean"
+      Tab(3).Control(3).Enabled=   0   'False
+      Tab(3).Control(4)=   "lblValue"
+      Tab(3).Control(4).Enabled=   0   'False
+      Tab(3).Control(5)=   "cboWhereCols"
+      Tab(3).Control(5).Enabled=   0   'False
       Tab(3).Control(6)=   "chkSystemColumns3"
-      Tab(3).Control(7)=   "cboWhereCols"
-      Tab(3).Control(8)=   "lblValue"
-      Tab(3).Control(9)=   "lblBoolean"
-      Tab(3).Control(10)=   "Label2(3)"
-      Tab(3).Control(11)=   "Label2(2)"
-      Tab(3).Control(12)=   "Label1(3)"
+      Tab(3).Control(6).Enabled=   0   'False
+      Tab(3).Control(7)=   "lstCriteria"
+      Tab(3).Control(7).Enabled=   0   'False
+      Tab(3).Control(8)=   "cmdAddCriteria"
+      Tab(3).Control(8).Enabled=   0   'False
+      Tab(3).Control(9)=   "cmdRemoveCriteria"
+      Tab(3).Control(9).Enabled=   0   'False
+      Tab(3).Control(10)=   "cboOperator"
+      Tab(3).Control(10).Enabled=   0   'False
+      Tab(3).Control(11)=   "cboBoolean"
+      Tab(3).Control(11).Enabled=   0   'False
+      Tab(3).Control(12)=   "txtValue"
+      Tab(3).Control(12).Enabled=   0   'False
       Tab(3).ControlCount=   13
       TabCaption(4)   =   " "
       TabPicture(4)   =   "frmSQLWizard.frx":037A
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "cmdSortColUp"
-      Tab(4).Control(1)=   "cmdSortColDown"
-      Tab(4).Control(2)=   "cmdAddDesc"
-      Tab(4).Control(3)=   "lstAllSortCols"
+      Tab(4).Control(0)=   "Label1(4)"
+      Tab(4).Control(0).Enabled=   0   'False
+      Tab(4).Control(1)=   "chkSystemColumns4"
+      Tab(4).Control(1).Enabled=   0   'False
+      Tab(4).Control(2)=   "cmdRemoveSortCol"
+      Tab(4).Control(2).Enabled=   0   'False
+      Tab(4).Control(3)=   "cmdAddAsc"
+      Tab(4).Control(3).Enabled=   0   'False
       Tab(4).Control(4)=   "lstIncSortCols"
-      Tab(4).Control(5)=   "cmdAddAsc"
-      Tab(4).Control(6)=   "cmdRemoveSortCol"
-      Tab(4).Control(7)=   "chkSystemColumns4"
-      Tab(4).Control(8)=   "Label1(4)"
+      Tab(4).Control(4).Enabled=   0   'False
+      Tab(4).Control(5)=   "lstAllSortCols"
+      Tab(4).Control(5).Enabled=   0   'False
+      Tab(4).Control(6)=   "cmdAddDesc"
+      Tab(4).Control(6).Enabled=   0   'False
+      Tab(4).Control(7)=   "cmdSortColDown"
+      Tab(4).Control(7).Enabled=   0   'False
+      Tab(4).Control(8)=   "cmdSortColUp"
+      Tab(4).Control(8).Enabled=   0   'False
       Tab(4).ControlCount=   9
       TabCaption(5)   =   " "
       TabPicture(5)   =   "frmSQLWizard.frx":0396
       Tab(5).ControlEnabled=   0   'False
       Tab(5).Control(0)=   "Label1(7)"
+      Tab(5).Control(0).Enabled=   0   'False
       Tab(5).Control(1)=   "Label2(5)"
+      Tab(5).Control(1).Enabled=   0   'False
       Tab(5).Control(2)=   "Label2(6)"
+      Tab(5).Control(2).Enabled=   0   'False
       Tab(5).Control(3)=   "chkDistinct"
+      Tab(5).Control(3).Enabled=   0   'False
       Tab(5).Control(4)=   "chkLimit"
+      Tab(5).Control(4).Enabled=   0   'False
       Tab(5).Control(5)=   "txtLimit"
+      Tab(5).Control(5).Enabled=   0   'False
       Tab(5).Control(6)=   "chkOffset"
+      Tab(5).Control(6).Enabled=   0   'False
       Tab(5).Control(7)=   "txtOffset"
+      Tab(5).Control(7).Enabled=   0   'False
       Tab(5).ControlCount=   8
       Begin VB.Frame Frame2 
          Caption         =   "Join Type"
@@ -879,25 +933,25 @@ End Sub
 
 Private Sub Get_JoinCols()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim rsTemp As New Recordset
   StartMsg "Getting Columns..."
   cboJColumn1.Clear
   cboJColumn2.Clear
   lstJoins.Clear
   txtPrimaryTable.Text = ""
-  For X = 0 To lstIncTables.ListCount - 1
+  For x = 0 To lstIncTables.ListCount - 1
     If rsTemp.State <> adStateClosed Then rsTemp.Close
     If chkSystemColumns1.Value = 1 Then
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     Else
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     End If
     While Not rsTemp.EOF
-      cboJColumn1.AddItem lstIncTables.List(X) & "." & QUOTE & rsTemp!column_name & QUOTE
-      cboJColumn2.AddItem lstIncTables.List(X) & "." & QUOTE & rsTemp!column_name & QUOTE
+      cboJColumn1.AddItem lstIncTables.List(x) & "." & QUOTE & rsTemp!column_name & QUOTE
+      cboJColumn2.AddItem lstIncTables.List(x) & "." & QUOTE & rsTemp!column_name & QUOTE
       rsTemp.MoveNext
     Wend
   Next
@@ -910,8 +964,8 @@ End Sub
 
 Private Sub Get_ValidJoinCols()
 On Error GoTo Err_Handler
-Dim X As Integer
-Dim Y As Integer
+Dim x As Integer
+Dim y As Integer
 Dim rsTemp As New Recordset
 Dim szTable As String
 Dim iStart As Integer
@@ -937,10 +991,10 @@ Dim bFlag As Boolean
   Wend
   
   'Add columns from other tables to list1
-  For X = 0 To lstJoins.ListCount - 1
+  For x = 0 To lstJoins.ListCount - 1
     If rsTemp.State <> adStateClosed Then rsTemp.Close
-    iStart = InStr(1, lstJoins.List(X), "JOIN " & QUOTE) + 6
-    szTable = Mid(lstJoins.List(X), iStart, InStr(iStart + 1, lstJoins.List(X), QUOTE) - iStart)
+    iStart = InStr(1, lstJoins.List(x), "JOIN " & QUOTE) + 6
+    szTable = Mid(lstJoins.List(x), iStart, InStr(iStart + 1, lstJoins.List(x), QUOTE) - iStart)
     If chkSystemColumns1.Value = 1 Then
       LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & szTable & "' ORDER BY column_position"
       rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & szTable & "' ORDER BY column_position", gConnection, adOpenForwardOnly
@@ -955,29 +1009,29 @@ Dim bFlag As Boolean
   Next
   
   'Now we need to add columns to list2 that aren't in list1
-  For X = 0 To lstIncTables.ListCount - 1
+  For x = 0 To lstIncTables.ListCount - 1
     If rsTemp.State <> adStateClosed Then rsTemp.Close
     bFlag = False
-    For Y = 0 To cboJColumn1.ListCount - 1
-      If Mid(cboJColumn1.List(Y), 1, InStr(2, cboJColumn1.List(Y), QUOTE & "." & QUOTE)) = lstIncTables.List(X) Then
+    For y = 0 To cboJColumn1.ListCount - 1
+      If Mid(cboJColumn1.List(y), 1, InStr(2, cboJColumn1.List(y), QUOTE & "." & QUOTE)) = lstIncTables.List(x) Then
         bFlag = True
         Exit For
       End If
-    Next Y
+    Next y
     If bFlag = False Then
       If chkSystemColumns1.Value = 1 Then
-        LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-        rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+        LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+        rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
       Else
-        LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-        rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+        LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+        rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
       End If
       While Not rsTemp.EOF
-        cboJColumn2.AddItem lstIncTables.List(X) & "." & QUOTE & rsTemp!column_name & QUOTE
+        cboJColumn2.AddItem lstIncTables.List(x) & "." & QUOTE & rsTemp!column_name & QUOTE
         rsTemp.MoveNext
       Wend
     End If
-  Next X
+  Next x
   
   EndMsg
   Exit Sub
@@ -988,22 +1042,22 @@ End Sub
 
 Private Sub Get_Columns()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim rsTemp As New Recordset
   StartMsg "Getting Columns..."
   lstAllColumns.Clear
   lstIncColumns.Clear
-  For X = 0 To lstIncTables.ListCount - 1
+  For x = 0 To lstIncTables.ListCount - 1
     If rsTemp.State <> adStateClosed Then rsTemp.Close
     If chkSystemColumns2.Value = 1 Then
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     Else
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     End If
     While Not rsTemp.EOF
-      lstAllColumns.AddItem lstIncTables.List(X) & "." & QUOTE & rsTemp!column_name & QUOTE
+      lstAllColumns.AddItem lstIncTables.List(x) & "." & QUOTE & rsTemp!column_name & QUOTE
       rsTemp.MoveNext
     Wend
   Next
@@ -1016,22 +1070,22 @@ End Sub
 
 Private Sub Get_WhereCols()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim rsTemp As New Recordset
   StartMsg "Getting Columns..."
   cboWhereCols.Clear
   lstCriteria.Clear
-  For X = 0 To lstIncTables.ListCount - 1
+  For x = 0 To lstIncTables.ListCount - 1
     If rsTemp.State <> adStateClosed Then rsTemp.Close
     If chkSystemColumns3.Value = 1 Then
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     Else
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     End If
     While Not rsTemp.EOF
-      cboWhereCols.AddItem lstIncTables.List(X) & "." & QUOTE & rsTemp!column_name & QUOTE
+      cboWhereCols.AddItem lstIncTables.List(x) & "." & QUOTE & rsTemp!column_name & QUOTE
       rsTemp.MoveNext
     Wend
   Next
@@ -1044,22 +1098,22 @@ End Sub
 
 Private Sub Get_SortCols()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim rsTemp As New Recordset
   StartMsg "Getting Columns..."
   lstAllSortCols.Clear
   lstIncSortCols.Clear
-  For X = 0 To lstIncTables.ListCount - 1
+  For x = 0 To lstIncTables.ListCount - 1
     If rsTemp.State <> adStateClosed Then rsTemp.Close
     If chkSystemColumns4.Value = 1 Then
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     Else
-      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position"
-      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(X), 2, Len(lstIncTables.List(X)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
+      LogMsg "Executing: SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position"
+      rsTemp.Open "SELECT column_name FROM pgadmin_tables WHERE column_position > 0 AND table_name = '" & Mid(lstIncTables.List(x), 2, Len(lstIncTables.List(x)) - 2) & "' ORDER BY column_position", gConnection, adOpenForwardOnly
     End If
     While Not rsTemp.EOF
-      lstAllSortCols.AddItem lstIncTables.List(X) & "." & QUOTE & rsTemp!column_name & QUOTE
+      lstAllSortCols.AddItem lstIncTables.List(x) & "." & QUOTE & rsTemp!column_name & QUOTE
       rsTemp.MoveNext
     Wend
   Next
@@ -1400,24 +1454,24 @@ Dim szTables As String
 Dim szFrom As String
 Dim szCriteria As String
 Dim szOrderBy As String
-Dim X As Integer
+Dim x As Integer
 
   'Column
-  For X = 0 To lstIncColumns.ListCount - 1
-    szColumns = szColumns & "  " & lstIncColumns.List(X) & ", " & vbCrLf
+  For x = 0 To lstIncColumns.ListCount - 1
+    szColumns = szColumns & "  " & lstIncColumns.List(x) & ", " & vbCrLf
   Next
   If Len(szColumns) > 4 Then szColumns = Mid(szColumns, 1, Len(szColumns) - 4)
   
   'Joins
   If lstJoins.ListCount >= 1 Then szJoins = "  " & txtPrimaryTable.Text & vbCrLf
-  For X = 0 To lstJoins.ListCount - 1
-    szJoins = szJoins & "  " & lstJoins.List(X) & vbCrLf
+  For x = 0 To lstJoins.ListCount - 1
+    szJoins = szJoins & "  " & lstJoins.List(x) & vbCrLf
   Next
   
   'Only add tables that aren't in any joins
-  For X = 0 To lstIncTables.ListCount - 1
-    If InStr(1, szJoins, lstIncTables.List(X)) = 0 Then
-      szTables = szTables & "  " & lstIncTables.List(X) & ", " & vbCrLf
+  For x = 0 To lstIncTables.ListCount - 1
+    If InStr(1, szJoins, lstIncTables.List(x)) = 0 Then
+      szTables = szTables & "  " & lstIncTables.List(x) & ", " & vbCrLf
     End If
   Next
   If Len(szJoins) > 7 Then szJoins = Mid(szJoins, 1, Len(szJoins) - 1)
@@ -1429,13 +1483,13 @@ Dim X As Integer
   If Len(szFrom) > 4 Then szFrom = Mid(szFrom, 1, Len(szFrom) - 4)
   
   'Criteria
-  For X = 0 To lstCriteria.ListCount - 1
-    szCriteria = szCriteria & "  " & lstCriteria.List(X) & " " & vbCrLf
+  For x = 0 To lstCriteria.ListCount - 1
+    szCriteria = szCriteria & "  " & lstCriteria.List(x) & " " & vbCrLf
   Next
   
   'Sorting
-  For X = 0 To lstIncSortCols.ListCount - 1
-    szOrderBy = szOrderBy & "  " & lstIncSortCols.List(X) & ", " & vbCrLf
+  For x = 0 To lstIncSortCols.ListCount - 1
+    szOrderBy = szOrderBy & "  " & lstIncSortCols.List(x) & ", " & vbCrLf
   Next
   If Len(szOrderBy) > 4 Then szOrderBy = Mid(szOrderBy, 1, Len(szOrderBy) - 4)
   
@@ -1455,15 +1509,15 @@ Dim X As Integer
   If chkLimit.Value = 1 Then szSQL = szSQL & "LIMIT " & txtLimit.Text & " " & vbCrLf
   If chkOffset.Value = 1 Then szSQL = szSQL & "OFFSET " & txtOffset.Text & " " & vbCrLf
     
-  For X = 0 To Forms.Count - 1
-    If Forms(X).hwnd = Me.Tag Then Exit For
+  For x = 0 To Forms.Count - 1
+    If Forms(x).hWnd = Me.Tag Then Exit For
   Next
-  If X = Forms.Count Then
+  If x = Forms.Count Then
     MsgBox "The SQL dialog that this wizard was initiated from appears to have been closed!", vbCritical, "Fatal Error"
     Unload Me
     Exit Sub
   End If
-  Forms(X).txtSQL.Text = szSQL
+  Forms(x).txtSQL.Text = szSQL
   Unload Me
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLWizard, cmdOK_Click"
@@ -1554,7 +1608,7 @@ End Sub
 
 Private Sub cmdNext_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   bButtonPress = True
   If tabWizard.Tab = 0 Then
     If lstIncTables.ListCount = 0 Then Exit Sub

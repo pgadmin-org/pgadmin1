@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportManager 
    Caption         =   "Report Manager"
    ClientHeight    =   4050
@@ -15,19 +16,29 @@ Begin VB.Form frmReportManager
       Caption         =   "Report Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   6
+      TabIndex        =   5
       Top             =   0
       Width           =   3660
-      Begin VB.TextBox txtDescription 
-         BackColor       =   &H8000000F&
-         Height          =   2850
+      Begin HighlightBox.HBX txtDescription 
+         Height          =   3075
          Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   5
-         Top             =   1080
+         TabIndex        =   7
+         Top             =   855
          Width           =   3480
+         _ExtentX        =   6138
+         _ExtentY        =   5424
+         BackColor       =   -2147483633
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Locked          =   -1  'True
+         Caption         =   "Description"
       End
       Begin VB.TextBox txtAuthor 
          BackColor       =   &H8000000F&
@@ -40,21 +51,11 @@ Begin VB.Form frmReportManager
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
-         Caption         =   "Description"
-         Height          =   195
-         Index           =   1
-         Left            =   90
-         TabIndex        =   8
-         Top             =   855
-         Width           =   795
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
          Caption         =   "Author"
          Height          =   195
          Index           =   0
          Left            =   90
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   270
          Width           =   465
       End
@@ -158,7 +159,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Sub trvReports_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub trvReports_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXReportManager
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmReportManager, trvReports_MouseUp"
@@ -177,7 +178,7 @@ Public Sub cmdRemove_Click()
 On Error GoTo Err_Handler
 Dim szData As String
 Dim fNum As Integer
-Dim X As Integer
+Dim x As Integer
   If Mid(trvReports.SelectedItem.Key, 1, 4) <> "REP:" Then
     MsgBox "You must select a report!", vbExclamation, "Error"
     Exit Sub
@@ -195,20 +196,20 @@ Dim X As Integer
   szData = ""
   fNum = FreeFile
   Open app.Path & "\Reports\Reports.dat" For Binary Access Write As #fNum
-  For X = 1 To UBound(rptList)
-    If X <> CInt(Mid(trvReports.SelectedItem.Key, 5, InStr(5, trvReports.SelectedItem.Key, ":") - 5)) Then
-      szData = szData & rptList(X).szName & Chr(253) & rptList(X).szCategory & Chr(253) & rptList(X).szFile & Chr(253) & rptList(X).szSQL & Chr(253) & rptList(X).szAuthor & Chr(253) & rptList(X).szDescription & Chr(253)
-      If rptList(X).bShowTree = True Then
+  For x = 1 To UBound(rptList)
+    If x <> CInt(Mid(trvReports.SelectedItem.Key, 5, InStr(5, trvReports.SelectedItem.Key, ":") - 5)) Then
+      szData = szData & rptList(x).szName & Chr(253) & rptList(x).szCategory & Chr(253) & rptList(x).szFile & Chr(253) & rptList(x).szSQL & Chr(253) & rptList(x).szAuthor & Chr(253) & rptList(x).szDescription & Chr(253)
+      If rptList(x).bShowTree = True Then
         szData = szData & "1" & Chr(253)
       Else
         szData = szData & "0" & Chr(253)
       End If
-      If rptList(X).bRefreshTables = True Then
+      If rptList(x).bRefreshTables = True Then
         szData = szData & "1" & Chr(253)
       Else
         szData = szData & "0" & Chr(253)
       End If
-      If rptList(X).bRefreshSequences = True Then
+      If rptList(x).bRefreshSequences = True Then
         szData = szData & "1" & Chr(254)
       Else
         szData = szData & "0" & Chr(254)
@@ -262,8 +263,8 @@ Dim fNum As Integer
 Dim szData As String
 Dim szEntries As Variant
 Dim szEntry As Variant
-Dim X As Integer
-Dim Y As Integer
+Dim x As Integer
+Dim y As Integer
 Dim bFound As Boolean
   ReDim rptList(0)
   fNum = FreeFile
@@ -275,8 +276,8 @@ Dim bFound As Boolean
       Exit Sub
     End If
   szEntries = Split(szData, Chr(254), , vbBinaryCompare)
-  For X = 0 To UBound(szEntries) - 1
-    szEntry = Split(szEntries(X), Chr(253), , vbBinaryCompare)
+  For x = 0 To UBound(szEntries) - 1
+    szEntry = Split(szEntries(x), Chr(253), , vbBinaryCompare)
     If UBound(szEntry) <> 8 Then
       MsgBox "The Report Data file (" & app.Path & "\Reports\Reports.dat) is corrupt!", vbCritical, "Error"
       Exit Sub
@@ -310,18 +311,18 @@ Dim bFound As Boolean
   Next
   trvReports.Nodes.Clear
   Set NodeX = trvReports.Nodes.Add(, tvwChild, "ROOT::", "Categories", 1)
-  For X = 1 To UBound(rptList)
+  For x = 1 To UBound(rptList)
     bFound = False
-    For Y = 1 To trvReports.Nodes.Count
-      If trvReports.Nodes(Y).Key = "CAT::" & rptList(X).szCategory Then
+    For y = 1 To trvReports.Nodes.Count
+      If trvReports.Nodes(y).Key = "CAT::" & rptList(x).szCategory Then
         bFound = True
         Exit For
       End If
     Next
     If bFound = False Then
-      Set NodeX = trvReports.Nodes.Add("ROOT::", tvwChild, "CAT::" & rptList(X).szCategory, rptList(X).szCategory, 2)
+      Set NodeX = trvReports.Nodes.Add("ROOT::", tvwChild, "CAT::" & rptList(x).szCategory, rptList(x).szCategory, 2)
     End If
-    Set NodeX = trvReports.Nodes.Add("CAT::" & rptList(X).szCategory, tvwChild, "REP:" & X & ":" & rptList(X).szName, rptList(X).szName, 3)
+    Set NodeX = trvReports.Nodes.Add("CAT::" & rptList(x).szCategory, tvwChild, "REP:" & x & ":" & rptList(x).szName, rptList(x).szName, 3)
   Next
   trvReports.Nodes(1).Expanded = True
   trvReports.Nodes(1).Selected = True
@@ -331,6 +332,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
+  txtDescription.Minimise
   If Me.WindowState <> 1 Then
     If Me.Width < 8325 Then Me.Width = 8325
     If Me.Height < 4455 Then Me.Height = 4455

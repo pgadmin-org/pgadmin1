@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.0#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmSQL 
    Caption         =   "SQL"
    ClientHeight    =   3195
@@ -17,11 +17,11 @@ Begin VB.Form frmSQL
       Height          =   2805
       Left            =   0
       TabIndex        =   5
+      ToolTipText     =   "Enter an SQL query or statement to execute."
       Top             =   0
       Width           =   6540
       _ExtentX        =   11536
       _ExtentY        =   4948
-      Enabled         =   -1  'True
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -31,10 +31,10 @@ Begin VB.Form frmSQL
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      WordList        =   $"frmSQL.frx":030A
       Text            =   ""
-      ScrollBars      =   2
-      MultiLine       =   -1  'True
+      BorderStyle     =   1
+      ControlBarVisible=   0   'False
+      Wordlist        =   ""
    End
    Begin VB.CommandButton cmdSQLWizard 
       Caption         =   "&Wizard"
@@ -234,7 +234,7 @@ Private Sub cmdSQLWizard_Click()
 On Error GoTo Err_Handler
 Dim SQLWizard As New frmSQLWizard
   Load SQLWizard
-  SQLWizard.Tag = Me.hwnd
+  SQLWizard.Tag = Me.hWnd
   SQLWizard.Caption = SQLWizard.Caption & " (" & Me.Caption & ")"
   SQLWizard.Show
   Exit Sub
@@ -243,14 +243,14 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   LogMsg "Loading Form: " & Me.Name
   vssExporters.DisplayList = "Screen;"
   vssExporters.IndexList = "SC;"
   On Error Resume Next
-  For X = 0 To UBound(Exporters)
-    vssExporters.DisplayList = vssExporters.DisplayList & Exporters(X).Description & ";"
-    vssExporters.IndexList = vssExporters.IndexList & X & ";"
+  For x = 0 To UBound(Exporters)
+    vssExporters.DisplayList = vssExporters.DisplayList & Exporters(x).Description & ";"
+    vssExporters.IndexList = vssExporters.IndexList & x & ";"
   Next
   On Error GoTo Err_Handler
   vssExporters.LoadList
