@@ -158,7 +158,7 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_DropIfExists"
 End Sub
 
-Sub cmp_Trigger_GetValues(szTrigger_PostgreSqlTable As String, Optional szTrigger_Name As String, Optional szTrigger_Table As String, Optional szTrigger_Function As String, Optional szTrigger_Arguments As String, Optional szTrigger_Foreach As String, Optional szTrigger_Executes As String, Optional szTrigger_Event As String, Optional szTrigger_Comments As String)
+Sub cmp_Trigger_GetValues(szTrigger_PostgreSqlTable As String, szTrigger_Name As String, szTrigger_Table As String, Optional szTrigger_Function As String, Optional szTrigger_Arguments As String, Optional szTrigger_Foreach As String, Optional szTrigger_Executes As String, Optional szTrigger_Event As String, Optional szTrigger_Comments As String)
 On Error GoTo Err_Handler
     Dim szQuery As String
     Dim rsComp As New Recordset
@@ -246,7 +246,7 @@ On Error GoTo Err_Handler
         szTrigger_Foreach = ""
         szTrigger_Executes = ""
             
-        If iTrigger_type = 0 Then Exit Sub
+        If IsNull(iTrigger_type) Then iTrigger_type = 0
         
         If (iTrigger_type And 1) = 1 Then
           szTrigger_Foreach = "Row"
@@ -260,11 +260,12 @@ On Error GoTo Err_Handler
           szTrigger_Executes = "After"
         End If
         
+        szTrigger_Event = ""
         If (iTrigger_type And 4) = 4 Then szTrigger_Event = szTrigger_Event & "Insert OR "
         If (iTrigger_type And 8) = 8 Then szTrigger_Event = szTrigger_Event & "Delete OR "
         If (iTrigger_type And 16) = 16 Then szTrigger_Event = szTrigger_Event & "Update OR "
         
-        szTrigger_Event = Trim(Left(szTrigger_Event, Len(szTrigger_Event) - 3))
+        If Len(szTrigger_Event) > 0 Then szTrigger_Event = Trim(Left(szTrigger_Event, Len(szTrigger_Event) - 3))
 
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_Ctype_ToString"
