@@ -83,11 +83,11 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_View_DropIfExists"
 End Function
 
-Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_Definition As String)
+Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_definition As String)
 On Error GoTo Err_Handler
   Dim szCreateStr As String
 
-    szCreateStr = "CREATE VIEW " & szView_Name & " AS " & szView_Definition
+    szCreateStr = "CREATE VIEW " & szView_Name & " AS " & szView_definition
     LogMsg "Creating view " & szView_Name & "..."
     LogMsg "Executing: " & szCreateStr
     
@@ -102,7 +102,7 @@ Err_Handler:
   bContinueCompilation = False
 End Sub
 
-Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
+Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String, Optional szView_definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -126,7 +126,7 @@ Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String
         If Not (IsMissing(szView_Name)) Then szView_Name = rsComp!view_name & ""
         If Not (IsMissing(szView_Owner)) Then szView_Owner = rsComp!view_owner & ""
         If Not (IsMissing(szView_Acl)) Then szView_Acl = rsComp!view_acl & ""
-        If Not (IsMissing(szView_Definition)) Then szView_Definition = cmp_View_GetViewDef(szView_Name)
+        If Not (IsMissing(szView_definition)) Then szView_definition = cmp_View_GetViewDef(szView_Name)
         rsComp.Close
     End If
   Exit Sub
@@ -743,6 +743,16 @@ Public Sub comp_Project_Initialize()
         rsComp.MoveNext
     Wend
     
+    ' initialize pgadmin_dev_view
+    szQuery = "SELECT * FROM pgadmin_dev_views ORDER BY view_oid"
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szQuery, gConnection, adOpenDynamic
+    
+    While Not rsComp.EOF
+        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''") & "' WHERE view_name = '" & rsComp!view_name & "'"
+        gConnection.Execute szQuery
+        rsComp.MoveNext
+    Wend
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
@@ -808,7 +818,8 @@ Public Sub comp_Project_RelinkViews()
 On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
-
+    Dim szViewDefinition As String
+    
     szQueryStr = "SELECT * From pgadmin_dev_views"
     
     LogMsg "Now relinking views..."
