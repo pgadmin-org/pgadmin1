@@ -510,3 +510,47 @@ Public Sub cmdButtonActivate(Tree As TreeToy, bShowSystem As Boolean, iPro_Index
    Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, cmdButtonActivate"
 End Sub
+
+'Parse an ACL and return GRANT/REVOKE Statements
+Public Function ParseACL(szObject As String, szACL As String) As String
+Dim szEntries() As String
+Dim szEntry As Variant
+Dim szName As String
+Dim szAccess As String
+Dim szSQL As String
+Dim szTemp As String
+  
+  szACL = Mid(szACL, 2, Len(szACL) - 2)
+  szACL = Replace(szACL, QUOTE, "")
+  szEntries = Split(szACL, ",")
+  For Each szEntry In szEntries
+  
+    'Get the username
+    szName = QUOTE & Left(szEntry, InStr(1, szEntry, "=") - 1) & QUOTE
+    If szName = QUOTE & QUOTE Then szName = "PUBLIC"
+    
+    'Get the Access
+    szAccess = Mid(szEntry, InStr(1, szEntry, "=") + 1)
+    
+    'If the Access is "" then REVOKE all
+    If szAccess = "" Then
+      szSQL = szSQL & "REVOKE ALL ON " & QUOTE & szObject & QUOTE & " FROM " & szName & ";" & vbCrLf
+    Else
+    
+      'Either grant ALL or individual privileges
+      If szAccess = "arwR" Then
+        szAccess = "ALL"
+      Else
+        If InStr(1, szAccess, "r") <> 0 Then szTemp = "SELECT, "
+        If InStr(1, szAccess, "w") <> 0 Then szTemp = "UPDATE, DELETE, "
+        If InStr(1, szAccess, "a") <> 0 Then szTemp = "INSERT, "
+        If InStr(1, szAccess, "R") <> 0 Then szTemp = "RULE, "
+        szAccess = Left(szTemp, Len(szTemp) - 2)
+      End If
+      
+      szSQL = szSQL & "GRANT " & szAccess & " ON " & QUOTE & szObject & QUOTE & " TO " & szName & ";" & vbCrLf
+    End If
+  Next szEntry
+  
+  ParseACL = szSQL
+End Function
