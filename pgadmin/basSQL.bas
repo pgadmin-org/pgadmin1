@@ -58,7 +58,7 @@ Dim SQL_PGADMIN_DEV_DEPENDENCIES As String
 
 SQL_PGADMIN_DESC = "SELECT * INTO pgadmin_desc FROM pg_description WHERE objoid > " & LAST_SYSTEM_OID
 SQL_PGADMIN_PARAM = "CREATE TABLE pgadmin_param(param_id int4, param_value text, param_desc text)"
-SQL_INS_PGADMIN_PARAM1 = "INSERT INTO pgadmin_param VALUES ('1', '" & SSO_VERSION & "', 'SSO Version')"
+SQL_INS_PGADMIN_PARAM1 = "INSERT INTO pgadmin_param VALUES ('1', '" & Str(SSO_VERSION) & "', 'SSO Version')"
 SQL_INS_PGADMIN_PARAM2 = "INSERT INTO pgadmin_param VALUES (2, 'N', 'Revision Tracking enabled?')"
 SQL_INS_PGADMIN_PARAM3 = "INSERT INTO pgadmin_param VALUES (3, '1.0', 'Revision Tracking version')"
 SQL_PGADMIN_LOG = "CREATE TABLE pgadmin_rev_log(event_timestamp timestamp DEFAULT now(), username text, version float4, query text)"
@@ -227,7 +227,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 1"
     rsParam.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 1", gConnection, adOpenForwardOnly
     If Not rsParam.EOF Then 'Param 4 exists so check it.
-      If Val(rsParam!param_value & "") < SSO_VERSION Then Drop_Objects False
+      If Val(rsParam!param_value) < SSO_VERSION Then Drop_Objects False
     Else 'Param 4 doesn't exist so drop SSO's to be safe.
       If Not SuperuserChk Then Exit Sub
       Drop_Objects False
@@ -657,8 +657,8 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   End If
   
   'Set the SSO Version on the server
-  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & SSO_VERSION & "' WHERE param_id = 1"
-  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & SSO_VERSION & "' WHERE param_id = 1"
+  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Str(SSO_VERSION) & "' WHERE param_id = 1"
+  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & Str(SSO_VERSION) & "' WHERE param_id = 1"
   
   Exit Sub
 Err_Handler:
