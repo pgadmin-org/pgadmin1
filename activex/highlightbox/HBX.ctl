@@ -9,7 +9,7 @@ Begin VB.UserControl HBX
    ScaleHeight     =   1065
    ScaleWidth      =   2865
    ToolboxBitmap   =   "HBX.ctx":0019
-   Begin RichTextLib.RichTextBox rtbstring 
+   Begin RichTextLib.RichTextBox rtbString 
       Height          =   375
       Left            =   0
       TabIndex        =   1
@@ -18,20 +18,23 @@ Begin VB.UserControl HBX
       _ExtentX        =   5054
       _ExtentY        =   661
       _Version        =   393217
+      BorderStyle     =   0
+      Enabled         =   -1  'True
       ScrollBars      =   3
+      Appearance      =   0
       AutoVerbMenu    =   -1  'True
       TextRTF         =   $"HBX.ctx":0113
    End
-   Begin VB.Image imgdn 
+   Begin VB.Image imgUp 
       Height          =   150
-      Left            =   2670
+      Left            =   2655
       Picture         =   "HBX.ctx":019E
       Top             =   30
       Width           =   150
    End
-   Begin VB.Image imgup 
+   Begin VB.Image imgDown 
       Height          =   150
-      Left            =   2670
+      Left            =   2655
       Picture         =   "HBX.ctx":04F8
       Top             =   30
       Visible         =   0   'False
@@ -47,7 +50,6 @@ Begin VB.UserControl HBX
       Width           =   2475
    End
    Begin VB.Shape shpBar 
-      BorderStyle     =   0  'Transparent
       FillColor       =   &H80000002&
       FillStyle       =   0  'Solid
       Height          =   195
@@ -80,31 +82,49 @@ Attribute VB_Ext_KEY = "PropPageWizardRun" ,"Yes"
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Option Explicit
+
 'Default Property Values:
 Const m_def_Wordlist = "0"
-
-Dim m_ForeColor As Long
-Dim m_BackStyle As Boolean
-Dim m_ControlBarVisible As Boolean
-Dim m_MaximisedWidth As Variant
-Dim iControlTop As Integer
-Dim iControlLeft As Integer
-
-Const m_def_ControlBarVisible = 0
+Const m_def_ControlBarVisible = True
 Const m_def_MaximisedHeight = 0
 Const m_def_ForeColor = 0
 Const m_def_BackStyle = False
 Const m_def_MaximisedWidth = 0
+Const DELIMCHARS = " []{}()'"""
+
+Dim m_ForeColor As Long
+Dim m_BackStyle As Boolean
+Dim m_ControlBarVisible As Boolean
+Dim m_MaximisedWidth As Long
+Dim m_MaximisedHeight As Long
+Dim m_Wordlist As String
+Dim bMaximised As Boolean
+Dim LastTop As Long
+Dim LastLeft As Long
+Dim MinimisedHeight As Long
+Dim MinimisedWidth As Long
+Dim szRTBFontinfo As String
+Dim szRTBWordinfo As String
+Dim szRTBColours As String
+Dim WordCache As Collection
 
 'Event Declarations:
-Event Click() 'MappingInfo=UserControl,UserControl,-1,Click
-Event DblClick() 'MappingInfo=rtbstring,rtbstring,-1,DblClick
-Event KeyDown(KeyCode As Integer, Shift As Integer) 'MappingInfo=rtbstring,rtbstring,-1,KeyDown
-Event KeyPress(KeyAscii As Integer) 'MappingInfo=rtbstring,rtbstring,-1,KeyPress
-Event KeyUp(KeyCode As Integer, Shift As Integer) 'MappingInfo=rtbstring,rtbstring,-1,KeyUp
-Event MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single) 'MappingInfo=rtbstring,rtbstring,-1,MouseDown
-Event MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single) 'MappingInfo=rtbstring,rtbstring,-1,MouseMove
-Event MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single) 'MappingInfo=rtbstring,rtbstring,-1,MouseUp
+Event Click()
+Attribute Click.VB_Description = "Occurs when the control is clicked."
+Event DblClick()
+Attribute DblClick.VB_Description = "Occurs when the control is double clicked."
+Event KeyDown(KeyCode As Integer, Shift As Integer)
+Attribute KeyDown.VB_Description = "Occurs when a key is pressed down."
+Event KeyPress(KeyAscii As Integer)
+Attribute KeyPress.VB_Description = "Occurs when a key is pressed."
+Event KeyUp(KeyCode As Integer, Shift As Integer)
+Attribute KeyUp.VB_Description = "Occurs when a key is released."
+Event MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Attribute MouseDown.VB_Description = "Occurs when the mouse button is down."
+Event MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Attribute MouseMove.VB_Description = "Occurs when the mouse is moved."
+Event MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Attribute MouseUp.VB_Description = "Occurs when the mouse button is released."
 
 Public Type WordStyle
   szColour As String
@@ -114,69 +134,98 @@ Public Type WordStyle
   bItalic As Boolean
 End Type
 
+Type T_RGB
+  R As Integer
+  G As Integer
+  B As Integer
+End Type
 
-Dim szRTBFontinfo As String
-Dim szRTBWordinfo As String
-Dim szRTBColours As String
-Const DELIMCHARS = " []{}()'"""
-'Property Variables:
-Dim m_Wordlist As String
-Dim m_MaximisedHeight As Variant
-Dim bMaximised As Boolean
+Private Declare Function ToAscii Lib "user32" (ByVal uVirtKey As Long, ByVal uScanCode As Long, lpbKeyState As Byte, lpwTransKey As Long, ByVal fuState As Long) As Long
+
+Public Function get_RGB(LColour As Long) As T_RGB
+Dim szHEX As String
+  szHEX = Hex(LColour)
+  While Len(szHEX) < 6
+    szHEX = "0" & szHEX
+  Wend
+  get_RGB.R = CInt("&H" & Mid(szHEX, 5, 2))
+  get_RGB.G = CInt("&H" & Mid(szHEX, 3, 2))
+  get_RGB.B = CInt("&H" & Mid(szHEX, 1, 2))
+End Function
+
+Private Function CharInstr(szChar As String, szString As String) As Boolean
+Dim lX As Long
+  For lX = 1 To Len(szString)
+    If Mid(szString, lX, 1) = szChar Then
+      CharInstr = True
+      Exit For
+    End If
+  Next lX
+End Function
+
+Private Function SearchCache(szLookup As String) As String
+Dim szSearchcache As String
+On Error Resume Next
+
+  szSearchcache = WordCache(szLookup).szRTFstring
+  If szSearchcache = "" Then
+    szSearchcache = szLookup
+  Else
+    szSearchcache = szSearchcache & " " & szLookup & "\cf0 "
+  End If
+  SearchCache = szSearchcache
+End Function
 
 Private Sub rtbstring_Change()
 Static lPrevLen As Long
 Dim lCount As Long
-lCount = Len(rtbstring.Text)
-If (lCount > lPrevLen + 2) Or (lCount < lPrevLen - 2) Then QR
-lPrevLen = lCount
+  lCount = Len(rtbString.Text)
+  If (lCount > lPrevLen + 2) Or (lCount < lPrevLen - 2) Then QR
+  lPrevLen = lCount
 End Sub
 
-Private Sub ColourWord() ' This is a coulour a word at a time test
+Private Sub ColourWord() 'Colour the previous word
 On Error Resume Next
 Dim lWordend As Long
 Dim lWordstart As Long
 Dim szChar As String
 Dim szTemp As String
 
-lWordend = rtbstring.SelStart
-If lWordend < 1 Then Exit Sub
+  lWordend = rtbString.SelStart
+  If lWordend < 1 Then Exit Sub
 
-lWordstart = lWordend
-szChar = Mid(rtbstring.Text, lWordstart - 1, 1)
-If szChar = Chr(10) Then
- MsgBox "Return"
-End If
+  lWordstart = lWordend
+  szChar = Mid(rtbString.Text, lWordstart - 1, 1)
 
-While (CharInstr(szChar, DELIMCHARS) = False) And szChar <> Chr(10)
-  If lWordstart = 1 Then GoTo fred
-  lWordstart = lWordstart - 1
-  szChar = Mid(rtbstring.Text, lWordstart, 1)
-Wend
+  While (CharInstr(szChar, DELIMCHARS) = False) And szChar <> Chr(10)
+    If lWordstart = 1 Then GoTo fred
+    lWordstart = lWordstart - 1
+    szChar = Mid(rtbString.Text, lWordstart, 1)
+  Wend
 
 fred:
-If lWordstart - 1 = 0 Then
-  szTemp = Mid(rtbstring.Text, lWordstart, (lWordend - lWordstart))
-  rtbstring.SelStart = lWordstart - 1
-  rtbstring.SelLength = (lWordend - lWordstart)
-Else
-  rtbstring.SelStart = lWordstart + 1
-  rtbstring.SelLength = (lWordend - lWordstart)
-  szTemp = Mid(rtbstring.Text, rtbstring.SelStart, rtbstring.SelLength)
-  rtbstring.SelStart = lWordstart
-  rtbstring.SelLength = (lWordend - lWordstart)
-End If
+  If lWordstart - 1 = 0 Then
+    szTemp = Mid(rtbString.Text, lWordstart, (lWordend - lWordstart))
+    rtbString.SelStart = lWordstart - 1
+    rtbString.SelLength = (lWordend - lWordstart)
+  Else
+    rtbString.SelStart = lWordstart + 1
+    rtbString.SelLength = (lWordend - lWordstart)
+    szTemp = Mid(rtbString.Text, rtbString.SelStart, rtbString.SelLength)
+    rtbString.SelStart = lWordstart
+    rtbString.SelLength = (lWordend - lWordstart)
+  End If
 
-If WordCache(szTemp).szString & "" <> "" Then
-  rtbstring.SelBold = WordCache(szTemp).bBold
-  rtbstring.SelItalic = WordCache(szTemp).bItalic
-  rtbstring.SelColor = Val(WordCache(szTemp).szColour) 'RGB(0, 0, 255)
-End If
+  If WordCache(szTemp).szString & "" <> "" Then
+    rtbString.SelBold = WordCache(szTemp).bBold
+    rtbString.SelItalic = WordCache(szTemp).bItalic
+    rtbString.SelColor = Val(WordCache(szTemp).szColour) 'RGB(0, 0, 255)
+  End If
 
-rtbstring.SelStart = lWordend + 1 'Reset cursor position
-rtbstring.SelBold = False
-rtbstring.SelItalic = False
-rtbstring.SelColor = RGB(0, 0, 0)
+  rtbString.SelStart = lWordend + 1 'Reset cursor position
+  rtbString.SelBold = False
+  rtbString.SelItalic = False
+  rtbString.SelColor = RGB(0, 0, 0)
 
 End Sub
 Private Sub QR()
@@ -189,59 +238,60 @@ Dim szChar As String
 Dim lArraypos As Long
 Dim szData As String
 Dim lX As Long
-ReDim Stringlist(Len(rtbstring.Text))
 
-lCurpos = rtbstring.SelStart
+  ReDim Stringlist(Len(rtbString.Text))
+  lCurpos = rtbString.SelStart
 
-szTemp = ""
-szData = rtbstring.Text
-For lX = 1 To Len(szData)
-  szChar = Mid(szData, lX, 1)
-   If CharInstr(szChar, DELIMCHARS) = False And szChar <> Chr(10) Then
-    szTemp = szTemp & szChar
-  Else
-    If szChar = Chr(10) Then szChar = "\par "
-    If szTemp <> "" Then
-      Stringlist(lArraypos) = szTemp
+  szTemp = ""
+  szData = rtbString.Text
+  For lX = 1 To Len(szData)
+    szChar = Mid(szData, lX, 1)
+     If CharInstr(szChar, DELIMCHARS) = False And szChar <> Chr(10) Then
+      szTemp = szTemp & szChar
+    Else
+      If szChar = Chr(10) Then szChar = "\par "
+      If szTemp <> "" Then
+        Stringlist(lArraypos) = szTemp
+        lArraypos = lArraypos + 1
+      End If
+      Stringlist(lArraypos) = szChar
       lArraypos = lArraypos + 1
+      szTemp = ""
     End If
-    Stringlist(lArraypos) = szChar
-    lArraypos = lArraypos + 1
-    szTemp = ""
-  End If
-Next lX
+  Next lX
 
-If szTemp <> "" Then Stringlist(lArraypos) = szTemp
+  If szTemp <> "" Then Stringlist(lArraypos) = szTemp
 
-For lX = 0 To UBound(Stringlist) - 1
-  If Stringlist(lX) <> "" Then Stringlist(lX) = SearchCache(Stringlist(lX))
-Next lX
+  For lX = 0 To UBound(Stringlist) - 1
+    If Stringlist(lX) <> "" Then Stringlist(lX) = SearchCache(Stringlist(lX))
+  Next lX
   
-For lX = 0 To UBound(Stringlist)
-  If Stringlist(lX) <> "" Then szOutputstring = szOutputstring & Stringlist(lX)
-Next lX
+  For lX = 0 To UBound(Stringlist)
+    If Stringlist(lX) <> "" Then szOutputstring = szOutputstring & Stringlist(lX)
+  Next lX
 
-rtbstring.TextRTF = szRTBFontinfo & szRTBColours & szRTBWordinfo & szOutputstring & " \par }"
-rtbstring.SelStart = lCurpos
+  rtbString.TextRTF = szRTBFontinfo & szRTBColours & szRTBWordinfo & szOutputstring & " \par }"
+  rtbString.SelStart = lCurpos
 End Sub
+
 Friend Sub BuildCache()
-  Dim szStrings() As String
-  Dim szValues() As String
-  Dim szColours() As String
-  Dim szRTBtmp As String
-  Dim iLoop As Integer
-  Dim WordDisplay As WordStyle
-  Dim colRGB As T_RGB
-  Dim iX As Integer
-  Dim bColour As Boolean
+Dim szStrings() As String
+Dim szValues() As String
+Dim szColours() As String
+Dim szRTBtmp As String
+Dim iLoop As Integer
+Dim WordDisplay As WordStyle
+Dim colRGB As T_RGB
+Dim iX As Integer
+Dim bColour As Boolean
   
-  rtbstring.Text = "|"
-  szRTBFontinfo = Mid(rtbstring.TextRTF, 1, (InStr(1, rtbstring.TextRTF, "|") - 1))
+  rtbString.Text = "|"
+  szRTBFontinfo = Mid(rtbString.TextRTF, 1, (InStr(1, rtbString.TextRTF, "|") - 1))
   szRTBWordinfo = Mid(szRTBFontinfo, InStr(1, szRTBFontinfo, "}}") + 2)
   szRTBFontinfo = Mid(szRTBFontinfo, 1, InStr(1, szRTBFontinfo, "}}") + 1)
   ReDim szColours(0)
   
-  rtbstring.TextRTF = ""
+  rtbString.TextRTF = ""
   Set WordCache = New Collection
   szRTBColours = "{\colortbl ;\red0\green0\blue0"
   szStrings = Split(m_Wordlist, ";")
@@ -280,10 +330,10 @@ Friend Sub BuildCache()
          
     If bColour = False Then
       szColours(UBound(szColours)) = szValues(3)
-      WordDisplay.szRTFstring = ("\cf" & UBound(szColours) + 2) & " " & szRTBtmp & "\cf0 "
+      WordDisplay.szRTFstring = ("\cf" & UBound(szColours) + 2)
       ReDim Preserve szColours(UBound(szColours) + 1)
     Else
-      WordDisplay.szRTFstring = ("\cf" & iX + 2) & " " & szRTBtmp & "\cf0 "
+      WordDisplay.szRTFstring = ("\cf" & iX + 2)
     End If
     WordCache.Add WordDisplay, szValues(0)
 
@@ -297,64 +347,51 @@ Friend Sub BuildCache()
           
   szRTBColours = szRTBColours & ";}"
 End Sub
-Private Function findControl(szName As String) As Integer
-Dim iX As Integer
-  For iX = 0 To UserControl.ParentControls.Count - 1
-    If UserControl.ParentControls.Item(iX).Name = szName Then
-      findControl = iX
-    End If
-  Next iX
-End Function
 
-Private Sub imgdn_Click()
-Dim ifoundcontrol As Integer
-  
+Private Sub imgUp_Click()
+On Error Resume Next
+Dim lHeight As Long
+Dim lWidth As Long
+
   MinimisedHeight = UserControl.Height
   MinimisedWidth = UserControl.Width
   LastTop = UserControl.Extender.Top
-  Lastleft = UserControl.Extender.Left
+  LastLeft = UserControl.Extender.Left
   
-  imgdn.Visible = False
-  imgup.Visible = True
-  ifoundcontrol = findControl(UserControl.Ambient.DisplayName)
-  If ifoundcontrol = 0 Then Exit Sub
-  iControlLeft = UserControl.ParentControls.Item(ifoundcontrol).Left
-  iControlTop = UserControl.ParentControls.Item(ifoundcontrol).Top
+  imgUp.Visible = False
+  imgDown.Visible = True
 
   If m_MaximisedHeight = 0 Then
-    UserControl.Height = UserControl.Parent.Height
-    UserControl.ParentControls.Item(ifoundcontrol).Move 0, 0
+    lHeight = UserControl.Extender.Container.ScaleHeight
+    If lHeight = 0 Then lHeight = UserControl.Extender.Container.Height
+    UserControl.Height = lHeight
+    UserControl.Extender.Top = 0
   Else
     If m_MaximisedHeight > MinimisedHeight Then UserControl.Height = m_MaximisedHeight
   End If
   
   If m_MaximisedWidth = 0 Then
-    UserControl.Width = UserControl.Parent.Width - 100
-    UserControl.ScaleLeft = 0
-    Else
+    lWidth = UserControl.Extender.Container.ScaleWidth
+    If lWidth = 0 Then lWidth = UserControl.Extender.Container.Width
+    UserControl.Width = lWidth
+    UserControl.Extender.Left = 0
+  Else
     If m_MaximisedWidth > MinimisedWidth Then UserControl.Width = m_MaximisedWidth
   End If
-  rtbstring.Height = (UserControl.Height - (3 * shpBar.Height))
+
+  UserControl.Extender.ZOrder 0
   bMaximised = True
-  UserControl.ParentControls.Item(ifoundcontrol).ZOrder 0
 End Sub
 
-Private Sub imgup_Click()
-Dim ifoundcontrol As Integer
-  imgup.Visible = False
-  imgdn.Visible = True
-  ifoundcontrol = findControl(UserControl.Ambient.DisplayName)
-  If ifoundcontrol = 0 Then
-    imgup.Visible = True
-    imgdn.Visible = False
-    Exit Sub
-  End If
-  
-  UserControl.ParentControls.Item(ifoundcontrol).Move iControlLeft, iControlTop
+Private Sub imgDown_Click()
+  imgDown.Visible = False
+  imgUp.Visible = True
   UserControl.Height = MinimisedHeight
   UserControl.Width = MinimisedWidth
+  UserControl.Extender.Top = LastTop
+  UserControl.Extender.Left = LastLeft
   bMaximised = False
-  End Sub
+End Sub
 
 Private Sub rtbstring_KeyUp(KeyCode As Integer, Shift As Integer)
 If KeyCode = vbKeyTab Or _
@@ -369,26 +406,43 @@ Private Sub UserControl_Resize()
   If UserControl.Width < 10 Then UserControl.Width = 10
   If UserControl.Height < 500 Then UserControl.Height = 500
   shpBar.Width = UserControl.Width
-  rtbstring.Top = 0 + shpBar.Height
-  rtbstring.Width = UserControl.Width
-  rtbstring.Height = (UserControl.Height - shpBar.Height)
-  imgup.Left = UserControl.Width - 200
-  imgdn.Left = UserControl.Width - 200
-  
-  If bMaximised = True Then imgup_Click
-
-  'ShowBar m_ControlBarVisible
+  If m_ControlBarVisible = True Then
+    rtbString.Top = 0 + shpBar.Height
+    rtbString.Height = (UserControl.Height - shpBar.Height)
+  Else
+    rtbString.Top = 0
+    rtbString.Height = UserControl.Height
+  End If
+  rtbString.Left = 0
+  rtbString.Width = UserControl.Width
+  If UserControl.BorderStyle = 0 Then
+    imgDown.Left = UserControl.Width - 200
+    imgUp.Left = UserControl.Width - 200
+  Else
+    imgDown.Left = UserControl.Width - 250
+    imgUp.Left = UserControl.Width - 250
+  End If
 End Sub
-Private Sub ShowBar(bSho As Boolean)
 
-    If bSho = True Then
+Public Sub Minimise()
+Attribute Minimise.VB_Description = "Minimise the control."
+  If bMaximised Then imgDown_Click
+End Sub
+
+Public Sub Maximise()
+Attribute Maximise.VB_Description = "Maximise the control to the size of it's container."
+ If Not bMaximised Then imgUp_Click
+End Sub
+
+Private Sub ShowBar(bSho As Boolean)
+  If bSho = True Then
     shpBar.Height = 195
-    rtbstring.Top = 0 + shpBar.Height
-    rtbstring.Height = UserControl.Height
+    rtbString.Top = 0 + shpBar.Height
+    rtbString.Height = UserControl.Height
   Else
     shpBar.Height = 0
-    rtbstring.Top = 0 + shpBar.Height
-    rtbstring.Height = UserControl.Height
+    rtbString.Top = 0 + shpBar.Height
+    rtbString.Height = UserControl.Height
   End If
 End Sub
 
@@ -416,6 +470,7 @@ Private Sub rtbstring_MouseUp(Button As Integer, Shift As Integer, x As Single, 
   RaiseEvent MouseUp(Button, Shift, x, y)
 End Sub
 Public Property Get MaximisedWidth() As Variant
+Attribute MaximisedWidth.VB_Description = "Sets/Returns the Maximised Width (0 = width of container)."
   MaximisedWidth = m_MaximisedWidth
 End Property
 
@@ -424,7 +479,6 @@ Public Property Let MaximisedWidth(ByVal New_MaximisedWidth As Variant)
   PropertyChanged "MaximisedWidth"
 End Property
 
-'Initialize Properties for User Control
 Private Sub UserControl_InitProperties()
   m_MaximisedWidth = m_def_MaximisedWidth
   Set UserControl.Font = Ambient.Font
@@ -432,68 +486,61 @@ Private Sub UserControl_InitProperties()
   m_Wordlist = m_def_Wordlist
   BuildCache
 End Sub
-'Load property values from storage
-Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
-  rtbstring.BackColor = PropBag.ReadProperty("BackColor", &H80000005)
-  rtbstring.Enabled = PropBag.ReadProperty("Enabled", True)
-  Set rtbstring.Font = PropBag.ReadProperty("Font", Ambient.Font)
-  rtbstring.BorderStyle = PropBag.ReadProperty("BorderStyle", 1)
-  rtbstring.SelText = PropBag.ReadProperty("SelText", "")
-  rtbstring.SelStart = PropBag.ReadProperty("SelStart", 0)
-  rtbstring.ToolTipText = PropBag.ReadProperty("ToolTipText", "")
-  rtbstring.Locked = PropBag.ReadProperty("Locked", False)
-  rtbstring.Text = PropBag.ReadProperty("Text", "HBX")
-  rtbstring.RightMargin = PropBag.ReadProperty("RightMargin", 0)
-  rtbstring.Locked = PropBag.ReadProperty("Locked", False)
-  rtbstring.MaxLength = PropBag.ReadProperty("MaxLength", 0)
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+  LastTop = UserControl.Extender.Top
+  LastLeft = UserControl.Extender.Left
+  rtbString.BackColor = PropBag.ReadProperty("BackColor", &H80000005)
+  rtbString.Enabled = PropBag.ReadProperty("Enabled", True)
+  Set rtbString.Font = PropBag.ReadProperty("Font", Ambient.Font)
+  rtbString.Locked = PropBag.ReadProperty("Locked", False)
+  rtbString.BorderStyle = PropBag.ReadProperty("BorderStyle", 1)
+  m_MaximisedHeight = PropBag.ReadProperty("MaximisedHeight", m_def_MaximisedHeight)
+  m_MaximisedWidth = PropBag.ReadProperty("MaximisedWidth", m_def_MaximisedWidth)
+  rtbString.SelText = PropBag.ReadProperty("SelText", "")
+  rtbString.SelStart = PropBag.ReadProperty("SelStart", 0)
+  rtbString.SelLength = PropBag.ReadProperty("SelLength", 0)
+  rtbString.ToolTipText = PropBag.ReadProperty("ToolTipText", "")
+  lblCaption.Caption = PropBag.ReadProperty("Caption", "")
+  rtbString.MaxLength = PropBag.ReadProperty("MaxLength", 0)
+  rtbString.Text = PropBag.ReadProperty("Text", "HBX")
   m_ForeColor = PropBag.ReadProperty("ForeColor", m_def_ForeColor)
   m_BackStyle = PropBag.ReadProperty("BackStyle", m_def_BackStyle)
-  lblCaption.Caption = PropBag.ReadProperty("Caption", "")
-  rtbstring.Text = PropBag.ReadProperty("Text", "RichTextBox1")
-  lblCaption.Caption = PropBag.ReadProperty("Caption", "")
+  rtbString.RightMargin = PropBag.ReadProperty("RightMargin", 0)
+  UserControl.BorderStyle = PropBag.ReadProperty("BorderStyle", 0)
   m_ControlBarVisible = PropBag.ReadProperty("ControlBarVisible", m_def_ControlBarVisible)
   m_Wordlist = PropBag.ReadProperty("Wordlist", m_def_Wordlist)
-  BuildCache
 End Sub
-Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 
-  Call PropBag.WriteProperty("BackColor", rtbstring.BackColor, &H80000005)
-  Call PropBag.WriteProperty("Enabled", rtbstring.Enabled, True)
-  Call PropBag.WriteProperty("Font", rtbstring.Font, Ambient.Font)
-  Call PropBag.WriteProperty("Locked", rtbstring.Locked, False)
+Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+  Call PropBag.WriteProperty("BackColor", rtbString.BackColor, &H80000005)
+  Call PropBag.WriteProperty("Enabled", rtbString.Enabled, True)
+  Call PropBag.WriteProperty("Font", rtbString.Font, Ambient.Font)
+  Call PropBag.WriteProperty("Locked", rtbString.Locked, False)
+  Call PropBag.WriteProperty("BorderStyle", rtbString.BorderStyle, 1)
   Call PropBag.WriteProperty("MaximisedHeight", m_MaximisedHeight, m_def_MaximisedHeight)
-  Call PropBag.WriteProperty("BorderStyle", rtbstring.BorderStyle, 1)
   Call PropBag.WriteProperty("MaximisedWidth", m_MaximisedWidth, m_def_MaximisedWidth)
-  Call PropBag.WriteProperty("SelText", rtbstring.SelText, "")
-  Call PropBag.WriteProperty("SelStart", rtbstring.SelStart, 0)
-  Call PropBag.WriteProperty("ToolTipText", rtbstring.ToolTipText, "")
+  Call PropBag.WriteProperty("SelText", rtbString.SelText, "")
+  Call PropBag.WriteProperty("SelStart", rtbString.SelStart, 0)
+  Call PropBag.WriteProperty("SelLength", rtbString.SelLength, 0)
+  Call PropBag.WriteProperty("ToolTipText", rtbString.ToolTipText, "")
   Call PropBag.WriteProperty("Caption", lblCaption.Caption, "")
-  Call PropBag.WriteProperty("MaxLength", rtbstring.MaxLength, 0)
-  Call PropBag.WriteProperty("Text", rtbstring.Text, "HBX")
+  Call PropBag.WriteProperty("MaxLength", rtbString.MaxLength, 0)
+  Call PropBag.WriteProperty("Text", rtbString.Text, "HBX")
   Call PropBag.WriteProperty("ForeColor", m_ForeColor, m_def_ForeColor)
   Call PropBag.WriteProperty("BackStyle", m_BackStyle, m_def_BackStyle)
-  Call PropBag.WriteProperty("RightMargin", rtbstring.RightMargin, 0)
+  Call PropBag.WriteProperty("RightMargin", rtbString.RightMargin, 0)
   Call PropBag.WriteProperty("BorderStyle", UserControl.BorderStyle, 0)
-  Call PropBag.WriteProperty("Locked", rtbstring.Locked, False)
-  Call PropBag.WriteProperty("MaxLength", rtbstring.MaxLength, 0)
-  Call PropBag.WriteProperty("ToolTipText", rtbstring.ToolTipText, "")
-  Call PropBag.WriteProperty("ScrollBars", rtbstring.ScrollBars, 0)
-  Call PropBag.WriteProperty("Text", rtbstring.Text, "RichTextBox1")
-  Call PropBag.WriteProperty("Caption", lblCaption.Caption, "")
   Call PropBag.WriteProperty("ControlBarVisible", m_ControlBarVisible, m_def_ControlBarVisible)
   Call PropBag.WriteProperty("Wordlist", m_Wordlist, m_def_Wordlist)
 End Sub
-Public Function Maximise() As Variant
-imgup_Click
-End Function
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=UserControl,UserControl,-1,BorderStyle
-Public Property Get BorderStyle() As Integer
+
+Public Property Get BorderStyle() As MSComctlLib.BorderStyleConstants
+Attribute BorderStyle.VB_Description = "Returns/sets the border style for an object."
   BorderStyle = UserControl.BorderStyle
 End Property
 
-Public Property Let BorderStyle(ByVal New_BorderStyle As Integer)
+Public Property Let BorderStyle(ByVal New_BorderStyle As MSComctlLib.BorderStyleConstants)
   UserControl.BorderStyle() = New_BorderStyle
   PropertyChanged "BorderStyle"
 End Property
@@ -502,40 +549,28 @@ Private Sub UserControl_Click()
   RaiseEvent Click
 End Sub
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,Locked
 Public Property Get Locked() As Boolean
-  Locked = rtbstring.Locked
+Attribute Locked.VB_Description = "Returns/Sets whether the text can be editted by the user."
+  Locked = rtbString.Locked
 End Property
 
 Public Property Let Locked(ByVal New_Locked As Boolean)
-  rtbstring.Locked() = New_Locked
+  rtbString.Locked() = New_Locked
   PropertyChanged "Locked"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,MaxLength
 Public Property Get MaxLength() As Long
-  MaxLength = rtbstring.MaxLength
+Attribute MaxLength.VB_Description = "Sets/Returns the Maximum text length allowable."
+  MaxLength = rtbString.MaxLength
 End Property
 
 Public Property Let MaxLength(ByVal New_MaxLength As Long)
-  rtbstring.MaxLength() = New_MaxLength
+  rtbString.MaxLength() = New_MaxLength
   PropertyChanged "MaxLength"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,ToolTipText
-Public Property Get ToolTipText() As String
-  ToolTipText = rtbstring.ToolTipText
-End Property
-
-Public Property Let ToolTipText(ByVal New_ToolTipText As String)
-  rtbstring.ToolTipText() = New_ToolTipText
-  PropertyChanged "ToolTipText"
-End Property
-
 Public Property Get MaximisedHeight() As Variant
+Attribute MaximisedHeight.VB_Description = "Sets/Returns the Maximised Height (0 = height of container)."
   MaximisedHeight = m_MaximisedHeight
 End Property
 
@@ -544,63 +579,49 @@ Public Property Let MaximisedHeight(ByVal New_MaximisedHeight As Variant)
   PropertyChanged "MaximisedHeight"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,BackColor
 Public Property Get BackColor() As OLE_COLOR
-  BackColor = rtbstring.BackColor
+Attribute BackColor.VB_Description = "Returns/sets the background color used to display text and graphics in an object."
+  BackColor = rtbString.BackColor
 End Property
 
 Public Property Let BackColor(ByVal New_BackColor As OLE_COLOR)
-  rtbstring.BackColor() = New_BackColor
+  rtbString.BackColor() = New_BackColor
   PropertyChanged "BackColor"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,Enabled
 Public Property Get Enabled() As Boolean
 Attribute Enabled.VB_Description = "Returns/sets a value that determines whether an object can respond to user-generated events."
-  Enabled = rtbstring.Enabled
+  Enabled = rtbString.Enabled
 End Property
 
 Public Property Let Enabled(ByVal New_Enabled As Boolean)
-  rtbstring.Enabled() = New_Enabled
+  rtbString.Enabled() = New_Enabled
   PropertyChanged "Enabled"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,Font
 Public Property Get Font() As Font
 Attribute Font.VB_Description = "Returns a Font object."
 Attribute Font.VB_UserMemId = -512
-  Set Font = rtbstring.Font
+  Set Font = rtbString.Font
 End Property
 
 Public Property Set Font(ByVal New_Font As Font)
-  Set rtbstring.Font = New_Font
+  Set rtbString.Font = New_Font
   PropertyChanged "Font"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,Refresh
-Public Sub Refresh()
-Attribute Refresh.VB_Description = "Forces a complete repaint of a control."
-  rtbstring.Refresh
-End Sub
-
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=rtbstring,rtbstring,-1,Text
 Public Property Get Text() As String
-  Text = rtbstring.Text
+Attribute Text.VB_Description = "Sets/Returns the Displayed Text."
+  Text = rtbString.Text
 End Property
 
 Public Property Let Text(ByVal New_Text As String)
-  rtbstring.Text() = New_Text
+  rtbString.Text() = New_Text
   PropertyChanged "Text"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MappingInfo=lblCaption,lblCaption,-1,Caption
 Public Property Get Caption() As String
+Attribute Caption.VB_Description = "Returns/Sets the Caption."
   Caption = lblCaption.Caption
 End Property
 
@@ -609,8 +630,6 @@ Public Property Let Caption(ByVal New_Caption As String)
   PropertyChanged "Caption"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MemberInfo=0,0,0,0
 Public Property Get ControlBarVisible() As Boolean
 Attribute ControlBarVisible.VB_Description = "Shows / Hides the Control Bar"
   ControlBarVisible = m_ControlBarVisible
@@ -618,19 +637,21 @@ End Property
 
 Public Property Let ControlBarVisible(ByVal New_ControlBarVisible As Boolean)
   m_ControlBarVisible = New_ControlBarVisible
+  lblCaption.Visible = m_ControlBarVisible
+  imgUp.Visible = m_ControlBarVisible
+  imgDown.Visible = False
+  shpBar.Visible = m_ControlBarVisible
+  UserControl_Resize
   PropertyChanged "ControlBarVisible"
 End Property
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MemberInfo=5
-Public Sub HUP()
-Attribute HUP.VB_Description = "Causes a Re-Colouring of the control"
-QR
+Public Sub ColourText()
+Attribute ColourText.VB_Description = "Causes a Re-Colouring of the text in the control."
+  QR
 End Sub
 
-'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
-'MemberInfo=13,0,0,0
 Public Property Get Wordlist() As String
+Attribute Wordlist.VB_Description = "Sets/Returns the code string that determines the text highlight."
   Wordlist = m_Wordlist
 End Property
 
@@ -639,4 +660,32 @@ Public Property Let Wordlist(ByVal New_Wordlist As String)
   PropertyChanged "Wordlist"
   BuildCache
 End Property
+
+Public Property Get SelStart() As Long
+Attribute SelStart.VB_Description = "Sets/Returns the Text Selection start point."
+  SelStart = rtbString.SelStart
+End Property
+
+Public Property Let SelStart(ByVal New_SelStart As Long)
+  rtbString.SelStart = New_SelStart
+  PropertyChanged "SelStart"
+End Property
+
+Public Property Get SelLength() As Long
+Attribute SelLength.VB_Description = "Sets/Returns the Text Selection length."
+  SelLength = rtbString.SelLength
+End Property
+
+Public Property Let SelLength(ByVal New_SelLength As Long)
+  rtbString.SelLength = New_SelLength
+  PropertyChanged "SelLength"
+End Property
+
+Public Property Get Maximised() As Boolean
+Attribute Maximised.VB_Description = "Set/Returns a boolean indicating whether the control is Maximised."
+  Maximised = bMaximised
+End Property
+
+
+
 
