@@ -19,94 +19,82 @@ JMP - Jean-Michel Poure<br>
 MM - Matthew MacSuga</p>
 <h4>v7.1.1 Fixes/Updates</h4>
 <ul>
-  <li>(DP) ADO connection objects used by the Migration Wizard now have the UID/PWD 
-    set directly *and* in the connection string to ensure they are picked up by 
-    ODBC drivers that manage to ignore one or the other (appears to occur with 
+  <li>(DP) ADO connection objects used by the Migration Wizard now have the UID/PWD
+    set directly *and* in the connection string to ensure they are picked up by
+    ODBC drivers that manage to ignore one or the other (appears to occur with
     SQL Server and Oracle whilst PostgreSQL, Access and Informix seem OK).</li>
-  <li>(DP) Fixed a bug that caused the DataGrid to report all Boolean values in 
+  <li>(DP) Fixed a bug that caused the DataGrid to report all Boolean values in
     the first row as being False.</li>
-  <li>(DP) Added quotes around objects names in the SQL used to refresh the Sequence 
+  <li>(DP) Added quotes around objects names in the SQL used to refresh the Sequence
     &amp; Table caches (Bug #196)</li>
-  <li>(KR) Added 'Serialize Column' option to table browser. This option allows 
-    columns of suitable types (ie. int, float etc.) to be converted to pseudo-serial 
+  <li>(KR) Added 'Serialize Column' option to table browser. This option allows
+    columns of suitable types (ie. int, float etc.) to be converted to pseudo-serial
     columns.</li>
-  <li>(DP) The New DSN dialogue now clears the list of DSN in the Login Dialogue 
+  <li>(DP) The New DSN dialogue now clears the list of DSN in the Login Dialogue
     correctly after creating a new DSN (Bug #193).</li>
-  <li>(DP) Added a Getting Started guide from francl with contributions from Jean-Michel 
+  <li>(DP) Added a Getting Started guide from francl with contributions from Jean-Michel
     Poure.</li>
-  <li>(DP) Fixed DSN create failed bug (pgAdmin incorrectly reported that the 
+  <li>(DP) Fixed DSN create failed bug (pgAdmin incorrectly reported that the
     first DSN created on a machine failed) (Bug #194).</li>
-  <li>(DP) Table and Index reports now show variable length columns as 'Variable' 
+  <li>(DP) Table and Index reports now show variable length columns as 'Variable'
     not '0' (Bug #203).</li>
-  <li>(DP) Fixed a bug that prevented the display of column details for many numeric 
+  <li>(DP) Fixed a bug that prevented the display of column details for many numeric
     columns.</li>
-  <li>(DP) Fixed a bug in the SQL wizard that caused an extra , to be included 
+  <li>(DP) Fixed a bug in the SQL wizard that caused an extra , to be included
     in the SQL if only only table was selected.</li>
   <li>(DP) Added a Custom Reports guide.</li>
-  <li>(DP) Fixed a bug where the Revision Tracking Version number could get misinterpreted 
+  <li>(DP) Fixed a bug where the Revision Tracking Version number could get misinterpreted
     in some locales (Bug #241).</li>
-  <li>(DP) Fixed a bug in the Migration Wizard where the MDB file username/password 
-    fields were used when the ODBC username/password fields should have been (thanks 
+  <li>(DP) Fixed a bug in the Migration Wizard where the MDB file username/password
+    fields were used when the ODBC username/password fields should have been (thanks
     to Ted Arnold).</li>
   <li>(JMP) Modified frmODBCLogon to allow use of the PostgreSQL ODBC+ Driver.</li>
-  <li>(DP) Added an Auto highlighting/colouring textbox control to various forms 
+  <li>(DP) Added an Auto highlighting/colouring textbox control to various forms
     (contributed by Mark Yeatman).</li>
-  <li>(JMP) Mods to the Migration Wizard for more reliable non-English language 
+  <li>(JMP) Mods to the Migration Wizard for more reliable non-English language
     use.</li>
   <li>(DP) Allow Migration from Views.</li>
-  <li>(DP) Fixed bug where Inherited tables in Table Creator are referenced by 
+  <li>(DP) Fixed bug where Inherited tables in Table Creator are referenced by
     OID, not name. (Bug #257).</li>
   <li>(DP) Allow grant/revoke superuser and create database privilege on users.</li>
   <li>(JMP) IDE (Integrated Development Environment) features:<br>
-    pgAdmin now allows edition, modification and saving of functions, triggers 
-    and views. To edit a function, trigger or view, click on the Modify button 
-    or simply double-click on the item you whish to modify. Be aware that modified/new 
-    functions, triggers and views are saved in pgAdmin new temporary tables (pgadmin_dev_functions, 
-    pgadmin_dev_triggers, pgadmin_dev_views). These temporary tables are dropped 
-    at pgAdmin startup, therefore (1) several developer cannot work on the same 
-    database at the same time, (2) always rebuild the project before leaving the 
-    database or your changes will be lost (see next feature).</li>
-  <li>(JMP) Project rebuilding:<br>
-    This unique feature is comparable to a 'compilation' process, which checks 
-    function dependencies and rebuilds functions, triggers and views to ensure 
-    that the database is in a working state (Rebuild Project button). The rebuilding 
-    process is stopped when errors are detected. Always rebuild a project to save 
-    modifications of functions, triggers and views.</li>
-  <li>(JMP) Added Export feature of functions, triggers and views (multi-select 
-    click to choose the items and click on Export).</li>
-  <li>(JMP) Added automatic Enable/Disable buttons in function, trigger and view 
+    pgAdmin now allows edition, modification and saving of functions, triggers and views. To edit a function, trigger or view, click on the Modify button or simply double-click on the item you whish to modify. Be aware that the objects are saved using DROP/CREATE which does not preserve dependencies.<br> Example: functionA calls functionB and therefore relies on functionB. If you modify functionB and save it, functionB is dropped and created again. The problem is that functionA is broken because it points to the old functionB identifier which was changed. This problem is due to PostgreSQL which does not support *yet* the ALTER function command.</li>
+  <li>(JMP/DP) Development mode/Production mode:<br>
+    Go to File->Options and click on Development mode button. Notice that Functions, Views and Triggers are now displayed in both Production and Development states. The Production objects are actually those compiled and running on you database server. The development objects allow you to safely modify code without applying changes immediatly - and therefore with less risk of breaking dependencies.</li>
+  <li>(JMP/DP) Project rebuilding:<br>
+  To apply changes and publish development objects, you need to click on the Rebuilding button. The process will check for dependencies between objects and DROP/CREATE them in the right order. This overcomes the problem of broken dependencies due to the absence of ALTER FUNCTION command. Your database will only be in production state at the end of the process, not *during* the process because rebuilding needs several transactions. Please note that the rebuilding process is stopped if any error is encountered. You then have to correct the error and click on the Rebuild button again.<br>If your PostgreSQL project has more than 10 functions, we strongly encourage you to use Development mode.</li>
+  <li>(JMP) Export functions, triggers and views (multi-select click to choose the items and click on Export).</li>
+  <li>(JMP) Automatic Enable/Disable buttons in function, trigger and view
     forms.</li>
-  <li>(JMP) User functions are not listed any longer in system functions. Same 
+  <li>(JMP) User functions are no longer listed in system functions. Same
     as for triggers and views.</li>
-  <li>(JMP) Fast retrieval of functions, triggers and views list in one query. 
+  <li>(JMP) Fast retrieval of functions, triggers and views list in one query.
   </li>
-  <li>(DP) Migrated object comments to pg_description now that COMMENT ON has 
+  <li>(DP) Migrated object comments to pg_description now that COMMENT ON has
   been around for a while.</li>
-  <li>(DP) Moved Revision Tracking options to new Developer options tab on the 
+  <li>(DP) Moved Revision Tracking options to new Developer options tab on the
   Options form.</li>
-  <li>(DP) The Migration Wizard now attempts to query the source database's 
-  ODBC driver for the supported SQL quoting character. Normally this is &quot;, but 
+  <li>(DP) The Migration Wizard now attempts to query the source database's
+  ODBC driver for the supported SQL quoting character. Normally this is &quot;, but
   Access uses ' and MySQL apparently doesn't support quoting at all.</li>
-  <li>(DP) The new template0 database in PostgreSQL 7.1.x is now hidden in the 
+  <li>(DP) The new template0 database in PostgreSQL 7.1.x is now hidden in the
   Database Browser unless 'Show System Databases' is checked (Bug #273).</li>
-  <li>(DP) The Migration Wizard no longer skips an entire data copy that 
+  <li>(DP) The Migration Wizard no longer skips an entire data copy that
   includes BLOB data, it now only skips the BLOB column.</li>
   <li>(DP) Added a Print Active Window option to the File menu.</li>
-  <li>(DP) Fixed a bug in the Datagrid/Editor whereby in some locales records 
+  <li>(DP) Fixed a bug in the Datagrid/Editor whereby in some locales records
   containing timestamps could not be identified in the source table.</li>
-  <li>(DP) Added a missing Crystal Reports file that stopped reports with 
+  <li>(DP) Added a missing Crystal Reports file that stopped reports with
   Charts from running (Bug #295).</li>
-  <li>(DP) Added EXPLAIN PLAN options to frmSQL and frmMain (requires psqlODBC 
+  <li>(DP) Added EXPLAIN PLAN options to frmSQL and frmMain (requires psqlODBC
   07.01.0006 or higher).</li>
   <li>(MM) Allow Migration Wizard to migrate auto increment columns from Access.</li>
-  <li>(DP) Ignore ADOX errors when connecting the source database in the 
+  <li>(DP) Ignore ADOX errors when connecting the source database in the
   Migration Wizard.</li>
-  <li>(DP) Don't Migrate the oid column from PostgreSQL databases (not sure why 
+  <li>(DP) Don't Migrate the oid column from PostgreSQL databases (not sure why
   anyone would do this but at least it will work now!).</li>
   <li>(DP) Properly escape \ &amp; ' in the Import Wizard.</li>
 </ul>
-<p>WARNING : do not test the new IDE on a production database. Before testing, 
-  export functions, triggers and views using the new export feature.</p>
 <h4>v7.1.0 Fixes/Updates</h4>
 <ul>
   <li>(RC) Added 'Migrate Primary Keys' code to the Migration Wizard.</li>
@@ -298,7 +286,7 @@ MM - Matthew MacSuga</p>
 </ul>
 <h4>v7.0.1 Fixes/Updates</h4>
 <ul>
-  <li>(DP) 
+  <li>(DP)
     <b>Open Source </b>- Yes, pgAdmin is open source as of
     v7.0.1. Please feel free to criticize my programming style (bearing in mind
     that I'm not a programmer of course!) and
@@ -393,7 +381,7 @@ MM - Matthew MacSuga</p>
     Syntax: <i>pgadmin [datasource username password]</i>
   If all three are specified, an autologon will be attempted,
   otherwise, values for DSN and (optionally) username will be used as defaults
-  in the logon dialogue.  <li>(DP) 
+  in the logon dialogue.  <li>(DP)
     Rows can now be added, deleted and edited from the table data view window.</li>
   <li>(DP) Object comments are now migrated on first use to a new
     pgadmin_desc table which will survive a dump/reload. Comments for system
@@ -610,7 +598,7 @@ MM - Matthew MacSuga</p>
   <li>(DP) Changed Add Table/Column tools to allow no size specification for
           text fields etc.</li>
   <li>(DP) New splash screen by Robert Page (<a href="mailto:rob@mindzone.demon.co.uk">rob@beta-band.freeserve.co.uk</a>,
-    <a href="http://www.beta-band.freeserve.co.uk" target="_top">http://www.beta-band.freeserve.co.uk</a> 
+    <a href="http://www.beta-band.freeserve.co.uk" target="_top">http://www.beta-band.freeserve.co.uk</a>
           ).</li>
   <li>(DP) Added menu option to change the current database.</li>
   <li>(DP) Arbitary SQL queries can now be saved in the registry for each datasource.</li>
