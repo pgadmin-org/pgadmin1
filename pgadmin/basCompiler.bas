@@ -88,7 +88,7 @@ Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_Definition As Stri
 On Error GoTo Err_Handler
   Dim szCreateStr As String
 
-    szCreateStr = "CREATE VIEW " & szView_Name & " AS " & szView_Definition
+    szCreateStr = cmp_View_CreateSQL(szView_Name, szView_Definition)
     LogMsg "Creating view " & szView_Name & "..."
     LogMsg "Executing: " & szCreateStr
     
@@ -102,6 +102,17 @@ Err_Handler:
   If Err.Number = -2147467259 Then MsgBox "View " & szView_Name & " could not be compiled." & vbCrLf & "Check source code and compile again."
   bContinueCompilation = False
 End Sub
+
+Function cmp_View_CreateSQL(ByVal szView_Name As String, ByVal szView_Definition As String) As String
+On Error GoTo Err_Handler
+  Dim szQuery As String
+
+    szQuery = "CREATE VIEW " & szView_Name & " AS " & szView_Definition & "; "
+    cmp_View_CreateSQL = szQuery
+  Exit Function
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Views_Create"
+End Function
 
 Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_PostgreSQLtable As String, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
  On Error GoTo Err_Handler
@@ -171,7 +182,7 @@ End Function
 '****
 '****
 
-Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
+Function cmp_Trigger_CreateSQL(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer) As String
 ' Two syntaxes
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_ForEach, szTrigger_Executes, szTrigger_Event )
 ' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, "", "", "", szTrigger_type)
@@ -208,13 +219,32 @@ On Error GoTo Err_Handler
     szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_ForEach
     szQueryStr = szQueryStr & " EXECUTE PROCEDURE " & szTrigger_function & "(" & szTrigger_arguments & ")"
     
-        ' Log information
+    cmp_Trigger_CreateSQL = szQueryStr
+    Exit Function
+    
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_CreateSQL"
+End Function
+
+Sub cmp_Trigger_Create(ByVal szTrigger_name As String, ByVal szTrigger_table As String, ByVal szTrigger_function As String, ByVal szTrigger_arguments As String, ByVal szTrigger_ForEach As String, ByVal szTrigger_Executes As String, ByVal szTrigger_event As String, Optional iTrigger_type As Integer)
+' Two syntaxes
+' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_ForEach, szTrigger_Executes, szTrigger_Event )
+' cmp_Trigger_Create (szTrigger_name, szTrigger_table, szTrigger_function, "", "", "", szTrigger_type)
+    Dim szQueryStr As String
+    
+    If (IsMissing(iTrigger_type)) Then
+      szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_ForEach, szTrigger_Executes, szTrigger_event)
+    Else
+      szQueryStr = cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_ForEach, szTrigger_Executes, szTrigger_event, iTrigger_type)
+    End If
+    
+    ' Log information
     LogMsg "Creating trigger " & szTrigger_name & "..."
     LogMsg "Executing: " & szQueryStr
       
-      ' Execute drop query and close log
-      gConnection.Execute szQueryStr
-      LogQuery szQueryStr
+    ' Execute drop query and close log
+    gConnection.Execute szQueryStr
+    LogQuery szQueryStr
       
     Exit Sub
 Err_Handler:
@@ -434,11 +464,8 @@ Public Sub cmp_Function_Create(ByVal szFunction_name As String, ByVal szFunction
 On Error GoTo Err_Handler
     Dim szCreateStr As String
 
-    szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
-    szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") "
-    szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " "
-    szCreateStr = szCreateStr & "AS '" & szFunction_source & "' "
-    szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
+    szCreateStr = cmp_Function_CreateSQL(szFunction_name, szFunction_argumentlist, szFunction_returns, szFunction_source, szFunction_language)
+    
     'Log
     LogMsg "Creating function " & szFunction_name & "(" & szFunction_argumentlist & ") ..."
     LogMsg "Executing: " & szCreateStr
@@ -452,6 +479,22 @@ Err_Handler:
   If Err.Number = -2147467259 Then MsgBox "Function " & szFunction_name & " (" & szFunction_argumentlist & ") could not be compiled." & vbCrLf & "Check source code and compile again."
   bContinueCompilation = False
 End Sub
+
+Public Function cmp_Function_CreateSQL(ByVal szFunction_name As String, ByVal szFunction_argumentlist As String, ByVal szFunction_returns As String, ByVal szFunction_source As String, ByVal szFunction_language As String) As String
+On Error GoTo Err_Handler
+    Dim szCreateStr As String
+
+    szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
+    szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") "
+    szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " "
+    szCreateStr = szCreateStr & "AS '" & szFunction_source & "' "
+    szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
+
+    cmp_Function_CreateSQL = szCreateStr
+  Exit Function
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_CreateSQL"
+End Function
 
 Public Sub cmp_Function_Compile(ByVal lngFunction_OID As Long)
 On Error GoTo Err_Handler
@@ -620,27 +663,36 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_Po
     If lngFunction_OID <> 0 Then
         szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE function_OID = " & lngFunction_OID
-               
-        ' Log information
-        LogMsg "Retrieving information from function OID =" & lngFunction_OID & " in table " & szFunction_PostgreSQLtable & "..."
-        LogMsg "Executing: " & szQueryStr
-        
-        ' open
-        If rsComp.State <> adStateClosed Then rsComp.Close
-        rsComp.Open szQueryStr, gConnection
-        
-        If Not rsComp.EOF Then
-            If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
-            If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
-            If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
-            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
-            If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
-            If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
-           
-            If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
-            szFunction_source = Replace(szFunction_source, "'", "''")
-            rsComp.Close
+    Else
+        If IsMissing(szFunction_name) Or IsMissing(szFunction_name) Then Exit Sub
+        If szFunction_name <> "" Then
+            szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
+            szQueryStr = szQueryStr & " WHERE function_name = '" & szFunction_name & "'"
+            If szFunction_arguments <> "" Then
+                szQueryStr = szQueryStr & " AND function_arguments = '" & szFunction_arguments & "'"
+            End If
         End If
+    End If
+    
+    ' Log information
+    LogMsg "Retrieving information from function OID =" & lngFunction_OID & " in table " & szFunction_PostgreSQLtable & "..."
+    LogMsg "Executing: " & szQueryStr
+    
+    ' open
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szQueryStr, gConnection
+    
+    If Not rsComp.EOF Then
+        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
+        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
+        If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
+        If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
+        If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
+        If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
+       
+        If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
+        szFunction_source = Replace(szFunction_source, "'", "''")
+        rsComp.Close
     End If
   Exit Sub
 Err_Handler:
