@@ -11,6 +11,15 @@ Begin VB.Form frmTables
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdSerialize 
+      Caption         =   "&Serialize Column"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   91
+      ToolTipText     =   "Convert this column into a (non primary key) serial column."
+      Top             =   2205
+      Width           =   1380
+   End
    Begin VB.CommandButton cmdAddColumn 
       Caption         =   "&Add Column"
       Height          =   330
@@ -62,15 +71,15 @@ Begin VB.Form frmTables
       Left            =   45
       TabIndex        =   6
       ToolTipText     =   "Edit the comment for the selected object."
-      Top             =   2205
+      Top             =   2565
       Width           =   1380
    End
    Begin VB.Frame Frame1 
       Caption         =   "Show System:"
-      Height          =   750
+      Height          =   705
       Left            =   45
       TabIndex        =   47
-      Top             =   2925
+      Top             =   3285
       Width           =   1380
       Begin VB.CheckBox chkFields 
          Caption         =   "Columns"
@@ -97,7 +106,7 @@ Begin VB.Form frmTables
       Left            =   45
       TabIndex        =   7
       ToolTipText     =   "Reload the table definitions from the database"
-      Top             =   2565
+      Top             =   2925
       Width           =   1380
    End
    Begin VB.CommandButton cmdAddTable 
@@ -962,6 +971,90 @@ Dim rsChecks As New Recordset
 Dim rsForeign As New Recordset
 Dim rsPrimary As New Recordset
 Dim rsUnique As New Recordset
+
+Private Sub cmdSerialize_Click()
+'-------------------------------------------------------------------------------
+' Routine: AddSequenceToField
+' Description: Create a sequence and attach it to this field
+' Created by: Kirk Roybal ' Date-Time: 3/6/2001 4:42:29 AM
+' Machine: KIRK
+' set the next sequence id to the highest value contained in the data + 1.
+'-------------------------------------------------------------------------------
+'On Error GoTo Err_Handler
+Dim sTableName As String
+Dim sFieldName As String
+Dim sSQL As String
+Dim rsNextVal As New Recordset
+Dim lNextVal As Long
+
+  ' exit for any crap reasons
+  If Left(trvBrowser.SelectedItem.Key, 1) <> "F" Then
+    MsgBox "That object is not a column!", vbExclamation, "Error"
+    Exit Sub
+  End If
+  If Left(trvBrowser.SelectedItem.Parent.Text, 3) = "pg_" Or Left(trvBrowser.SelectedItem.Parent.Text, 8) = "pgadmin_" Then
+    MsgBox "That is a system table!", vbExclamation, "Error"
+    Exit Sub
+  End If
+
+  'DJP - Check the field selected is a suitable type and doesn't already have a default.
+  'The last item clicked on the treeview must have been the column,
+  'so txtType *should* contain the type for the correct column.
+  If Left(txtType.Text, 3) <> "int" And _
+     Left(txtType.Text, 5) <> "float" And _
+     Left(txtType.Text, 7) <> "numeric" Then
+    MsgBox "Only intX, floatX and numeric columns can be serialized!", vbExclamation, "Error"
+    Exit Sub
+  End If
+  If txtDefault.Text <> "" Then
+    MsgBox "You cannot serialize a column which has a default value!", vbExclamation, "Error"
+    Exit Sub
+  End If
+  
+  'DJP - Confirm action.
+  If MsgBox("Are you sure you wish to serialize " & trvBrowser.SelectedItem.Text & "?", vbYesNo + vbQuestion, "Confirm Serialize Column") = vbNo Then Exit Sub
+  
+  sFieldName = trvBrowser.SelectedItem.Text
+  sTableName = trvBrowser.SelectedItem.Parent.Text
+
+  StartMsg "Creating Sequence..."
+
+  sSQL = "SELECT MAX(" & QUOTE & sFieldName & QUOTE & ") FROM " & QUOTE & sTableName & QUOTE
+  rsNextVal.Open sSQL, gConnection, adOpenForwardOnly, adLockReadOnly
+  If Not (rsNextVal.BOF And rsNextVal.EOF) Then
+    lNextVal = Val(rsNextVal(0) & "") + 1
+    If lNextVal = 0 Then
+      lNextVal = 1
+    End If
+  End If
+  If rsNextVal.State <> adStateClosed Then rsNextVal.Close
+  Set rsNextVal = Nothing
+  sSQL = "CREATE SEQUENCE " & QUOTE & sTableName & "_" & sFieldName & "_seq" & QUOTE
+  LogMsg "Executing: " & sSQL
+  gConnection.Execute sSQL, , adCmdText
+  LogQuery sSQL
+  sSQL = "SELECT setval('" & sTableName & "_" & sFieldName & "_seq', " & lNextVal & ");" & vbCrLf
+ 
+  ' MsgBox sSQL
+  LogMsg "Executing: " & sSQL
+  gConnection.Execute sSQL, , adCmdText
+  LogQuery sSQL
+  sSQL = "ALTER TABLE " & QUOTE & sTableName & QUOTE
+  sSQL = sSQL & " ALTER COLUMN " & QUOTE & sFieldName & QUOTE
+  sSQL = sSQL & " SET DEFAULT nextval('" & sTableName & "_" & sFieldName & "_seq');"
+  LogMsg "Executing: " & sSQL
+  gConnection.Execute sSQL, , adCmdText
+  LogQuery sSQL
+  cmdRefresh_Click
+  EndMsg
+  Exit Sub
+
+Err_Handler:
+  If rsNextVal.State <> adStateClosed Then rsNextVal.Close
+  Set rsNextVal = Nothing
+  EndMsg
+  If Err.Number <> 0 Then LogError Err, "frmTables, cmdSerialize_Click"
+End Sub
 
 Private Sub trvBrowser_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 On Error GoTo Err_Handler
