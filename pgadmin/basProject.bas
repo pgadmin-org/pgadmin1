@@ -102,7 +102,54 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_FindNextFunctionToCompile"
 End Function
 
-Public Sub cmp_Project_RebuildTriggers()
+Public Sub cmp_Project_Move_Functions(szFunction_source_table As String, szFunction_source_clause As String, szFunction_target_table As String)
+On Error GoTo Err_Handler
+    Dim rsFunc As New Recordset
+    Dim szQuery As String
+    Dim szFunction As Variant
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    Dim iUbound As Long
+    Dim iLoop As Long
+    
+    If ObjectExists(szFunction_source_table, tTable) = 0 Then Exit Sub
+    
+    If ObjectExists(szFunction_target_table, tTable) = 0 Then
+        szQuery = "CREATE TABLE " & szFunction_target_table & " AS SELECT * FROM " & szFunction_source_table & " LIMIT 1 ; TRUNCATE TABLE " & szFunction_target_table
+        If Not SuperuserChk Then Exit Sub
+        LogMsg "Executing: " & szQuery
+        gConnection.Execute szQuery
+        LogMsg "Executing: GRANT all ON " & szFunction_target_table & " TO public"
+        gConnection.Execute "GRANT all ON " & szFunction_target_table & " TO public"
+    End If
+    
+    szQuery = "SELECT function_name, function_arguments FROM " & szFunction_source_table
+    If szFunction_source_clause <> "" Then szQuery = szQuery & " WHERE " & szFunction_source_clause
+    
+    LogMsg "Now rebuilding functions..."
+    LogMsg "Executing: " & szQuery
+    
+    If rsFunc.State <> adStateClosed Then rsFunc.Close
+    rsFunc.Open szQuery, gConnection, adOpenForwardOnly
+    
+    If Not (rsFunc.EOF) Then
+        szFunction = rsFunc.GetRows
+        iUbound = UBound(szFunction, 2)
+        rsFunc.Close
+        For iLoop = 0 To iUbound
+            szFunction_name = szFunction(0, iLoop) & ""
+            szFunction_arguments = szFunction(1, iLoop) & ""
+            cmp_Function_Move szFunction_source_table, szFunction_target_table, szFunction_name, szFunction_arguments, False
+        Next
+    End If
+    
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Move_Functions"
+End Sub
+
+
+Public Sub cmp_Project_Move_Triggers(szTrigger_source_table As String, szTrigger_source_clause As String, szTrigger_target_table As String)
 On Error GoTo Err_Handler
     Dim szQuery As String
     Dim szTrigger() As Variant
@@ -112,7 +159,19 @@ On Error GoTo Err_Handler
     Dim szTrigger_Name As String
     Dim szTrigger_Table As String
  
-    szQuery = "SELECT trigger_name, trigger_table FROM pgadmin_dev_triggers"
+    If ObjectExists(szTrigger_source_table, tTable) = 0 Then Exit Sub
+    
+     If ObjectExists(szTrigger_target_table, tTable) = 0 Then
+        szQuery = "CREATE TABLE " & szTrigger_target_table & " AS SELECT * FROM " & szTrigger_source_table & " LIMIT 1 ; TRUNCATE TABLE " & szTrigger_target_table
+        If Not SuperuserChk Then Exit Sub
+        LogMsg "Executing: " & szQuery
+        gConnection.Execute szQuery
+        LogMsg "Executing: GRANT all ON " & szTrigger_target_table & " TO public"
+        gConnection.Execute "GRANT all ON " & szTrigger_target_table & " TO public"
+    End If
+    
+    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_source_table
+    If szTrigger_source_clause <> "" Then szQuery = szQuery & " WHERE " & szTrigger_source_clause
     
     LogMsg "Now relinking triggers..."
     LogMsg "Executing: " & szQuery
@@ -127,31 +186,43 @@ On Error GoTo Err_Handler
         For iLoop = 0 To iUbound
             szTrigger_Name = szTrigger(0, iLoop) & ""
             szTrigger_Table = szTrigger(1, iLoop) & ""
-            cmp_Trigger_Move gDevPostgresqlTables & "_triggers", "pgadmin_triggers", szTrigger_Name, szTrigger_Table, False
+            cmp_Trigger_Move szTrigger_source_table, szTrigger_target_table, szTrigger_Name, szTrigger_Table, False
         Next
     End If
  
 Exit Sub
 Err_Handler:
-If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildTriggers"
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Move_Triggers"
 End Sub
 
-Public Sub cmp_Project_RebuildViews()
+Public Sub cmp_Project_Move_Views(szView_source_table As String, szView_source_clause As String, szView_target_table As String)
 On Error GoTo Err_Handler
     Dim rsViews As New Recordset
-    Dim szQueryStr As String
+    Dim szQuery As String
     Dim szView As Variant
     Dim szView_name As String
     Dim iUbound As Long
     Dim iLoop As Long
     
-    szQueryStr = "SELECT view_name FROM pgadmin_dev_views"
+    If ObjectExists(szView_source_table, tTable) = 0 Then Exit Sub
+    
+    If ObjectExists(szView_target_table, tTable) = 0 Then
+        szQuery = "CREATE TABLE " & szView_target_table & " AS SELECT * FROM " & szView_source_table & " LIMIT 1 ; TRUNCATE TABLE " & szView_target_table
+        If Not SuperuserChk Then Exit Sub
+        LogMsg "Executing: " & szQuery
+        gConnection.Execute szQuery
+        LogMsg "Executing: GRANT all ON " & szView_target_table & " TO public"
+        gConnection.Execute "GRANT all ON " & szView_target_table & " TO public"
+    End If
+    
+    szQuery = "SELECT view_name FROM " & szView_source_table
+    If szView_source_clause <> "" Then szQuery = szQuery & " WHERE " & szView_source_clause
     
     LogMsg "Now relinking views..."
-    LogMsg "Executing: " & szQueryStr
+    LogMsg "Executing: " & szQuery
     
     If rsViews.State <> adStateClosed Then rsViews.Close
-    rsViews.Open szQueryStr, gConnection, adOpenForwardOnly
+    rsViews.Open szQuery, gConnection, adOpenForwardOnly
     
     If Not (rsViews.EOF) Then
         szView = rsViews.GetRows
@@ -159,13 +230,13 @@ On Error GoTo Err_Handler
         rsViews.Close
         For iLoop = 0 To iUbound
             szView_name = szView(0, iLoop) & ""
-            cmp_View_Move gDevPostgresqlTables & "_views", "pgadmin_views", szView_name, False
+            cmp_View_Move szView_source_table, szView_target_table, szView_name, False
         Next
     End If
     
 Exit Sub
 Err_Handler:
-If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildViews"
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Move_Views"
 End Sub
 
 Public Sub cmp_Project_Compile()
@@ -186,8 +257,8 @@ On Error GoTo Err_Handler
       
     ' We must always relink triggers and views
     ' even if function compilation was aborted
-    cmp_Project_RebuildTriggers
-    cmp_Project_RebuildViews
+    cmp_Project_Move_Triggers gDevPostgresqlTables & "_triggers", "", "pgadmin_triggers"
+    cmp_Project_Move_Views gDevPostgresqlTables & "_views", "", "pgadmin_views"
     
     If bContinueRebuilding = True Then
         MsgBox ("Rebuilding successfull")

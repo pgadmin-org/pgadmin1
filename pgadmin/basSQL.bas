@@ -17,6 +17,9 @@ Attribute VB_Name = "basSQL"
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+Dim SQL_PGADMIN_SELECT_CLAUSE_FUNCTIONS As String
+Dim SQL_PGADMIN_SELECT_CLAUSE_VIEWS As String
+Dim SQL_PGADMIN_SELECT_CLAUSE_TRIGGERS As String
 
 Public Sub Chk_HelperObjects()
 On Error GoTo Err_Handler
@@ -179,45 +182,46 @@ SQL_PGADMIN_VIEWS = _
   "WHERE " & _
   "  ((c.relhasrules AND (EXISTS (SELECT r.rulename FROM pg_rewrite r WHERE ((r.ev_class = c.oid) AND (r.ev_type::char = '1'::char))))) OR c.relkind = 'v')"
 
-SQL_PGADMIN_DEV_FUNCTIONS = "CREATE TABLE pgadmin_dev_functions AS SELECT * " & _
-  "  FROM pgadmin_functions " & _
-  "  WHERE function_name NOT LIKE '%_call_handler' " & _
+' SQL_PGADMIN_SELECT_CLAUSE_FUNCTIONS is used later in cmp_Project_Move_Functions
+SQL_PGADMIN_SELECT_CLAUSE_FUNCTIONS = "function_name NOT LIKE '%_call_handler' " & _
   "  AND function_name NOT LIKE 'pgadmin_%' " & _
   "  AND function_name NOT LIKE 'pg_%' " & _
   "  AND function_oid > " & LAST_SYSTEM_OID & _
-  "  ORDER BY function_oid ;" & _
-  "  ALTER TABLE pgadmin_dev_functions ADD function_iscompiled boolean DEFAULT 'f'  ;" & _
-  "  UPDATE pgadmin_dev_functions SET function_iscompiled = 'f';" & _
-  "  UPDATE pgadmin_dev_functions SET function_returns = 'opaque' WHERE function_returns = NULL;"
+  "  ORDER BY function_name ;"
 
-SQL_PGADMIN_DEV_TRIGGERS = "CREATE TABLE pgadmin_dev_triggers AS SELECT * " & _
-  "  FROM pgadmin_triggers " & _
-  "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
+SQL_PGADMIN_DEV_FUNCTIONS = "CREATE TABLE pgadmin_dev_functions AS SELECT * FROM pgadmin_functions WHERE " & SQL_PGADMIN_SELECT_CLAUSE_FUNCTIONS & _
+  "  ALTER TABLE pgadmin_dev_functions ADD function_iscompiled boolean DEFAULT 'f'  ;" & _
+  "  TRUNCATE TABLE pgadmin_dev_functions ;"
+
+' SQL_PGADMIN_SELECT_CLAUSE_TRIGGERS is used later in cmp_Project_Move_Triggers
+SQL_PGADMIN_SELECT_CLAUSE_TRIGGERS = "trigger_oid > " & LAST_SYSTEM_OID & _
   "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
   "  AND trigger_name NOT LIKE 'pg_%' " & _
   "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
-  "  ORDER BY trigger_name; " & _
+  "  ORDER BY trigger_name; "
+
+SQL_PGADMIN_DEV_TRIGGERS = "CREATE TABLE pgadmin_dev_triggers AS SELECT * FROM pgadmin_triggers WHERE " & SQL_PGADMIN_SELECT_CLAUSE_TRIGGERS & _
   "  ALTER TABLE pgadmin_dev_triggers ADD trigger_iscompiled boolean DEFAULT 'f'  ;" & _
-  "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
+  "  TRUNCATE TABLE pgadmin_dev_triggers ;"
 
-'  Backup if needed
-'  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_foreach text;" & _
-'  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_executes text;" & _
-'  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_event text;" & _
-
-SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * from " & _
-  "  pgadmin_views " & _
-  "  WHERE view_oid > " & LAST_SYSTEM_OID & _
+' SQL_PGADMIN_SELECT_CLAUSE_VIEWS is used later in cmp_Project_Move_Views
+SQL_PGADMIN_SELECT_CLAUSE_VIEWS = "view_oid > " & LAST_SYSTEM_OID & _
   "  AND view_name NOT LIKE 'pgadmin_%' " & _
   "  AND view_name NOT LIKE 'pg_%' " & _
-  "  ORDER BY view_name; " & _
+  "  ORDER BY view_name; "
+
+SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * FROM pgadmin_views WHERE " & SQL_PGADMIN_SELECT_CLAUSE_VIEWS & _
   "  ALTER TABLE pgadmin_dev_views ADD view_definition text;  " & _
   "  ALTER TABLE pgadmin_dev_views ADD view_iscompiled boolean DEFAULT 'f'  ;" & _
-  "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
+  "  TRUNCATE TABLE pgadmin_dev_views ;"
   
 SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
-  " dependency_from text," & _
-  " dependency_to text);"
+  " dependency_project_oid int4," & _
+  " dependency_parent_object varchar(30)," & _
+  " dependency_parent_name   varchar(254)," & _
+  " dependency_child_object  varchar(30)," & _
+  " dependency_child_name    varchar(254));"
+
 
   'If the SSO Version on the server doesn't exist or is lower than
   'that defined in SSO_VERSION then drop all SSO's. If pgadmin_param
@@ -603,6 +607,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute SQL_PGADMIN_DEV_FUNCTIONS
     LogMsg "Executing: GRANT all ON pgadmin_dev_functions TO public"
     gConnection.Execute "GRANT all ON pgadmin_dev_functions TO public"
+    cmp_Project_Move_Functions "pgadmin_temp_functions", "", "pgadmin_dev_functions"
     EndMsg
   End If
   
@@ -613,6 +618,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute SQL_PGADMIN_DEV_TRIGGERS
     LogMsg "Executing: GRANT all ON pgadmin_dev_triggers TO public"
     gConnection.Execute "GRANT all ON pgadmin_dev_triggers TO public"
+    cmp_Project_Move_Triggers "pgadmin_temp_triggers", "", "pgadmin_dev_triggers"
     EndMsg
   End If
   
@@ -623,6 +629,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute SQL_PGADMIN_DEV_VIEWS
     LogMsg "Executing: GRANT all ON pgadmin_dev_views TO public"
     gConnection.Execute "GRANT all ON pgadmin_dev_views TO public"
+    cmp_Project_Move_Views "pgadmin_temp_views", "", "pgadmin_dev_views"
     EndMsg
   End If
   
@@ -650,6 +657,22 @@ Public Sub Drop_Objects(Optional bDropAll As Boolean)
 On Error Resume Next
   StartMsg "Dropping pgAdmin Server Side Objects..."
 
+  'Drop temp tables
+  LogMsg "Executing: DROP TABLE pgadmin_temp_functions"
+  gConnection.Execute "DROP TABLE pgadmin_temp_functions"
+  
+  LogMsg "Executing: DROP TABLE pgadmin_temp_triggers"
+  gConnection.Execute "DROP TABLE pgadmin_temp_triggers"
+  
+  LogMsg "Executing: DROP TABLE pgadmin_temp_views"
+  gConnection.Execute "DROP TABLE pgadmin_temp_views"
+  
+  'Backup dev objects to temp tables
+  cmp_Project_Move_Functions "pgadmin_dev_functions", "", "pgadmin_temp_functions"
+  cmp_Project_Move_Triggers "pgadmin_dev_triggers", "", "pgadmin_temp_triggers"
+  cmp_Project_Move_Views "pgadmin_dev_views", "", "pgadmin_temp_views"
+
+ 
   'Drop tables
   If bDropAll = True Then
     LogMsg "Executing: DROP TABLE pgadmin_sys"
@@ -817,7 +840,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basSQL, CreateMSysConf"
 End Sub
 
-Private Function SuperuserChk() As Boolean
+Public Function SuperuserChk() As Boolean
 On Error GoTo Err_Handler
   If SuperUser = False Then
     SuperuserChk = False

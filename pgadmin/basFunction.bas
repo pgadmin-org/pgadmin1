@@ -300,8 +300,8 @@ On Error GoTo Err_Handler
   
     ' Write dependencies in pgadmin_dev_dependencies
     If Not rsComp.EOF Then
-        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_to, dependency_from) "
-        szDependencyStr = szDependencyStr & " SELECT '" & szFunction_name & "' AS dependency_to, function_name as dependency_from "
+        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_parent_name, dependency_child_name) "
+        szDependencyStr = szDependencyStr & " SELECT '" & szFunction_name & "' AS dependency_parent_name, function_name as dependency_child_name "
         szDependencyStr = szDependencyStr & " FROM " & szFunction_dev_table & " WHERE "
         szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
         
@@ -343,9 +343,9 @@ Public Function cmp_Function_HasSatisfiedDependencies(ByVal szFunction_dev_table
     szQueryStr = "SELECT " & szFunction_dev_table & ".function_name, " & szFunction_dev_table & ".function_arguments, " & szFunction_dev_table & ".function_iscompiled"
     szQueryStr = szQueryStr & " From " & szFunction_dev_table
     szQueryStr = szQueryStr & "    INNER JOIN " & szDependency_table
-    szQueryStr = szQueryStr & "    ON " & szFunction_dev_table & ".Function_name = " & szDependency_table & ".dependency_from"
+    szQueryStr = szQueryStr & "    ON " & szFunction_dev_table & ".Function_name = " & szDependency_table & ".dependency_child_name"
     szQueryStr = szQueryStr & "    INNER JOIN " & szFunction_dev_table & " AS " & szFunction_dev_table & "_1"
-    szQueryStr = szQueryStr & "    ON " & szDependency_table & ".dependency_to =  " & szFunction_dev_table & "_1.Function_name"
+    szQueryStr = szQueryStr & "    ON " & szDependency_table & ".dependency_parent_name =  " & szFunction_dev_table & "_1.Function_name"
     szQueryStr = szQueryStr & "    WHERE ((" & szFunction_dev_table & ".Function_name = '" & szFunction_name & "') AND (" & szFunction_dev_table & "_1.function_iscompiled = 'f'));"
     
     LogMsg "Executing: " & szQueryStr
@@ -362,6 +362,7 @@ Public Function cmp_Function_HasSatisfiedDependencies(ByVal szFunction_dev_table
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_HasSatisfiedDependencies"
 End Function
+
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Tree
