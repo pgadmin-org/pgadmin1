@@ -1,17 +1,18 @@
 VERSION 5.00
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Begin VB.Form frmModifyUser 
    AutoRedraw      =   -1  'True
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Modify User"
-   ClientHeight    =   3570
+   ClientHeight    =   3900
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   4200
    Icon            =   "frmModifyUser.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   3570
+   ScaleHeight     =   3900
    ScaleWidth      =   4200
    Begin MSComCtl2.MonthView calUser 
       Height          =   2370
@@ -25,15 +26,15 @@ Begin VB.Form frmModifyUser
       ForeColor       =   -2147483630
       BackColor       =   -2147483633
       Appearance      =   1
-      StartOfWeek     =   60948482
+      StartOfWeek     =   22740994
       CurrentDate     =   36587
    End
    Begin VB.CommandButton cmdApply 
       Caption         =   "&Apply"
       Height          =   330
-      Left            =   2880
-      TabIndex        =   3
-      Top             =   3195
+      Left            =   2835
+      TabIndex        =   5
+      Top             =   3510
       Width           =   1275
    End
    Begin VB.TextBox txtPassword 
@@ -58,12 +59,76 @@ Begin VB.Form frmModifyUser
       Top             =   105
       Width           =   2115
    End
+   Begin vsAdoSelector.VS_AdoSelector vssUser 
+      Height          =   315
+      Index           =   0
+      Left            =   1425
+      TabIndex        =   3
+      ToolTipText     =   "Can the new user create databases?"
+      Top             =   3195
+      Width           =   870
+      _ExtentX        =   1535
+      _ExtentY        =   556
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      SelectorType    =   1
+      DisplayList     =   "No;Yes;"
+      IndexList       =   "0;1;"
+   End
+   Begin vsAdoSelector.VS_AdoSelector vssUser 
+      Height          =   315
+      Index           =   1
+      Left            =   1425
+      TabIndex        =   4
+      ToolTipText     =   "Can the new user create other users?"
+      Top             =   3540
+      Width           =   870
+      _ExtentX        =   1535
+      _ExtentY        =   556
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      SelectorType    =   1
+      DisplayList     =   "No;Yes;"
+      IndexList       =   "0;1;"
+   End
+   Begin VB.Label Label1 
+      Caption         =   "Create dbs"
+      Height          =   225
+      Index           =   4
+      Left            =   90
+      TabIndex        =   10
+      Top             =   3240
+      Width           =   960
+   End
+   Begin VB.Label Label1 
+      Caption         =   "Superuser"
+      Height          =   225
+      Index           =   3
+      Left            =   90
+      TabIndex        =   9
+      Top             =   3600
+      Width           =   960
+   End
    Begin VB.Label Label1 
       Caption         =   "Expiry date:"
       Height          =   225
       Index           =   2
       Left            =   105
-      TabIndex        =   6
+      TabIndex        =   8
       Top             =   840
       Width           =   1275
    End
@@ -72,7 +137,7 @@ Begin VB.Form frmModifyUser
       Height          =   225
       Index           =   1
       Left            =   105
-      TabIndex        =   5
+      TabIndex        =   7
       Top             =   445
       Width           =   1590
    End
@@ -81,7 +146,7 @@ Begin VB.Form frmModifyUser
       Height          =   225
       Index           =   0
       Left            =   105
-      TabIndex        =   4
+      TabIndex        =   6
       Top             =   130
       Width           =   1590
    End
@@ -130,6 +195,16 @@ Dim UpdateStr As String
   If txtPassword(0).Text <> "" Then
     UpdateStr = UpdateStr & " WITH PASSWORD '" & txtPassword(0).Text & "'"
   End If
+  If vssUser(0).Caption = "No" Then
+    UpdateStr = UpdateStr & " NOCREATEDB"
+  Else
+    UpdateStr = UpdateStr & " CREATEDB"
+  End If
+  If vssUser(1).Caption = "No" Then
+    UpdateStr = UpdateStr & " NOCREATEUSER"
+  Else
+    UpdateStr = UpdateStr & " CREATEUSER"
+  End If
   UpdateStr = UpdateStr & " VALID UNTIL '" & Format(calUser.Value, "MM/dd/yyyy") & " 01:00:00" & "'"
   LogMsg "Executing: " & Replace(UpdateStr, "PASSWORD '" & txtPassword(0).Text, "PASSWORD '********")
   gConnection.Execute UpdateStr
@@ -147,9 +222,19 @@ Private Sub Gen_SQL()
 On Error GoTo Err_Handler
   fMainForm.txtSQLPane.Text = "ALTER USER " & szMuser
   If txtPassword(0).Text <> "" Then
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  WITH PASSWORD " & QUOTE & "********" & QUOTE
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  WITH PASSWORD '********'"
   End If
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  VALID UNTIL '" & calUser.Value & " 01:00:00" & "'"
+  If vssUser(0).Caption = "No" Then
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  NOCREATEDB"
+  Else
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  CREATEDB"
+  End If
+  If vssUser(1).Caption = "No" Then
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  NOCREATEUSER"
+  Else
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  CREATEUSER"
+  End If
+  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  VALID UNTIL '" & Format(calUser.Value, "MM/dd/yyyy") & " 01:00:00" & "'"
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmModifyUser, Gen_SQL"
 End Sub
@@ -158,7 +243,11 @@ Private Sub Form_Load()
 On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 4290
-  Me.Height = 3945
+  Me.Height = 4275
+  vssUser(0).LoadList
+  vssUser(1).LoadList
+  vssUser(0).Text = "0"
+  vssUser(1).Text = "0"
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmModifyUser, Form_Load"
 End Sub
@@ -168,10 +257,12 @@ On Error GoTo Err_Handler
 Dim rsUser As New Recordset
   StartMsg "Retrieving User Info..."
   If rsUser.State <> adStateClosed Then rsUser.Close
-  LogMsg "Executing: SELECT passwd, valuntil FROM pg_shadow WHERE usename = '" & szUser & "'"
-  rsUser.Open "SELECT passwd, valuntil FROM pg_shadow WHERE usename = '" & szUser & "'", gConnection, adOpenForwardOnly
-  If rsUser!passwd <> "" Then txtPassword(0).Text = rsUser!passwd
+  LogMsg "Executing: SELECT passwd, valuntil, usecreatedb, usesuper FROM pg_shadow WHERE usename = '" & szUser & "'"
+  rsUser.Open "SELECT passwd, valuntil, usecreatedb, usesuper FROM pg_shadow WHERE usename = '" & szUser & "'", gConnection, adOpenForwardOnly
+  txtPassword(0).Text = rsUser!passwd & ""
   txtPassword(1).Text = txtPassword(0).Text
+  If rsUser!usecreatedb = "t" Or rsUser!usecreatedb = True Then vssUser(0).Text = "1"
+  If rsUser!usesuper = "t" Or rsUser!usesuper = True Then vssUser(1).Text = "1"
   Me.Caption = "Modify User - " & szUser
   szMuser = szUser
   If rsUser!valuntil <> "" Then
@@ -207,4 +298,11 @@ On Error GoTo Err_Handler
   Gen_SQL
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmModifyUser, txtPassword_Change"
+End Sub
+
+Private Sub vssUser_ItemSelected(Index As Integer, Item As String, ItemText As String)
+On Error GoTo Err_Handler
+  Gen_SQL
+  Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmModifyUser, vssUser_ItemSelected"
 End Sub
