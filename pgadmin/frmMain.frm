@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
@@ -202,7 +202,7 @@ Begin VB.MDIForm frmMain
          NumPanels       =   5
          BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   1
-            Object.Width           =   8758
+            Object.Width           =   8678
             Text            =   "Status"
             TextSave        =   "Status"
             Key             =   "Status"
@@ -800,23 +800,23 @@ On Error GoTo Err_Handler
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, MDIForm_Activate"
 End Sub
 
-Private Sub MDIForm_DragDrop(Source As Control, X As Single, Y As Single)
+Private Sub MDIForm_DragDrop(Source As Control, x As Single, y As Single)
 On Error Resume Next
   If Source.Name = "picSideBar" Then
-    If X < Source.Width Then
+    If x < Source.Width Then
       Source.Align = vbAlignLeft
       Exit Sub
     End If
-    If X > (fMainForm.Width - Source.Width) Then
+    If x > (fMainForm.Width - Source.Width) Then
       Source.Align = vbAlignRight
       Exit Sub
     End If
   ElseIf Source.Name = "picSQLPane" Then
-    If Y < Source.Height Then
+    If y < Source.Height Then
       Source.Align = vbAlignTop
       Exit Sub
     End If
-    If Y > (fMainForm.Height - (2 * Source.Height)) Then
+    If y > (fMainForm.Height - (2 * Source.Height)) Then
       Source.Align = vbAlignBottom
       Exit Sub
     End If
@@ -827,7 +827,7 @@ Private Sub MDIForm_Load()
 On Error GoTo Err_Handler
 Dim Prn As String
 Dim rs As New Recordset
-Dim X As Printer
+Dim x As Printer
   LogInitMsg "Loading Form: " & Me.Name
   ActionCancelled = False
   
@@ -906,14 +906,15 @@ Dim X As Printer
       DevMode = False
       StatusBar1.Panels("Mode").Text = "Production Mode"
     End If
+    gDevPostgresqlTables = "pgadmin_dev"
   End If
   
   If rs.State <> adStateClosed Then rs.Close
   
   Prn = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Printer", "")
-  For Each X In Printers
-    If X.DeviceName = Prn Then
-      Set Printer = X
+  For Each x In Printers
+    If x.DeviceName = Prn Then
+      Set Printer = x
       Exit For
     End If
   Next
@@ -992,17 +993,17 @@ End Sub
 
 Private Sub mnuAdvancedDropAll_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   If Not SuperUser Then
     MsgBox "Only Superusers can drop pgAdmin Server Side Objects!", vbExclamation, "Error"
     Exit Sub
   End If
-  X = MsgBox("Do you want to drop the Revision Tracking Log, System Table and Description Table as well (these may contain data which will be lost).", vbQuestion + vbDefaultButton2 + vbYesNoCancel, "Delete System Objects?")
-  If X = vbCancel Then Exit Sub
-  If X = vbYes Then
+  x = MsgBox("Do you want to drop the Revision Tracking Log, System Table and Description Table as well (these may contain data which will be lost).", vbQuestion + vbDefaultButton2 + vbYesNoCancel, "Delete System Objects?")
+  If x = vbCancel Then Exit Sub
+  If x = vbYes Then
     If MsgBox("This action cannot be undone. Are you sure you want to continue?", vbQuestion + vbYesNo, "Confirm Delete") = vbNo Then Exit Sub
     Drop_Objects True
-  ElseIf X = vbNo Then
+  ElseIf x = vbNo Then
     Drop_Objects False
   End If
   Exit Sub
@@ -1361,15 +1362,15 @@ End Sub
 
 Private Sub mnuSelectdb_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim Response As Integer
 
   Response = MsgBox("Selecting a new database will close all currently open windows." & vbCrLf & "Do you wish to continue?", vbExclamation + vbYesNo, "Select db")
   If Response = vbNo Then Exit Sub
                     
-  For X = Forms.Count - 1 To 0 Step -1
-    If Forms(X).Name <> "frmMain" Then
-      Unload Forms(X)
+  For x = Forms.Count - 1 To 0 Step -1
+    If Forms(x).Name <> "frmMain" Then
+      Unload Forms(x)
     End If
   Next
   
@@ -1403,11 +1404,11 @@ End Sub
 
 Private Sub Force_Selectdb()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
              
-  For X = Forms.Count - 1 To 0 Step -1
-    If Forms(X).Name <> "frmMain" Then
-      Unload Forms(X)
+  For x = Forms.Count - 1 To 0 Step -1
+    If Forms(x).Name <> "frmMain" Then
+      Unload Forms(x)
     End If
   Next
   
@@ -1476,13 +1477,13 @@ End Sub
 Private Sub mnuUtilitiesDatasources_Click()
 On Error GoTo Err_Handler
 Dim Scr_hDC As Long
-Dim X As Long
+Dim x As Long
   Scr_hDC = GetDesktopWindow()
   LogMsg "Executing: Opening the ODBC Datasource Manager..."
-  X = ShellExecute(Scr_hDC, "Open", "rundll32.exe", "shell32.dll,Control_RunDLL odbccp32.cpl", "C:\", SW_SHOWNORMAL)
-  If X <= 32 Then
+  x = ShellExecute(Scr_hDC, "Open", "rundll32.exe", "shell32.dll,Control_RunDLL odbccp32.cpl", "C:\", SW_SHOWNORMAL)
+  If x <= 32 Then
     MsgBox "An error occured opening the 32Bit ODBC Datasource Manager.", vbCritical, "Error!"
-    LogMsg "Could not open the ODBC Datasource Manager (Error: " & X & ")."
+    LogMsg "Could not open the ODBC Datasource Manager (Error: " & x & ")."
     End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, mnuUtilitiesDatasources_Click"
@@ -1518,22 +1519,22 @@ End Sub
 Private Sub mnuToolsSQL_Click()
 On Error GoTo Err_Handler
 Dim SQL As New frmSQL
-Dim X As Integer
-Dim Y As Integer
-  Y = 1
-  For X = 0 To Forms.Count - 1
-    If Mid(Forms(X).Caption, 1, 6) = "SQL - " Then
-      If InStr(1, Forms(X).Caption, "(") <> 0 Then
-        If Mid(Forms(X).Caption, 7, InStr(7, Forms(X).Caption, " ") - 7) = Y Then Y = Mid(Forms(X).Caption, 7, InStr(7, Forms(X).Caption, " ") - 7) + 1
+Dim x As Integer
+Dim y As Integer
+  y = 1
+  For x = 0 To Forms.Count - 1
+    If Mid(Forms(x).Caption, 1, 6) = "SQL - " Then
+      If InStr(1, Forms(x).Caption, "(") <> 0 Then
+        If Mid(Forms(x).Caption, 7, InStr(7, Forms(x).Caption, " ") - 7) = y Then y = Mid(Forms(x).Caption, 7, InStr(7, Forms(x).Caption, " ") - 7) + 1
       Else
-        If Mid(Forms(X).Caption, 7) = Y Then Y = Mid(Forms(X).Caption, 7) + 1
+        If Mid(Forms(x).Caption, 7) = y Then y = Mid(Forms(x).Caption, 7) + 1
       End If
     End If
   Next
   Load SQL
   SQL.Show
-  SQL.Caption = "SQL - " & Y
-  SQL.szTitle = "SQL - " & Y
+  SQL.Caption = "SQL - " & y
+  SQL.szTitle = "SQL - " & y
   SQL.ZOrder 0
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, mnuToolsSQL_Click"
