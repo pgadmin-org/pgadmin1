@@ -260,6 +260,7 @@ Begin VB.Form frmFunctions
    End
    Begin VB.ListBox lstFunc 
       Height          =   5520
+      ItemData        =   "frmFunctions.frx":0000
       Left            =   1485
       List            =   "frmFunctions.frx":0002
       MultiSelect     =   2  'Extended
@@ -345,7 +346,7 @@ On Error GoTo Err_Handler
             ' Header
             szExport = szExport & "/*" & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & szFunction_name & "(" & szFunction_arguments & ")" & " -> " & szFunction_returns & vbCrLf
+            szExport = szExport & "Function " & szFunction_name & "(" & szFunction_arguments & ")" & " -> " & szFunction_returns & vbCrLf
             If szFunction_comments <> "" Then szExport = szExport & szFunction_comments & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
             szExport = szExport & "*/" & vbCrLf
@@ -357,9 +358,8 @@ On Error GoTo Err_Handler
     
     If bExport Then
         szHeader = "/*" & vbCrLf
-        szHeader = szHeader & Format(Now, "d mmmm yyyy") & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of a GNU generation, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
         szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf

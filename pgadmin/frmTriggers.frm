@@ -331,7 +331,7 @@ Private Sub cmdExportTrig_Click()
             ' Header
             szExport = szExport & "/*" & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & szTrigger_name & " ON " & szTrigger_table & vbCrLf
+            szExport = szExport & "Trigger " & szTrigger_name & " ON " & szTrigger_table & vbCrLf
             If szTrigger_Comments <> "" Then szExport = szExport & szTrigger_Comments & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
             szExport = szExport & "*/" & vbCrLf
@@ -344,7 +344,7 @@ Private Sub cmdExportTrig_Click()
     If bExport Then
         szHeader = "/*" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of a GNU generation, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
         szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf

@@ -302,7 +302,7 @@ On Error GoTo Err_Handler
             ' Header
             szExport = szExport & "/*" & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & szView_name & vbCrLf
+            szExport = szExport & "View " & szView_name & vbCrLf
             If szView_comments <> "" Then szExport = szExport & szView_comments & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
             szExport = szExport & "*/" & vbCrLf
@@ -314,9 +314,8 @@ On Error GoTo Err_Handler
     
     If bExport Then
         szHeader = "/*" & vbCrLf
-        szHeader = szHeader & Format(Now, "d mmmm yyyy") & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of a GNU generation, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
         szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
