@@ -27,7 +27,7 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   22
       ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
-      Top             =   2565
+      Top             =   3555
       Width           =   1410
    End
    Begin VB.CommandButton cmdModifyFunc 
@@ -269,8 +269,8 @@ Begin VB.Form frmFunctions
       Width           =   2985
    End
    Begin MSComDlg.CommonDialog CommonDialog1 
-      Left            =   90
-      Top             =   3735
+      Left            =   45
+      Top             =   2295
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
@@ -311,6 +311,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsFunc As New Recordset
+Dim szFunction_PostgreSqlTable As String
 
 Private Sub cmdExportFunc_Click()
     Dim iLoop As Long
@@ -319,7 +320,7 @@ Private Sub cmdExportFunc_Click()
     Dim bExport As Boolean
     Dim szHeader As String
     
-    Dim szFunction_OID As Long
+    Dim szFunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -336,9 +337,9 @@ Private Sub cmdExportFunc_Click()
     For iLoop = 0 To iListCount - 1
         If lstFunc.Selected(iLoop) = True Then
             bExport = True
-            szFunction_OID = 0
-            ParseFunction lstFunc.List(iLoop), szFunction_name, szFunction_arguments
-            cmp_Function_GetValues szFunction_OID, "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+            szFunction_oid = 0
+            comp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+            cmp_Function_GetValues szFunction_PostgreSqlTable, szFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
             
             ' Header
             szExport = szExport & "/*" & vbCrLf
@@ -357,7 +358,7 @@ Private Sub cmdExportFunc_Click()
         szHeader = "/*" & vbCrLf
         szHeader = szHeader & Format(Now, "d mmmm yyyy") & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
-        szHeader = szHeader & "The choice of the best developers, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "The choice of a GNU generation, " & Format(Now, "d mmmm yyyy") & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
         szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
@@ -368,12 +369,12 @@ Private Sub cmdExportFunc_Click()
 End Sub
 
 Public Sub cmdModifyFunc_Click()
-' On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 
 If txtOID <> "" Then
-    ' This means we can open the function
-    gPostgresOBJ_OID = Val(txtOID)
-    
+    ' Get name and arguments
+    comp_Function_ParseName lstFunc.Text, gFunction_Name, gFunction_Arguments
+ 
     ' Load form
     Load frmAddFunction
     frmAddFunction.Show
@@ -384,11 +385,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_
 End Sub
 
 Private Sub cmdRebuild_Click()
-    If MsgBox("For the moment, the rebuilding feature does not keep comments and views ACL." & vbCrLf & "Please confirm you wish to continue.", vbYesNo + vbQuestion, _
-            "Rebuild project") = vbYes Then
-        comp_Project_Initialize
-        comp_Project_Compile
-    End If
+    comp_Project_Rebuild
 End Sub
 
 Private Sub lstFunc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -403,14 +400,14 @@ On Error Resume Next
 End Sub
 
 Private Sub chkFunctions_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, chkFunctions_Click"
 End Sub
 
 Public Sub cmdComment_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
   If txtOID.Text = "" Then
     MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
     Exit Sub
@@ -424,9 +421,10 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdComment_Cli
 End Sub
 
 Public Sub cmdCreateFunc_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
   ' This means we will create the function
-  gPostgresOBJ_OID = 0
+  gFunction_Name = ""
+  gFunction_Arguments = ""
   
   ' Load form
   Load frmAddFunction
@@ -436,7 +434,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCreateFunc_
 End Sub
 
 Public Sub cmdDropFunc_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
     Dim szDropStr As String
     Dim iLoop As Long
     Dim iListCount As Long
@@ -451,14 +449,9 @@ Public Sub cmdDropFunc_Click()
         iListCount = lstFunc.ListCount
         For iLoop = 0 To iListCount - 1
             If lstFunc.Selected(iLoop) = True Then
-                ParseFunction lstFunc.List(iLoop), szFunction_name, szFunction_arguments
-                cmp_Function_GetValues 0, "", szFunction_name, szFunction_arguments
-                
-                szDropStr = "DROP FUNCTION " & QUOTE & szFunction_name & QUOTE & " (" & szFunction_arguments & ")"
-                fMainForm.txtSQLPane.Text = szDropStr
-                LogMsg "Executing: " & szDropStr
-                gConnection.Execute szDropStr
-                LogQuery szDropStr
+                comp_Function_ParseName lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+                cmp_Function_GetValues szFunction_PostgreSqlTable, 0, szFunction_name, szFunction_arguments
+                cmp_Function_DropIfExists szFunction_PostgreSqlTable, 0, szFunction_name, szFunction_arguments
              End If
         Next iLoop
         
@@ -475,6 +468,7 @@ End Sub
 
 Public Sub cmdRefresh_Click()
  On Error GoTo Err_Handler
+  Dim szQuery As String
   Dim szFunc() As Variant
   Dim iLoop As Long
   Dim iUbound As Long
@@ -486,11 +480,15 @@ Public Sub cmdRefresh_Click()
   
   If rsFunc.State <> adStateClosed Then rsFunc.Close
   If chkFunctions.Value = 1 Then
-    LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions ORDER BY function_name"
-    rsFunc.Open "SELECT function_name, function_arguments FROM pgadmin_functions ORDER BY function_name", gConnection, adOpenDynamic
+    szFunction_PostgreSqlTable = "pgadmin_functions"
+    szQuery = "SELECT function_name, function_arguments FROM " & szFunction_PostgreSqlTable & " WHERE function_oid < " & LAST_SYSTEM_OID & " OR function_name LIKE 'pgadmin_%' OR function_name  LIKE 'pg_%' ORDER BY function_name"
+    LogMsg "Executing: " & szQuery
+    rsFunc.Open szQuery, gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name"
-    rsFunc.Open "SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
+    szFunction_PostgreSqlTable = "pgadmin_dev_functions"
+    szQuery = "SELECT function_name, function_arguments FROM " & szFunction_PostgreSqlTable & " WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' ORDER BY function_name"
+    LogMsg "Executing: " & szQuery
+    rsFunc.Open szQuery, gConnection, adOpenDynamic
   End If
   
   If Not (rsFunc.EOF) Then
@@ -516,7 +514,7 @@ Err_Handler:
 End Sub
 
 Private Sub Form_Load()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 8325
   Me.Height = 4455
@@ -526,7 +524,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 9000 Then Me.Width = 9000
@@ -548,7 +546,7 @@ End Sub
 
 Public Sub lstFunc_Click()
 On Error GoTo Err_Handler
-    Dim szFunction_OID As Long
+    Dim szFunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -563,7 +561,7 @@ On Error GoTo Err_Handler
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
     If lstFunc.SelCount > 0 Then
-        ParseFunction lstFunc.Text, szFunction_name, szFunction_arguments
+        comp_Function_ParseName lstFunc.Text, szFunction_name, szFunction_arguments
     Else
         szFunction_name = ""
         szFunction_arguments = ""
@@ -572,11 +570,19 @@ On Error GoTo Err_Handler
     ' Lookup database
     '----------------------------------------------------------------------------------
     StartMsg "Retrieving Function Info..."
-    szFunction_OID = 0
-    cmp_Function_GetValues szFunction_OID, "pgadmin_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
-    txtOID.Text = Trim(Str(szFunction_OID))
-    If txtOID.Text = 0 Then txtOID.Text = ""
+    szFunction_oid = 0
+    cmp_Function_GetValues szFunction_PostgreSqlTable, szFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    
+    txtOID.Text = Trim(Str(szFunction_oid))
     txtOwner.Text = szFunction_owner
+    
+    If szFunction_name <> "" Then
+        If txtOID.Text = 0 Then txtOID.Text = "N.S."
+        If txtOwner.Text = "" Then txtOwner.Text = "N.S."
+    Else
+        If txtOID.Text = 0 Then txtOID.Text = ""
+    End If
+    
     txtReturns.Text = szFunction_returns
     txtArguments.Text = szFunction_arguments
     txtFunction.Text = szFunction_source
@@ -586,25 +592,16 @@ On Error GoTo Err_Handler
     
     CmdFuncButton
     EndMsg
+    
   Exit Sub
 Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_Click"
 End Sub
 
-Private Sub ParseFunction(szInput As String, szFunction_name As String, szFunction_arguments As String)
-    Dim iInstr As Integer
-    iInstr = InStr(szInput, "(")
-    If iInstr > 0 Then
-        szFunction_name = Left(szInput, iInstr - 2)
-        szFunction_arguments = Mid(szInput, iInstr + 1, Len(szInput) - iInstr - 1)
-    Else
-        szFunction_name = szInput
-        szFunction_arguments = ""
-    End If
-End Sub
-
 Public Sub CmdFuncButton()
-    cmdButtonActivate lstFunc.SelCount, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
+    Dim bSystem As Boolean
+    bSystem = (chkFunctions.Value = 1)
+    cmdButtonActivate bSystem, lstFunc.SelCount, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
 End Sub
 

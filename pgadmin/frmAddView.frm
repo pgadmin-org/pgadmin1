@@ -163,11 +163,12 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim lng_OpenView_OID As Long
+Dim lngView_oid_old As Long
+Dim szView_name_old As String
 
 Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
-  bContinueCompilation = True
+  bContinueRebuilding = True
   
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the View!", vbExclamation, "Error"
@@ -179,23 +180,16 @@ On Error GoTo Err_Handler
   End If
   StartMsg "Creating View..."
     
-    ' Create fake view for testing purposes
-    cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15)
-    cmp_View_Create "pgadmin_fake__" & Left(txtName.Text, 15), txtSQL.Text
-    cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15)
+
+    If szView_name_old <> "" Then cmp_View_DropIfExists "pgadmin_dev_views", 0, szView_name_old
     
-    ' Create real view
-    If bContinueCompilation = True Then
-        ' Drop view if exists
-        If lng_OpenView_OID <> 0 Then cmp_View_DropIfExists lng_OpenView_OID
-        
-        ' Create view
-        cmp_View_Create txtName.Text, txtSQL.Text
-        
-        ' Refresh view list
-        frmViews.cmdRefresh_Click
-        Unload Me
-    End If
+    ' Create view
+    cmp_View_Create "pgadmin_dev_views", txtName.Text, txtSQL.Text
+    
+    ' Refresh view list
+    frmViews.cmdRefresh_Click
+    Unload Me
+
     EndMsg
   Exit Sub
 Err_Handler:
@@ -254,10 +248,15 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-    Dim szView_Name As String
-    Dim szView_Definition As String
-    Dim szView_Owner As String
-    Dim szView_Acl As String
+    Dim lngView_oid As Long
+    Dim szView_name As String
+    Dim szView_definition As String
+    Dim szView_owner As String
+    Dim szView_acl As String
+    
+    szView_name_old = gView_Name
+    szView_name = gView_Name
+    gView_Name = ""
     
     LogMsg "Loading Form: " & Me.Name
     Me.Height = 3675
@@ -265,19 +264,26 @@ On Error GoTo Err_Handler
     txtSQL.Wordlist = TextColours
     
     ' Retrieve view if exists
-    lng_OpenView_OID = gPostgresOBJ_OID
-    gPostgresOBJ_OID = 0
-    If lng_OpenView_OID <> 0 Then
+
+    If szView_name_old <> "" Then
       Me.Caption = "Modify view"
       
       ' Load View data
-      cmp_View_GetValues lng_OpenView_OID, "", szView_Name, szView_Definition, szView_Owner, szView_Acl
+      lngView_oid = 0
+      cmp_View_GetValues "pgadmin_dev_views", lngView_oid, szView_name, szView_definition, szView_owner, szView_acl
       
-      txtName = szView_Name
-      txtSQL.Text = szView_Definition
-      txtOID.Text = lng_OpenView_OID
-      txtOwner.Text = szView_Owner
-      txtACL.Text = szView_Acl
+      txtName = szView_name
+      txtSQL.Text = szView_definition
+      
+      If (lngView_oid = 0) Then
+            txtOID.Text = "N.S."
+            txtACL.Text = "N.S."
+            txtOwner.Text = "N.S."
+      Else
+            txtOID.Text = lngView_oid
+            txtACL.Text = szView_acl
+            txtOwner.Text = szView_owner
+      End If
     Else
       Me.Caption = "Create view"
       txtOID.Text = "N.S."

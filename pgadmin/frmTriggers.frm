@@ -10,6 +10,16 @@ Begin VB.Form frmTriggers
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdRebuild 
+      BackColor       =   &H80000018&
+      Caption         =   "&Rebuild project"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   26
+      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
+      Top             =   3555
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdExportTrig 
       Caption         =   "Export Trigger"
       Height          =   330
@@ -33,7 +43,7 @@ Begin VB.Form frmTriggers
       Height          =   525
       Left            =   45
       TabIndex        =   21
-      Top             =   2475
+      Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Triggers"
@@ -255,7 +265,7 @@ Begin VB.Form frmTriggers
    End
    Begin MSComDlg.CommonDialog CommonDialog1 
       Left            =   45
-      Top             =   3150
+      Top             =   2250
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
@@ -287,6 +297,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsTrig As New Recordset
+Dim szTrigger_PostgreSQLtable As String
 Private Sub cmdExportTrig_Click()
     Dim iLoop As Long
     Dim iListCount As Long
@@ -301,7 +312,7 @@ Private Sub cmdExportTrig_Click()
     Dim szTrigger_arguments As String
     Dim szTrigger_foreach As String
     Dim szTrigger_event As String
-    Dim szTrigger_Executes As String
+    Dim szTrigger_executes As String
     Dim szTrigger_Comments As String
     
     bExport = False
@@ -312,8 +323,8 @@ Private Sub cmdExportTrig_Click()
     For iLoop = 0 To iListCount - 1
         If lstTrig.Selected(iLoop) = True Then
             bExport = True
-            ParseTrigger lstTrig.List(iLoop), szTrigger_name, szTrigger_table
-            cmp_Trigger_GetValues 0, "", szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, szTrigger_Comments
+            cmp_Trigger_ParseName lstTrig.List(iLoop), szTrigger_name, szTrigger_table
+            cmp_Trigger_GetValues szTrigger_PostgreSQLtable, 0, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
             
             ' Header
             szExport = szExport & "/*" & vbCrLf
@@ -324,7 +335,7 @@ Private Sub cmdExportTrig_Click()
             szExport = szExport & "*/" & vbCrLf
             
             ' Function
-            szExport = szExport & Replace(cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event), vbCrLf, " ") & vbCrLf & vbCrLf
+            szExport = szExport & Replace(cmp_Trigger_CreateSQL(szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event), vbCrLf, " ") & vbCrLf & vbCrLf
         End If
     Next iLoop
     
@@ -342,11 +353,11 @@ Private Sub cmdExportTrig_Click()
 End Sub
 
 Public Sub cmdModifyTrig_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
 
 If txtOID <> "" Then
     ' This means we can open the function
-    gPostgresOBJ_OID = Val(txtOID)
+    cmp_Trigger_ParseName lstTrig.Text, gTrigger_Name, gTrigger_Table
     
     ' Load form
     Load frmAddTrigger
@@ -355,6 +366,10 @@ End If
 
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_Click"
+End Sub
+
+Private Sub cmdRebuild_Click()
+    comp_Project_Rebuild
 End Sub
 
 Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -391,8 +406,11 @@ End Sub
 
 Public Sub cmdCreateTrig_Click()
 On Error GoTo Err_Handler
-  Load frmAddTrigger
-  frmAddTrigger.Show
+    gTrigger_Name = ""
+    gTrigger_Table = ""
+    Load frmAddTrigger
+    frmAddTrigger.Show
+    
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdCreateTrig_Click"
 End Sub
@@ -413,21 +431,13 @@ Dim iListCount As Long
          iListCount = lstTrig.ListCount
          For iLoop = 0 To iListCount - 1
             If lstTrig.Selected(iLoop) = True Then
-                ParseTrigger lstTrig.List(iLoop), szTrigger_name, szTrigger_table
-                cmp_Trigger_GetValues 0, "", szTrigger_name, szTrigger_table
-                
-                szDropStr = "DROP TRIGGER " & QUOTE & szTrigger_name & QUOTE & " ON " & QUOTE & szTrigger_table & QUOTE
-   
-                fMainForm.txtSQLPane.Text = szDropStr
-                StartMsg "Dropping Function..."
-                LogMsg "Executing: " & szDropStr
-                gConnection.Execute szDropStr
-                LogQuery szDropStr
+                cmp_Trigger_ParseName lstTrig.List(iLoop), szTrigger_name, szTrigger_table
+                cmp_Trigger_GetValues szTrigger_PostgreSQLtable, 0, szTrigger_name, szTrigger_table
+                cmp_Trigger_DropIfExists szTrigger_PostgreSQLtable, 0, szTrigger_name, szTrigger_table
              End If
           Next iLoop
-          
+
           EndMsg
-          
           cmdRefresh_Click
   End If
 
@@ -444,6 +454,7 @@ On Error GoTo Err_Handler
   Dim szTrigger() As Variant
   Dim szTrigger_name As String
   Dim szTrigger_table As String
+  Dim szQuery As String
   
   LogMsg "Loading Form: " & Me.Name
   StartMsg "Retrieving Trigger Names..."
@@ -452,11 +463,15 @@ On Error GoTo Err_Handler
   
   If rsTrig.State <> adStateClosed Then rsTrig.Close
   If chkSystem.Value = 1 Then
-    LogMsg "Executing: SELECT trigger_name, trigger_table FROM pgadmin_triggers ORDER BY trigger_name"
-    rsTrig.Open "SELECT trigger_name, trigger_table FROM pgadmin_triggers ORDER BY trigger_name", gConnection, adOpenDynamic
+    szTrigger_PostgreSQLtable = "pgadmin_triggers"
+    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSQLtable & " WHERE trigger_oid < " & LAST_SYSTEM_OID & " OR trigger_name LIKE 'pgadmin_%' OR trigger_name  LIKE 'pg_%' OR trigger_name LIKE 'RI_%' ORDER BY trigger_name"
+    LogMsg "Executing: " & szQuery
+    rsTrig.Open szQuery, gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT trigger_name, trigger_table FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name"
-    rsTrig.Open "SELECT trigger_name, trigger_table FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name", gConnection, adOpenDynamic
+    szTrigger_PostgreSQLtable = "pgadmin_dev_triggers"
+    szQuery = "SELECT trigger_name, trigger_table FROM " & szTrigger_PostgreSQLtable & " WHERE trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_%' ORDER BY trigger_name"
+    LogMsg "Executing: " & szQuery
+    rsTrig.Open szQuery, gConnection, adOpenDynamic
   End If
   
   If Not (rsTrig.EOF) Then
@@ -521,7 +536,7 @@ Dim szTrigger_function As String
 Dim szTrigger_arguments As String
 Dim szTrigger_foreach As String
 Dim szTrigger_event As String
-Dim szTrigger_Executes As String
+Dim szTrigger_executes As String
 Dim szTrigger_Comments As String
 Dim iInstr As Integer
 
@@ -529,7 +544,7 @@ Dim iInstr As Integer
     ' Parse trigger name and arguments from List
     '----------------------------------------------------------------------------------
     If lstTrig.SelCount > 0 Then
-        ParseTrigger lstTrig.Text, szTrigger_name, szTrigger_table
+        cmp_Trigger_ParseName lstTrig.Text, szTrigger_name, szTrigger_table
     Else
         szTrigger_name = ""
         szTrigger_table = ""
@@ -540,14 +555,18 @@ Dim iInstr As Integer
 
     StartMsg "Retrieving trigger info..."
     szTrigger_oid = 0
-    cmp_Trigger_GetValues szTrigger_oid, "pgadmin_triggers", szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, szTrigger_Comments
+    cmp_Trigger_GetValues szTrigger_PostgreSQLtable, szTrigger_oid, szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_executes, szTrigger_event, szTrigger_Comments
     txtOID.Text = Trim(Str(szTrigger_oid))
-    If txtOID.Text = "0" Then txtOID.Text = ""
+    If szTrigger_name <> "" Then
+        If txtOID.Text = "0" Then txtOID.Text = "N.S."
+    Else
+        txtOID.Text = ""
+    End If
     txtName.Text = szTrigger_name
     txtTable.Text = szTrigger_table
     txtFunction.Text = szTrigger_function
     txtForEach.Text = szTrigger_foreach
-    txtExecutes.Text = szTrigger_Executes
+    txtExecutes.Text = szTrigger_executes
     txtEvent.Text = szTrigger_event
     txtComments.Text = szTrigger_Comments
     
@@ -561,18 +580,8 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "frmTriggers, lstTrig_Click"
 End Sub
 
-Private Sub ParseTrigger(szInput As String, szTrigger_name As String, szTrigger_table As String)
-    Dim iInstr As Integer
-    iInstr = InStr(szInput, "ON")
-    If iInstr > 0 Then
-        szTrigger_name = Left(szInput, iInstr - 2)
-        szTrigger_table = Mid(szInput, iInstr + 3, Len(szInput) - iInstr - 2)
-    Else
-        szTrigger_name = szInput
-        szTrigger_table = ""
-    End If
-End Sub
-
 Public Sub CmdTrigButton()
-    cmdButtonActivate lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
+    Dim bSystem As Boolean
+    bSystem = (chkSystem.Value = 1)
+    cmdButtonActivate bSystem, lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
 End Sub

@@ -214,7 +214,6 @@ Begin VB.Form frmAddFunction
       Height          =   5520
       Left            =   1477
       TabIndex        =   17
-      ToolTipText     =   "Enter the function code or Library Path."
       Top             =   45
       Width           =   2968
       _ExtentX        =   5239
@@ -256,7 +255,8 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim lng_OpenFunction_OID As Long
+Dim szFunction_name_old As String
+Dim szFunction_arguments_old As String
 
 Private Sub cboReturnType_Click()
 On Error GoTo Err_Handler
@@ -275,17 +275,28 @@ End Sub
 
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
-Dim szCreateStr As String
-Dim X As Integer
-  fMainForm.txtSQLPane.Text = "CREATE FUNCTION " & QUOTE & txtName.Text & QUOTE & vbCrLf & "  ("
-  For X = 0 To lstArguments.ListCount - 2
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & lstArguments.List(X) & ", "
-  Next X
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & lstArguments.List(X) & ") "
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  RETURNS " & cboReturnType.Text & " "
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  AS '" & txtPath.Text & "' "
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  LANGUAGE '" & vssLanguage.Text & "'"
-  Exit Sub
+    Dim szCreateStr As String
+    Dim intLoop As Integer
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    Dim szFunction_returns As String
+    Dim szFunction_source As String
+    Dim szFunction_language As String
+    
+    szFunction_name = txtName.Text
+    szFunction_arguments = ""
+    For intLoop = 0 To lstArguments.ListCount - 2
+        If szFunction_arguments <> "" Then szFunction_arguments = szFunction_arguments & ", "
+        szFunction_arguments = szFunction_arguments & lstArguments.List(intLoop)
+    Next intLoop
+    
+    szFunction_returns = cboReturnType.Text
+    szFunction_source = txtPath.Text
+    szFunction_language = vssLanguage.Text
+    
+    fMainForm.txtSQLPane.Text = cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language)
+
+    Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddFunction, Gen_SQL"
 End Sub
 
@@ -294,8 +305,6 @@ On Error GoTo Err_Handler
 Dim szCreateStr As String
 Dim ArgList As String
 Dim X As Integer
-
-bContinueCompilation = True
 
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the function!", vbExclamation, "Error"
@@ -331,40 +340,25 @@ bContinueCompilation = True
   If ArgList <> "" Then ArgList = Left(ArgList, Len(ArgList) - 2)
   
  ' In case of a creation, test existence of function with same arguments
-  If lng_OpenFunction_OID = 0 Then
-    If cmp_Function_Exists(0, txtName.Text, ArgList) = True Then
-    MsgBox "Function " & txtName.Text & " (" & ArgList & ") already exists ", vbExclamation, "Error"
+  If szFunction_name_old = "" Then
+    If cmp_Function_Exists("pgadmin_dev_functions", 0, txtName.Text, ArgList) = True Then
+        MsgBox "Function " & txtName.Text & " (" & ArgList & ") already exists ", vbExclamation, "Error"
     Exit Sub
     End If
   End If
-  
-  ' Create fake function for testing purposes
-  cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15), ArgList
-  cmp_Function_Create "pgadmin_fake__" & Left(txtName.Text, 15), ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
-  cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15), ArgList
-  
-  If bContinueCompilation = True Then
-    'Backup triggers and views
-    comp_Project_BackupTriggers
-    comp_Project_BackupViews
     
     ' Drop function if exists
-    If lng_OpenFunction_OID <> 0 Then cmp_Function_DropIfExists lng_OpenFunction_OID
+    If szFunction_name_old <> "" Then cmp_Function_DropIfExists "pgadmin_dev_functions", 0, szFunction_name_old, szFunction_arguments_old
     
     ' Create function
-    cmp_Function_Create txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
+    cmp_Function_Create "pgadmin_dev_functions", txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
     
-    'Rebuild triggers and views
-    comp_Project_RebuildTriggers
-    comp_Project_RebuildViews
     
     ' Refresh function list
     frmFunctions.cmdRefresh_Click
-    frmTriggers.cmdRefresh_Click
-    frmViews.cmdRefresh_Click
-    
-    Unload Me
-  End If
+   
+Unload Me
+
   
   EndMsg
   Exit Sub
@@ -440,87 +434,96 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-Dim rsTypes As New Recordset
-
-Dim temp_arg_list As Variant
-Dim temp_arg_item As Variant
-
-Dim szFunction_name As String
-Dim szFunction_arguments As String
-Dim szFunction_returns As String
-Dim szFunction_source As String
-Dim szFunction_language As String
-Dim szFunction_owner As String
-
-  LogMsg "Loading Form: " & Me.Name
-  Me.Height = 4110
-  Me.Width = 4275
-  
-  ' Retrieve data types
-  StartMsg "Retrieving data types and languages..."
-  If rsTypes.State <> adStateClosed Then rsTypes.Close
-  LogMsg "Executing: SELECT typname FROM pg_type WHERE typrelid = 0 ORDER BY typname"
-  rsTypes.Open "SELECT typname FROM pg_type WHERE typrelid = 0 ORDER BY typname", gConnection, adOpenForwardOnly
-  cboReturnType.Clear
-  cboArguments.Clear
-  cboReturnType.AddItem "opaque"
-  While Not rsTypes.EOF
-    If Mid(rsTypes!typname, 1, 1) <> "_" Then
-      cboReturnType.AddItem rsTypes!typname
-      cboArguments.AddItem rsTypes!typname
-    End If
-    rsTypes.MoveNext
-  Wend
-  If rsTypes.BOF <> True Then rsTypes.MoveFirst
-  
-  ' Retrieve languages
-  vssLanguage.Connect = Connect
-  vssLanguage.SQL = "SELECT language_name, language_name FROM pgadmin_languages ORDER BY language_name"
-  LogMsg "Executing: " & vssLanguage.SQL
-  vssLanguage.LoadList
-  lstArguments.Clear
-  EndMsg
-   
-  ' Retrieve function if exists
-  lng_OpenFunction_OID = gPostgresOBJ_OID
-  gPostgresOBJ_OID = 0
-  
-  If lng_OpenFunction_OID <> 0 Then
-    Me.Caption = "Modify function"
+    Dim rsTypes As New Recordset
     
-    ' get function values
-    cmp_Function_GetValues lng_OpenFunction_OID, "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    Dim temp_arg_list As Variant
+    Dim temp_arg_item As Variant
     
-    ' Initialize form
-    txtName = szFunction_name
-    txtPath.Text = szFunction_source
-    vssLanguage.Text = szFunction_language
-    cboReturnType.Text = szFunction_returns
-    txtOID = lng_OpenFunction_OID
-    txtOwner = szFunction_owner
-      
-    temp_arg_list = Split(szFunction_arguments, ",")
-    For Each temp_arg_item In temp_arg_list
-         cboArguments.Text = Trim(temp_arg_item)
-         cmdAdd_Click
-    Next
+    Dim lngFunction_oid As Long
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    Dim szFunction_returns As String
+    Dim szFunction_source As String
+    Dim szFunction_language As String
+    Dim szFunction_owner As String
     
-    ' Lock function name
-    txtName.Locked = True
-    txtName.BackColor = -2147483633
-   Else
-      Me.Caption = "Create function"
-      txtName.Locked = False
-      txtName.BackColor = -2147483643
-      txtOID = "N.S."
-      txtOwner = "N.S."
-   End If
-  
-      ' Write query
-  Gen_SQL
-  Set rsTypes = Nothing
-  
-  Exit Sub
+    
+    ' Remember initial values of function_name and function_arguments
+    szFunction_name_old = gFunction_Name
+    szFunction_name = gFunction_Name
+    
+    szFunction_arguments_old = gFunction_Arguments
+    szFunction_arguments = gFunction_Arguments
+    
+    gFunction_Name = ""
+    gFunction_Arguments = ""
+    
+    ' Log
+    LogMsg "Loading Form: " & Me.Name
+    Me.Height = 4110
+    Me.Width = 4275
+    
+    ' Retrieve data types
+    StartMsg "Retrieving data types and languages..."
+    If rsTypes.State <> adStateClosed Then rsTypes.Close
+    LogMsg "Executing: SELECT typname FROM pg_type WHERE typrelid = 0 ORDER BY typname"
+    rsTypes.Open "SELECT typname FROM pg_type WHERE typrelid = 0 ORDER BY typname", gConnection, adOpenForwardOnly
+    cboReturnType.Clear
+    cboArguments.Clear
+    cboReturnType.AddItem "opaque"
+    While Not rsTypes.EOF
+      If Mid(rsTypes!typname, 1, 1) <> "_" Then
+        cboReturnType.AddItem rsTypes!typname
+        cboArguments.AddItem rsTypes!typname
+      End If
+      rsTypes.MoveNext
+    Wend
+
+    If rsTypes.BOF <> True Then rsTypes.MoveFirst
+        
+        ' Retrieve languages
+        vssLanguage.Connect = Connect
+        vssLanguage.SQL = "SELECT language_name, language_name FROM pgadmin_languages ORDER BY language_name"
+        LogMsg "Executing: " & vssLanguage.SQL
+        vssLanguage.LoadList
+        lstArguments.Clear
+        EndMsg
+           
+        If szFunction_name_old <> "" Then
+              Me.Caption = "Modify function"
+              
+              ' get function values
+              lngFunction_oid = 0
+              cmp_Function_GetValues "pgadmin_dev_functions", lngFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+              
+              ' Initialize form
+              txtName = szFunction_name
+              txtPath.Text = szFunction_source
+              vssLanguage.Text = szFunction_language
+              cboReturnType.Text = szFunction_returns
+              txtOID = lngFunction_oid
+              txtOwner = szFunction_owner
+                
+              temp_arg_list = Split(szFunction_arguments, ",")
+              For Each temp_arg_item In temp_arg_list
+                   cboArguments.Text = Trim(temp_arg_item)
+                   cmdAdd_Click
+              Next
+              
+             
+            If txtOID = 0 Then txtOID = "N.S."
+            If txtOwner = "" Then txtOwner = "N.S."
+        Else
+           Me.Caption = "Create function"
+           txtOID = "N.S."
+           txtOwner = "N.S."
+        End If
+    
+        ' Write query
+    Gen_SQL
+    Set rsTypes = Nothing
+    
+    Exit Sub
 Err_Handler:
   Set rsTypes = Nothing
   EndMsg

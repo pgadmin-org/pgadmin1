@@ -11,6 +11,16 @@ Begin VB.Form frmViews
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdRebuild 
+      BackColor       =   &H80000018&
+      Caption         =   "&Rebuild project"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   23
+      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
+      Top             =   3555
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdExportView 
       Caption         =   "Export View"
       Enabled         =   0   'False
@@ -36,7 +46,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Edit the comment for the selected View."
-      Top             =   1845
+      Top             =   2205
       Width           =   1410
    End
    Begin VB.CommandButton cmdComment 
@@ -188,7 +198,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   4
       ToolTipText     =   "Refresh the list of Views."
-      Top             =   2205
+      Top             =   1845
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropView 
@@ -214,12 +224,12 @@ Begin VB.Form frmViews
       Height          =   525
       Left            =   45
       TabIndex        =   17
-      Top             =   2565
+      Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Views"
          Height          =   225
-         Left            =   120
+         Left            =   135
          TabIndex        =   5
          ToolTipText     =   "Select to view system views"
          Top             =   225
@@ -227,8 +237,8 @@ Begin VB.Form frmViews
       End
    End
    Begin MSComDlg.CommonDialog CommonDialog1 
-      Left            =   45
-      Top             =   3195
+      Left            =   945
+      Top             =   2610
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
@@ -260,6 +270,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsView As New Recordset
+Dim szView_PostgreSQLtable As String
 
 Private Sub cmdExportView_Click()
     Dim iLoop As Long
@@ -284,7 +295,7 @@ Private Sub cmdExportView_Click()
         If lstView.Selected(iLoop) = True Then
             bExport = True
             szView_name = lstView.List(iLoop)
-            cmp_View_GetValues 0, "", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+            cmp_View_GetValues szView_PostgreSQLtable, 0, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
             
             ' Header
             szExport = szExport & "/*" & vbCrLf
@@ -314,19 +325,20 @@ Private Sub cmdExportView_Click()
 End Sub
 
 Public Sub cmdModifyView_Click()
-' On Error GoTo Err_Handler
+ On Error GoTo Err_Handler
 
-If txtOID <> "" Then
-    ' This means we can open the function
-    gPostgresOBJ_OID = Val(txtOID)
-    
-    ' Load form
+If lstView.Text <> "" Then
+    gView_Name = lstView.Text
     Load frmAddView
     frmAddView.Show
 End If
 
 Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdModifyView_Click"
+End Sub
+
+Private Sub cmdRebuild_Click()
+    comp_Project_Rebuild
 End Sub
 
 Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -397,6 +409,7 @@ End Sub
 
 Public Sub cmdCreateView_Click()
 On Error GoTo Err_Handler
+  gView_Name = ""
   Load frmAddView
   frmAddView.Show
   Exit Sub
@@ -418,15 +431,8 @@ On Error GoTo Err_Handler
         
         For iLoop = 0 To iListCount - 1
            If lstView.Selected(iLoop) = True Then
-           
             szTrigger_name = lstView.List(iLoop)
-            szDropStr = "DROP VIEW " & QUOTE & szTrigger_name & QUOTE
-            
-            fMainForm.txtSQLPane.Text = szDropStr
-            LogMsg "Executing: " & szDropStr
-            gConnection.Execute szDropStr
-            LogQuery szDropStr
-            
+            cmp_View_DropIfExists szView_PostgreSQLtable, 0, szTrigger_name
             End If
         Next iLoop
             
@@ -446,6 +452,7 @@ On Error GoTo Err_Handler
   Dim iUbound As Long
   Dim szView() As Variant
   Dim szView_name As String
+  Dim szQuery As String
   
   StartMsg "Retrieving View Names..."
   lstView.Clear
@@ -455,11 +462,15 @@ On Error GoTo Err_Handler
   txtOwner.Text = ""
   If rsView.State <> adStateClosed Then rsView.Close
   If chkSystem.Value = 1 Then
-    LogMsg "Executing: SELECT view_name FROM pgadmin_views ORDER BY view_name"
-    rsView.Open "SELECT view_name FROM pgadmin_views ORDER BY view_name", gConnection, adOpenDynamic
+    szView_PostgreSQLtable = "pgadmin_views"
+    szQuery = "SELECT view_name FROM " & szView_PostgreSQLtable & " WHERE view_oid < " & LAST_SYSTEM_OID & " OR view_name LIKE 'pgadmin_%'OR view_name LIKE 'pg_%' ORDER BY view_name"
+    LogMsg "Executing: " & szQuery
+    rsView.Open szQuery, gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT view_name FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
-    rsView.Open "SELECT view_name FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name", gConnection, adOpenDynamic
+    szView_PostgreSQLtable = "pgadmin_dev_views"
+    szQuery = "SELECT view_name FROM " & szView_PostgreSQLtable & " WHERE view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
+    LogMsg "Executing: " & szQuery
+    rsView.Open szQuery, gConnection, adOpenDynamic
   End If
   
   If Not (rsView.EOF) Then
@@ -529,14 +540,23 @@ On Error GoTo Err_Handler
     
     StartMsg "Retrieving View Info..."
     lngView_oid = 0
-    cmp_View_GetValues lngView_oid, "pgadmin_views", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+    cmp_View_GetValues szView_PostgreSQLtable, lngView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+    
     txtOID.Text = Trim(Str(lngView_oid))
     If txtOID.Text = 0 Then txtOID.Text = ""
+
     txtName.Text = szView_name
+    txtDefinition.Text = szView_definition
     txtOwner.Text = szView_owner
     txtACL.Text = szView_acl
     txtComments.Text = szView_comments
-    txtDefinition.Text = szView_definition
+        
+    If txtName.Text <> "" Then
+        If txtOID.Text = "" Then txtOID.Text = "N.S."
+        If txtOwner.Text = "" Then txtOwner.Text = "N.S."
+        If txtACL.Text = "" Then txtACL.Text = "N.S."
+        If txtComments.Text = "" Then txtComments.Text = "N.S."
+    End If
     
     CmdViewButton
     EndMsg
@@ -547,5 +567,7 @@ Err_Handler:
 End Sub
 
 Public Sub CmdViewButton()
-    cmdButtonActivate lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
+    Dim bSystem As Boolean
+    bSystem = (chkSystem.Value = 1)
+    cmdButtonActivate bSystem, lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
 End Sub

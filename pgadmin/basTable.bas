@@ -42,7 +42,7 @@ Public Sub cmp_Table_DropIfExists(ByVal szTable_name As String)
     
       Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Table_DropIfExists"
+  If Err.Number <> 0 Then LogError Err, "basTable, cmp_Table_DropIfExists"
 End Sub
 
 Public Function cmp_Table_Exists(ByVal szTable_name As String) As Boolean
@@ -66,5 +66,5 @@ Public Function cmp_Table_Exists(ByVal szTable_name As String) As Boolean
     
       Exit Function
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Table_Exists"
+  If Err.Number <> 0 Then LogError Err, "basTable, cmp_Table_Exists"
 End Function

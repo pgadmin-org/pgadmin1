@@ -200,6 +200,9 @@ SQL_PGADMIN_DEV_TRIGGERS = "CREATE TABLE pgadmin_dev_triggers AS SELECT * " & _
   "  AND trigger_name NOT LIKE 'pg_%' " & _
   "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
   "  ORDER BY trigger_name; " & _
+  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_foreach text;" & _
+  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_executes text;" & _
+  "  ALTER TABLE pgadmin_dev_triggers ADD trigger_event text;" & _
   "  ALTER TABLE pgadmin_dev_triggers ADD trigger_iscompiled boolean DEFAULT 'f'  ;" & _
   "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
   
@@ -214,8 +217,8 @@ SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * from " & _
   "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
   
 SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
-  " dependency_from int4," & _
-  " dependency_to int4);"
+  " dependency_from text," & _
+  " dependency_to text);"
 
   'If the SSO Version on the server doesn't exist or is lower than
   'that defined in SSO_VERSION then drop all SSO's. If pgadmin_param
@@ -582,12 +585,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     EndMsg
   End If
   
-  ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views and pgadmin_dev_dependencies
-  ' are temporary tables used for checking and rebuilding dependencies
-  ' The process of rebuilding dependencies starts with dropping  and recreating theses tables.
-  ' In a future release of PgAdmin, we might maintain the list of dependencies in real time.
-  ' Candidates ? Jaen-Michel POURE
-  
   If ObjectExists("pgadmin_dev_functions", tTable) <> 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Dropping corrupted pgAdmin_dev_functions table..."
@@ -655,6 +652,10 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute "GRANT all ON pgadmin_dev_dependencies TO public"
     EndMsg
   End If
+  
+  comp_Function_CopyToDev
+  comp_Trigger_CopyToDev
+  comp_View_CopyToDev
   
   'Set the SSO Version on the server
   LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Str(SSO_VERSION) & "' WHERE param_id = 1"
@@ -854,4 +855,16 @@ On Error GoTo Err_Handler
 Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "basSQL, SuperuserChk"
+End Function
+
+Public Function RsExecuteGetResult(ByVal szQuery As String) As Variant
+    Dim rsTemp As New Recordset
+    
+    If rsTemp.State <> adStateClosed Then rsTemp.Close
+    rsTemp.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
+    
+    If Not (rsTemp.EOF) Then
+        RsExecuteGetResult = rsTemp(0).Value
+        rsTemp.Close
+    End If
 End Function

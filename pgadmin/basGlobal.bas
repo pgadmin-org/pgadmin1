@@ -39,7 +39,7 @@ Public Enum ObjectTypes
   tLanguage = 6
 End Enum
 
-Public Const SSO_VERSION = 2.04
+Public Const SSO_VERSION = 2.05
 Public Const DEVELOPMENT = True
 Public Const QUOTE = """"
 Public Const LAST_SYSTEM_OID = 18655
@@ -73,5 +73,17 @@ Public CallingForm As String
 Public SecondLogon As Boolean
 Public rptList() As rptDef
 Public Exporters() As pgExporter
+
+' Global variables used to open AddForms
 Public gPostgresOBJ_OID As Long
-Public bContinueCompilation As Boolean
+
+Public gFunction_Name As String
+Public gFunction_Arguments As String
+
+Public gTrigger_Name As String
+Public gTrigger_Table As String
+
+Public gView_Name As String
+
+' Gloabl variable used to control rebuilding
+Public bContinueRebuilding As Boolean

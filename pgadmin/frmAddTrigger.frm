@@ -203,7 +203,8 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim lng_OpenTrig_OID As Long
+Dim szTriggerName_old As String
+Dim szTriggerTable_old As String
 
 Private Sub cboFunction_Click()
 On Error GoTo Err_Handler
@@ -225,97 +226,27 @@ Dim szTriggerName As String
 Dim szTriggerTable As String
 Dim szTriggerFunction As String
 Dim szTriggerArguments As String
-Dim szTriggerForEach As String
+Dim szTriggerForeach As String
 Dim szTriggerExecutes As String
 Dim szTriggerEvent As String
   
-Dim szTriggerName_backup As String
-Dim szTriggerTable_backup As String
-Dim szTriggerFunction_backup As String
-Dim szTriggerArguments_backup As String
-Dim szTriggerForEach_backup As String
-Dim szTriggerExecutes_backup As String
-Dim szTriggerEvent_backup As String
-Dim iLoop As Integer
-
-bContinueCompilation = True
-iLoop = 0
-
-  'Trigger Name
-  If txtName.Text = "" Then
-    MsgBox "You must enter a name for the trigger!", vbExclamation, "Error"
-    Exit Sub
-  End If
-  szTriggerName = txtName.Text
-  
-  'Execution time
-  If optExecution(0).Value = True Then
-    szTriggerExecutes = "BEFORE"
-  Else
-    szTriggerExecutes = "AFTER"
-  End If
-  
-  'Event
-  szTriggerEvent = ""
-  If chkEvent(0).Value = 1 Then szTriggerEvent = szTriggerEvent & " INSERT OR"
-  If chkEvent(1).Value = 1 Then szTriggerEvent = szTriggerEvent & " UPDATE OR"
-  If chkEvent(2).Value = 1 Then szTriggerEvent = szTriggerEvent & " DELETE OR"
-  If szTriggerEvent = "" Then
-    MsgBox "You must select at least one trigger event!", vbExclamation, "Error"
-    Exit Sub
-  End If
-  szTriggerEvent = Mid(szTriggerEvent, 1, Len(szTriggerEvent) - 3)
-  
-  'Table
-  If vssTable.Text = "" Then
-    MsgBox "You must select a table to create the trigger on!", vbExclamation, "Error"
-    Exit Sub
-  End If
-  szTriggerTable = vssTable.Text
-  
-  'For each
-  If optForEach(0).Value = True Then
-    szTriggerForEach = "ROW"
-  Else
-    szTriggerForEach = "STATEMENT"
-  End If
-  
-  'Function name and arguments
-  If cboFunction.Text = "" Then
-    MsgBox "You must select a function for the trigger to execute!", vbExclamation, "Error"
-    Exit Sub
-  End If
-
-  szTriggerFunction = Mid(cboFunction.Text, 1, InStr(1, cboFunction.Text, "(") - 1)
-
-  szTriggerArguments = Mid(cboFunction.Text, InStr(1, cboFunction.Text, "("))
-  szTriggerArguments = Replace(szTriggerArguments, "(", "")
-  szTriggerArguments = Replace(szTriggerArguments, ")", "")
+If (Form_txtSave(True, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent) = False) Then Exit Sub
     
   ' In case of a creation, test existence of a trigger with same name & table
-  If lng_OpenTrig_OID = 0 Then
-    If cmp_Trigger_Exists(0, szTriggerName, szTriggerTable) = True Then
+  If szTriggerName_old = "" Then
+    If cmp_Trigger_Exists("pgadmin_dev_triggers", 0, szTriggerName, szTriggerTable) = True Then
     MsgBox "Trigger " & szTriggerName & " already exists on table " & szTriggerTable, vbExclamation, "Error"
     Exit Sub
     End If
   End If
  
   StartMsg "Creating Trigger..."
-
-   ' Backup trigger if exists
-  If lng_OpenTrig_OID <> 0 Then cmp_Trigger_GetValues lng_OpenTrig_OID, "", szTriggerName_backup, szTriggerTable_backup, szTriggerFunction_backup, szTriggerArguments_backup, szTriggerForEach_backup, szTriggerExecutes_backup, szTriggerEvent_backup
-  
+ 
   ' Drop trigger if exists
-  If lng_OpenTrig_OID <> 0 Then cmp_Trigger_DropIfExists lng_OpenTrig_OID
-  
-  ' Create trigger
-  cmp_Trigger_Create szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
+  If szTriggerName_old <> "" Then cmp_Trigger_DropIfExists "pgadmin_dev_triggers", 0, szTriggerName_old, szTriggerTable_old
 
-  ' In case of a problem, if the trigger was deleted, rollback
-  If (bContinueCompilation = False) And (cmp_Trigger_Exists(0, szTriggerName_backup, szTriggerTable_backup) = False) And (iLoop = 0) Then
-      iLoop = iLoop + 1
-      cmp_Trigger_Create szTriggerName_backup, szTriggerTable_backup, szTriggerFunction_backup, szTriggerArguments_backup, szTriggerForEach_backup, szTriggerExecutes_backup, szTriggerEvent_backup
-  End If
+  ' Create trigger
+  cmp_Trigger_Create "pgadmin_dev_triggers", szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent
   
   EndMsg
   frmTriggers.cmdRefresh_Click
@@ -329,32 +260,20 @@ End Sub
 
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
-  fMainForm.txtSQLPane.Text = "CREATE TRIGGER " & QUOTE & txtName.Text & QUOTE
-  If optExecution(0).Value = True Then
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  BEFORE"
-  Else
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  AFTER"
-  End If
-  If chkEvent(0).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " INSERT OR"
-  If chkEvent(1).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " UPDATE OR"
-  If chkEvent(2).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " DELETE OR"
-  If Mid(fMainForm.txtSQLPane.Text, Len(fMainForm.txtSQLPane.Text) - 2, Len(fMainForm.txtSQLPane.Text)) = " OR" Then
-    fMainForm.txtSQLPane.Text = Mid(fMainForm.txtSQLPane.Text, 1, Len(fMainForm.txtSQLPane.Text) - 3) & vbCrLf & "  ON "
-  Else
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  ON "
-  End If
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & QUOTE & vssTable.Text & QUOTE & vbCrLf & "  FOR EACH"
-  If optForEach(0).Value = True Then
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " ROW"
-  Else
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " STATEMENT"
-  End If
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "  EXECUTE PROCEDURE"
-  If cboFunction.Text <> "" Then
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " " & QUOTE & Mid(cboFunction.Text, 1, InStr(1, cboFunction.Text, "(") - 1)
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & QUOTE & Mid(cboFunction.Text, InStr(1, cboFunction.Text, "("))
-  End If
-  Exit Sub
+
+    Dim szTrigger_PostgreSQLtable As String
+    Dim szTriggerName As String
+    Dim szTriggerTable As String
+    Dim szTriggerFunction As String
+    Dim szTriggerArguments As String
+    Dim szTriggerForeach As String
+    Dim szTriggerExecutes As String
+    Dim szTriggerEvent As String
+    
+    Form_txtSave False, szTriggerName & "", szTriggerTable & "", szTriggerFunction & "", szTriggerArguments & "", szTriggerForeach & "", szTriggerExecutes & "", szTriggerEvent & ""
+    fMainForm.txtSQLPane.Text = cmp_Trigger_CreateSQL(szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent)
+
+    Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddTrigger, Gen_SQL"
 End Sub
 
@@ -372,7 +291,12 @@ Private Sub Form_Load()
 On Error GoTo Err_Handler
 Dim rsFuncs As New Recordset
 Dim szQuery As String
-
+  szTriggerName_old = gTrigger_Name
+  szTriggerTable_old = gTrigger_Table
+  
+  gTrigger_Name = ""
+  gTrigger_Table = ""
+  
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 4365
   Me.Height = 3855
@@ -388,23 +312,20 @@ Dim szQuery As String
   LogMsg "Executing: " & szQuery
   rsFuncs.Open szQuery, gConnection, adOpenForwardOnly
   While Not rsFuncs.EOF
-    cboFunction.AddItem rsFuncs!Function_name & "(" & rsFuncs!Function_arguments & ")"
+    cboFunction.AddItem rsFuncs!function_name & "(" & rsFuncs!Function_arguments & ")"
     rsFuncs.MoveNext
   Wend
-  EndMsg
-  Gen_SQL
   Set rsFuncs = Nothing
-  
-        ' Retrieve function if exists
-  lng_OpenTrig_OID = gPostgresOBJ_OID
-  gPostgresOBJ_OID = 0
-  If lng_OpenTrig_OID <> 0 Then
+    
+  If szTriggerName_old <> "" Then
     Me.Caption = "Modify trigger"
-    Trigger_Load
+    Form_txtLoad
   Else
     Me.Caption = "Create trigger"
   End If
   
+  Gen_SQL
+  EndMsg
   Exit Sub
 Err_Handler:
   Set rsFuncs = Nothing
@@ -440,27 +361,32 @@ On Error GoTo Err_Handler
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddTrigger, vssTable_ItemSelected"
 End Sub
 
-Private Sub Trigger_Load()
+Private Sub Form_txtLoad()
 On Error GoTo Err_Handler
     Dim temp_arg_list As Variant
     Dim temp_arg_item As Variant
     
+    Dim lngTriggeroid As Long
     Dim szTriggerName As String
     Dim szTriggerTable As String
     Dim szTriggerFunction As String
     Dim szTriggerArguments As String
-    Dim szTriggerForEach As String
+    Dim szTriggerForeach As String
     Dim szTriggerExecutes As String
     Dim szTriggerEvent As String
     
+    szTriggerName = szTriggerName_old
+    szTriggerTable = szTriggerTable_old
+    
     StartMsg "Retrieving trigger information..."
-    cmp_Trigger_GetValues lng_OpenTrig_OID, "", szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
+    lngTriggeroid = 0
+    cmp_Trigger_GetValues "pgadmin_dev_triggers", lngTriggeroid, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent
     
     ' Loading trigger name
     txtName = szTriggerName
     
     ' For each Row
-    If szTriggerForEach = "Row" Then
+    If szTriggerForeach = "Row" Then
       ' Row
       optForEach(0).Value = True
       optForEach(1).Value = False
@@ -480,17 +406,13 @@ On Error GoTo Err_Handler
      optExecution(1).Value = True
     End If
     
-    If InStr(szTriggerEvent, "Insert") > 0 Then chkEvent(0).Value = 1 ' Insert
-    If InStr(szTriggerEvent, "Update") > 0 Then chkEvent(1).Value = 1 ' Update
-    If InStr(szTriggerEvent, "Delete") > 0 Then chkEvent(2).Value = 1 ' Delete
+    If InStr(szTriggerEvent, "INSERT") > 0 Then chkEvent(0).Value = 1 ' Insert
+    If InStr(szTriggerEvent, "UPDATE") > 0 Then chkEvent(1).Value = 1 ' Update
+    If InStr(szTriggerEvent, "DELETE") > 0 Then chkEvent(2).Value = 1 ' Delete
       
     ' Check if trigger is not broken because function was dropped
-    If cmp_Function_Exists(0, szTriggerFunction & "", szTriggerArguments & "") = True Then
-        cboFunction = szTriggerFunction & "(" & szTriggerArguments & ")"
-    Else
-        MsgBox "The function called by the trigger does not exist. " & vbCrLf & _
-        "You should select a new funtion or drop the trigger."
-    End If
+
+    cboFunction = szTriggerFunction & "(" & szTriggerArguments & ")"
     
     ' Loading table
     vssTable.Text = szTriggerTable
@@ -501,3 +423,71 @@ Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRefresh_Click"
 End Sub
+
+Private Function Form_txtSave(bWarn As Boolean, szTriggerName As String, szTriggerTable As String, szTriggerFunction As String, szTriggerArguments As String, szTriggerForeach As String, szTriggerExecutes As String, szTriggerEvent As String) As Boolean
+    On Error GoTo Err_Handler
+    Dim iLoop As Integer
+    iLoop = 0
+    Form_txtSave = False
+    
+      'Trigger Name
+      If bWarn And txtName.Text = "" Then
+        MsgBox "You must enter a name for the trigger!", vbExclamation, "Error"
+        Exit Function
+      End If
+      szTriggerName = txtName.Text
+      
+      'Execution time
+      If optExecution(0).Value = True Then
+        szTriggerExecutes = "BEFORE"
+      Else
+        szTriggerExecutes = "AFTER"
+      End If
+      
+      'Event
+      szTriggerEvent = ""
+      If chkEvent(0).Value = 1 Then szTriggerEvent = szTriggerEvent & " INSERT OR"
+      If chkEvent(1).Value = 1 Then szTriggerEvent = szTriggerEvent & " UPDATE OR"
+      If chkEvent(2).Value = 1 Then szTriggerEvent = szTriggerEvent & " DELETE OR"
+      If bWarn And szTriggerEvent = "" Then
+        MsgBox "You must select at least one trigger event!", vbExclamation, "Error"
+        Exit Function
+      End If
+      If Len(szTriggerEvent) > 0 Then szTriggerEvent = Trim(Mid(szTriggerEvent, 1, Len(szTriggerEvent) - 3))
+      
+      'Table
+      If bWarn And vssTable.Text = "" Then
+        MsgBox "You must select a table to create the trigger on!", vbExclamation, "Error"
+        Exit Function
+      End If
+      szTriggerTable = vssTable.Text
+      
+      'For each
+      If optForEach(0).Value = True Then
+        szTriggerForeach = "ROW"
+      Else
+        szTriggerForeach = "STATEMENT"
+      End If
+      
+      'Function name and arguments
+      If bWarn And cboFunction.Text = "" Then
+        MsgBox "You must select a function for the trigger to execute!", vbExclamation, "Error"
+        Exit Function
+      End If
+    
+      If cboFunction.Text <> "" Then
+        szTriggerFunction = Mid(cboFunction.Text, 1, InStr(1, cboFunction.Text, "(") - 1)
+        szTriggerArguments = Mid(cboFunction.Text, InStr(1, cboFunction.Text, "("))
+        szTriggerArguments = Replace(szTriggerArguments, "(", "")
+        szTriggerArguments = Replace(szTriggerArguments, ")", "")
+      Else
+        szTriggerFunction = ""
+        szTriggerArguments = ""
+      End If
+      
+      Form_txtSave = True
+      Exit Function
+Err_Handler:
+  EndMsg
+  If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_txtSave"
+  End Function
