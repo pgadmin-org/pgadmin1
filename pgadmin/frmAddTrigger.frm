@@ -228,6 +228,18 @@ Dim szTriggerArguments As String
 Dim szTriggerForEach As String
 Dim szTriggerExecutes As String
 Dim szTriggerEvent As String
+  
+Dim szTriggerName_backup As String
+Dim szTriggerTable_backup As String
+Dim szTriggerFunction_backup As String
+Dim szTriggerArguments_backup As String
+Dim szTriggerForEach_backup As String
+Dim szTriggerExecutes_backup As String
+Dim szTriggerEvent_backup As String
+Dim iLoop As Integer
+
+bContinueCompilation = True
+iLoop = 0
 
   'Trigger Name
   If txtName.Text = "" Then
@@ -279,22 +291,36 @@ Dim szTriggerEvent As String
   szTriggerArguments = Mid(cboFunction.Text, InStr(1, cboFunction.Text, "("))
   szTriggerArguments = Replace(szTriggerArguments, "(", "")
   szTriggerArguments = Replace(szTriggerArguments, ")", "")
-
+    
+  ' In case of a creation, test existence of a trigger with same name & table
+  If lng_OpenTrig_OID = 0 Then
+    If cmp_Trigger_Exists(0, szTriggerName, szTriggerTable) = True Then
+    MsgBox "Trigger " & szTriggerName & " already exists on table " & szTriggerTable, vbExclamation, "Error"
+    Exit Sub
+    End If
+  End If
+ 
   StartMsg "Creating Trigger..."
 
-   ' Drop trigger if exists
+   ' Make backup of trigger if exists
+  If lng_OpenTrig_OID <> 0 Then cmp_Trigger_GetValues lng_OpenTrig_OID, szTriggerName_backup, szTriggerTable_backup, szTriggerFunction_backup, szTriggerArguments_backup, szTriggerForEach_backup, szTriggerExecutes_backup, szTriggerEvent_backup
+  
+  ' Drop trigger if exists
   If lng_OpenTrig_OID <> 0 Then cmp_Trigger_DropIfExists lng_OpenTrig_OID
   
   ' Create trigger
   cmp_Trigger_Create szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
 
-  frmTriggers.cmdRefresh_Click
-  EndMsg
-  Unload Me
-
-  EndMsg
-  Unload Me
+  ' In case of a problem, if the trigger was deleted, rollback
+  If (bContinueCompilation = False) And (cmp_Trigger_Exists(0, szTriggerName_backup, szTriggerTable_backup) = False) And (iLoop = 0) Then
+      iLoop = iLoop + 1
+      cmp_Trigger_Create szTriggerName_backup, szTriggerTable_backup, szTriggerFunction_backup, szTriggerArguments_backup, szTriggerForEach_backup, szTriggerExecutes_backup, szTriggerEvent_backup
+  End If
   
+  EndMsg
+  frmTriggers.cmdRefresh_Click
+  Unload Me
+    
   Exit Sub
 Err_Handler:
   EndMsg
