@@ -288,7 +288,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsFunc As New Recordset
 
-Private Sub cmdModifyFunc_Click()
+Public Sub cmdModifyFunc_Click()
 ' On Error GoTo Err_Handler
 
 If txtOID <> "" Then

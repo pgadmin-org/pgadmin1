@@ -240,7 +240,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsView As New Recordset
 
-Private Sub cmdModifyView_Click()
+Public Sub cmdModifyView_Click()
 ' On Error GoTo Err_Handler
 
 If txtOID <> "" Then

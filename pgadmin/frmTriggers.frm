@@ -247,7 +247,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsTrig As New Recordset
 
-Private Sub cmdModifyTrig_Click()
+Public Sub cmdModifyTrig_Click()
 ' On Error GoTo Err_Handler
 
 If txtOID <> "" Then

@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H80000010&
    Caption         =   "pgAdmin"
@@ -202,7 +202,7 @@ Begin VB.MDIForm frmMain
          NumPanels       =   4
          BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   1
-            Object.Width           =   10557
+            Object.Width           =   10478
             Text            =   "Status"
             TextSave        =   "Status"
          EndProperty
@@ -556,6 +556,9 @@ Begin VB.MDIForm frmMain
       Begin VB.Menu mnuCTXFunctions_Add 
          Caption         =   "Add Function"
       End
+      Begin VB.Menu mnuCTXFunctions_Modify 
+         Caption         =   "Modify Function"
+      End
       Begin VB.Menu mnuCTXFunctions_Drop 
          Caption         =   "Drop Function"
       End
@@ -682,6 +685,9 @@ Begin VB.MDIForm frmMain
       Begin VB.Menu mnuCTXTriggers_Create 
          Caption         =   "Create Trigger"
       End
+      Begin VB.Menu mnuCTXTriggers_Modify 
+         Caption         =   "Modify Trigger"
+      End
       Begin VB.Menu mnuCTXTriggers_Drop 
          Caption         =   "Drop Trigger"
       End
@@ -719,6 +725,9 @@ Begin VB.MDIForm frmMain
       Visible         =   0   'False
       Begin VB.Menu mnuCTXViews_Create 
          Caption         =   "Create View"
+      End
+      Begin VB.Menu mnuCTXViews_Modify 
+         Caption         =   "Modify View"
       End
       Begin VB.Menu mnuCTXViews_Drop 
          Caption         =   "Drop View"
@@ -1034,6 +1043,10 @@ Private Sub mnuCTXFunctions_Add_Click()
   frmFunctions.cmdCreateFunc_Click
 End Sub
 
+Private Sub mnuCTXFunctions_Modify_Click()
+  frmFunctions.cmdModifyFunc_Click
+End Sub
+
 Private Sub mnuCTXFunctions_Comment_Click()
   frmFunctions.cmdComment_Click
 End Sub
@@ -1158,6 +1171,10 @@ Private Sub mnuCTXTriggers_Create_Click()
   frmTriggers.cmdCreateTrig_Click
 End Sub
 
+Private Sub mnuCTXTriggers_Modify_Click()
+  frmTriggers.cmdModifyTrig_Click
+End Sub
+
 Private Sub mnuCTXTriggers_Drop_Click()
   frmTriggers.cmdDropTrig_Click
 End Sub
@@ -1188,6 +1205,10 @@ End Sub
 
 Private Sub mnuCTXViews_Create_Click()
   frmViews.cmdCreateView_Click
+End Sub
+
+Private Sub mnuCTXViews_Modify_Click()
+  frmViews.cmdModifyView_Click
 End Sub
 
 Private Sub mnuCTXViews_Data_Click()
