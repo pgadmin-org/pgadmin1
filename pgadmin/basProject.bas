@@ -92,12 +92,17 @@ On Error GoTo Err_Handler
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     
-    szQueryStr = "SELECT function_name, function_arguments FROM pgadmin_dev_functions" & _
-    " WHERE function_iscompiled = 'f' AND function_name NOT IN(" & _
+    szQueryStr = "SELECT function_name, function_arguments " & _
+    " FROM pgadmin_dev_functions" & _
+    " WHERE function_iscompiled = 'f' AND function_name " & _
+    " NOT IN" & _
+    " (" & _
     " SELECT dependency_child_name FROM pgadmin_dev_dependencies d, pgadmin_dev_functions f" & _
-    " WHERE d.dependency_parent_name = f.function_name AND f.function_iscompiled = 'f') " & _
-    " ORDER BY function_oid"
-
+    " WHERE d.dependency_parent_name = f.function_name " & _
+    " AND f.function_iscompiled = 'f'" & _
+    " ) " & _
+    " ORDER BY function_name"
+       
     LogMsg "Looking for next function to compile..."
     LogMsg "Executing: " & szQueryStr
     
@@ -222,7 +227,16 @@ On Error GoTo Err_Handler
     Dim rsFunc As New Recordset
     Dim szView_name As String
     
-    szQueryStr = "SELECT view_name From pgadmin_dev_Views WHERE view_iscompiled = 'f' ORDER BY view_name"
+    szQueryStr = "SELECT view_name " & _
+    " FROM pgadmin_dev_views" & _
+    " WHERE view_iscompiled = 'f' AND view_name " & _
+    " NOT IN" & _
+    " (" & _
+    " SELECT dependency_child_name FROM pgadmin_dev_dependencies d, pgadmin_dev_views v" & _
+    " WHERE d.dependency_parent_name = v.view_name " & _
+    " AND v.view_iscompiled = 'f'" & _
+    " ) " & _
+    " ORDER BY view_name"
     
     LogMsg "Looking for next view to compile..."
     LogMsg "Executing: " & szQueryStr
@@ -232,17 +246,14 @@ On Error GoTo Err_Handler
     
     cmp_Project_FindNextViewToCompile = ""
     If Not (rsFunc.EOF) Then
-      szFunc = rsFunc.GetRows
+      szFunc = rsFunc.GetRows(1)
       rsFunc.Close
       iUbound = UBound(szFunc, 2)
-      For iLoop = 0 To iUbound
-           szView_name = szFunc(0, iLoop)
-           If cmp_View_HasSatisfiedDependencies("pgadmin_dev_Views", "pgadmin_dev_dependencies", szView_name) = True Then
-                cmp_Project_FindNextViewToCompile = szView_name
-                LogMsg "Next vailable View to compile is " & cmp_Project_FindNextViewToCompile & "..."
-                Exit Function
-            End If
-      Next iLoop
+
+      szView_name = szFunc(0, iLoop)
+      cmp_Project_FindNextViewToCompile = szView_name
+      LogMsg "Next vailable View to compile is " & cmp_Project_FindNextViewToCompile & "..."
+
       Erase szFunc
     End If
    
