@@ -333,10 +333,10 @@ End Sub
 Public Sub cmp_Trigger_ParseName(szInput As String, szTrigger_name As String, szTrigger_table As String)
 On Error GoTo Err_Handler
     Dim iInstr As Integer
-    iInstr = InStr(szInput, "ON")
+    iInstr = InStr(szInput, " ON ")
     If iInstr > 0 Then
-        szTrigger_name = Left(szInput, iInstr - 2)
-        szTrigger_table = Mid(szInput, iInstr + 3, Len(szInput) - iInstr - 2)
+        szTrigger_name = Left(szInput, iInstr - 1)
+        szTrigger_table = Mid(szInput, iInstr + 4, Len(szInput) - iInstr - 2)
     Else
         szTrigger_name = szInput
         szTrigger_table = ""
