@@ -614,6 +614,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     LogMsg "Executing: GRANT all ON pgadmin_dev_functions TO public"
     gConnection.Execute "GRANT all ON pgadmin_dev_functions TO public"
     cmp_Project_Move_Functions "pgadmin_temp_functions", "", "pgadmin_dev_functions"
+    cmp_Table_DropIfExists "pgadmin_temp_functions"
     EndMsg
   End If
   
@@ -625,6 +626,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     LogMsg "Executing: GRANT all ON pgadmin_dev_triggers TO public"
     gConnection.Execute "GRANT all ON pgadmin_dev_triggers TO public"
     cmp_Project_Move_Triggers "pgadmin_temp_triggers", "", "pgadmin_dev_triggers"
+    cmp_Table_DropIfExists "pgadmin_temp_triggers"
     EndMsg
   End If
   
@@ -636,6 +638,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     LogMsg "Executing: GRANT all ON pgadmin_dev_views TO public"
     gConnection.Execute "GRANT all ON pgadmin_dev_views TO public"
     cmp_Project_Move_Views "pgadmin_temp_views", "", "pgadmin_dev_views"
+    cmp_Table_DropIfExists "pgadmin_temp_views"
     EndMsg
   End If
   
