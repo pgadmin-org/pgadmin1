@@ -488,9 +488,6 @@ Dim szFunction_owner As String
   If lng_OpenFunction_OID <> 0 Then
     Me.Caption = "Modify function"
     
-    ' To rename a file, use the rename function
-    txtName.Locked = True
-    txtName.BackColor = -2147483633
     ' get function values
     cmp_Function_GetValues lng_OpenFunction_OID, "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
     
@@ -507,6 +504,10 @@ Dim szFunction_owner As String
          cboArguments.Text = Trim(temp_arg_item)
          cmdAdd_Click
     Next
+    
+    ' Lock function name
+    txtName.Locked = True
+    txtName.BackColor = -2147483633
    Else
       Me.Caption = "Create function"
       txtName.Locked = False
