@@ -92,8 +92,12 @@ On Error GoTo Err_Handler
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     
-    szQueryStr = "SELECT function_name, function_arguments From pgadmin_dev_functions WHERE function_iscompiled = 'f' ORDER BY function_oid"
-    
+    szQueryStr = "SELECT function_name, function_arguments FROM pgadmin_dev_functions" & _
+    " WHERE function_iscompiled = 'f' AND function_name NOT IN(" & _
+    " SELECT dependency_child_name FROM pgadmin_dev_dependencies d, pgadmin_dev_functions f" & _
+    " WHERE d.dependency_parent_name = f.function_name AND f.function_iscompiled = 'f') " & _
+    " ORDER BY function_oid"
+
     LogMsg "Looking for next function to compile..."
     LogMsg "Executing: " & szQueryStr
     
@@ -102,18 +106,13 @@ On Error GoTo Err_Handler
     
     cmp_Project_FindNextFunctionToCompile = ""
     If Not (rsFunc.EOF) Then
-      szFunc = rsFunc.GetRows
+      szFunc = rsFunc.GetRows(1)
       rsFunc.Close
       iUbound = UBound(szFunc, 2)
-      For iLoop = 0 To iUbound
-           szFunction_name = szFunc(0, iLoop)
-           szFunction_arguments = szFunc(1, iLoop)
-           If cmp_Function_HasSatisfiedDependencies("pgadmin_dev_functions", "pgadmin_dev_dependencies", szFunction_name) = True Then
-                cmp_Project_FindNextFunctionToCompile = szFunction_name & "(" & szFunction_arguments & ")"
-                LogMsg "Next vailable function to compile is " & cmp_Project_FindNextFunctionToCompile & "..."
-                Exit Function
-            End If
-      Next iLoop
+      
+      szFunction_name = szFunc(0, iLoop)
+      szFunction_arguments = szFunc(1, iLoop)
+      cmp_Project_FindNextFunctionToCompile = szFunction_name & "(" & szFunction_arguments & ")"
       Erase szFunc
     End If
    
