@@ -44,6 +44,7 @@ Public Const DEVELOPMENT = True
 Public Const QUOTE = """"
 Public Const LAST_SYSTEM_OID = 18655
 Public Const MIN_PGSQL_VERSION = 7
+Public Const DEFAULT_TEXT_COLOURS = "create|0|0|0|16711808;select|0|0|0|16711808;insert|0|0|0|16711808;update|0|0|0|16711808;vacuum|0|0|0|16711808;alter|0|0|0|16711808;from|0|0|0|33023;to|0|0|0|33023;where|0|0|0|33023;order|0|0|0|33023;by|0|0|0|33023;"
 
 Public gConnection As New Connection
 Public ActionCancelled As Boolean
@@ -60,6 +61,7 @@ Public TrackVer As Single
 Public Logging As Variant
 Public MaskPassword As Variant
 Public LogFile As String
+Public TextColours As String
 Public OID As String
 Public CallingForm As String
 Public SecondLogon As Boolean

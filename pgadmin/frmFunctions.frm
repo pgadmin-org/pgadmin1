@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
    ClientHeight    =   4050
@@ -43,6 +44,29 @@ Begin VB.Form frmFunctions
       TabIndex        =   13
       Top             =   0
       Width           =   3660
+      Begin HighlightBox.HBX txtFunction 
+         Height          =   870
+         Left            =   900
+         TabIndex        =   10
+         Top             =   1755
+         Width           =   2670
+         _ExtentX        =   4710
+         _ExtentY        =   1535
+         BackColor       =   -2147483633
+         Enabled         =   -1  'True
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Text            =   ""
+         ScrollBars      =   2
+         MultiLine       =   -1  'True
+      End
       Begin VB.TextBox txtLanguage 
          BackColor       =   &H8000000F&
          Height          =   285
@@ -50,17 +74,6 @@ Begin VB.Form frmFunctions
          Locked          =   -1  'True
          TabIndex        =   11
          Top             =   2655
-         Width           =   2670
-      End
-      Begin VB.TextBox txtFunction 
-         BackColor       =   &H8000000F&
-         Height          =   870
-         Left            =   900
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   10
-         Top             =   1755
          Width           =   2670
       End
       Begin VB.TextBox txtReturns 
@@ -342,6 +355,7 @@ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 8325
   Me.Height = 4455
+  txtFunction.Wordlist = TextColours
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"

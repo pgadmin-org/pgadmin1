@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Begin VB.Form frmAddUser 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Add a User"
@@ -25,7 +25,7 @@ Begin VB.Form frmAddUser
       ForeColor       =   -2147483630
       BackColor       =   -2147483633
       Appearance      =   1
-      StartOfWeek     =   57409538
+      StartOfWeek     =   60948482
       CurrentDate     =   36587
    End
    Begin vsAdoSelector.VS_AdoSelector vssUser 

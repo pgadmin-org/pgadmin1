@@ -1,22 +1,46 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmSQL 
    Caption         =   "SQL"
    ClientHeight    =   3195
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   6585
+   ClientWidth     =   6555
    Icon            =   "frmSQL.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
    ScaleHeight     =   3195
-   ScaleWidth      =   6585
+   ScaleWidth      =   6555
+   Begin HighlightBox.HBX txtSQL 
+      Height          =   2805
+      Left            =   0
+      TabIndex        =   5
+      Top             =   0
+      Width           =   6540
+      _ExtentX        =   11536
+      _ExtentY        =   4948
+      Enabled         =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      WordList        =   $"frmSQL.frx":030A
+      Text            =   ""
+      ScrollBars      =   2
+      MultiLine       =   -1  'True
+   End
    Begin VB.CommandButton cmdSQLWizard 
       Caption         =   "&Wizard"
       Height          =   330
       Left            =   1710
-      TabIndex        =   3
+      TabIndex        =   2
       ToolTipText     =   "Run the SQL Wizard."
       Top             =   2835
       Width           =   810
@@ -25,7 +49,7 @@ Begin VB.Form frmSQL
       Caption         =   "&Load"
       Height          =   330
       Left            =   0
-      TabIndex        =   1
+      TabIndex        =   0
       ToolTipText     =   "Load a query."
       Top             =   2835
       Width           =   810
@@ -34,7 +58,7 @@ Begin VB.Form frmSQL
       Caption         =   "&Save"
       Height          =   330
       Left            =   855
-      TabIndex        =   2
+      TabIndex        =   1
       ToolTipText     =   "Save the current query."
       Top             =   2835
       Width           =   795
@@ -43,20 +67,10 @@ Begin VB.Form frmSQL
       Caption         =   "&Execute to:"
       Height          =   330
       Left            =   2565
-      TabIndex        =   4
+      TabIndex        =   3
       ToolTipText     =   "Execute the SQL query to the selected output option."
       Top             =   2835
       Width           =   1035
-   End
-   Begin VB.TextBox txtSQL 
-      Height          =   2745
-      Left            =   0
-      MultiLine       =   -1  'True
-      ScrollBars      =   3  'Both
-      TabIndex        =   0
-      ToolTipText     =   "Enter an SQL query to execute"
-      Top             =   0
-      Width           =   6525
    End
    Begin MSComDlg.CommonDialog CommonDialog1 
       Left            =   0
@@ -70,7 +84,7 @@ Begin VB.Form frmSQL
    Begin vsAdoSelector.VS_AdoSelector vssExporters 
       Height          =   315
       Left            =   3645
-      TabIndex        =   5
+      TabIndex        =   4
       ToolTipText     =   "Select where to execute the query to."
       Top             =   2835
       Width           =   2895
@@ -241,6 +255,7 @@ Dim X As Integer
   On Error GoTo Err_Handler
   vssExporters.LoadList
   vssExporters.SelectItemText RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Recordset Viewer", "Read Only Screen (Fast)")
+  txtSQL.Wordlist = TextColours
   bDirty = False
   Me.Height = 3600
   Me.Width = 6705

@@ -29,6 +29,7 @@ Dim i As Long
   LogFile = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Log File", "C:\pgAdmin.log")
   BBar = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Button Bar", 1)
   SQLPane = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "SQL Pane", 1)
+  TextColours = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Text Colours", DEFAULT_TEXT_COLOURS)
   LogStartup
   
   'Load the installed exporters

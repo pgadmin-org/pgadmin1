@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmComments 
    Caption         =   "Comments"
    ClientHeight    =   2820
@@ -10,22 +11,36 @@ Begin VB.Form frmComments
    MDIChild        =   -1  'True
    ScaleHeight     =   2820
    ScaleWidth      =   4650
+   Begin HighlightBox.HBX txtComments 
+      Height          =   2400
+      Left            =   0
+      TabIndex        =   1
+      ToolTipText     =   "Enter or Edit the comments for the object."
+      Top             =   0
+      Width           =   4650
+      _ExtentX        =   8202
+      _ExtentY        =   4233
+      Enabled         =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Text            =   ""
+      ScrollBars      =   2
+      MultiLine       =   -1  'True
+   End
    Begin VB.CommandButton cmdSave 
       Caption         =   "&Save"
       Height          =   375
       Left            =   3510
-      TabIndex        =   1
+      TabIndex        =   0
       Top             =   2430
       Width           =   1095
-   End
-   Begin VB.TextBox txtComments 
-      Height          =   2325
-      Left            =   0
-      MultiLine       =   -1  'True
-      ScrollBars      =   3  'Both
-      TabIndex        =   0
-      Top             =   45
-      Width           =   4635
    End
 End
 Attribute VB_Name = "frmComments"
@@ -119,6 +134,7 @@ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 5000
   Me.Height = 3500
+  txtComments.Wordlist = TextColours
   lCallingForm = CallingForm
   lOID = OID
   Update = False

@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportAdd 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Add Report"
@@ -15,6 +16,29 @@ Begin VB.Form frmReportAdd
    ScaleHeight     =   5070
    ScaleWidth      =   4410
    ShowInTaskbar   =   0   'False
+   Begin HighlightBox.HBX txtSQL 
+      Height          =   1590
+      Left            =   945
+      TabIndex        =   16
+      ToolTipText     =   "Enter the SQL required to provide the data for the report. "
+      Top             =   2115
+      Width           =   3390
+      _ExtentX        =   5980
+      _ExtentY        =   2805
+      Enabled         =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Text            =   ""
+      ScrollBars      =   2
+      MultiLine       =   -1  'True
+   End
    Begin VB.TextBox txtDescription 
       Height          =   735
       Left            =   945
@@ -49,22 +73,12 @@ Begin VB.Form frmReportAdd
       Top             =   90
       Width           =   345
    End
-   Begin VB.TextBox txtSQL 
-      Height          =   1545
-      Left            =   945
-      MultiLine       =   -1  'True
-      ScrollBars      =   2  'Vertical
-      TabIndex        =   6
-      ToolTipText     =   "Enter the SQL required to provide the data for the report. "
-      Top             =   2115
-      Width           =   3390
-   End
    Begin VB.CheckBox chkGroupTree 
       Alignment       =   1  'Right Justify
       Caption         =   "S&how 'Group Tree' in the Report Viewer?"
       Height          =   195
       Left            =   90
-      TabIndex        =   9
+      TabIndex        =   8
       Top             =   4410
       Width           =   4245
    End
@@ -73,7 +87,7 @@ Begin VB.Form frmReportAdd
       Caption         =   "Refresh the '&Sequence Cache' before execution?"
       Height          =   195
       Left            =   90
-      TabIndex        =   8
+      TabIndex        =   7
       Top             =   4095
       Width           =   4245
    End
@@ -82,7 +96,7 @@ Begin VB.Form frmReportAdd
       Caption         =   "Refresh the '&Table Cache' before execution?"
       Height          =   195
       Left            =   90
-      TabIndex        =   7
+      TabIndex        =   6
       Top             =   3780
       Width           =   4245
    End
@@ -106,7 +120,7 @@ Begin VB.Form frmReportAdd
       BackColor       =   &H8000000F&
       Height          =   285
       Left            =   945
-      TabIndex        =   11
+      TabIndex        =   10
       TabStop         =   0   'False
       ToolTipText     =   "Enter the absolute filename for the report."
       Top             =   90
@@ -126,7 +140,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   5
       Left            =   90
-      TabIndex        =   16
+      TabIndex        =   15
       Top             =   1395
       Width           =   795
    End
@@ -136,7 +150,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   4
       Left            =   90
-      TabIndex        =   15
+      TabIndex        =   14
       Top             =   1080
       Width           =   465
    End
@@ -146,7 +160,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   3
       Left            =   90
-      TabIndex        =   14
+      TabIndex        =   13
       Top             =   2160
       Width           =   315
    End
@@ -156,7 +170,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   2
       Left            =   90
-      TabIndex        =   13
+      TabIndex        =   12
       Top             =   765
       Width           =   630
    End
@@ -166,7 +180,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   1
       Left            =   90
-      TabIndex        =   12
+      TabIndex        =   11
       Top             =   450
       Width           =   420
    End
@@ -176,7 +190,7 @@ Begin VB.Form frmReportAdd
       Height          =   195
       Index           =   0
       Left            =   90
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   135
       Width           =   765
    End
@@ -316,6 +330,7 @@ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 4530
   Me.Height = 5445
+  txtSQL.Wordlist = TextColours
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmReportAdd, Form_Load"
 End Sub

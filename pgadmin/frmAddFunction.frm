@@ -1,5 +1,6 @@
 VERSION 5.00
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddFunction 
    Caption         =   "Create Function"
    ClientHeight    =   3705
@@ -11,10 +12,33 @@ Begin VB.Form frmAddFunction
    MDIChild        =   -1  'True
    ScaleHeight     =   3705
    ScaleWidth      =   4155
+   Begin HighlightBox.HBX txtPath 
+      Height          =   735
+      Left            =   1080
+      TabIndex        =   15
+      ToolTipText     =   "Enter the function code or Library Path."
+      Top             =   2475
+      Width           =   3030
+      _ExtentX        =   5345
+      _ExtentY        =   1296
+      Enabled         =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Text            =   ""
+      ScrollBars      =   2
+      MultiLine       =   -1  'True
+   End
    Begin vsAdoSelector.VS_AdoSelector vssLanguage 
       Height          =   315
       Left            =   1080
-      TabIndex        =   15
+      TabIndex        =   14
       ToolTipText     =   "Select the the language that the function is written in."
       Top             =   2115
       Width           =   3030
@@ -36,7 +60,7 @@ Begin VB.Form frmAddFunction
       Left            =   1080
       Sorted          =   -1  'True
       Style           =   2  'Dropdown List
-      TabIndex        =   14
+      TabIndex        =   13
       Top             =   675
       Width           =   2085
    End
@@ -45,7 +69,7 @@ Begin VB.Form frmAddFunction
       Left            =   1080
       Sorted          =   -1  'True
       Style           =   2  'Dropdown List
-      TabIndex        =   13
+      TabIndex        =   12
       Top             =   360
       Width           =   2085
    End
@@ -53,7 +77,7 @@ Begin VB.Form frmAddFunction
       Caption         =   "&Down"
       Height          =   285
       Left            =   3195
-      TabIndex        =   12
+      TabIndex        =   11
       Top             =   1410
       Width           =   915
    End
@@ -61,7 +85,7 @@ Begin VB.Form frmAddFunction
       Caption         =   "&Remove"
       Height          =   285
       Left            =   3195
-      TabIndex        =   11
+      TabIndex        =   10
       Top             =   1755
       Width           =   915
    End
@@ -69,7 +93,7 @@ Begin VB.Form frmAddFunction
       Caption         =   "&Up"
       Height          =   285
       Left            =   3195
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   1080
       Width           =   915
    End
@@ -77,7 +101,7 @@ Begin VB.Form frmAddFunction
       Caption         =   "&Add"
       Height          =   285
       Left            =   3195
-      TabIndex        =   9
+      TabIndex        =   8
       Top             =   720
       Width           =   915
    End
@@ -85,7 +109,7 @@ Begin VB.Form frmAddFunction
       Caption         =   "&Create Function"
       Height          =   375
       Left            =   2655
-      TabIndex        =   8
+      TabIndex        =   7
       ToolTipText     =   "Create the new function."
       Top             =   3285
       Width           =   1455
@@ -102,15 +126,6 @@ Begin VB.Form frmAddFunction
       Left            =   1080
       TabIndex        =   1
       Top             =   45
-      Width           =   3030
-   End
-   Begin VB.TextBox txtPath 
-      Height          =   735
-      Left            =   1080
-      MultiLine       =   -1  'True
-      ScrollBars      =   2  'Vertical
-      TabIndex        =   7
-      Top             =   2475
       Width           =   3030
    End
    Begin VB.Label lblPath 
@@ -327,6 +342,7 @@ Dim rsTypes As New Recordset
   LogMsg "Loading Form: " & Me.Name
   Me.Height = 4110
   Me.Width = 4275
+  txtPath.Wordlist = TextColours
   StartMsg "Retrieving data types and languages..."
   If rsTypes.State <> adStateClosed Then rsTypes.Close
   LogMsg "Executing: SELECT typname FROM pg_type WHERE typrelid = 0 ORDER BY typname"

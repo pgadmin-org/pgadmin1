@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddView 
    Caption         =   "Create View"
    ClientHeight    =   3270
@@ -11,6 +12,29 @@ Begin VB.Form frmAddView
    MDIChild        =   -1  'True
    ScaleHeight     =   3270
    ScaleWidth      =   4650
+   Begin HighlightBox.HBX txtSQL 
+      Height          =   2175
+      Left            =   45
+      TabIndex        =   2
+      ToolTipText     =   "Enter the SQL Query for the View."
+      Top             =   630
+      Width           =   4560
+      _ExtentX        =   8043
+      _ExtentY        =   3836
+      Enabled         =   -1  'True
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Text            =   ""
+      ScrollBars      =   2
+      MultiLine       =   -1  'True
+   End
    Begin MSComDlg.CommonDialog CommonDialog1 
       Left            =   2070
       Top             =   2745
@@ -34,15 +58,6 @@ Begin VB.Form frmAddView
       Top             =   2880
       Width           =   1275
    End
-   Begin VB.TextBox txtSQL 
-      Height          =   2175
-      Left            =   0
-      MultiLine       =   -1  'True
-      ScrollBars      =   3  'Both
-      TabIndex        =   3
-      Top             =   630
-      Width           =   4605
-   End
    Begin VB.TextBox txtName 
       Height          =   285
       Left            =   990
@@ -55,7 +70,7 @@ Begin VB.Form frmAddView
       Caption         =   "SQL Query"
       Height          =   195
       Left            =   45
-      TabIndex        =   2
+      TabIndex        =   3
       Top             =   405
       Width           =   780
    End
@@ -163,6 +178,7 @@ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Height = 3675
   Me.Width = 4770
+  txtSQL.Wordlist = TextColours
   Gen_SQL
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddView, Form_Load"

@@ -1,6 +1,7 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H80000010&
    Caption         =   "pgAdmin"
@@ -32,7 +33,7 @@ Begin VB.MDIForm frmMain
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   3  'Both
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   315
          Width           =   2490
       End
@@ -41,7 +42,7 @@ Begin VB.MDIForm frmMain
          Default         =   -1  'True
          Height          =   330
          Left            =   45
-         TabIndex        =   5
+         TabIndex        =   4
          ToolTipText     =   "Copy the contents of the SQL pane to the clipboard."
          Top             =   180
          Width           =   1095
@@ -50,20 +51,33 @@ Begin VB.MDIForm frmMain
          Caption         =   "&Copy SQL"
          Height          =   330
          Left            =   45
-         TabIndex        =   4
+         TabIndex        =   3
          ToolTipText     =   "Copy the contents of the SQL pane to the clipboard."
          Top             =   540
          Width           =   1095
       End
-      Begin VB.TextBox txtSQLPane 
+      Begin HighlightBox.HBX txtSQLPane 
          Height          =   1095
-         Left            =   1170
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   3  'Both
-         TabIndex        =   3
+         Left            =   1215
+         TabIndex        =   12
          Top             =   315
-         Width           =   2625
+         Width           =   2580
+         _ExtentX        =   4551
+         _ExtentY        =   1931
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         WordList        =   $"frmMain.frx":030A
+         Text            =   ""
+         ScrollBars      =   2
+         MultiLine       =   -1  'True
+         Locked          =   -1  'True
       End
       Begin VB.Label lblVersion 
          Alignment       =   1  'Right Justify
@@ -82,7 +96,7 @@ Begin VB.MDIForm frmMain
          ForeColor       =   &H00C0FFFF&
          Height          =   195
          Left            =   8010
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   1125
          Width           =   645
       End
@@ -94,7 +108,7 @@ Begin VB.MDIForm frmMain
          ForeColor       =   &H80000005&
          Height          =   105
          Left            =   0
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   0
          Width           =   8745
       End
@@ -104,7 +118,7 @@ Begin VB.MDIForm frmMain
          ForeColor       =   &H8000000E&
          Height          =   195
          Left            =   3870
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   90
          Width           =   1185
       End
@@ -114,14 +128,14 @@ Begin VB.MDIForm frmMain
          ForeColor       =   &H8000000E&
          Height          =   195
          Left            =   1215
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   90
          Width           =   1185
       End
       Begin VB.Image imgLogo 
          Height          =   1260
          Left            =   6345
-         Picture         =   "frmMain.frx":030A
+         Picture         =   "frmMain.frx":03E4
          Stretch         =   -1  'True
          Top             =   135
          Width           =   2400
@@ -142,7 +156,7 @@ Begin VB.MDIForm frmMain
       Begin SideBarVB.SideBar sbMain 
          Height          =   5820
          Left            =   0
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   135
          Width           =   1200
          _ExtentX        =   2117
@@ -169,7 +183,7 @@ Begin VB.MDIForm frmMain
          ForeColor       =   &H80000005&
          Height          =   105
          Left            =   0
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   45
          Width           =   1410
       End
@@ -225,102 +239,102 @@ Begin VB.MDIForm frmMain
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
          NumListImages   =   24
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":17E6
+            Picture         =   "frmMain.frx":18C0
             Key             =   "Tune db"
          EndProperty
          BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":1B00
+            Picture         =   "frmMain.frx":1BDA
             Key             =   "Triggers"
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":1E1A
+            Picture         =   "frmMain.frx":1EF4
             Key             =   "Languages"
          EndProperty
          BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2134
+            Picture         =   "frmMain.frx":220E
             Key             =   "Databases"
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":244E
+            Picture         =   "frmMain.frx":2528
             Key             =   "rExec"
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2768
+            Picture         =   "frmMain.frx":2842
             Key             =   "Tracking"
          EndProperty
          BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2A82
+            Picture         =   "frmMain.frx":2B5C
             Key             =   "Migration"
          EndProperty
          BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2D9C
+            Picture         =   "frmMain.frx":2E76
             Key             =   "Users"
          EndProperty
          BeginProperty ListImage9 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":30B6
+            Picture         =   "frmMain.frx":3190
             Key             =   "Groups"
          EndProperty
          BeginProperty ListImage10 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":33D0
+            Picture         =   "frmMain.frx":34AA
             Key             =   "Vacuum"
          EndProperty
          BeginProperty ListImage11 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":36EA
+            Picture         =   "frmMain.frx":37C4
             Key             =   "Tables"
          EndProperty
          BeginProperty ListImage12 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":3A04
+            Picture         =   "frmMain.frx":3ADE
             Key             =   "Indexes"
          EndProperty
          BeginProperty ListImage13 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":3D1E
+            Picture         =   "frmMain.frx":3DF8
             Key             =   "Import"
          EndProperty
          BeginProperty ListImage14 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4038
+            Picture         =   "frmMain.frx":4112
             Key             =   "Privileges"
          EndProperty
          BeginProperty ListImage15 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4352
+            Picture         =   "frmMain.frx":442C
             Key             =   "Export"
          EndProperty
          BeginProperty ListImage16 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":466C
+            Picture         =   "frmMain.frx":4746
             Key             =   "SQL"
          EndProperty
          BeginProperty ListImage17 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4986
+            Picture         =   "frmMain.frx":4A60
             Key             =   "Sequences"
          EndProperty
          BeginProperty ListImage18 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4CA0
+            Picture         =   "frmMain.frx":4D7A
             Key             =   "Functions"
          EndProperty
          BeginProperty ListImage19 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":4FBA
+            Picture         =   "frmMain.frx":5094
             Key             =   "Views"
          EndProperty
          BeginProperty ListImage20 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":52D4
+            Picture         =   "frmMain.frx":53AE
             Key             =   "Psql"
          EndProperty
          BeginProperty ListImage21 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":55EE
+            Picture         =   "frmMain.frx":56C8
             Key             =   "Reports"
             Object.Tag             =   "Reports"
          EndProperty
          BeginProperty ListImage22 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5908
+            Picture         =   "frmMain.frx":59E2
             Key             =   "Datasources"
             Object.Tag             =   "Datasources"
          EndProperty
          BeginProperty ListImage23 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5C22
+            Picture         =   "frmMain.frx":5CFC
             Key             =   "Manager"
             Object.Tag             =   "Manager"
          EndProperty
          BeginProperty ListImage24 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5F3C
+            Picture         =   "frmMain.frx":6016
             Key             =   "Exporters"
             Object.Tag             =   "Exporters"
          EndProperty
@@ -804,6 +818,7 @@ Dim X As Printer
   
   picSideBar.Align = CInt(RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Button Bar Pos", 3))
   picSQLPane.Align = CInt(RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "SQL Pane Pos", 2))
+  txtSQLPane.Wordlist = TextColours
 
   'Allow the user to login to the correct datasource
   

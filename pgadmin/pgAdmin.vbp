@@ -68,6 +68,7 @@ Module=basSQL; basSQL.bas
 Form=frmSplash.frm
 Form=frmOptions.frm
 Form=frmReportViewer.frm
+Object={44F33AC4-8757-4330-B063-18608617F23E}#4.1#0; HighlightBox.ocx
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""
