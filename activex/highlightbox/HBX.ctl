@@ -19,6 +19,7 @@ Begin VB.UserControl HBX
       _ExtentY        =   661
       _Version        =   393217
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ScrollBars      =   3
       Appearance      =   0
       AutoVerbMenu    =   -1  'True
@@ -87,6 +88,7 @@ Const m_def_ControlBarVisible = True
 Const m_def_MaximisedHeight = 0
 Const m_def_MaximisedWidth = 0
 Const m_def_Wordlist = "0"
+Const m_def_AutoColour = True
 
 Const DELIMCHARS = " []{}()'"""
 
@@ -94,6 +96,7 @@ Dim m_ControlBarVisible As Boolean
 Dim m_MaximisedWidth As Long
 Dim m_MaximisedHeight As Long
 Dim m_Wordlist As String
+Dim m_AutoColour As Boolean
 
 Dim bMaximised As Boolean
 Dim LastTop As Long
@@ -176,9 +179,11 @@ End Function
 Private Sub rtbstring_Change()
 Static lPrevLen As Long
 Dim lCount As Long
-  lCount = Len(rtbString.Text)
-  If (lCount > lPrevLen + 2) Or (lCount < lPrevLen - 2) Then QR
-  lPrevLen = lCount
+  If m_AutoColour Then
+    lCount = Len(rtbString.Text)
+    If (lCount > lPrevLen + 2) Or (lCount < lPrevLen - 2) Then QR
+    lPrevLen = lCount
+  End If
 End Sub
 
 Private Sub ColourWord() 'Colour the previous word
@@ -391,10 +396,10 @@ Private Sub imgDown_Click()
 End Sub
 
 Private Sub rtbstring_KeyUp(KeyCode As Integer, Shift As Integer)
-If KeyCode = vbKeyTab Or _
+If (KeyCode = vbKeyTab Or _
    KeyCode = vbKeyReturn Or _
    KeyCode = vbKeySpace Or _
-   KeyCode = vbKeyDelete Then ColourWord
+   KeyCode = vbKeyDelete) And m_AutoColour Then ColourWord
 
 RaiseEvent KeyUp(KeyCode, Shift)
 End Sub
@@ -479,6 +484,7 @@ Private Sub UserControl_InitProperties()
   m_ControlBarVisible = m_def_ControlBarVisible
   m_MaximisedWidth = m_def_MaximisedWidth
   m_MaximisedHeight = m_def_MaximisedHeight
+  m_AutoColour = m_def_AutoColour
   UserControl.BorderStyle = 1
 End Sub
 
@@ -497,6 +503,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
   m_ControlBarVisible = PropBag.ReadProperty("ControlBarVisible", m_def_ControlBarVisible)
   m_Wordlist = PropBag.ReadProperty("Wordlist", m_def_Wordlist)
   rtbString.AutoVerbMenu = PropBag.ReadProperty("AutoVerbMenu", True)
+  m_AutoColour = PropBag.ReadProperty("AutoColour", m_def_AutoColour)
   BuildCache
 End Sub
 
@@ -513,6 +520,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
   Call PropBag.WriteProperty("ControlBarVisible", m_ControlBarVisible, m_def_ControlBarVisible)
   Call PropBag.WriteProperty("Wordlist", m_Wordlist, m_def_Wordlist)
   Call PropBag.WriteProperty("AutoVerbMenu", rtbString.AutoVerbMenu, True)
+  Call PropBag.WriteProperty("AutoColour", m_def_AutoColour)
 End Sub
 
 Public Property Get BorderStyle() As MSComctlLib.BorderStyleConstants
@@ -523,6 +531,15 @@ End Property
 Public Property Let BorderStyle(ByVal New_BorderStyle As MSComctlLib.BorderStyleConstants)
   UserControl.BorderStyle = New_BorderStyle
   PropertyChanged "BorderStyle"
+End Property
+
+Public Property Get AutoColour() As Boolean
+  AutoColour = m_AutoColour
+End Property
+
+Public Property Let AutoColour(ByVal New_AutoColour As Boolean)
+  m_AutoColour = New_AutoColour
+  PropertyChanged "AutoColour"
 End Property
 
 Private Sub UserControl_Click()
