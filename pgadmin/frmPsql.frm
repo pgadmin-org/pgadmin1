@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Begin VB.Form frmPsql 
    Caption         =   "Psql"
    ClientHeight    =   2955
@@ -127,17 +127,17 @@ Option Explicit
 Private Sub cmdExecute_Click()
 On Error GoTo Err_Handler
 Dim Scr_hDC As Long
-Dim X As Long
+Dim x As Long
   Scr_hDC = GetDesktopWindow()
   LogMsg "Executing psql.exe..."
   If chkDebug.Value = 0 Then
-    X = ShellExecute(Scr_hDC, "Open", txtPath.Text, " -U " & Username & " -h " & txtHost.Text & " -d " & txtDatabase.Text, "C:\", SW_SHOWNORMAL)
+    x = ShellExecute(Scr_hDC, "Open", txtPath.Text, " -U " & Username & " -h " & txtHost.Text & " -d " & txtDatabase.Text, "C:\", SW_SHOWNORMAL)
   Else
-    X = ShellExecute(Scr_hDC, "Open", txtPath.Text, " -U " & Username & " -h " & txtHost.Text & " -d " & txtDatabase.Text & " -E", "C:\", SW_SHOWNORMAL)
+    x = ShellExecute(Scr_hDC, "Open", txtPath.Text, " -U " & Username & " -h " & txtHost.Text & " -d " & txtDatabase.Text & " -E", "C:\", SW_SHOWNORMAL)
   End If
-  If X <= 32 Then
+  If x <= 32 Then
     MsgBox "An error occured executing psql.exe. Please check the executable path.", vbCritical, "Error!"
-    LogMsg "Could not execute psql.exe (Error: " & X & ")."
+    LogMsg "Could not execute psql.exe (Error: " & x & ")."
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmPsql, cmdExecute_Click"
@@ -145,6 +145,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
+  LogMsg "Loading Form: " & Me.Name
   txtHost.Text = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\db Servers", Datasource, gConnection.Properties("Server Name").Value)
   txtDatabase.Text = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin\db Names", Datasource, Username)
   txtPath.Text = RegRead(HKEY_LOCAL_MACHINE, "Software\pgAdmin", "Psql Path", "psql.exe")
