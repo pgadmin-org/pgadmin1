@@ -162,11 +162,12 @@ On Error GoTo Err_Handler
     'Execute
     gConnection.Execute szCreateStr
     If (szFunction_table = "pgadmin_functions") Then LogQuery szCreateStr
-  Exit Sub
+
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Create"
-  If Err.Number = -2147467259 Then MsgBox "Function " & szFunction_name & " (" & szFunction_arguments & ") could not be compiled." & vbCrLf & "Check source code and compile again."
-  bContinueRebuilding = False
+If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Create"
+If Err.Number = -2147467259 Then MsgBox "Function " & szFunction_name & " (" & szFunction_arguments & ") could not be compiled." & vbCrLf & "Check source code and compile again."
+bContinueRebuilding = False
 End Sub
 
 Public Function cmp_Function_CreateSQL(ByVal szFunction_name As String, ByVal szFunction_argumentlist As String, ByVal szFunction_returns As String, ByVal szFunction_source As String, ByVal szFunction_language As String) As String
@@ -407,56 +408,6 @@ Dim iInstr As Integer
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Func_CopyToDev"
-End Sub
-
-Public Sub cmp_Function_DropAll(Optional szFunction_table As String)
-On Error GoTo Err_Handler
-    Dim szQuery As String
-    Dim szFunc() As Variant
-    Dim iLoop As Long
-    Dim iUbound As Long
-    Dim rsFunc As New Recordset
-    Dim szFunction_name As String
-    Dim szFunction_arguments As String
-    
-    If IsMissing(szFunction_table) Or (szFunction_table = "") Then szFunction_table = "pgadmin_functions"
-        
-    If (szFunction_table = "pgadmin_functions") Then
-        szQuery = " SELECT function_name, function_arguments " & _
-        "  FROM pgadmin_functions " & _
-        "  WHERE function_name NOT LIKE '%_call_handler' " & _
-        "  AND function_name NOT LIKE 'pgadmin_%' " & _
-        "  AND function_name NOT LIKE 'pg_%' " & _
-        "  AND function_oid > " & LAST_SYSTEM_OID & _
-        "  ORDER BY function_oid ;"
-        
-        LogMsg "Dropping all functions in pgadmin_functions..."
-        LogMsg "Executing: " & szQuery
-        
-        If rsFunc.State <> adStateClosed Then rsFunc.Close
-        rsFunc.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
-    
-        If Not (rsFunc.EOF) Then
-            szFunc = rsFunc.GetRows
-            rsFunc.Close
-            iUbound = UBound(szFunc, 2)
-                For iLoop = 0 To iUbound
-                     szFunction_name = szFunc(0, iLoop)
-                     szFunction_arguments = szFunc(1, iLoop)
-                     cmp_Function_DropIfExists "", 0, szFunction_name, szFunction_arguments
-                Next iLoop
-            Erase szFunc
-        End If
-    Else
-        szQuery = "TRUNCATE " & szFunction_table
-        LogMsg "Truncate " & szFunction_table & "..."
-        LogMsg "Executing: " & szQuery
-        gConnection.Execute szQuery
-    End If
-   
-    Exit Sub
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_DropAll"
 End Sub
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
