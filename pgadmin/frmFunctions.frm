@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
@@ -12,22 +13,11 @@ Begin VB.Form frmFunctions
    ScaleWidth      =   8880
    Begin VB.CommandButton cmdExportFunc 
       Caption         =   "Export Function"
-      Enabled         =   0   'False
-      Height          =   330
-      Left            =   45
-      TabIndex        =   27
-      ToolTipText     =   "Delete the selected function."
-      Top             =   1125
-      Width           =   1410
-   End
-   Begin VB.CommandButton cmdRenameFunc 
-      Caption         =   "Rename Function"
-      Enabled         =   0   'False
       Height          =   330
       Left            =   45
       TabIndex        =   26
-      ToolTipText     =   "Create a new function."
-      Top             =   2205
+      ToolTipText     =   "Delete the selected function."
+      Top             =   1125
       Width           =   1410
    End
    Begin VB.CommandButton cmdRebuild 
@@ -267,6 +257,25 @@ Begin VB.Form frmFunctions
          Width           =   735
       End
    End
+   Begin VB.ListBox lstFunc 
+      Height          =   5520
+      ItemData        =   "frmFunctions.frx":0000
+      Left            =   1485
+      List            =   "frmFunctions.frx":0002
+      MultiSelect     =   2  'Extended
+      TabIndex        =   5
+      Top             =   45
+      Width           =   2985
+   End
+   Begin MSComDlg.CommonDialog CommonDialog1 
+      Left            =   90
+      Top             =   3735
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+      DialogTitle     =   "Select SQL File"
+      Filter          =   "All Files (*.*)|*.*"
+   End
    Begin VB.CommandButton cmdCreateFunc 
       Caption         =   "&Create Function"
       Height          =   330
@@ -275,15 +284,6 @@ Begin VB.Form frmFunctions
       ToolTipText     =   "Create a new function."
       Top             =   45
       Width           =   1410
-   End
-   Begin VB.ListBox lstFunc 
-      Height          =   5520
-      ItemData        =   "frmFunctions.frx":0000
-      Left            =   1485
-      List            =   "frmFunctions.frx":0002
-      TabIndex        =   5
-      Top             =   45
-      Width           =   2985
    End
 End
 Attribute VB_Name = "frmFunctions"
@@ -310,6 +310,64 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsFunc As New Recordset
+
+Private Sub cmdExportFunc_Click()
+    Dim iLoop As Long
+    Dim iListCount As Long
+    Dim iSelCount As Long
+    Dim szExport As String
+    Dim bExport As Boolean
+    Dim szHeader As String
+    
+    Dim szFunction_OID As Long
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+    Dim szFunction_returns As String
+    Dim szFunction_source As String
+    Dim szFunction_language As String
+    Dim szFunction_owner As String
+    Dim szFunction_comments As String
+    
+    bExport = False
+    szExport = ""
+
+    iSelCount = lstFunc.SelCount
+    If iSelCount = 0 Then Exit Sub
+    iListCount = lstFunc.ListCount
+        
+    For iLoop = 0 To iListCount - 1
+        If lstFunc.Selected(iLoop) = True Then
+            bExport = True
+            szFunction_OID = 0
+            ParseFunction lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+            cmp_Function_GetValues szFunction_OID, "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+            
+            ' Header
+            szExport = szExport & "/*" & vbCrLf
+            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+            szExport = szExport & szFunction_name & "(" & szFunction_arguments & ")" & " -> " & szFunction_returns & vbCrLf
+            If szFunction_comments <> "" Then szExport = szExport & szFunction_comments & vbCrLf
+            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+            szExport = szExport & "*/" & vbCrLf
+            
+            ' Function
+            szExport = szExport & cmp_Function_CreateSQL(szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language) & vbCrLf & vbCrLf
+        End If
+    Next iLoop
+    
+    If bExport Then
+        szHeader = "/*" & vbCrLf
+        szHeader = szHeader & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
+        szHeader = szHeader & "The choice of freedom, " & Format(Now, "d mmmm yyyy") & vbCrLf
+        szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
+        szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
+        szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
+        szHeader = szHeader & "*/" & vbCrLf & vbCrLf
+        szExport = szHeader & szExport
+        MsgExportToFile CommonDialog1, szExport, "sql", "Export functions"
+    End If
+End Sub
 
 Public Sub cmdModifyFunc_Click()
 ' On Error GoTo Err_Handler
@@ -386,9 +444,9 @@ Dim szDropStr As String
     MsgBox "You must select a function to delete!", vbExclamation, "Error"
     Exit Sub
   End If
-  If MsgBox("Are you sure you wish to delete this Function?", vbYesNo + vbQuestion, _
-            "Confirm Function Delete") = vbYes Then
-    szDropStr = "DROP FUNCTION " & QUOTE & lstFunc.Text & QUOTE & " (" & txtArguments.Text & ")"
+  If MsgBox("Are you sure you wish to drop this Function?", vbYesNo + vbQuestion, _
+            "Confirm Function Deletion") = vbYes Then
+    szDropStr = "DROP FUNCTION " & QUOTE & txtName.Text & QUOTE & " (" & txtArguments.Text & ")"
     fMainForm.txtSQLPane.Text = szDropStr
     StartMsg "Dropping Function..."
     LogMsg "Executing: " & szDropStr
@@ -495,15 +553,8 @@ On Error GoTo Err_Handler
     '----------------------------------------------------------------------------------
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
-    iInstr = InStr(lstFunc.Text, "(")
-    If iInstr > 0 Then
-        szFunction_name = Left(lstFunc.Text, iInstr - 2)
-        szFunction_arguments = Mid(lstFunc.Text, iInstr + 1, Len(lstFunc.Text) - iInstr - 1)
-    Else
-        szFunction_name = lstFunc.Text
-        szFunction_arguments = ""
-    End If
-    
+    ParseFunction lstFunc.Text, szFunction_name, szFunction_arguments
+
     '----------------------------------------------------------------------------------
     ' Lookup database
     '----------------------------------------------------------------------------------
@@ -525,5 +576,17 @@ On Error GoTo Err_Handler
 Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_Click"
+End Sub
+
+Private Sub ParseFunction(szInput As String, szFunction_name As String, szFunction_arguments As String)
+    Dim iInstr As Integer
+    iInstr = InStr(szInput, "(")
+    If iInstr > 0 Then
+        szFunction_name = Left(szInput, iInstr - 2)
+        szFunction_arguments = Mid(szInput, iInstr + 1, Len(szInput) - iInstr - 1)
+    Else
+        szFunction_name = szInput
+        szFunction_arguments = ""
+    End If
 End Sub
 

@@ -107,7 +107,7 @@ Function cmp_View_CreateSQL(ByVal szView_name As String, ByVal szView_definition
 On Error GoTo Err_Handler
   Dim szQuery As String
 
-    szQuery = "CREATE VIEW " & szView_name & " AS " & szView_definition & "; "
+    szQuery = "CREATE VIEW " & szView_name & vbCrLf & " AS " & szView_definition & "; "
     cmp_View_CreateSQL = szQuery
   Exit Function
 Err_Handler:
@@ -215,9 +215,9 @@ On Error GoTo Err_Handler
         End If
     End If
      
-    szQueryStr = "CREATE TRIGGER " & QUOTE & szTrigger_name & QUOTE
-    szQueryStr = szQueryStr & " " & szTrigger_Executes & " " & szTrigger_event
-    szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_foreach
+    szQueryStr = "CREATE TRIGGER " & QUOTE & szTrigger_name & QUOTE & vbCrLf
+    szQueryStr = szQueryStr & " " & szTrigger_Executes & " " & szTrigger_event & vbCrLf
+    szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_foreach & vbCrLf
     szQueryStr = szQueryStr & " EXECUTE PROCEDURE " & szTrigger_function & "(" & szTrigger_arguments & ")"
     
     cmp_Trigger_CreateSQL = szQueryStr
@@ -490,9 +490,11 @@ On Error GoTo Err_Handler
     Dim szCreateStr As String
 
     szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
-    szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") "
-    szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " "
-    szCreateStr = szCreateStr & "AS '" & szFunction_source & "' "
+    szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") " & vbCrLf
+    szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " " & vbCrLf
+    szCreateStr = szCreateStr & "AS '" & vbCrLf
+    szCreateStr = szCreateStr & szFunction_source & vbCrLf
+    szCreateStr = szCreateStr & "' " & vbCrLf
     szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
 
     cmp_Function_CreateSQL = szCreateStr
@@ -689,8 +691,8 @@ Sub cmp_Function_GetValues(lngFunction_OID As Long, Optional szFunction_PostgreS
     
     If Not rsComp.EOF Then
         lngFunction_OID = rsComp!function_oid
-        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!function_name & ""
-        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!function_arguments & ""
+        If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
+        If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
         If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
         If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
         If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
@@ -942,7 +944,7 @@ Public Sub comp_Project_BackupFunctions(Optional ByVal Function_OldName, Optiona
     rsComp.Open szQuery, gConnection, adOpenDynamic
     
     While Not rsComp.EOF
-        cmp_Function_Dependency_Initialize rsComp!function_oid, rsComp!function_name
+        cmp_Function_Dependency_Initialize rsComp!function_oid, rsComp!Function_name
         rsComp.MoveNext
     Wend
     

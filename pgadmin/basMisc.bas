@@ -393,3 +393,36 @@ Public Function dbSZ(szData As String) As String
   szData = Replace(szData, "'", "\'")
   dbSZ = szData
 End Function
+
+Public Sub MsgExportToFile(Obj As Object, szTextToExport As String, Optional ByVal szFileExtension As String, Optional ByVal szSaveMessage As String)
+  On Error GoTo Err_Handler
+  
+    Dim fNum As Integer
+
+    If szTextToExport = "" Then Exit Sub
+    If IsMissing(szFileExtension) Then szFileExtension = "*"
+    If IsMissing(szSaveMessage) Then szSaveMessage = "Save file"
+
+  With Obj
+    .DialogTitle = szSaveMessage
+    .Filter = "Filter (*." & szFileExtension & ")|*." & szFileExtension
+    .CancelError = True
+    .ShowSave
+  End With
+  If Obj.FileName = "" Then
+    MsgBox "No filename specified - File not saved.", vbExclamation, "Warning"
+    Exit Sub
+  End If
+  If Dir(Obj.FileName) <> "" Then
+    If MsgBox("File exists - overwrite?", vbYesNo + vbQuestion, "Overwrite File") = vbNo Then Obj.cmdSave_Click
+  End If
+  fNum = FreeFile
+  LogMsg "Writing " & Obj.FileName
+  Open Obj.FileName For Output As #fNum
+  Print #fNum, szTextToExport
+  Close #fNum
+  
+  Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, MsgExportToFile"
+End Sub
+
