@@ -364,6 +364,11 @@ End Sub
 
 Public Sub cmdRefresh_Click()
 On Error GoTo Err_Handler
+  Dim iLoop As Long
+  Dim iUbound As Long
+  Dim szView() As Variant
+  Dim szView_name As String
+  
   StartMsg "Retrieving View Names..."
   lstView.Clear
   txtOID.Text = ""
@@ -372,16 +377,21 @@ On Error GoTo Err_Handler
   txtOwner.Text = ""
   If rsView.State <> adStateClosed Then rsView.Close
   If chkSystem.Value = 1 Then
-    LogMsg "Executing: SELECT * FROM pgadmin_views ORDER BY view_name"
-    rsView.Open "SELECT * FROM pgadmin_views ORDER BY view_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT view_name FROM pgadmin_views ORDER BY view_name"
+    rsView.Open "SELECT view_name FROM pgadmin_views ORDER BY view_name", gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT * FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
-    rsView.Open "SELECT * FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT view_name FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
+    rsView.Open "SELECT view_name FROM pgadmin_views WHERE view_oid > " & LAST_SYSTEM_OID & " AND view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name", gConnection, adOpenDynamic
   End If
-  While Not rsView.EOF
-    lstView.AddItem rsView!view_name
-    rsView.MoveNext
-  Wend
+  
+  szView = rsView.GetRows
+  iUbound = UBound(szView, 2)
+  For iLoop = 0 To iUbound
+    szView_name = szView(0, iLoop)
+    lstView.AddItem szView_name
+  Next iLoop
+  Erase szView
+  
   EndMsg
   Exit Sub
 Err_Handler:

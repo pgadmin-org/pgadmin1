@@ -405,6 +405,12 @@ End Sub
 
 Public Sub cmdRefresh_Click()
  On Error GoTo Err_Handler
+  Dim szFunc() As Variant
+  Dim iLoop As Long
+  Dim iUbound As Long
+  Dim szFunction_name As String
+  Dim szFunction_arguments As String
+  
   StartMsg "Retrieving Function Names..."
   lstFunc.Clear
   txtOID.Text = ""
@@ -416,20 +422,24 @@ Public Sub cmdRefresh_Click()
   txtOwner.Text = ""
   If rsFunc.State <> adStateClosed Then rsFunc.Close
   If chkFunctions.Value = 1 Then
-    LogMsg "Executing: SELECT * FROM pgadmin_functions ORDER BY function_name"
-    rsFunc.Open "SELECT * FROM pgadmin_functions ORDER BY function_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions ORDER BY function_name"
+    rsFunc.Open "SELECT function_name, function_arguments FROM pgadmin_functions ORDER BY function_name", gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT * FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name"
-    rsFunc.Open "SELECT * FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name"
+    rsFunc.Open "SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
   End If
-  While Not rsFunc.EOF
-    If rsFunc!function_arguments <> "" Then
-        lstFunc.AddItem rsFunc!function_name & " (" & rsFunc!function_arguments & ")"
-    Else
-        lstFunc.AddItem rsFunc!function_name
-    End If
-    rsFunc.MoveNext
-  Wend
+  szFunc = rsFunc.GetRows
+  iUbound = UBound(szFunc, 2)
+  For iLoop = 0 To iUbound
+       szFunction_name = szFunc(0, iLoop)
+       szFunction_arguments = szFunc(1, iLoop)
+      If szFunction_arguments <> "" Then
+          lstFunc.AddItem szFunction_name & " (" & szFunction_arguments & ")"
+      Else
+          lstFunc.AddItem szFunction_name
+      End If
+  Next iLoop
+  Erase szFunc
   txtName.Text = lstFunc
   EndMsg
   Exit Sub

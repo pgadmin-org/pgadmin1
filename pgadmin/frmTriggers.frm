@@ -341,6 +341,12 @@ End Sub
 
 Public Sub cmdRefresh_Click()
 On Error GoTo Err_Handler
+  Dim iLoop As Long
+  Dim iUbound As Long
+  Dim szTrigger() As Variant
+  Dim szTrigger_name As String
+  Dim szTrigger_table As String
+  
   LogMsg "Loading Form: " & Me.Name
   StartMsg "Retrieving Trigger Names..."
   lstTrig.Clear
@@ -353,16 +359,20 @@ On Error GoTo Err_Handler
   txtExecutes.Text = ""
   If rsTrig.State <> adStateClosed Then rsTrig.Close
   If chkSystem.Value = 1 Then
-    LogMsg "Executing: SELECT * FROM pgadmin_triggers ORDER BY trigger_name"
-    rsTrig.Open "SELECT * FROM pgadmin_triggers ORDER BY trigger_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT trigger_name, trigger_table FROM pgadmin_triggers ORDER BY trigger_name"
+    rsTrig.Open "SELECT trigger_name, trigger_table FROM pgadmin_triggers ORDER BY trigger_name", gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT * FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name"
-    rsTrig.Open "SELECT * FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT trigger_name, trigger_table FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name"
+    rsTrig.Open "SELECT trigger_name, trigger_table FROM pgadmin_triggers WHERE trigger_oid > " & LAST_SYSTEM_OID & " AND trigger_name NOT LIKE 'pgadmin_%' AND trigger_name NOT LIKE 'pg_%' AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' ORDER BY trigger_name", gConnection, adOpenDynamic
   End If
-  While Not rsTrig.EOF
-    lstTrig.AddItem rsTrig!trigger_name & " ON " & rsTrig!trigger_table
-    rsTrig.MoveNext
-  Wend
+  szTrigger = rsTrig.GetRows
+  iUbound = UBound(szTrigger, 2)
+  For iLoop = 0 To iUbound
+    szTrigger_name = szTrigger(0, iLoop)
+    szTrigger_table = szTrigger(1, iLoop)
+    lstTrig.AddItem szTrigger_name & " ON " & szTrigger_table
+  Next iLoop
+  Erase szTrigger
   EndMsg
   Exit Sub
 Err_Handler:
