@@ -346,7 +346,7 @@ Private Sub cmdExportTrig_Click()
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
         szHeader = szHeader & "The choice of a GNU generation " & vbCrLf
         szHeader = szHeader & "PostgreSQL     www.postgresql.org" & vbCrLf
-        szHeader = szHeader & "PgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
+        szHeader = szHeader & "pgAdmin        www.greatbridge.org/project/pgadmin" & vbCrLf
         szHeader = szHeader & "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" & vbCrLf
         szHeader = szHeader & "*/" & vbCrLf & vbCrLf
         szExport = szHeader & szExport
@@ -401,9 +401,8 @@ On Error GoTo Err_Handler
     MsgBox "You must select a Trigger to edit the comment for.", vbExclamation, "Error"
     Exit Sub
   End If
-  CallingForm = "frmTriggers"
-  OID = txtOID.Text
   Load frmComments
+  frmComments.Setup "frmTriggers", QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE, Val(txtOID.Text)
   frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdComment_Click"

@@ -88,7 +88,7 @@ Dim X As Long
   fMainForm.txtLog.Text = fMainForm.txtLog.Text & vbCrLf & Now & " - " & Msg
   fMainForm.txtLog.SelStart = X + 2
   fMainForm.MousePointer = vbHourglass
-  fMainForm.StatusBar1.Panels(1).Text = Msg
+  fMainForm.StatusBar1.Panels("Status").Text = Msg
   fMainForm.StatusBar1.Refresh
   QryTimer = Timer
 End Sub
@@ -138,7 +138,7 @@ Dim fNum As Integer
 Dim Msg As String
 Dim X As Long
   Msg = "Done - " & Fix((Timer - QryTimer) * 100) / 100 & " Secs."
-  If Mid(fMainForm.StatusBar1.Panels(1).Text, Len(fMainForm.StatusBar1.Panels(1).Text) - 4, 5) <> "Done." Then
+  If Mid(fMainForm.StatusBar1.Panels("Status").Text, Len(fMainForm.StatusBar1.Panels("Status").Text) - 4, 5) <> "Done." Then
     If Logging = 1 Then
       fNum = FreeFile
       Open LogFile For Append As #fNum
@@ -151,8 +151,8 @@ Dim X As Long
     X = Len(fMainForm.txtLog.Text)
     fMainForm.txtLog.Text = fMainForm.txtLog.Text & vbCrLf & Now & " - " & Msg
     fMainForm.txtLog.SelStart = X + 2
-    fMainForm.StatusBar1.Panels(2).Text = Fix((Timer - QryTimer) * 100) / 100 & " Secs."
-    fMainForm.StatusBar1.Panels(1).Text = fMainForm.StatusBar1.Panels(1).Text & " Done."
+    fMainForm.StatusBar1.Panels("Timer").Text = Fix((Timer - QryTimer) * 100) / 100 & " Secs."
+    fMainForm.StatusBar1.Panels("Status").Text = fMainForm.StatusBar1.Panels("Status").Text & " Done."
     fMainForm.StatusBar1.Refresh
   End If
   fMainForm.MousePointer = vbDefault

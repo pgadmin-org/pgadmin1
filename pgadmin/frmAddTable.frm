@@ -740,7 +740,7 @@ Dim rsTypes As New Recordset
   Wend
   If rsTypes.State <> adStateClosed Then rsTypes.Close
   cboColumnType.AddItem "serial"
-  fMainForm.StatusBar1.Panels(1).Text = "Retrieving table names..."
+  fMainForm.StatusBar1.Panels("Status").Text = "Retrieving table names..."
   fMainForm.StatusBar1.Refresh
   vssTables.Connect = Connect
   vssTables.SQL = "SELECT DISTINCT ON(table_name) table_oid, table_name FROM pgadmin_tables WHERE table_oid > " & LAST_SYSTEM_OID & " AND table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' ORDER BY table_name"

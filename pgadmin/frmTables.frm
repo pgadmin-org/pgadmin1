@@ -15,7 +15,7 @@ Begin VB.Form frmTables
       Caption         =   "&Serialize Column"
       Height          =   330
       Left            =   45
-      TabIndex        =   91
+      TabIndex        =   83
       ToolTipText     =   "Convert this column into a (non primary key) serial column."
       Top             =   2205
       Width           =   1380
@@ -78,7 +78,7 @@ Begin VB.Form frmTables
       Caption         =   "Show System:"
       Height          =   705
       Left            =   45
-      TabIndex        =   47
+      TabIndex        =   43
       Top             =   3285
       Width           =   1380
       Begin VB.CheckBox chkFields 
@@ -183,7 +183,7 @@ Begin VB.Form frmTables
       Caption         =   "Column Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   48
+      TabIndex        =   44
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtNotNull 
@@ -257,7 +257,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   55
+         TabIndex        =   51
          Top             =   1845
          Width           =   510
       End
@@ -267,7 +267,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   0
          Left            =   90
-         TabIndex        =   54
+         TabIndex        =   50
          Top             =   1530
          Width           =   570
       End
@@ -277,7 +277,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   13
          Left            =   90
-         TabIndex        =   53
+         TabIndex        =   49
          Top             =   2160
          Width           =   735
       End
@@ -287,7 +287,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   18
          Left            =   90
-         TabIndex        =   52
+         TabIndex        =   48
          Top             =   1215
          Width           =   360
       End
@@ -297,7 +297,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   19
          Left            =   90
-         TabIndex        =   51
+         TabIndex        =   47
          Top             =   900
          Width           =   495
       End
@@ -307,7 +307,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   20
          Left            =   90
-         TabIndex        =   50
+         TabIndex        =   46
          Top             =   585
          Width           =   555
       End
@@ -317,7 +317,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   21
          Left            =   90
-         TabIndex        =   49
+         TabIndex        =   45
          Top             =   270
          Width           =   285
       End
@@ -326,7 +326,7 @@ Begin VB.Form frmTables
       Caption         =   "Datasource Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   62
+      TabIndex        =   58
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtCompiler 
@@ -380,7 +380,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   23
          Left            =   90
-         TabIndex        =   67
+         TabIndex        =   63
          Top             =   1530
          Width           =   600
       End
@@ -390,7 +390,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   22
          Left            =   90
-         TabIndex        =   66
+         TabIndex        =   62
          Top             =   1215
          Width           =   570
       End
@@ -400,7 +400,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   17
          Left            =   90
-         TabIndex        =   65
+         TabIndex        =   61
          Top             =   900
          Width           =   465
       End
@@ -410,7 +410,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   15
          Left            =   90
-         TabIndex        =   64
+         TabIndex        =   60
          Top             =   270
          Width           =   720
       End
@@ -420,7 +420,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   14
          Left            =   90
-         TabIndex        =   63
+         TabIndex        =   59
          Top             =   585
          Width           =   570
       End
@@ -429,7 +429,7 @@ Begin VB.Form frmTables
       Caption         =   "Table Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   56
+      TabIndex        =   52
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtPrimaryKey 
@@ -530,7 +530,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   72
+         TabIndex        =   68
          Top             =   2790
          Width           =   915
       End
@@ -540,7 +540,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   10
          Left            =   90
-         TabIndex        =   71
+         TabIndex        =   67
          Top             =   2160
          Width           =   600
       End
@@ -550,7 +550,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   9
          Left            =   90
-         TabIndex        =   70
+         TabIndex        =   66
          Top             =   1845
          Width           =   495
       End
@@ -560,7 +560,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   8
          Left            =   90
-         TabIndex        =   69
+         TabIndex        =   65
          Top             =   1530
          Width           =   645
       End
@@ -570,7 +570,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   16
          Left            =   90
-         TabIndex        =   68
+         TabIndex        =   64
          Top             =   2475
          Width           =   660
       End
@@ -580,7 +580,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   61
+         TabIndex        =   57
          Top             =   900
          Width           =   300
       End
@@ -590,7 +590,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   60
+         TabIndex        =   56
          Top             =   270
          Width           =   285
       End
@@ -600,7 +600,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   59
+         TabIndex        =   55
          Top             =   585
          Width           =   465
       End
@@ -610,7 +610,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   7
          Left            =   90
-         TabIndex        =   58
+         TabIndex        =   54
          Top             =   1215
          Width           =   405
       End
@@ -620,7 +620,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   12
          Left            =   90
-         TabIndex        =   57
+         TabIndex        =   53
          Top             =   3105
          Width           =   735
       End
@@ -629,12 +629,12 @@ Begin VB.Form frmTables
       Caption         =   "Unique Constraint Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   85
+      TabIndex        =   79
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtUniqueColumns 
          BackColor       =   &H8000000F&
-         Height          =   1815
+         Height          =   3075
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
@@ -652,24 +652,13 @@ Begin VB.Form frmTables
          Top             =   225
          Width           =   2400
       End
-      Begin VB.TextBox txtUniqueComments 
-         BackColor       =   &H8000000F&
-         Height          =   1005
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   35
-         Top             =   2880
-         Width           =   3480
-      End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
          Caption         =   "Columns"
          Height          =   195
          Index           =   37
          Left            =   90
-         TabIndex        =   90
+         TabIndex        =   82
          Top             =   585
          Width           =   600
       End
@@ -679,68 +668,37 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   35
          Left            =   90
-         TabIndex        =   89
+         TabIndex        =   81
          Top             =   270
          Width           =   720
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   31
-         Left            =   90
-         TabIndex        =   88
-         Top             =   2655
-         Width           =   735
       End
    End
    Begin VB.Frame fraPrimary 
       Caption         =   "Primary Key Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   83
+      TabIndex        =   77
       Top             =   0
       Width           =   3660
-      Begin VB.TextBox txtPrimaryComments 
-         BackColor       =   &H8000000F&
-         Height          =   1005
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   38
-         Top             =   2880
-         Width           =   3480
-      End
       Begin VB.TextBox txtPrimaryOID 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   36
+         TabIndex        =   35
          Top             =   225
          Width           =   2400
       End
       Begin VB.TextBox txtPrimaryColumns 
          BackColor       =   &H8000000F&
-         Height          =   1815
+         Height          =   3075
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   37
+         TabIndex        =   36
          Top             =   810
          Width           =   3480
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   34
-         Left            =   90
-         TabIndex        =   87
-         Top             =   2655
-         Width           =   735
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -748,7 +706,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   33
          Left            =   90
-         TabIndex        =   86
+         TabIndex        =   80
          Top             =   270
          Width           =   720
       End
@@ -758,7 +716,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   26
          Left            =   90
-         TabIndex        =   84
+         TabIndex        =   78
          Top             =   585
          Width           =   600
       End
@@ -767,29 +725,29 @@ Begin VB.Form frmTables
       Caption         =   "Foreign Key Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   77
+      TabIndex        =   72
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtLocalColumns 
          BackColor       =   &H8000000F&
-         Height          =   600
+         Height          =   1230
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   41
+         TabIndex        =   39
          Top             =   1125
          Width           =   3480
       End
       Begin VB.TextBox txtForeignColumns 
          BackColor       =   &H8000000F&
-         Height          =   600
+         Height          =   1275
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   42
-         Top             =   1980
+         TabIndex        =   40
+         Top             =   2610
          Width           =   3480
       End
       Begin VB.TextBox txtForeignTable 
@@ -797,7 +755,7 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   40
+         TabIndex        =   38
          Top             =   540
          Width           =   2400
       End
@@ -806,20 +764,9 @@ Begin VB.Form frmTables
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   39
+         TabIndex        =   37
          Top             =   225
          Width           =   2400
-      End
-      Begin VB.TextBox txtForeignComments 
-         BackColor       =   &H8000000F&
-         Height          =   1050
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   43
-         Top             =   2835
-         Width           =   3480
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -827,7 +774,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   30
          Left            =   90
-         TabIndex        =   82
+         TabIndex        =   76
          Top             =   900
          Width           =   1035
       End
@@ -837,8 +784,8 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   29
          Left            =   90
-         TabIndex        =   81
-         Top             =   1755
+         TabIndex        =   75
+         Top             =   2385
          Width           =   1170
       End
       Begin VB.Label Label1 
@@ -847,7 +794,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   27
          Left            =   90
-         TabIndex        =   80
+         TabIndex        =   74
          Top             =   585
          Width           =   975
       End
@@ -857,68 +804,37 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   25
          Left            =   90
-         TabIndex        =   79
+         TabIndex        =   73
          Top             =   270
          Width           =   825
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   11
-         Left            =   90
-         TabIndex        =   78
-         Top             =   2610
-         Width           =   735
       End
    End
    Begin VB.Frame fraCheck 
       Caption         =   "Check Details"
       Height          =   3975
       Left            =   4500
-      TabIndex        =   73
+      TabIndex        =   69
       Top             =   0
       Width           =   3660
-      Begin VB.TextBox txtCheckComments 
-         BackColor       =   &H8000000F&
-         Height          =   1500
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   46
-         Top             =   2385
-         Width           =   3480
-      End
       Begin VB.TextBox txtCheckOID 
          BackColor       =   &H8000000F&
          Height          =   285
          Left            =   1170
          Locked          =   -1  'True
-         TabIndex        =   44
+         TabIndex        =   41
          Top             =   225
          Width           =   2400
       End
       Begin VB.TextBox txtCheckDefinition 
          BackColor       =   &H8000000F&
-         Height          =   1320
+         Height          =   3075
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   45
+         TabIndex        =   42
          Top             =   810
          Width           =   3480
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   5
-         Left            =   90
-         TabIndex        =   76
-         Top             =   2160
-         Width           =   735
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -926,7 +842,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   28
          Left            =   90
-         TabIndex        =   75
+         TabIndex        =   71
          Top             =   270
          Width           =   795
       End
@@ -936,7 +852,7 @@ Begin VB.Form frmTables
          Height          =   195
          Index           =   24
          Left            =   90
-         TabIndex        =   74
+         TabIndex        =   70
          Top             =   585
          Width           =   1170
       End
@@ -1117,41 +1033,21 @@ Public Sub cmdComment_Click()
       MsgBox "You must select a table to edit the comment for.", vbExclamation, "Error"
       Exit Sub
     End If
-    OID = txtOID.Text
+    Load frmComments
+    frmComments.Setup "frmTables", QUOTE & trvBrowser.SelectedItem.Text & QUOTE, Val(txtOID.Text)
+    frmComments.Show
   ElseIf fraColumn.Visible Then
     If txtColOID.Text = "" Then
       MsgBox "You must select a column to edit the comment for.", vbExclamation, "Error"
       Exit Sub
     End If
-    OID = txtColOID.Text
-  ElseIf fraCheck.Visible Then
-    If txtCheckOID.Text = "" Then
-      MsgBox "You must select a Check Constraint to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    OID = txtCheckOID.Text
-  ElseIf fraForeign.Visible Then
-    If txtForeignOID.Text = "" Then
-      MsgBox "You must select a Foreign Key to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    OID = txtForeignOID.Text
-  ElseIf fraPrimary.Visible Then
-    If txtPrimaryOID.Text = "" Then
-      MsgBox "You must select a Primary Key to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    OID = txtPrimaryOID.Text
-  ElseIf fraUnique.Visible Then
-    If txtUniqueOID.Text = "" Then
-      MsgBox "You must select a Unique Constraint to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    OID = txtUniqueOID.Text
+    Load frmComments
+    frmComments.Setup "frmTables - Column", QUOTE & trvBrowser.SelectedItem.Parent.Text & QUOTE & "." & QUOTE & trvBrowser.SelectedItem.Text & QUOTE, Val(txtColOID.Text)
+    frmComments.Show
+  Else
+    MsgBox "You must select a table or column to edit the comment for.", vbExclamation, "Error"
+    Exit Sub
   End If
-  CallingForm = "frmTables"
-  Load frmComments
-  frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, cmdComment_Click"
 End Sub
@@ -1371,10 +1267,10 @@ Private Sub Form_Resize()
     fraDatasource.Height = Me.ScaleHeight
     txtComments.Height = fraDatasource.Height - txtComments.Top - 100
     txtColComments.Height = fraDatasource.Height - txtColComments.Top - 100
-    txtCheckComments.Height = fraDatasource.Height - txtCheckComments.Top - 100
-    txtForeignComments.Height = fraDatasource.Height - txtForeignComments.Top - 100
-    txtPrimaryComments.Height = fraDatasource.Height - txtPrimaryComments.Top - 100
-    txtUniqueComments.Height = fraDatasource.Height - txtUniqueComments.Top - 100
+    txtCheckDefinition.Height = fraDatasource.Height - txtCheckDefinition.Top - 100
+    txtForeignColumns.Height = fraDatasource.Height - txtForeignColumns.Top - 100
+    txtPrimaryColumns.Height = fraDatasource.Height - txtPrimaryColumns.Top - 100
+    txtUniqueColumns.Height = fraDatasource.Height - txtUniqueColumns.Top - 100
     fraTable.Left = fraDatasource.Left
     fraTable.Height = fraDatasource.Height
     fraColumn.Left = fraDatasource.Left
@@ -1566,7 +1462,7 @@ Dim szGetRows() As Variant
     Dim szForeign_tgconstrname As String
     
     If rsForeign.State = adStateClosed Then
-      szQuery = "SELECT oid, tgrelid, tgconstrname, tgnargs, tgargs, CASE WHEN oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(oid) ELSE pgadmin_get_desc(oid) END AS comments FROM pg_trigger WHERE tgisconstraint = TRUE AND tgtype = 21"
+      szQuery = "SELECT oid, tgrelid, tgconstrname, tgnargs, tgargs, pgadmin_get_desc(oid) AS comments FROM pg_trigger WHERE tgisconstraint = TRUE AND tgtype = 21"
       LogMsg szQuery
       rsForeign.Open szQuery, gConnection, adOpenStatic
       'On Error Resume Next
@@ -1739,7 +1635,6 @@ Dim szGetRows() As Variant
       If rsChecks!check_oid = CLng(Mid(Node.Key, 3)) Then
         txtCheckOID.Text = rsChecks!check_oid & ""
         txtCheckDefinition.Text = rsChecks!check_definition & ""
-        txtCheckComments.Text = rsChecks!check_comments & ""
         rsChecks.MoveLast
       End If
       rsChecks.MoveNext
@@ -1777,7 +1672,6 @@ Dim szGetRows() As Variant
             End If
           Next X
         End If
-        txtForeignComments.Text = rsForeign!Comments & ""
         rsForeign.MoveLast
       End If
       rsForeign.MoveNext
@@ -1798,7 +1692,6 @@ Dim szGetRows() As Variant
     While Not rsPrimary.EOF
       If rsPrimary!index_oid = CLng(Mid(Node.Key, 3)) Then
         txtPrimaryOID.Text = rsPrimary!index_oid & ""
-        txtPrimaryComments.Text = rsPrimary!index_comments & ""
         txtPrimaryColumns.Text = txtPrimaryColumns.Text & rsPrimary!column_name & vbCrLf
       End If
       rsPrimary.MoveNext
@@ -1819,7 +1712,6 @@ Dim szGetRows() As Variant
     While Not rsUnique.EOF
       If rsUnique!index_oid = CLng(Mid(Node.Key, 3)) Then
         txtUniqueOID.Text = rsUnique!index_oid & ""
-        txtUniqueComments.Text = rsUnique!index_comments & ""
         txtUniqueColumns.Text = txtUniqueColumns.Text & rsUnique!column_name & vbCrLf
       End If
       rsUnique.MoveNext

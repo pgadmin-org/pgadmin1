@@ -320,9 +320,8 @@ On Error GoTo Err_Handler
     MsgBox "You must select a sequence to edit the comment for.", vbExclamation, "Error"
     Exit Sub
   End If
-  CallingForm = "frmSequences"
-  OID = txtOID.Text
   Load frmComments
+  frmComments.Setup "frmSequences", QUOTE & lstSeq.Text & QUOTE, Val(txtOID.Text)
   frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSequences, cmdComment_Click"
@@ -425,13 +424,8 @@ Dim rsInfo As New Recordset
     txtOwner.Text = rsSeq!usename & ""
     txtACL.Text = rsSeq!relacl & ""
     If rsInfo.State <> adStateClosed Then rsInfo.Close
-    If rsSeq!OID > LAST_SYSTEM_OID Then
-      LogMsg "Executing: SELECT description FROM pgadmin_desc WHERE objoid = " & rsSeq!OID
-      rsInfo.Open "SELECT description FROM pgadmin_desc WHERE objoid = " & rsSeq!OID, gConnection, adOpenForwardOnly
-    Else
-      LogMsg "Executing: SELECT description FROM pg_description WHERE objoid = " & rsSeq!OID
-      rsInfo.Open "SELECT description FROM pg_description WHERE objoid = " & rsSeq!OID, gConnection, adOpenForwardOnly
-    End If
+    LogMsg "Executing: SELECT description FROM pg_description WHERE objoid = " & rsSeq!OID
+    rsInfo.Open "SELECT description FROM pg_description WHERE objoid = " & rsSeq!OID, gConnection, adOpenForwardOnly
     If Not rsInfo.EOF Then
       txtComments.Text = rsInfo!Description & ""
     Else

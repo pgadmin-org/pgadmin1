@@ -1,5 +1,4 @@
 VERSION 5.00
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
 Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adoDataGrid.ocx"
 Begin VB.Form frmTracking 
    Caption         =   "Revision Tracking"
@@ -12,6 +11,24 @@ Begin VB.Form frmTracking
    MDIChild        =   -1  'True
    ScaleHeight     =   4725
    ScaleWidth      =   6630
+   Begin VB.CommandButton cmdClearLog 
+      Caption         =   "&Clear Tracking Log"
+      Height          =   375
+      Left            =   2160
+      TabIndex        =   2
+      ToolTipText     =   "Delete all records from the tracking log."
+      Top             =   4320
+      Width           =   2040
+   End
+   Begin VB.CommandButton cmdGenerate 
+      Caption         =   "&Generate Upgrade Script"
+      Height          =   375
+      Left            =   45
+      TabIndex        =   1
+      ToolTipText     =   "Generate an Auto Upgrade SQL Script in PostgreSQL pg_dump format."
+      Top             =   4320
+      Width           =   2040
+   End
    Begin adoDataGrid.DataGrid grdLog 
       Align           =   1  'Align Top
       Height          =   1800
@@ -24,80 +41,6 @@ Begin VB.Form frmTracking
       ViewTools       =   0   'False
       HeaderText      =   "Timestamp;Username;Version;Query"
       ColumnWidths    =   "2000;1440;1000;6000"
-   End
-   Begin VB.Frame fraOptions 
-      Caption         =   "Options"
-      Height          =   1050
-      Left            =   45
-      TabIndex        =   5
-      Top             =   3690
-      Width           =   6540
-      Begin vsAdoSelector.VS_AdoSelector vssTracking 
-         Height          =   315
-         Left            =   1710
-         TabIndex        =   1
-         ToolTipText     =   "Select whether or not to use Revision Tracking."
-         Top             =   270
-         Width           =   1050
-         _ExtentX        =   1852
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         SelectorType    =   1
-         DisplayList     =   "Yes;No;"
-         IndexList       =   "Y;N;"
-      End
-      Begin VB.TextBox txtTracking 
-         Height          =   285
-         Left            =   1710
-         TabIndex        =   2
-         ToolTipText     =   "Set the Version number of the last software release."
-         Top             =   630
-         Width           =   1050
-      End
-      Begin VB.CommandButton cmdGenerate 
-         Caption         =   "&Generate Upgrade Script"
-         Height          =   690
-         Left            =   2880
-         TabIndex        =   3
-         ToolTipText     =   "Generate an Auto Upgrade SQL Script in PostgreSQL pg_dump format."
-         Top             =   225
-         Width           =   1725
-      End
-      Begin VB.CommandButton cmdClearLog 
-         Caption         =   "&Clear Tracking Log"
-         Height          =   690
-         Left            =   4680
-         TabIndex        =   4
-         ToolTipText     =   "Delete all records from the tracking log."
-         Top             =   225
-         Width           =   1725
-      End
-      Begin VB.Label Label1 
-         Caption         =   "Enable Tracking"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   7
-         Top             =   315
-         Width           =   1320
-      End
-      Begin VB.Label Label1 
-         Caption         =   "Last Release Version"
-         Height          =   195
-         Index           =   1
-         Left            =   90
-         TabIndex        =   6
-         Top             =   675
-         Width           =   1725
-      End
    End
 End
 Attribute VB_Name = "frmTracking"
@@ -164,23 +107,14 @@ Dim rs As New Recordset
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 6750
   Me.Height = 5130
-  StartMsg "Loading Revision Tracking Options..."
+  StartMsg "Loading Revision Tracking Log..."
   LogMsg "Executing: SELECT * FROM pgadmin_rev_log"
   If rsLog.State <> adStateClosed Then rsLog.Close
   rsLog.Open "SELECT * FROM pgadmin_rev_log", gConnection, adOpenForwardOnly, adLockReadOnly
   Set grdLog.Recordset = rsLog
-  
   If rs.State <> adStateClosed Then rs.Close
-  LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 2"
-  rs.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 2", gConnection, adOpenForwardOnly
-  vssTracking.LoadList
-  vssTracking.SelectItem rs!param_value
-  If rs.State <> adStateClosed Then rs.Close
-  LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 3"
-  rs.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 3", gConnection, adOpenForwardOnly
-  txtTracking.Text = rs!param_value
-  EndMsg
   Set rs = Nothing
+  EndMsg
   Exit Sub
 Err_Handler:
   Set rs = Nothing
@@ -195,33 +129,12 @@ On Error GoTo Err_Handler
       If Me.Width < 6650 Then Me.Width = 6650
       If Me.Height < 2500 Then Me.Height = 2500
     End If
-    fraOptions.Top = Me.ScaleHeight - fraOptions.Height - 50
-    grdLog.Height = fraOptions.Top - 100
+    cmdGenerate.Top = Me.ScaleHeight - cmdGenerate.Height - 50
+    cmdClearLog.Top = cmdGenerate.Top
+    grdLog.Height = cmdGenerate.Top - 100
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTracking, Form_Resize"
 End Sub
 
-Private Sub txtTracking_Change()
-On Error GoTo Err_Handler
-  If Validate(txtTracking.Text, vdtNumeric, True) = False Then Exit Sub
-  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & txtTracking.Text & "' WHERE param_id = 3"
-  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & txtTracking.Text & "' WHERE param_id = 3"
-  TrackVer = txtTracking.Text
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTracking, txtTracking_Change"
-End Sub
-
-Private Sub vssTracking_ItemSelected(Item As String, ItemText As String)
-On Error GoTo Err_Handler
-  If Item = "Y" Then
-    Tracking = True
-  Else
-    Tracking = False
-  End If
-  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Item & "' WHERE param_id = 2"
-  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & Item & "' WHERE param_id = 2"
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTracking, vssTracking_ItemSelected"
-End Sub
 

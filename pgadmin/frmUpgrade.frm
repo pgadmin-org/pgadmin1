@@ -142,7 +142,7 @@ Dim fNum As Integer
     If chkConnect.Value = 1 Then Print #fNum, "\CONNECT - " & rsLog!Username
     Print #fNum, rsLog!Query
     Count = Count + 1
-    fMainForm.StatusBar1.Panels(1).Text = "Writing upgrade script - query: " & Count
+    fMainForm.StatusBar1.Panels("Status").Text = "Writing upgrade script - query: " & Count
     fMainForm.StatusBar1.Refresh
     rsLog.MoveNext
   Wend

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
@@ -199,30 +199,41 @@ Begin VB.MDIForm frmMain
       _ExtentY        =   476
       _Version        =   393216
       BeginProperty Panels {8E3867A5-8586-11D1-B16A-00C0F0283628} 
-         NumPanels       =   4
+         NumPanels       =   5
          BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   1
-            Object.Width           =   10478
+            Object.Width           =   8758
             Text            =   "Status"
             TextSave        =   "Status"
+            Key             =   "Status"
          EndProperty
          BeginProperty Panel2 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Alignment       =   1
             AutoSize        =   2
             Object.Width           =   873
             MinWidth        =   882
+            Key             =   "Timer"
          EndProperty
          BeginProperty Panel3 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Alignment       =   1
             AutoSize        =   2
             Object.Width           =   1773
             MinWidth        =   1764
+            Key             =   "Mode"
          EndProperty
          BeginProperty Panel4 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Alignment       =   1
             AutoSize        =   2
             Object.Width           =   1773
             MinWidth        =   1764
+            Key             =   "Database"
+         EndProperty
+         BeginProperty Panel5 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
+            Alignment       =   1
+            AutoSize        =   2
+            Object.Width           =   1773
+            MinWidth        =   1764
+            Key             =   "User"
          EndProperty
       EndProperty
    End
@@ -551,7 +562,7 @@ Begin VB.MDIForm frmMain
       End
    End
    Begin VB.Menu mnuCTXFunctions 
-      Caption         =   "Funtions"
+      Caption         =   "Functions"
       Visible         =   0   'False
       Begin VB.Menu mnuCTXFunctions_Add 
          Caption         =   "Add Function"
@@ -618,9 +629,6 @@ Begin VB.MDIForm frmMain
       End
       Begin VB.Menu Sep9 
          Caption         =   "-"
-      End
-      Begin VB.Menu mnuCTXLanguages_Comment 
-         Caption         =   "Edit Comment"
       End
       Begin VB.Menu mnuCTXLanguages_Refresh 
          Caption         =   "Refresh"
@@ -773,7 +781,7 @@ Option Explicit
 Private Sub cmdCopy_Click()
 On Error GoTo Err_Handler
   Clipboard.SetText txtSQLPane.Text
-  StatusBar1.Panels(1).Text = "SQL Copied to clipboard."
+  StatusBar1.Panels("Status").Text = "SQL Copied to clipboard."
   StatusBar1.Refresh
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, cmdCopy_Click"
@@ -874,9 +882,9 @@ Dim X As Printer
   If ActionCancelled <> True Then Chk_DriverOptions
   If ActionCancelled <> True Then Chk_HelperObjects
   If ActionCancelled <> True Then
-  If rs.State <> adStateClosed Then rs.Close
-  LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 2"
-  rs.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 2", gConnection, adOpenForwardOnly
+    If rs.State <> adStateClosed Then rs.Close
+    LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 2"
+    rs.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 2", gConnection, adOpenForwardOnly
     If rs!param_value = "Y" Then
       Tracking = True
       If rs.State <> adStateClosed Then rs.Close
@@ -886,8 +894,22 @@ Dim X As Printer
     Else
       Tracking = False
     End If
+    If rs.State <> adStateClosed Then rs.Close
+  
+    'What mode are we running in (Development or Production)?
+    LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 4"
+    rs.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 4", gConnection, adOpenForwardOnly
+    If rs!param_value = "Y" Then
+      DevMode = True
+      StatusBar1.Panels("Mode").Text = "Development Mode"
+    Else
+      DevMode = False
+      StatusBar1.Panels("Mode").Text = "Production Mode"
+    End If
   End If
+  
   If rs.State <> adStateClosed Then rs.Close
+  
   Prn = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Printer", "")
   For Each X In Printers
     If X.DeviceName = Prn Then
@@ -1085,10 +1107,6 @@ End Sub
 
 Private Sub mnuCTXIndexes_Refresh_Click()
   frmIndexes.cmdRefresh_Click
-End Sub
-
-Private Sub mnuCTXLanguages_Comment_Click()
-  frmLanguages.cmdComment_Click
 End Sub
 
 Private Sub mnuCTXLanguages_Create_Click()
@@ -1372,9 +1390,9 @@ Dim Response As Integer
   End If
   Chk_HelperObjects
   
-  StatusBar1.Panels(1).Text = "Ready"
-  StatusBar1.Panels(3).Text = "Connected to: " & Datasource
-  StatusBar1.Panels(4).Text = "Username: " & Username
+  StatusBar1.Panels("Status").Text = "Ready"
+  StatusBar1.Panels("Database").Text = "Connected to: " & Datasource
+  StatusBar1.Panels("User").Text = "Username: " & Username
   StatusBar1.Refresh
   Screen.MousePointer = vbNormal
   Exit Sub
@@ -1409,9 +1427,9 @@ Dim X As Integer
     Force_Selectdb
   End If
   
-  StatusBar1.Panels(1).Text = "Ready"
-  StatusBar1.Panels(3).Text = "Connected to: " & Datasource
-  StatusBar1.Panels(4).Text = "Username: " & Username
+  StatusBar1.Panels("Status").Text = "Ready"
+  StatusBar1.Panels("Database").Text = "Connected to: " & Datasource
+  StatusBar1.Panels("User").Text = "Username: " & Username
   StatusBar1.Refresh
   Screen.MousePointer = vbNormal
   Exit Sub

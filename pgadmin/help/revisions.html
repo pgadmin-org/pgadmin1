@@ -57,12 +57,12 @@ JMP - Jean-Michel Poure</p>
     OID, not name. (Bug #257).</li>
   <li>(DP) Allow grant/revoke superuser and create database privilege on users.</li>
   <li>(JMP) IDE (Integrated Development Environment) features:<br>
-    PgAdmin now allows edition, modification and saving of functions, triggers 
+    pgAdmin now allows edition, modification and saving of functions, triggers 
     and views. To edit a function, trigger or view, click on the Modify button 
     or simply double-click on the item you whish to modify. Be aware that modified/new 
-    functions, triggers and views are saved in PgAdmin new temporary tables (pgadmin_dev_functions, 
+    functions, triggers and views are saved in pgAdmin new temporary tables (pgadmin_dev_functions, 
     pgadmin_dev_triggers, pgadmin_dev_views). These temporarty tables are dropped 
-    at PgAdmin startup, therefore (1) several developer cannot work on the same 
+    at pgAdmin startup, therefore (1) several developer cannot work on the same 
     database at the same time, (2) always rebuild the project before leaving the 
     database or your changes will be lost (see next feature).</li>
   <li>(JMP) Project rebuilding:<br>
@@ -79,6 +79,10 @@ JMP - Jean-Michel Poure</p>
     as for triggers and views.</li>
   <li>(JMP) Fast retrieval of functions, triggers and views list in one query. 
   </li>
+  <li>(DJP) Migrated object comments to pg_description now that COMMENT ON has 
+  been around for a while.</li>
+  <li>(DJP) Moved Revision Tracking options to new Developer options tab on the 
+  Options form.</li>
 </ul>
 <p>WARNING : do not test the new IDE on a production database. Before testing, 
   export functions, triggers and views using the new export feature.</p>

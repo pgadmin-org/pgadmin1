@@ -301,9 +301,8 @@ On Error GoTo Err_Handler
     MsgBox "You must select a database to edit the comment for!", vbExclamation, "Error"
     Exit Sub
   End If
-  CallingForm = "frmDatabases"
-  OID = txtOID.Text
   Load frmComments
+  frmComments.Setup "frmDatabases", QUOTE & lstDB.Text & QUOTE, Val(txtOID.Text)
   frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmDatabases, cmdComment_Click"

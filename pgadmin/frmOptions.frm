@@ -34,43 +34,107 @@ Begin VB.Form frmOptions
       _ExtentY        =   4789
       _Version        =   393216
       Style           =   1
-      Tabs            =   2
-      Tab             =   1
       TabHeight       =   520
       TabCaption(0)   =   "&Logging"
       TabPicture(0)   =   "frmOptions.frx":128A
-      Tab(0).ControlEnabled=   0   'False
+      Tab(0).ControlEnabled=   -1  'True
       Tab(0).Control(0)=   "Label1"
+      Tab(0).Control(0).Enabled=   0   'False
       Tab(0).Control(1)=   "chkEnableLogging"
+      Tab(0).Control(1).Enabled=   0   'False
       Tab(0).Control(2)=   "chkMaskPassword"
+      Tab(0).Control(2).Enabled=   0   'False
       Tab(0).Control(3)=   "txtLogfile"
+      Tab(0).Control(3).Enabled=   0   'False
       Tab(0).Control(4)=   "cmdBrowse"
+      Tab(0).Control(4).Enabled=   0   'False
       Tab(0).Control(5)=   "CommonDialog1"
+      Tab(0).Control(5).Enabled=   0   'False
       Tab(0).ControlCount=   6
       TabCaption(1)   =   "&Colours"
       TabPicture(1)   =   "frmOptions.frx":12A6
-      Tab(1).ControlEnabled=   -1  'True
+      Tab(1).ControlEnabled=   0   'False
       Tab(1).Control(0)=   "Label2"
-      Tab(1).Control(0).Enabled=   0   'False
       Tab(1).Control(1)=   "lvWords"
-      Tab(1).Control(1).Enabled=   0   'False
       Tab(1).Control(2)=   "chkItalic"
-      Tab(1).Control(2).Enabled=   0   'False
       Tab(1).Control(3)=   "chkBold"
-      Tab(1).Control(3).Enabled=   0   'False
       Tab(1).Control(4)=   "cmdChangeCol"
-      Tab(1).Control(4).Enabled=   0   'False
       Tab(1).Control(5)=   "cmdAddNew"
-      Tab(1).Control(5).Enabled=   0   'False
       Tab(1).Control(6)=   "txtWord"
-      Tab(1).Control(6).Enabled=   0   'False
       Tab(1).Control(7)=   "cmdRemove"
-      Tab(1).Control(7).Enabled=   0   'False
       Tab(1).ControlCount=   8
+      TabCaption(2)   =   "&Developer"
+      TabPicture(2)   =   "frmOptions.frx":12C2
+      Tab(2).ControlEnabled=   0   'False
+      Tab(2).Control(0)=   "fraMode"
+      Tab(2).Control(1)=   "fraTracking"
+      Tab(2).ControlCount=   2
+      Begin VB.Frame fraTracking 
+         Caption         =   "Revision Tracking"
+         Height          =   1005
+         Left            =   -74775
+         TabIndex        =   18
+         Top             =   1485
+         Width           =   4155
+         Begin VB.TextBox txtTrackVer 
+            Height          =   285
+            Left            =   2385
+            TabIndex        =   20
+            ToolTipText     =   "Enter the last Revision Version Number."
+            Top             =   540
+            Width           =   915
+         End
+         Begin VB.CheckBox chkTracking 
+            Alignment       =   1  'Right Justify
+            Caption         =   "Revision Tracking enabled?"
+            Height          =   240
+            Left            =   765
+            TabIndex        =   19
+            ToolTipText     =   "Check to enable the Revision Tracking System."
+            Top             =   270
+            Width           =   2535
+         End
+         Begin VB.Label Label3 
+            Caption         =   "Last Release Version"
+            Height          =   195
+            Left            =   810
+            TabIndex        =   21
+            Top             =   585
+            Width           =   1545
+         End
+      End
+      Begin VB.Frame fraMode 
+         Caption         =   "Database Mode"
+         Height          =   870
+         Left            =   -74775
+         TabIndex        =   15
+         Top             =   495
+         Width           =   4155
+         Begin VB.OptionButton optMode 
+            Caption         =   "&Production"
+            Height          =   240
+            Index           =   1
+            Left            =   1170
+            TabIndex        =   17
+            ToolTipText     =   "Select to put the Database in Production Mode."
+            Top             =   540
+            Width           =   1905
+         End
+         Begin VB.OptionButton optMode 
+            Caption         =   "D&evelopment"
+            Height          =   240
+            Index           =   0
+            Left            =   1170
+            TabIndex        =   16
+            ToolTipText     =   "Select to put the Database in Development mode."
+            Top             =   270
+            Width           =   1905
+         End
+      End
       Begin VB.CommandButton cmdRemove 
          Caption         =   "Remove"
          Height          =   345
-         Left            =   3645
+         Left            =   -71355
          TabIndex        =   9
          ToolTipText     =   "Remove the selected word."
          Top             =   848
@@ -78,7 +142,7 @@ Begin VB.Form frmOptions
       End
       Begin VB.TextBox txtWord 
          Height          =   285
-         Left            =   585
+         Left            =   -74415
          TabIndex        =   7
          ToolTipText     =   "Enter a word to highlight."
          Top             =   450
@@ -87,7 +151,7 @@ Begin VB.Form frmOptions
       Begin VB.CommandButton cmdAddNew 
          Caption         =   "Add"
          Height          =   345
-         Left            =   3645
+         Left            =   -71355
          TabIndex        =   8
          ToolTipText     =   "Add the selected word."
          Top             =   420
@@ -96,7 +160,7 @@ Begin VB.Form frmOptions
       Begin VB.CommandButton cmdChangeCol 
          Caption         =   "Change Colour"
          Height          =   330
-         Left            =   1755
+         Left            =   -73245
          Style           =   1  'Graphical
          TabIndex        =   12
          ToolTipText     =   "Select a colour for the word."
@@ -106,7 +170,7 @@ Begin VB.Form frmOptions
       Begin VB.CheckBox chkBold 
          Caption         =   "Bold"
          Height          =   285
-         Left            =   90
+         Left            =   -74910
          TabIndex        =   10
          ToolTipText     =   "Should the word be made bold?"
          Top             =   900
@@ -115,14 +179,14 @@ Begin VB.Form frmOptions
       Begin VB.CheckBox chkItalic 
          Caption         =   "Italic"
          Height          =   285
-         Left            =   945
+         Left            =   -74055
          TabIndex        =   11
          ToolTipText     =   "Should the word be made italic?"
          Top             =   900
          Width           =   675
       End
       Begin MSComDlg.CommonDialog CommonDialog1 
-         Left            =   -74955
+         Left            =   45
          Top             =   2160
          _ExtentX        =   847
          _ExtentY        =   847
@@ -131,14 +195,14 @@ Begin VB.Form frmOptions
       Begin VB.CommandButton cmdBrowse 
          Caption         =   "..."
          Height          =   330
-         Left            =   -71310
+         Left            =   3690
          TabIndex        =   3
          Top             =   1800
          Width           =   375
       End
       Begin VB.TextBox txtLogfile 
          Height          =   285
-         Left            =   -74505
+         Left            =   495
          TabIndex        =   2
          Top             =   1845
          Width           =   3165
@@ -146,7 +210,7 @@ Begin VB.Form frmOptions
       Begin VB.CheckBox chkMaskPassword 
          Caption         =   "&Mask password in logfile"
          Height          =   195
-         Left            =   -74505
+         Left            =   495
          TabIndex        =   1
          Top             =   1260
          Width           =   3435
@@ -154,14 +218,14 @@ Begin VB.Form frmOptions
       Begin VB.CheckBox chkEnableLogging 
          Caption         =   "&Enable advanced logging"
          Height          =   195
-         Left            =   -74505
+         Left            =   495
          TabIndex        =   0
          Top             =   810
          Width           =   3435
       End
       Begin MSComctlLib.ListView lvWords 
          Height          =   1365
-         Left            =   45
+         Left            =   -74955
          TabIndex        =   14
          ToolTipText     =   "Displays the Text Formatting rules."
          Top             =   1260
@@ -184,7 +248,7 @@ Begin VB.Form frmOptions
       Begin VB.Label Label2 
          Caption         =   "Word"
          Height          =   255
-         Left            =   90
+         Left            =   -74910
          TabIndex        =   13
          Top             =   495
          Width           =   870
@@ -193,7 +257,7 @@ Begin VB.Form frmOptions
          AutoSize        =   -1  'True
          Caption         =   "Logfile"
          Height          =   195
-         Left            =   -74505
+         Left            =   495
          TabIndex        =   5
          Top             =   1620
          Width           =   465
@@ -223,6 +287,17 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+
+Private Sub chkTracking_Click()
+On Error GoTo Err_Handler
+  If chkTracking.Value = 1 Then
+    txtTrackVer.Enabled = True
+  Else
+    txtTrackVer.Enabled = False
+  End If
+  Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmOptions, chkTracking_Click"
+End Sub
 
 Private Sub cmdAddNew_Click()
 On Error GoTo Err_Handler
@@ -310,6 +385,31 @@ Dim szTextColours As String
   TextColours = szTextColours
   RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "Text Colours", ValString, CStr(TextColours)
   
+  'Save the Developer options...
+  If optMode(0).Value = True Then
+    DevMode = True
+    fMainForm.StatusBar1.Panels("Mode").Text = "Development Mode"
+    LogMsg "Executing: UPDATE pgadmin_param SET param_value = 'Y' WHERE param_id = 4"
+    gConnection.Execute "UPDATE pgadmin_param SET param_value = 'Y' WHERE param_id = 4"
+  Else
+    DevMode = False
+    fMainForm.StatusBar1.Panels("Mode").Text = "Production Mode"
+    LogMsg "Executing: UPDATE pgadmin_param SET param_value = 'N' WHERE param_id = 4"
+    gConnection.Execute "UPDATE pgadmin_param SET param_value = 'N' WHERE param_id = 4"
+  End If
+  If chkTracking.Value = 1 Then
+    Tracking = True
+    LogMsg "Executing: UPDATE pgadmin_param SET param_value = 'Y' WHERE param_id = 2"
+    gConnection.Execute "UPDATE pgadmin_param SET param_value = 'Y' WHERE param_id = 2"
+  Else
+    Tracking = False
+    LogMsg "Executing: UPDATE pgadmin_param SET param_value = 'N' WHERE param_id = 2"
+    gConnection.Execute "UPDATE pgadmin_param SET param_value = 'N' WHERE param_id = 2"
+  End If
+  TrackVer = Val(txtTrackVer.Text)
+  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & TrackVer & "' WHERE param_id = 3"
+  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & TrackVer & "' WHERE param_id = 3"
+  
   'Unload the form.
   Unload Me
   Exit Sub
@@ -326,7 +426,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-Dim x As Printer
+Dim X As Printer
 Dim iLoop As Integer
 Dim itmX As ListItem
 Dim szStrings() As String
@@ -360,6 +460,22 @@ Dim szValues() As String
       itmX.SubItems(2) = "N"
     End If
   Next iLoop
+  
+  'Developer Options
+  If DevMode = True Then
+    optMode(0).Value = True
+  Else
+    optMode(1).Value = True
+  End If
+  If Tracking = True Then
+    chkTracking.Value = 1
+    txtTrackVer.Enabled = True
+  Else
+    chkTracking.Value = 0
+    txtTrackVer.Enabled = False
+  End If
+  txtTrackVer.Text = TrackVer
+  
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmOptions, Form_Load"
 End Sub

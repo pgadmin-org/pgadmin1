@@ -14,33 +14,24 @@ Begin VB.Form frmLanguages
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   17
-      Top             =   1485
+      TabIndex        =   14
+      Top             =   1125
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Languages"
          Height          =   225
          Left            =   120
-         TabIndex        =   4
+         TabIndex        =   3
          ToolTipText     =   "Select to view system languages."
          Top             =   225
          Width           =   1155
       End
    End
-   Begin VB.CommandButton cmdComment 
-      Caption         =   "&Edit Comment"
-      Height          =   330
-      Left            =   45
-      TabIndex        =   2
-      ToolTipText     =   "Edit the comment for the selected language."
-      Top             =   765
-      Width           =   1410
-   End
    Begin VB.Frame fraDetails 
       Caption         =   "Language Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   11
+      TabIndex        =   9
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtCompiler 
@@ -48,7 +39,7 @@ Begin VB.Form frmLanguages
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   1170
          Width           =   2670
       End
@@ -57,7 +48,7 @@ Begin VB.Form frmLanguages
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   855
          Width           =   2670
       End
@@ -66,7 +57,7 @@ Begin VB.Form frmLanguages
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   225
          Width           =   2670
       End
@@ -75,20 +66,9 @@ Begin VB.Form frmLanguages
          Height          =   285
          Left            =   900
          Locked          =   -1  'True
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   540
          Width           =   2670
-      End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   2175
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   10
-         Top             =   1755
-         Width           =   3480
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -96,7 +76,7 @@ Begin VB.Form frmLanguages
          Height          =   195
          Index           =   0
          Left            =   90
-         TabIndex        =   16
+         TabIndex        =   13
          Top             =   270
          Width           =   285
       End
@@ -106,7 +86,7 @@ Begin VB.Form frmLanguages
          Height          =   195
          Index           =   2
          Left            =   90
-         TabIndex        =   15
+         TabIndex        =   12
          Top             =   585
          Width           =   630
       End
@@ -116,7 +96,7 @@ Begin VB.Form frmLanguages
          Height          =   195
          Index           =   3
          Left            =   90
-         TabIndex        =   14
+         TabIndex        =   11
          Top             =   900
          Width           =   555
       End
@@ -126,25 +106,15 @@ Begin VB.Form frmLanguages
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   13
+         TabIndex        =   10
          Top             =   1215
          Width           =   600
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   12
-         Top             =   1530
-         Width           =   735
       End
    End
    Begin VB.ListBox lstLang 
       Height          =   3960
       Left            =   1485
-      TabIndex        =   5
+      TabIndex        =   4
       Top             =   45
       Width           =   2985
    End
@@ -152,9 +122,9 @@ Begin VB.Form frmLanguages
       Caption         =   "&Refresh"
       Height          =   330
       Left            =   45
-      TabIndex        =   3
+      TabIndex        =   2
       ToolTipText     =   "Refresh the list of languages."
-      Top             =   1125
+      Top             =   765
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropLang 
@@ -219,20 +189,6 @@ On Error Resume Next
   Set rsLang = Nothing
 End Sub
 
-Public Sub cmdComment_Click()
-On Error GoTo Err_Handler
-  If txtOID.Text = "" Then
-    MsgBox "You must select a language to edit the comment for.", vbExclamation, "Error"
-    Exit Sub
-  End If
-  CallingForm = "frmLanguages"
-  OID = txtOID.Text
-  Load frmComments
-  frmComments.Show
-  Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmLanguages, cmdComment_Click"
-End Sub
-
 Public Sub cmdCreateLang_Click()
 On Error GoTo Err_Handler
   Load frmAddLanguage
@@ -269,7 +225,6 @@ On Error GoTo Err_Handler
   lstLang.Clear
   txtOID.Text = ""
   txtHandler.Text = ""
-  txtComments.Text = ""
   txtTrusted.Text = ""
   txtCompiler.Text = ""
   If rsLang.State <> adStateClosed Then rsLang.Close
@@ -313,7 +268,6 @@ On Error GoTo Err_Handler
     lstLang.Width = Me.ScaleWidth - lstLang.Left - fraDetails.Width - 25
     fraDetails.Left = lstLang.Left + lstLang.Width + 25
     fraDetails.Height = Me.ScaleHeight
-    txtComments.Height = fraDetails.Height - txtComments.Top - 100
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmLanguages, Form_Resize"
@@ -328,7 +282,6 @@ On Error GoTo Err_Handler
     txtCompiler.Text = rsLang!language_compiler & ""
     txtTrusted.Text = rsLang!language_is_trusted & ""
     txtHandler.Text = rsLang!language_handler & ""
-    txtComments.Text = rsLang!language_comments & ""
     If rsLang.BOF <> True Then rsLang.MoveFirst
   End If
   Exit Sub

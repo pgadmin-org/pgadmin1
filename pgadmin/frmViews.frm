@@ -405,9 +405,8 @@ On Error GoTo Err_Handler
     MsgBox "You must select a View to edit the comment for.", vbExclamation, "Error"
     Exit Sub
   End If
-  CallingForm = "frmViews"
-  OID = txtOID.Text
   Load frmComments
+  frmComments.Setup "frmViews", QUOTE & lstView.Text & QUOTE, txtOID.Text
   frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdComment_Click"

@@ -162,9 +162,9 @@ On Error GoTo Err_Handler
   Else
     fMainForm.Caption = Datasource & " - pgAdmin v" & app.Major & "." & app.Minor & "." & app.Revision
   End If
-  fMainForm.StatusBar1.Panels(1).Text = "Ready"
-  fMainForm.StatusBar1.Panels(3).Text = "Connected to: " & Datasource
-  fMainForm.StatusBar1.Panels(4).Text = "Username: " & Username
+  fMainForm.StatusBar1.Panels("Status").Text = "Ready"
+  fMainForm.StatusBar1.Panels("Database").Text = "Connected to: " & Datasource
+  fMainForm.StatusBar1.Panels("User").Text = "Username: " & Username
   fMainForm.StatusBar1.Refresh
   RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "DataSource", ValString, cboDSNList.Text
   RegWrite HKEY_CURRENT_USER, "Software\pgAdmin", "Username", ValString, txtUID.Text
@@ -172,7 +172,7 @@ On Error GoTo Err_Handler
 Err_Handler:
   If Err = -2147217843 Then
     Screen.MousePointer = vbNormal
-    fMainForm.StatusBar1.Panels(1).Text = "Not connected."
+    fMainForm.StatusBar1.Panels("Status").Text = "Not connected."
     MsgBox "Incorrect Password - Connection to datasource: " & cboDSNList.Text & _
            " failed!", vbCritical, "Connection Error"
     txtPWD.SelStart = 0

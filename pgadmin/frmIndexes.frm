@@ -42,7 +42,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   22
+      TabIndex        =   21
       Top             =   1485
       Width           =   1380
       Begin VB.CheckBox chkIndexes 
@@ -113,7 +113,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Datasource Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   23
+      TabIndex        =   22
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtdbVer 
@@ -121,7 +121,7 @@ Begin VB.Form frmIndexes
          Height          =   285
          Left            =   765
          Locked          =   -1  'True
-         TabIndex        =   19
+         TabIndex        =   18
          Top             =   855
          Width           =   2805
       End
@@ -130,7 +130,7 @@ Begin VB.Form frmIndexes
          Height          =   285
          Left            =   765
          Locked          =   -1  'True
-         TabIndex        =   20
+         TabIndex        =   19
          Top             =   1170
          Width           =   2805
       End
@@ -139,7 +139,7 @@ Begin VB.Form frmIndexes
          Height          =   285
          Left            =   765
          Locked          =   -1  'True
-         TabIndex        =   21
+         TabIndex        =   20
          Top             =   1485
          Width           =   2805
       End
@@ -148,7 +148,7 @@ Begin VB.Form frmIndexes
          Height          =   285
          Left            =   1080
          Locked          =   -1  'True
-         TabIndex        =   18
+         TabIndex        =   17
          Top             =   540
          Width           =   2490
       End
@@ -157,7 +157,7 @@ Begin VB.Form frmIndexes
          Height          =   285
          Left            =   1080
          Locked          =   -1  'True
-         TabIndex        =   17
+         TabIndex        =   16
          Top             =   225
          Width           =   2490
       End
@@ -167,7 +167,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   17
          Left            =   90
-         TabIndex        =   40
+         TabIndex        =   38
          Top             =   900
          Width           =   465
       End
@@ -177,7 +177,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   22
          Left            =   90
-         TabIndex        =   39
+         TabIndex        =   37
          Top             =   1215
          Width           =   570
       End
@@ -187,7 +187,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   23
          Left            =   90
-         TabIndex        =   38
+         TabIndex        =   36
          Top             =   1530
          Width           =   600
       End
@@ -197,7 +197,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   1
          Left            =   90
-         TabIndex        =   25
+         TabIndex        =   24
          Top             =   585
          Width           =   570
       End
@@ -207,7 +207,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   0
          Left            =   90
-         TabIndex        =   24
+         TabIndex        =   23
          Top             =   270
          Width           =   720
       End
@@ -216,7 +216,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Index Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   26
+      TabIndex        =   25
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtLossy 
@@ -281,7 +281,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   41
+         TabIndex        =   39
          Top             =   1530
          Width           =   495
       End
@@ -291,7 +291,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   12
          Left            =   90
-         TabIndex        =   31
+         TabIndex        =   30
          Top             =   1845
          Width           =   735
       End
@@ -301,7 +301,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   11
          Left            =   90
-         TabIndex        =   30
+         TabIndex        =   29
          Top             =   1215
          Width           =   600
       End
@@ -311,7 +311,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   10
          Left            =   90
-         TabIndex        =   29
+         TabIndex        =   28
          Top             =   900
          Width           =   600
       End
@@ -321,7 +321,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   28
+         TabIndex        =   27
          Top             =   585
          Width           =   405
       End
@@ -331,7 +331,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   27
+         TabIndex        =   26
          Top             =   315
          Width           =   285
       End
@@ -340,7 +340,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Column Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   32
+      TabIndex        =   31
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtType 
@@ -379,24 +379,13 @@ Begin VB.Form frmIndexes
          Top             =   855
          Width           =   2625
       End
-      Begin VB.TextBox txtColComments 
-         BackColor       =   &H8000000F&
-         Height          =   2220
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   16
-         Top             =   1710
-         Width           =   3480
-      End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
          Caption         =   "OID"
          Height          =   195
          Index           =   21
          Left            =   90
-         TabIndex        =   37
+         TabIndex        =   35
          Top             =   270
          Width           =   285
       End
@@ -406,7 +395,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   20
          Left            =   90
-         TabIndex        =   36
+         TabIndex        =   34
          Top             =   585
          Width           =   555
       End
@@ -416,7 +405,7 @@ Begin VB.Form frmIndexes
          Height          =   240
          Index           =   19
          Left            =   90
-         TabIndex        =   35
+         TabIndex        =   33
          Top             =   900
          Width           =   495
       End
@@ -426,19 +415,9 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   18
          Left            =   90
-         TabIndex        =   34
+         TabIndex        =   32
          Top             =   1215
          Width           =   360
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   13
-         Left            =   90
-         TabIndex        =   33
-         Top             =   1485
-         Width           =   735
       End
    End
 End
@@ -497,21 +476,12 @@ End Sub
 
 Public Sub cmdComment_Click()
 On Error GoTo Err_Handler
-  If fraIndex.Visible = True Then
-    If txtOID.Text = "" Then
-      MsgBox "You must select an index to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    OID = txtOID.Text
-  Else
-    If txtColOID.Text = "" Then
-      MsgBox "You must select a column to edit the comment for.", vbExclamation, "Error"
-      Exit Sub
-    End If
-    OID = txtColOID.Text
+  If txtOID.Text = "" Or fraColumn.Visible = True Then
+    MsgBox "You must select an index to edit the comment for.", vbExclamation, "Error"
+    Exit Sub
   End If
-  CallingForm = "frmIndexes"
   Load frmComments
+  frmComments.Setup "frmIndexes", QUOTE & trvBrowser.SelectedItem.Text & QUOTE, Val(txtOID.Text)
   frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmIndexes, cmdComment_Click"
@@ -612,7 +582,6 @@ On Error GoTo Err_Handler
     fraDatasource.Left = trvBrowser.Left + trvBrowser.Width + 25
     fraDatasource.Height = Me.ScaleHeight
     txtComments.Height = fraDatasource.Height - txtComments.Top - 100
-    txtColComments.Height = fraDatasource.Height - txtColComments.Top - 100
     fraIndex.Left = fraDatasource.Left
     fraIndex.Height = fraDatasource.Height
     fraColumn.Left = fraDatasource.Left
@@ -685,7 +654,6 @@ Dim rsTemp As New Recordset
           txtLength.Text = rsFields!column_length & ""
         End If
         txtType.Text = rsFields!column_type & ""
-        txtColComments.Text = rsFields!column_comments & ""
       End If
       rsFields.MoveNext
     Wend

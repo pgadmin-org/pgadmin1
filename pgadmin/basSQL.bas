@@ -22,17 +22,16 @@ Public Sub Chk_HelperObjects()
 On Error GoTo Err_Handler
 
 Dim rsParam As New Recordset
-Dim SQL_PGADMIN_DESC As String
 Dim SQL_PGADMIN_SYS As String
 Dim SQL_PGADMIN_PARAM As String
 Dim SQL_INS_PGADMIN_PARAM1 As String
 Dim SQL_INS_PGADMIN_PARAM2 As String
 Dim SQL_INS_PGADMIN_PARAM3 As String
+Dim SQL_INS_PGADMIN_PARAM4 As String
 Dim SQL_PGADMIN_LOG As String
 Dim SQL_PGADMIN_SEQ_CACHE As String
 Dim SQL_PGADMIN_TABLE_CACHE As String
 Dim SQL_PGADMIN_GET_DESC As String
-Dim SQL_PGADMIN_GET_PGDESC As String
 Dim SQL_PGADMIN_GET_COL_DEF As String
 Dim SQL_PGADMIN_GET_HANDLER As String
 Dim SQL_PGADMIN_GET_TYPE As String
@@ -56,16 +55,15 @@ Dim SQL_PGADMIN_DEV_TRIGGERS As String
 Dim SQL_PGADMIN_DEV_VIEWS As String
 Dim SQL_PGADMIN_DEV_DEPENDENCIES As String
 
-SQL_PGADMIN_DESC = "SELECT * INTO pgadmin_desc FROM pg_description WHERE objoid > " & LAST_SYSTEM_OID
 SQL_PGADMIN_PARAM = "CREATE TABLE pgadmin_param(param_id int4, param_value text, param_desc text)"
 SQL_INS_PGADMIN_PARAM1 = "INSERT INTO pgadmin_param VALUES ('1', '" & Str(SSO_VERSION) & "', 'SSO Version')"
 SQL_INS_PGADMIN_PARAM2 = "INSERT INTO pgadmin_param VALUES (2, 'N', 'Revision Tracking enabled?')"
 SQL_INS_PGADMIN_PARAM3 = "INSERT INTO pgadmin_param VALUES (3, '1.0', 'Revision Tracking version')"
+SQL_INS_PGADMIN_PARAM4 = "INSERT INTO pgadmin_param VALUES (4, 'N', 'Development Mode?')"
 SQL_PGADMIN_LOG = "CREATE TABLE pgadmin_rev_log(event_timestamp timestamp DEFAULT now(), username text, version float4, query text)"
 SQL_PGADMIN_SEQ_CACHE = "CREATE TABLE pgadmin_seq_cache(sequence_oid oid, sequence_last_value int4, sequence_increment_by int4, sequence_max_value int4, sequence_min_value int4, sequence_cache_value int4, sequence_is_cycled text, sequence_timestamp timestamp DEFAULT now())"
 SQL_PGADMIN_TABLE_CACHE = "CREATE TABLE pgadmin_table_cache(table_oid oid, table_rows int4, table_timestamp timestamp DEFAULT now())"
-SQL_PGADMIN_GET_DESC = "CREATE FUNCTION pgadmin_get_desc(oid) RETURNS text AS 'SELECT description FROM pgadmin_desc WHERE objoid = $1' LANGUAGE 'sql'"
-SQL_PGADMIN_GET_PGDESC = "CREATE FUNCTION pgadmin_get_pgdesc(oid) RETURNS text AS 'SELECT description FROM pg_description WHERE objoid = $1' LANGUAGE 'sql'"
+SQL_PGADMIN_GET_DESC = "CREATE FUNCTION pgadmin_get_desc(oid) RETURNS text AS 'SELECT description FROM pg_description WHERE objoid = $1' LANGUAGE 'sql'"
 SQL_PGADMIN_GET_COL_DEF = "CREATE FUNCTION pgadmin_get_col_def(oid, int4) RETURNS text AS 'SELECT adsrc FROM pg_attrdef WHERE adrelid = $1 AND adnum = $2' LANGUAGE 'sql'"
 SQL_PGADMIN_GET_HANDLER = "CREATE FUNCTION pgadmin_get_handler(oid) RETURNS text AS 'SELECT proname::text FROM pg_proc WHERE oid = $1' LANGUAGE 'sql'"
 SQL_PGADMIN_GET_TYPE = "CREATE FUNCTION pgadmin_get_type(oid) RETURNS text AS 'SELECT typname::text FROM pg_type WHERE oid = $1' LANGUAGE 'sql'"
@@ -81,7 +79,7 @@ SQL_PGADMIN_CHECKS = _
   "  c.oid AS check_table_oid, " & _
   "  c.relname AS check_table_name, " & _
   "  r.rcsrc AS check_definition, " & _
-  "  CASE WHEN r.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(r.oid) ELSE pgadmin_get_desc(r.oid) END AS check_comments " & _
+  "  pgadmin_get_desc(r.oid) AS check_comments " & _
   "FROM pg_relcheck r, pg_class c " & _
   "WHERE r.rcrelid = c.oid"
   
@@ -91,7 +89,7 @@ SQL_PGADMIN_DATABASES = _
   "  d.datname AS database_name, " & _
   "  d.datpath AS database_path, " & _
   "  pg_get_userbyid(d.datdba) AS database_owner, " & _
-  "  CASE WHEN d.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(d.oid) ELSE pgadmin_get_desc(d.oid) END AS database_comments " & _
+  "  pgadmin_get_desc(d.oid) AS database_comments " & _
   "FROM pg_database d"
   
 SQL_PGADMIN_FUNCTIONS = _
@@ -100,7 +98,7 @@ SQL_PGADMIN_FUNCTIONS = _
   "  CASE WHEN (pgadmin_get_type(p.proargtypes[5]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[5]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[6]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[6]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[7]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[7]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[8]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[8]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[9]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[9]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[10]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[10]) || ', ' ELSE '' END || " & _
   "  CASE WHEN (pgadmin_get_type(p.proargtypes[11]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[11]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[12]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[12]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[13]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[13]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[14]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[14]) || ', ' ELSE '' END || CASE WHEN (pgadmin_get_type(p.proargtypes[15]) NOTNULL) THEN pgadmin_get_type(p.proargtypes[15]) || ', ' ELSE '' END), ',') AS function_arguments, " & _
   "  pgadmin_get_type(p.prorettype) AS function_returns, p.prosrc AS function_source, l.lanname AS function_language, " & _
-  "  CASE WHEN p.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(p.oid) ELSE pgadmin_get_desc(p.oid) END AS function_comments " & _
+  "  pgadmin_get_desc(p.oid) AS function_comments " & _
   "FROM pg_proc p, pg_language l " & _
   "WHERE p.prolang = l.oid " & _
   "AND p.proname NOT LIKE '%_call_handler'"
@@ -114,10 +112,10 @@ SQL_PGADMIN_INDEXES = _
   "CREATE VIEW pgadmin_indexes AS SELECT " & _
   "  i.oid AS index_oid, i.relname AS index_name, c.relname AS index_table, pg_get_userbyid(i.relowner) AS index_owner, " & _
   "  CASE WHEN x.indislossy = TRUE THEN 'Yes'::text ELSE 'No'::text END AS index_is_lossy, CASE WHEN x.indisunique = TRUE THEN 'Yes'::text ELSE 'No'::text END AS index_is_unique, CASE WHEN x.indisprimary = TRUE THEN 'Yes'::text ELSE 'No'::text END AS index_is_primary, " & _
-  "  CASE WHEN i.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(i.oid) ELSE pgadmin_get_desc(i.oid) END AS index_comments, " & _
+  "  pgadmin_get_desc(i.oid) AS index_comments, " & _
   "  pg_get_indexdef(x.indexrelid) AS index_definition, a.oid AS column_oid, a.attname AS column_name,  a.attnum AS column_position,  t.typname As column_type, " & _
   "  CASE WHEN ((a.attlen = -1) AND ((a.atttypmod)::int4 = (-1)::int4)) THEN (0)::int4 ELSE CASE WHEN a.attlen = -1 THEN CASE WHEN ((t.typname = 'bpchar') OR (t.typname = 'char') OR (t.typname = 'varchar')) THEN (a.atttypmod -4)::int4 ELSE (a.atttypmod)::int4 END ELSE (a.attlen)::int4 END END AS column_length, " & _
-  "  CASE WHEN a.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(a.oid) ELSE pgadmin_get_desc(a.oid) END AS column_comments " & _
+  "  pgadmin_get_desc(a.oid) AS column_comments " & _
   "FROM pg_index x, pg_attribute a, pg_type t, pg_class c,pg_class i " & _
   "WHERE a.atttypid = t.oid AND a.attrelid = i.oid AND ((c.oid = x.indrelid) AND (i.oid = x.indexrelid))"
 
@@ -128,7 +126,7 @@ SQL_PGADMIN_LANGUAGES = _
   "  l.lancompiler AS language_compiler, " & _
   "  CASE WHEN l.lanpltrusted = TRUE THEN 'Yes'::text ELSE 'No'::text END AS language_is_trusted, " & _
   "  pgadmin_get_handler(lanplcallfoid) AS language_handler, " & _
-  "  CASE WHEN l.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(l.oid) ELSE pgadmin_get_desc(l.oid) END AS language_comments " & _
+  "  pgadmin_get_desc(l.oid) AS language_comments " & _
   "FROM pg_language l"
   
 SQL_PGADMIN_SEQUENCES = _
@@ -136,7 +134,7 @@ SQL_PGADMIN_SEQUENCES = _
   "  c.oid AS sequence_oid, c.relname AS sequence_name, pg_get_userbyid(c.relowner) AS sequence_owner, c.relacl AS sequence_acl, sequence_last_value(pgadmin_get_sequence(c.oid)) AS sequence_last_value, " & _
   "  sequence_increment_by(pgadmin_get_sequence(c.oid)) AS sequence_increment_by, sequence_max_value(pgadmin_get_sequence(c.oid)) AS sequence_max_value, sequence_min_value(pgadmin_get_sequence(c.oid)) AS sequence_min_value, " & _
   "  sequence_cache_value(pgadmin_get_sequence(c.oid)) AS sequence_cache_value, sequence_is_cycled(pgadmin_get_sequence(c.oid)) AS sequence_is_cycled, " & _
-  "  CASE WHEN c.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(c.oid) ELSE pgadmin_get_desc(c.oid) END AS sequence_comments " & _
+  "  pgadmin_get_desc(c.oid) AS sequence_comments " & _
   "FROM pg_class c " & _
   "WHERE c.relkind = 'S'"
 
@@ -144,12 +142,12 @@ SQL_PGADMIN_TABLES = _
   "CREATE VIEW pgadmin_tables AS SELECT " & _
   "  c.oid AS table_oid, c.relname AS table_name, pg_get_userbyid(c.relowner) AS table_owner, c.relacl AS table_acl, " & _
   "  CASE WHEN c.relhasindex = TRUE THEN 'Yes'::text ELSE 'No'::text END AS table_has_indexes, CASE WHEN c.relhasrules = TRUE THEN 'Yes'::text ELSE 'No'::text END AS table_has_rules, CASE WHEN c.relisshared = TRUE THEN 'Yes'::text ELSE 'No'::text END  AS table_is_shared, CASE WHEN c.relhaspkey = TRUE THEN 'Yes'::text ELSE 'No'::text END AS table_has_primarykey, CASE WHEN c.reltriggers > 0 THEN 'Yes'::text ELSE 'No'::text END AS table_has_triggers, " & _
-  "  table_rows(pgadmin_get_rows(c.oid)) AS table_rows, CASE WHEN c.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(c.oid) ELSE pgadmin_get_desc(c.oid) END AS table_comments, a.oid AS column_oid, a.attname AS column_name, a.attnum AS column_position, t.typname As column_type,  " & _
+  "  table_rows(pgadmin_get_rows(c.oid)) AS table_rows, pgadmin_get_desc(c.oid) AS table_comments, a.oid AS column_oid, a.attname AS column_name, a.attnum AS column_position, t.typname As column_type,  " & _
   "  CASE WHEN ((a.attlen = -1) AND ((a.atttypmod)::int4 = (-1)::int4)) THEN (0)::int4 ELSE CASE WHEN a.attlen = -1 THEN " & _
   "  CASE WHEN ((t.typname = 'bpchar') OR (t.typname = 'char') OR (t.typname = 'varchar')) THEN (a.atttypmod -4)::int4 ELSE (a.atttypmod)::int4 END " & _
   "  ELSE (a.attlen)::int4 END END AS column_length, " & _
   "  CASE WHEN a.attnotnull = TRUE THEN 'Yes'::text ELSE 'No'::text END AS column_not_null, CASE WHEN a.atthasdef = TRUE THEN 'Yes'::text ELSE 'No'::text END AS column_has_default,  " & _
-  "  CASE WHEN (pgadmin_get_col_def(c.oid, a.attnum) NOTNULL) THEN pgadmin_get_col_def(c.oid, a.attnum) ELSE '' END AS column_default, CASE WHEN a.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(a.oid) ELSE pgadmin_get_desc(a.oid) END AS column_comments " & _
+  "  CASE WHEN (pgadmin_get_col_def(c.oid, a.attnum) NOTNULL) THEN pgadmin_get_col_def(c.oid, a.attnum) ELSE '' END AS column_default, pgadmin_get_desc(a.oid) AS column_comments " & _
   "FROM pg_attribute a, pg_type t, pg_class c " & _
   "WHERE a.atttypid = t.oid AND a.attrelid = c.oid AND (((c.relkind::char = 'r'::char) OR (c.relkind::char = 's'::char)) AND (NOT (EXISTS (SELECT pg_rewrite.rulename FROM pg_rewrite WHERE ((pg_rewrite.ev_class = c.oid) AND (pg_rewrite.ev_type::char = '1'::char))))))"
   
@@ -165,7 +163,7 @@ SQL_PGADMIN_TRIGGERS = _
   "CREATE VIEW pgadmin_triggers AS SELECT " & _
   " t.oid AS trigger_oid, t.tgname AS trigger_name, c.relname AS trigger_table, " & _
   " pgadmin_get_function_name (tgfoid) AS trigger_function, pgadmin_get_function_arguments (tgfoid) AS trigger_arguments, t.tgtype AS trigger_type, " & _
-  " CASE WHEN t.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(t.oid) ELSE pgadmin_get_desc(t.oid) END AS trigger_comments " & _
+  " pgadmin_get_desc(t.oid) AS trigger_comments " & _
   "FROM pg_trigger t, pg_class c " & _
   "WHERE c.oid = t.tgrelid"
 
@@ -175,7 +173,7 @@ SQL_PGADMIN_VIEWS = _
   "  c.relname AS view_name, " & _
   "  pg_get_userbyid(c.relowner) AS view_owner, " & _
   "  c.relacl AS view_acl, " & _
-  "  CASE WHEN c.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(c.oid) ELSE pgadmin_get_desc(c.oid) END AS view_comments " & _
+  "  pgadmin_get_desc(c.oid) AS view_comments " & _
   "FROM " & _
   "  pg_class c " & _
   "WHERE " & _
@@ -228,25 +226,35 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     If rsParam.State <> adStateClosed Then rsParam.Close
     LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 1"
     rsParam.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 1", gConnection, adOpenForwardOnly
-    If Not rsParam.EOF Then 'Param 4 exists so check it.
+    If Not rsParam.EOF Then 'Param 1 exists so check it.
       If Val(rsParam!param_value) < SSO_VERSION Then Drop_Objects False
-    Else 'Param 4 doesn't exist so drop SSO's to be safe.
+    Else 'Param 1 doesn't exist so drop SSO's to be safe.
       If Not SuperuserChk Then Exit Sub
       Drop_Objects False
     End If
     EndMsg
   End If
   
-  'Check Descriptions table
-  If ObjectExists("pgadmin_desc", tTable) = 0 Then
+  'Check Descriptions table. If it exist then migrate to pg_description & drop it.
+  If ObjectExists("pgadmin_desc", tTable) <> 0 Then
     If Not SuperuserChk Then Exit Sub
-    StartMsg "Creating pgAdmin Descriptions Table..."
-    LogMsg "Executing: " & SQL_PGADMIN_DESC
-    gConnection.Execute SQL_PGADMIN_DESC
-    LogMsg "Executing: GRANT all ON pgadmin_desc TO public"
-    gConnection.Execute "GRANT all ON pgadmin_desc TO public"
+    StartMsg "Removing old pgAdmin Descriptions Table..."
+    LogMsg "Executing: INSERT INTO pg_description SELECT * FROM pgadmin_desc"
+    gConnection.Execute "INSERT INTO pg_description SELECT * FROM pgadmin_desc"
+    LogMsg "Executing: DROP TABLE pgadmin_desc"
+    gConnection.Execute "DROP TABLE pgadmin_desc"
     EndMsg
   End If
+  
+  'Drop any old pgadmin_get_pgdesc functions
+  If ObjectExists("pgadmin_get_pgdesc", tFunction) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Dropping old pgAdmin Description Lookup Function..."
+    LogMsg "Executing: DROP FUNCTION pgadmin_get_desc(oid)"
+    gConnection.Execute "DROP FUNCTION pgadmin_get_desc(oid)"
+    EndMsg
+  End If
+  
   If ObjectExists("pgadmin_param", tTable) = 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Creating pgAdmin Parameter Table..."
@@ -271,6 +279,8 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
         gConnection.Execute SQL_INS_PGADMIN_PARAM2
         LogMsg "Executing: " & SQL_INS_PGADMIN_PARAM3
         gConnection.Execute SQL_INS_PGADMIN_PARAM3
+        LogMsg "Executing: " & SQL_INS_PGADMIN_PARAM4
+        gConnection.Execute SQL_INS_PGADMIN_PARAM4
       End If
       If rsParam.State <> adStateClosed Then rsParam.Close
       LogMsg "Executing: DROP TABLE pgadmin_sys"
@@ -300,6 +310,13 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   If rsParam.EOF Then
     LogMsg "Executing: " & SQL_INS_PGADMIN_PARAM3
     gConnection.Execute SQL_INS_PGADMIN_PARAM3
+  End If
+  If rsParam.State <> adStateClosed Then rsParam.Close
+  LogMsg "Executing: SELECT * FROM pgadmin_param WHERE param_id = 4"
+  rsParam.Open "SELECT * FROM pgadmin_param WHERE param_id = 4", gConnection, adOpenForwardOnly
+  If rsParam.EOF Then
+    LogMsg "Executing: " & SQL_INS_PGADMIN_PARAM4
+    gConnection.Execute SQL_INS_PGADMIN_PARAM4
   End If
   
   If ObjectExists("pgadmin_rev_log", tTable) = 0 Then
@@ -347,13 +364,6 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     StartMsg "Creating pgAdmin Description Lookup Function..."
     LogMsg "Executing: " & SQL_PGADMIN_GET_DESC
     gConnection.Execute SQL_PGADMIN_GET_DESC
-    EndMsg
-  End If
-  If ObjectExists("pgadmin_get_pgdesc", tFunction) = 0 Then
-    If Not SuperuserChk Then Exit Sub
-    StartMsg "Creating PostgreSQL Description Lookup Function..."
-    LogMsg "Executing: " & SQL_PGADMIN_GET_PGDESC
-    gConnection.Execute SQL_PGADMIN_GET_PGDESC
     EndMsg
   End If
   If ObjectExists("pgadmin_get_col_def", tFunction) = 0 Then
@@ -657,8 +667,8 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   cmp_View_CopyToDev
   
   'Set the SSO Version on the server
-  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Str(SSO_VERSION) & "' WHERE param_id = 1"
-  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & Str(SSO_VERSION) & "' WHERE param_id = 1"
+  LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Val(SSO_VERSION) & "' WHERE param_id = 1"
+  gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & Val(SSO_VERSION) & "' WHERE param_id = 1"
   
   Exit Sub
 Err_Handler:
@@ -672,8 +682,6 @@ On Error Resume Next
 
   'Drop tables
   If bDropAll = True Then
-    LogMsg "Executing: DROP TABLE pgadmin_desc"
-    gConnection.Execute "DROP TABLE pgadmin_desc"
     LogMsg "Executing: DROP TABLE pgadmin_sys"
     gConnection.Execute "DROP TABLE pgadmin_sys"
     LogMsg "Executing: DROP TABLE pgadmin_log"
@@ -687,8 +695,6 @@ On Error Resume Next
   'Drop functions
   LogMsg "Executing: DROP FUNCTION pgadmin_get_desc(oid)"
   gConnection.Execute "DROP FUNCTION pgadmin_get_desc(oid)"
-  LogMsg "Executing: DROP FUNCTION pgadmin_get_pgdesc(oid)"
-  gConnection.Execute "DROP FUNCTION pgadmin_get_pgdesc(oid)"
   LogMsg "Executing: DROP FUNCTION pgadmin_get_col_def(oid, int4)"
   gConnection.Execute "DROP FUNCTION pgadmin_get_col_def(oid, int4)"
   LogMsg "Executing: DROP FUNCTION pgadmin_get_handler(oid)"

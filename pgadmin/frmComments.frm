@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmComments 
    Caption         =   "Comments"
    ClientHeight    =   2820
@@ -20,7 +20,6 @@ Begin VB.Form frmComments
       Width           =   4650
       _ExtentX        =   8202
       _ExtentY        =   4233
-      Enabled         =   -1  'True
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -66,59 +65,48 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim rs As New Recordset
-Dim lOID As String
-Dim lCallingForm As String
-Dim Update As Boolean
-
-Private Sub Form_Unload(Cancel As Integer)
-On Error Resume Next
-  Set rs = Nothing
-End Sub
+Dim szCaller As String
+Dim szIdentifier As String
+Dim lOID As Long
 
 Private Sub cmdSave_Click()
 On Error GoTo Err_Handler
 Dim szComment As String
   StartMsg "Updating Comment..."
   szComment = Replace(Replace(txtComments.Text, "\", "\\"), "'", "\'")
-  If lOID > LAST_SYSTEM_OID Then
-    If Update = True Then
-      LogMsg "Executing: UPDATE pgadmin_desc SET description = '" & szComment & "' WHERE objoid = " & lOID
-      gConnection.Execute "UPDATE pgadmin_desc SET description = '" & szComment & "' WHERE objoid = " & lOID
-      fMainForm.txtSQLPane.Text = "UPDATE pgadmin_desc SET description = '" & szComment & "' WHERE objoid = " & lOID
-    Else
-      LogMsg "Executing: INSERT INTO pgadmin_desc (objoid, description) VALUES (" & lOID & ", '" & szComment & "')"
-      gConnection.Execute "INSERT INTO pgadmin_desc (objoid, description) VALUES (" & lOID & ", '" & szComment & "')"
-      fMainForm.txtSQLPane.Text = "INSERT INTO pgadmin_desc (objoid, description) VALUES (" & lOID & ", '" & szComment & "')"
-    End If
-  Else
-    If Update = True Then
-      LogMsg "Executing: UPDATE pg_description SET description = '" & txtComments.Text & "' WHERE objoid = " & lOID
-      gConnection.Execute "UPDATE pg_description SET description = '" & txtComments.Text & "' WHERE objoid = " & lOID
-      fMainForm.txtSQLPane.Text = "UPDATE pg_description SET description = '" & txtComments.Text & "' WHERE objoid = " & lOID
-    Else
-      LogMsg "Executing: INSERT INTO pg_description (objoid, description) VALUES (" & lOID & ", '" & txtComments.Text & "')"
-      gConnection.Execute "INSERT INTO pg_description (objoid, description) VALUES (" & lOID & ", '" & txtComments.Text & "')"
-      fMainForm.txtSQLPane.Text = "INSERT INTO pg_description (objoid, description) VALUES (" & lOID & ", '" & txtComments.Text & "')"
-    End If
-  End If
-  
-  Select Case lCallingForm
+    
+  Select Case szCaller
     Case "frmDatabases"
+      LogMsg "Executing: COMMENT ON DATABASE " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON DATABASE " & szIdentifier & " IS '" & szComment & "'"
       frmDatabases.cmdRefresh_Click
     Case "frmSequences"
+      LogMsg "Executing: COMMENT ON SEQUENCE " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON SEQUENCE " & szIdentifier & " IS '" & szComment & "'"
       frmSequences.lstSeq_Click
     Case "frmIndexes"
+      LogMsg "Executing: COMMENT ON INDEX " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON INDEX " & szIdentifier & " IS '" & szComment & "'"
       frmIndexes.cmdRefresh_Click
     Case "frmTables"
+      LogMsg "Executing: COMMENT ON TABLE " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON TABLE " & szIdentifier & " IS '" & szComment & "'"
       frmTables.cmdRefresh_Click
-    Case "frmLanguages"
-      frmLanguages.cmdRefresh_Click
+    Case "frmTables - Column"
+      LogMsg "Executing: COMMENT ON COLUMN " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON COLUMN " & szIdentifier & " IS '" & szComment & "'"
+      frmTables.cmdRefresh_Click
     Case "frmFunctions"
+      LogMsg "Executing: COMMENT ON FUNCTION " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON FUNCTION " & szIdentifier & " IS '" & szComment & "'"
       frmFunctions.cmdRefresh_Click
     Case "frmTriggers"
+      LogMsg "Executing: COMMENT ON TRIGGER " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON TRIGGER " & szIdentifier & " IS '" & szComment & "'"
       frmTriggers.cmdRefresh_Click
     Case "frmViews"
+      LogMsg "Executing: COMMENT ON VIEW " & szIdentifier & " IS '" & szComment & "'"
+      gConnection.Execute "COMMENT ON VIEW " & szIdentifier & " IS '" & szComment & "'"
       frmViews.cmdRefresh_Click
   End Select
   EndMsg
@@ -135,25 +123,30 @@ On Error GoTo Err_Handler
   Me.Width = 5000
   Me.Height = 3500
   txtComments.Wordlist = TextColours
-  lCallingForm = CallingForm
-  lOID = OID
-  Update = False
-  If rs.State <> adStateClosed Then rs.Close
-  If lOID > LAST_SYSTEM_OID Then
-    LogMsg "Executing: SELECT description FROM pgadmin_desc WHERE objoid = " & lOID
-    rs.Open "SELECT description FROM pgadmin_desc WHERE objoid = " & lOID, gConnection, adOpenDynamic
-  Else
+  Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmComments, Form_Load"
+End Sub
+
+Public Sub Setup(szMCaller As String, szMIdentifier As String, lMOID As Long)
+On Error GoTo Err_Handler
+Dim rs As New Recordset
+  szCaller = szMCaller
+  szIdentifier = szMIdentifier
+  lOID = lMOID
   LogMsg "Executing: SELECT description FROM pg_description WHERE objoid = " & lOID
   rs.Open "SELECT description FROM pg_description WHERE objoid = " & lOID, gConnection, adOpenDynamic
-  End If
   If rs.EOF <> True Then
     txtComments.Text = rs!Description
-    Update = True
   Else
     txtComments.Text = ""
   End If
+  If rs.State <> adStateClosed Then rs.Close
+  Set rs = Nothing
   Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmComments, Form_Load"
+Err_Handler:
+  If rs.State <> adStateClosed Then rs.Close
+  Set rs = Nothing
+  If Err.Number <> 0 Then LogError Err, "frmComments, Setup"
 End Sub
 
 Private Sub Form_Resize()

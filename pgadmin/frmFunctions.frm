@@ -424,9 +424,8 @@ Public Sub cmdComment_Click()
     MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
     Exit Sub
   End If
-  CallingForm = "frmFunctions"
-  OID = txtOID.Text
   Load frmComments
+  frmComments.Setup "frmFunctions", QUOTE & lstFunc.Text & QUOTE & "(" & txtArguments.Text & ")", Val(txtOID.Text)
   frmComments.Show
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdComment_Click"

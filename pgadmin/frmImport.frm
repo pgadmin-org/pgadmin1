@@ -108,19 +108,19 @@ Begin VB.Form frmImport
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmImport.frx":130F
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "Label3(1)"
+      Tab(1).Control(0)=   "lstOColumns"
       Tab(1).Control(0).Enabled=   0   'False
-      Tab(1).Control(1)=   "Frame3"
+      Tab(1).Control(1)=   "cmdUp"
       Tab(1).Control(1).Enabled=   0   'False
-      Tab(1).Control(2)=   "Frame2"
+      Tab(1).Control(2)=   "cmdDown"
       Tab(1).Control(2).Enabled=   0   'False
       Tab(1).Control(3)=   "Frame1"
       Tab(1).Control(3).Enabled=   0   'False
-      Tab(1).Control(4)=   "cmdDown"
+      Tab(1).Control(4)=   "Frame2"
       Tab(1).Control(4).Enabled=   0   'False
-      Tab(1).Control(5)=   "cmdUp"
+      Tab(1).Control(5)=   "Frame3"
       Tab(1).Control(5).Enabled=   0   'False
-      Tab(1).Control(6)=   "lstOColumns"
+      Tab(1).Control(6)=   "Label3(1)"
       Tab(1).Control(6).Enabled=   0   'False
       Tab(1).ControlCount=   7
       Begin VB.ListBox lstOColumns 
@@ -816,7 +816,7 @@ Proc_Next:
       For X = 0 To UBound(Tuple)
         Tuple(X) = ""
       Next
-      fMainForm.StatusBar1.Panels(1).Text = "Inserting Data - " & TupleCount & " Records"
+      fMainForm.StatusBar1.Panels("Status").Text = "Inserting Data - " & TupleCount & " Records"
       fMainForm.StatusBar1.Refresh
     End If
   Loop
