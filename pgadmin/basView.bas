@@ -316,7 +316,7 @@ On Error GoTo Err_Handler
     
                 If szParentKey = "Dev:" And bContinueRebuilding = True Then
                     szView_name = nodX.Text
-                    cmp_View_Move gDevPostgresqlTables & "_views", "pgadmin_views", szView_name
+                    cmp_View_Move gDevPostgresqlTables & "_views", "pgadmin_views", szView_name, True
                     bRefresh = True
                 End If
             End If
