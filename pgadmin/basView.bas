@@ -402,16 +402,19 @@ On Error GoTo Err_Handler
             szView_name = nodX.Text
             cmp_View_GetValues szview_table, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
 
-            ' Header
-            szExport = szExport & "/*" & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "View " & szView_name & vbCrLf
-            If szView_comments <> "" Then szExport = szExport & szView_comments & vbCrLf
-            szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
-            szExport = szExport & "*/" & vbCrLf
-            
-            ' Function
-            szExport = szExport & cmp_View_CreateSQL(szView_name, szView_definition) & vbCrLf & vbCrLf
+            If szView_name <> "" Then
+    
+                ' Header
+                szExport = szExport & "/*" & vbCrLf
+                szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+                szExport = szExport & "View " & szView_name & vbCrLf
+                If szView_comments <> "" Then szExport = szExport & szView_comments & vbCrLf
+                szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
+                szExport = szExport & "*/" & vbCrLf
+                
+                ' Function
+                szExport = szExport & cmp_View_CreateSQL(szView_name, szView_definition) & vbCrLf & vbCrLf
+            End If
         End If
     Next
             
