@@ -9,6 +9,16 @@ Begin VB.Form frmTriggers
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdExportTrig 
+      Caption         =   "Export Trigger"
+      Enabled         =   0   'False
+      Height          =   330
+      Left            =   45
+      TabIndex        =   23
+      ToolTipText     =   "Modify the selected trigger."
+      Top             =   1125
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdModifyTrig 
       Caption         =   "&Modify Trigger"
       Height          =   330
@@ -23,7 +33,7 @@ Begin VB.Form frmTriggers
       Height          =   525
       Left            =   45
       TabIndex        =   21
-      Top             =   2115
+      Top             =   2475
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Triggers"
@@ -41,7 +51,7 @@ Begin VB.Form frmTriggers
       Left            =   45
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected Trigger."
-      Top             =   1125
+      Top             =   1485
       Width           =   1410
    End
    Begin VB.Frame fraDetails 
@@ -189,7 +199,9 @@ Begin VB.Form frmTriggers
    End
    Begin VB.ListBox lstTrig 
       Height          =   3960
+      ItemData        =   "frmTriggers.frx":0000
       Left            =   1485
+      List            =   "frmTriggers.frx":0002
       TabIndex        =   5
       Top             =   45
       Width           =   2985
@@ -200,7 +212,7 @@ Begin VB.Form frmTriggers
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Refresh the list of Triggers."
-      Top             =   1485
+      Top             =   1845
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropTrig 

@@ -10,6 +10,16 @@ Begin VB.Form frmViews
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdExportView 
+      Caption         =   "Export View"
+      Enabled         =   0   'False
+      Height          =   330
+      Left            =   45
+      TabIndex        =   22
+      ToolTipText     =   "Modify the selected View."
+      Top             =   1125
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdModifyView 
       Caption         =   "&Modify View"
       Height          =   330
@@ -25,7 +35,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Edit the comment for the selected View."
-      Top             =   1485
+      Top             =   1845
       Width           =   1410
    End
    Begin VB.CommandButton cmdComment 
@@ -34,7 +44,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected View."
-      Top             =   1125
+      Top             =   1485
       Width           =   1410
    End
    Begin VB.Frame fraDetails 
@@ -176,7 +186,7 @@ Begin VB.Form frmViews
       Left            =   45
       TabIndex        =   4
       ToolTipText     =   "Refresh the list of Views."
-      Top             =   1845
+      Top             =   2205
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropView 
@@ -202,7 +212,7 @@ Begin VB.Form frmViews
       Height          =   525
       Left            =   45
       TabIndex        =   17
-      Top             =   2205
+      Top             =   2565
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Views"

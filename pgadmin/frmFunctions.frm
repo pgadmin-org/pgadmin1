@@ -10,6 +10,16 @@ Begin VB.Form frmFunctions
    MDIChild        =   -1  'True
    ScaleHeight     =   5595
    ScaleWidth      =   8880
+   Begin VB.CommandButton cmdExportFunc 
+      Caption         =   "Export Function"
+      Enabled         =   0   'False
+      Height          =   330
+      Left            =   45
+      TabIndex        =   27
+      ToolTipText     =   "Delete the selected function."
+      Top             =   1125
+      Width           =   1410
+   End
    Begin VB.CommandButton cmdRenameFunc 
       Caption         =   "Rename Function"
       Enabled         =   0   'False
@@ -17,7 +27,7 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   26
       ToolTipText     =   "Create a new function."
-      Top             =   765
+      Top             =   2205
       Width           =   1410
    End
    Begin VB.CommandButton cmdRebuild 
@@ -26,7 +36,7 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   22
       ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
-      Top             =   1845
+      Top             =   2565
       Width           =   1410
    End
    Begin VB.CommandButton cmdModifyFunc 
@@ -43,7 +53,7 @@ Begin VB.Form frmFunctions
       Height          =   525
       Left            =   45
       TabIndex        =   20
-      Top             =   2760
+      Top             =   2970
       Width           =   1380
       Begin VB.CheckBox chkFunctions 
          Caption         =   "Functions"
@@ -64,20 +74,13 @@ Begin VB.Form frmFunctions
       Top             =   1485
       Width           =   1410
    End
-   Begin VB.ListBox lstFunc 
-      Height          =   5520
-      Left            =   1485
-      TabIndex        =   5
-      Top             =   45
-      Width           =   2985
-   End
    Begin VB.CommandButton cmdRefresh 
       Caption         =   "&Refresh"
       Height          =   330
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Refresh the list of function."
-      Top             =   2205
+      Top             =   1845
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropFunc 
@@ -86,7 +89,7 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   1
       ToolTipText     =   "Delete the selected function."
-      Top             =   1125
+      Top             =   765
       Width           =   1410
    End
    Begin VB.Frame fraDetails 
@@ -271,6 +274,15 @@ Begin VB.Form frmFunctions
       ToolTipText     =   "Create a new function."
       Top             =   45
       Width           =   1410
+   End
+   Begin VB.ListBox lstFunc 
+      Height          =   5520
+      ItemData        =   "frmFunctions.frx":0000
+      Left            =   1485
+      List            =   "frmFunctions.frx":0002
+      TabIndex        =   5
+      Top             =   45
+      Width           =   2985
    End
 End
 Attribute VB_Name = "frmFunctions"
