@@ -426,3 +426,37 @@ Public Sub MsgExportToFile(Obj As Object, szTextToExport As String, Optional ByV
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, MsgExportToFile"
 End Sub
 
+Public Sub cmdButtonActivate(intSelCount As Integer, Optional cmdObjCreate As Object, Optional cmdObjModify As Object, Optional cmdObjDrop As Object, Optional cmdObjExport As Object, Optional cmdObjEdit As Object, Optional cmdObjRefresh As Object, Optional cmdObjView As Object)
+    On Error Resume Next
+    Select Case intSelCount
+        Case 0
+            cmdObjCreate.Enabled = True
+            cmdObjModify.Enabled = False
+            cmdObjDrop.Enabled = False
+            cmdObjExport.Enabled = False
+            cmdObjEdit.Enabled = False
+            cmdObjRefresh.Enabled = True
+            cmdObjView.Enabled = False
+
+        Case 1
+            cmdObjCreate.Enabled = True
+            cmdObjModify.Enabled = True
+            cmdObjDrop.Enabled = True
+            cmdObjExport.Enabled = True
+            cmdObjEdit.Enabled = True
+            cmdObjRefresh.Enabled = True
+            cmdObjView.Enabled = True
+            
+        Case Is > 1
+            cmdObjCreate.Enabled = True
+            cmdObjModify.Enabled = False
+            cmdObjDrop.Enabled = True
+            cmdObjExport.Enabled = True
+            cmdObjEdit.Enabled = False
+            cmdObjRefresh.Enabled = True
+            cmdObjView.Enabled = False
+    End Select
+    
+   Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, cmdButtonActivate"
+End Sub
