@@ -43,7 +43,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   21
+      TabIndex        =   16
       Top             =   1485
       Width           =   1380
       Begin VB.CheckBox chkIndexes 
@@ -114,7 +114,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Index Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   25
+      TabIndex        =   17
       Top             =   0
       Width           =   3660
       Begin HighlightBox.HBX txtComments 
@@ -189,7 +189,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   6
          Left            =   90
-         TabIndex        =   38
+         TabIndex        =   27
          Top             =   1530
          Width           =   495
       End
@@ -199,7 +199,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   11
          Left            =   90
-         TabIndex        =   29
+         TabIndex        =   21
          Top             =   1215
          Width           =   600
       End
@@ -209,7 +209,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   10
          Left            =   90
-         TabIndex        =   28
+         TabIndex        =   20
          Top             =   900
          Width           =   600
       End
@@ -219,7 +219,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   5
          Left            =   90
-         TabIndex        =   27
+         TabIndex        =   19
          Top             =   585
          Width           =   405
       End
@@ -229,7 +229,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   4
          Left            =   90
-         TabIndex        =   26
+         TabIndex        =   18
          Top             =   315
          Width           =   285
       End
@@ -238,7 +238,7 @@ Begin VB.Form frmIndexes
       Caption         =   "Column Details"
       Height          =   4020
       Left            =   4500
-      TabIndex        =   30
+      TabIndex        =   22
       Top             =   0
       Width           =   3660
       Begin VB.TextBox txtType 
@@ -283,7 +283,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   21
          Left            =   90
-         TabIndex        =   34
+         TabIndex        =   26
          Top             =   270
          Width           =   285
       End
@@ -293,7 +293,7 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   20
          Left            =   90
-         TabIndex        =   33
+         TabIndex        =   25
          Top             =   585
          Width           =   555
       End
@@ -303,7 +303,7 @@ Begin VB.Form frmIndexes
          Height          =   240
          Index           =   19
          Left            =   90
-         TabIndex        =   32
+         TabIndex        =   24
          Top             =   900
          Width           =   495
       End
@@ -313,112 +313,9 @@ Begin VB.Form frmIndexes
          Height          =   195
          Index           =   18
          Left            =   90
-         TabIndex        =   31
+         TabIndex        =   23
          Top             =   1215
          Width           =   360
-      End
-   End
-   Begin VB.Frame fraDatasource 
-      Caption         =   "Datasource Details"
-      Height          =   4020
-      Left            =   4500
-      TabIndex        =   22
-      Top             =   0
-      Width           =   3660
-      Begin VB.TextBox txtdbVer 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   765
-         Locked          =   -1  'True
-         TabIndex        =   18
-         Top             =   855
-         Width           =   2805
-      End
-      Begin VB.TextBox txtPlatform 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   765
-         Locked          =   -1  'True
-         TabIndex        =   19
-         Top             =   1170
-         Width           =   2805
-      End
-      Begin VB.TextBox txtCompiler 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   765
-         Locked          =   -1  'True
-         TabIndex        =   20
-         Top             =   1485
-         Width           =   2805
-      End
-      Begin VB.TextBox txtTimeOut 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1080
-         Locked          =   -1  'True
-         TabIndex        =   17
-         Top             =   540
-         Width           =   2490
-      End
-      Begin VB.TextBox txtUsername 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   1080
-         Locked          =   -1  'True
-         TabIndex        =   16
-         Top             =   225
-         Width           =   2490
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "DBMS"
-         Height          =   195
-         Index           =   17
-         Left            =   90
-         TabIndex        =   37
-         Top             =   900
-         Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Platform"
-         Height          =   195
-         Index           =   22
-         Left            =   90
-         TabIndex        =   36
-         Top             =   1215
-         Width           =   570
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Compiler"
-         Height          =   195
-         Index           =   23
-         Left            =   90
-         TabIndex        =   35
-         Top             =   1530
-         Width           =   600
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Timeout"
-         Height          =   195
-         Index           =   1
-         Left            =   90
-         TabIndex        =   24
-         Top             =   585
-         Width           =   570
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Username"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   23
-         Top             =   270
-         Width           =   720
       End
    End
 End
@@ -518,10 +415,8 @@ Dim rsDesc As New Recordset
 
   fraIndex.Visible = False
   fraColumn.Visible = False
-  fraDatasource.Visible = False
+
   Me.Refresh
-  txtUsername.Text = Username
-  txtTimeOut.Text = gConnection.CommandTimeout
   
   StartMsg "Retrieving Index Definitions..."
   If rsIndexes.State <> adStateClosed Then rsIndexes.Close
@@ -536,19 +431,13 @@ Dim rsDesc As New Recordset
   trvBrowser.Nodes.Clear
   Set NodeX = trvBrowser.Nodes.Add(, tvwChild, "D:" & Datasource, Datasource, 1)
   While Not rsIndexes.EOF
-    Set NodeX = trvBrowser.Nodes.Add("D:" & Datasource, tvwChild, "I:" & rsIndexes!index_oid, rsIndexes!index_name, 2)
+    Set NodeX = trvBrowser.Nodes.Add("D:" & Datasource, tvwChild, "I:" & rsIndexes!index_oid, rsIndexes!Index_name, 2)
     rsIndexes.MoveNext
   Wend
   If rsIndexes.BOF <> True Then rsIndexes.MoveFirst
   
   trvBrowser.Nodes(1).Expanded = True
-  LogMsg "Executing: SELECT version()"
-  rsDesc.Open "SELECT version()", gConnection, adOpenForwardOnly
-  txtdbVer.Text = Mid(rsDesc!Version, 1, InStr(1, rsDesc!Version, " on ") - 1)
-  txtPlatform.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, " on") + 4, InStr(1, rsDesc!Version, ", compiled by ") - InStr(1, rsDesc!Version, " on") - 4)
-  txtCompiler.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, ", compiled by ") + 14, Len(rsDesc!Version))
-  fraDatasource.Visible = True
-  
+ 
     ' Retrieve table content
   ' This can be done because optimize with GetRows
   If trvBrowser.Nodes.Count > 1 Then
@@ -589,14 +478,13 @@ On Error GoTo Err_Handler
     End If
     
     trvBrowser.Height = frmIndexes.ScaleHeight
-    trvBrowser.Width = frmIndexes.ScaleWidth - trvBrowser.Left - fraDatasource.Width - 25
-    fraDatasource.Left = trvBrowser.Left + trvBrowser.Width + 25
-    fraDatasource.Height = Me.ScaleHeight
-    txtComments.Height = fraDatasource.Height - txtComments.Top - 100
-    fraIndex.Left = fraDatasource.Left
-    fraIndex.Height = fraDatasource.Height
-    fraColumn.Left = fraDatasource.Left
-    fraColumn.Height = fraDatasource.Height
+    trvBrowser.Width = frmIndexes.ScaleWidth - trvBrowser.Left - fraIndex.Width - 25
+    
+    fraIndex.Left = trvBrowser.Left + trvBrowser.Width + 25
+    fraIndex.Height = Me.ScaleHeight
+
+    fraColumn.Left = fraIndex.Left
+    fraColumn.Height = fraIndex.Height
 
   End If
   Exit Sub
@@ -618,17 +506,16 @@ Dim rsTemp As New Recordset
   Select Case Mid(Node.Key, 1, 1)
   Case "I"
     StartMsg "Retrieving Index Info..."
-    fraDatasource.Visible = False
     fraColumn.Visible = False
     While Not rsIndexes.EOF
-      If rsIndexes!index_name = Node.Text Then
+      If rsIndexes!Index_name = Node.Text Then
         lOID = rsIndexes!index_oid
         txtOID.Text = rsIndexes!index_oid & ""
-        txtTable.Text = rsIndexes!index_table & ""
-        txtUnique.Text = rsIndexes!index_is_unique & ""
+        txtTable.Text = rsIndexes!Index_table & ""
+        txtUnique.Text = rsIndexes!Index_Is_Unique & ""
         txtPrimary.Text = rsIndexes!index_is_primary & ""
         txtLossy.Text = rsIndexes!index_is_lossy & ""
-        txtComments.Text = rsIndexes!index_comments & ""
+        txtComments.Text = rsIndexes!Index_comments & ""
         rsIndexes.MoveLast
       End If
       rsIndexes.MoveNext
@@ -641,7 +528,7 @@ Dim rsTemp As New Recordset
       rsFields.Open "SELECT index_oid, index_name, column_oid, column_name, column_position, column_type, column_length, column_comments FROM pgadmin_indexes ORDER BY column_position", gConnection, adOpenStatic
       On Error Resume Next
       While Not rsFields.EOF
-        Set NodeX = trvBrowser.Nodes.Add("I:" & rsFields!index_oid, tvwChild, "F:" & rsFields!column_oid & ":" & rsFields!column_name, rsFields!column_name, 3)
+        Set NodeX = trvBrowser.Nodes.Add("I:" & rsFields!index_oid, tvwChild, "F:" & rsFields!column_oid & ":" & rsFields!Column_name, rsFields!Column_name, 3)
       rsFields.MoveNext
       Wend
       On Error GoTo Err_Handler
@@ -653,10 +540,9 @@ Dim rsTemp As New Recordset
   Case "F"
 
     StartMsg "Retrieving Index Column Definitions..."
-    fraDatasource.Visible = False
     fraIndex.Visible = False
     While Not rsFields.EOF
-      If rsFields!column_name = Node.Text And rsFields!index_name = Node.Parent.Text Then
+      If rsFields!Column_name = Node.Text And rsFields!Index_name = Node.Parent.Text Then
         txtColOID.Text = rsFields!column_oid & ""
         txtNumber.Text = rsFields!column_position & ""
         If rsFields!column_type & "" = "numeric" Then
@@ -676,15 +562,6 @@ Dim rsTemp As New Recordset
 
     fraIndex.Visible = False
     fraColumn.Visible = False
-    txtUsername.Text = Username
-    txtTimeOut.Text = gConnection.ConnectionTimeout
-    fraDatasource.Visible = True
-    LogMsg "Executing: SELECT version()"
-    rsTemp.Open "SELECT version()", gConnection, adOpenForwardOnly
-    txtdbVer.Text = Mid(rsTemp!Version, 1, InStr(1, rsTemp!Version, " on "))
-    txtPlatform.Text = Mid(rsTemp!Version, InStr(1, rsTemp!Version, " on") + 4, InStr(1, rsTemp!Version, ", compiled by ") - InStr(1, rsTemp!Version, " on") - 4)
-    txtCompiler.Text = Mid(rsTemp!Version, InStr(1, rsTemp!Version, ", compiled by ") + 14, Len(rsTemp!Version))
-    
   End Select
 
   'This stuff can always be done.
