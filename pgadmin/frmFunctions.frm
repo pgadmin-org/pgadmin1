@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
-Object = "{07C43A57-5336-11D5-A885-0001020F24EF}#1.0#0"; "TreeToys.ocx"
+Object = "{304F6B90-5346-11D5-A885-0001020F24EF}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
    ClientHeight    =   5595
@@ -506,7 +506,10 @@ End Sub
 
 Public Sub cmdDropFunc_Click()
 On Error GoTo Err_Handler
-If MsgBox("Are you sure you wish to drop Function(s)?", vbYesNo + vbQuestion, _
+Dim szText As String
+
+szText = trvBrowser.TreeTextChecked
+If MsgBox("Are you sure you wish to drop:" & vbCrLf & vbCrLf & szText, vbYesNo + vbQuestion, _
             "Connfirm?") = vbYes Then
     cmp_function_tree_drop trvBrowser
     cmdRefresh_Click
