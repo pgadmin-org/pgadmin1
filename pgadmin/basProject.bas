@@ -27,13 +27,12 @@ Option Compare Text
 
 Public Sub cmp_Project_Initialize()
 On Error GoTo Err_Handler
-    Dim szFunc() As Variant
+    Dim szDependency() As Variant
     Dim iLoop As Long
     Dim iUbound As Long
     Dim szQuery As String
-    Dim rsFunc As New Recordset
-    Dim szFunction_source As String
-    Dim szFunction_name As String
+    Dim rsDependency As New Recordset
+    Dim szParent_name As String
     
     ' Initialize dependencies
     
@@ -42,21 +41,38 @@ On Error GoTo Err_Handler
     LogMsg "Executing: " & szQuery
     gConnection.Execute szQuery
     
-    szQuery = "SELECT function_name FROM pgadmin_dev_functions ORDER BY function_oid"
-    If rsFunc.State <> adStateClosed Then rsFunc.Close
-    rsFunc.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
+    ' Initialize dependencies on functions
+    szQuery = "SELECT function_name FROM pgadmin_dev_functions ORDER BY function_name"
+    If rsDependency.State <> adStateClosed Then rsDependency.Close
+    rsDependency.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
  
-    If Not (rsFunc.EOF) Then
-      szFunc = rsFunc.GetRows
-      rsFunc.Close
-      iUbound = UBound(szFunc, 2)
+    If Not (rsDependency.EOF) Then
+      szDependency = rsDependency.GetRows
+      rsDependency.Close
+      iUbound = UBound(szDependency, 2)
       For iLoop = 0 To iUbound
-          szFunction_name = szFunc(0, iLoop)
-          cmp_Function_Dependency_Initialize "pgadmin_dev_dependencies", "pgadmin_dev_functions", szFunction_name
+          szParent_name = szDependency(0, iLoop)
+          cmp_Function_Dependency_Initialize "pgadmin_dev_dependencies", szParent_name
       Next iLoop
-      Erase szFunc
+      Erase szDependency
     End If
 
+    ' Initialize dependencies on views
+    szQuery = "SELECT view_name FROM pgadmin_dev_views ORDER BY view_name"
+    If rsDependency.State <> adStateClosed Then rsDependency.Close
+    rsDependency.Open szQuery, gConnection, adOpenForwardOnly, adLockReadOnly
+ 
+    If Not (rsDependency.EOF) Then
+      szDependency = rsDependency.GetRows
+      rsDependency.Close
+      iUbound = UBound(szDependency, 2)
+      For iLoop = 0 To iUbound
+          szParent_name = szDependency(0, iLoop)
+          cmp_View_Dependency_Initialize "pgadmin_dev_dependencies", szParent_name
+      Next iLoop
+      Erase szDependency
+    End If
+    
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Initialize"
