@@ -205,7 +205,7 @@ Dim X As Variant
   Print #fNum, "Error Number: " & Error.Number
   Print #fNum, "Error Description: " & Error.Description
   Print #fNum, "Error Source: " & Error.Source
-  Print #fNum, "Subroutine of Function: " & SubOrFunc
+  Print #fNum, "Subroutine or Function: " & SubOrFunc
   Print #fNum, ""
   Print #fNum, "System Details"
   Print #fNum, "**************"
