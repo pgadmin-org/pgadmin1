@@ -240,7 +240,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddTrigger, chkEvent_Clic
 End Sub
 
 Private Sub cmdCreate_Click()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 Dim szTrigger_pgTable As String
 Dim szTrigger_Name As String
 Dim szTrigger_Table As String
