@@ -179,12 +179,34 @@ On Error GoTo Err_Handler
     cmp_Project_RebuildTriggers
     cmp_Project_RebuildViews
     
-    If bContinueRebuilding = True Then MsgBox ("Rebuilding successfull")
-    
+    If bContinueRebuilding = True Then
+        cmp_Function_CopyToDev
+        cmp_Trigger_CopyToDev
+        cmp_View_CopyToDev
+        
+        MsgBox ("Rebuilding successfull")
+    End If
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_Compile"
 End Sub
+
+Public Function cmp_Project_IsRebuilt() As Boolean
+Dim iResult As Long
+
+    cmp_Project_IsRebuilt = False
+    
+    iResult = RsExecuteGetResult("SELECT COUNT (*) FROM pgadmin_dev_functions WHERE function_oid = NULL")
+    If iResult > 0 Then Exit Function
+    
+    iResult = RsExecuteGetResult("SELECT COUNT (*) FROM pgadmin_dev_triggers WHERE trigger_oid = NULL")
+    If iResult > 0 Then Exit Function
+    
+    iResult = RsExecuteGetResult("SELECT COUNT (*) FROM pgadmin_dev_views WHERE view_oid = NULL")
+    If iResult > 0 Then Exit Function
+    
+    cmp_Project_IsRebuilt = True
+End Function
 
 Public Sub cmp_Project_Rebuild()
 On Error GoTo Err_Handler

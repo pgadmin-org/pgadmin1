@@ -74,7 +74,6 @@ SQL_PGADMIN_GET_SEQUENCE = "CREATE FUNCTION pgadmin_get_sequence(oid) RETURNS pg
 SQL_PGADMIN_GET_FUNCTION_NAME = "CREATE FUNCTION pgadmin_get_function_name(oid) RETURNS name AS 'SELECT function_name FROM pgadmin_functions WHERE function_oid = $1' LANGUAGE 'sql'"
 SQL_PGADMIN_GET_FUNCTION_ARGUMENTS = "CREATE FUNCTION pgadmin_get_function_arguments(oid) RETURNS text AS 'SELECT function_arguments FROM pgadmin_functions WHERE function_oid = $1' LANGUAGE 'sql'"
 
-
 SQL_PGADMIN_CHECKS = _
   "CREATE VIEW pgadmin_checks AS SELECT " & _
   "  r.oid AS check_oid, " & _
