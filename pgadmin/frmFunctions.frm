@@ -305,8 +305,11 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_
 End Sub
 
 Private Sub cmdRebuild_Click()
-    comp_Project_Initialize
-    comp_Project_Compile
+    If MsgBox("For the moment, the rebuilding feature does not keep comments and views ACL." & vbCrLf & "Please confirm you wish to continue.", vbYesNo + vbQuestion, _
+            "Rebuild project") = vbYes Then
+        comp_Project_Initialize
+        comp_Project_Compile
+    End If
 End Sub
 
 Private Sub lstFunc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
