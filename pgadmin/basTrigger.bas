@@ -576,7 +576,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_tree_drop"
 End Sub
 
-Public Sub cmp_Trigger_tree_refresh(Tree As TreeToy, bShowSystem As Boolean)
+Public Sub cmp_Trigger_tree_refresh(Tree As TreeToy, bShowSystem As Boolean, iPro_Index As Integer, iSys_Index As Integer, iDev_Index As Integer)
 On Error GoTo Err_Handler
 
   Dim NodeX As Node
@@ -721,54 +721,3 @@ Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "basTrigger, cmp_Trigger_tree_refresh"
 End Sub
-
-Public Sub cmp_Trigger_tree_activatebuttons(Tree As TreeToy, iSelected As Integer, sz_key As String, bShowSystem As Boolean)
-' On Error GoTo Err_Handler
-    Dim szSelectedNodeRoot As String
-    Dim nodX As Node
-    Dim szMode As String
-    Dim bExpanded As Boolean
-    ' Count checked items
-    iSelected = Tree.TreeCountChecked
-    
-    ' Find the mode of the selected item
-    sz_key = ""
-    If iSelected > 0 Then
-        If Tree.SelectedItem.Parent Is Nothing Then
-            sz_key = Tree.SelectedItem.Key
-        Else
-            sz_key = Tree.SelectedItem.Parent.Key
-        End If
-        
-        Select Case sz_key
-            Case "Pro:"
-            If DevMode = True Then
-                Tree.TreeSetChildren Tree.Nodes.Item(iDev_Index), False
-            End If
-            If bShowSystem = True Then
-                Tree.TreeSetChildren Tree.Nodes.Item(iSys_Index), False
-            End If
-            
-            Case "Dev:"
-            Tree.TreeSetChildren Tree.Nodes.Item(iPro_Index), False
-            If bShowSystem = True Then
-                Tree.TreeSetChildren Tree.Nodes.Item(iSys_Index), False
-            End If
-            
-            Case "Sys:"
-            If DevMode = True Then
-                Tree.TreeSetChildren Tree.Nodes.Item(iDev_Index), False
-            End If
-            Tree.TreeSetChildren Tree.Nodes.Item(iPro_Index), False
-        End Select
-    End If
-  
-    iSelected = Tree.TreeCountChecked
-      
-Exit Sub
-Err_Handler:
-If Err.Number <> 0 Then LogError Err, "basFunction, cmp_function_tree_activatebuttons"
-End Sub
-
-
-

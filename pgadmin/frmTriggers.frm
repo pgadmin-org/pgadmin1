@@ -348,8 +348,15 @@ Attribute VB_Exposed = False
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-Public dragNode As Node, dropNode As Node
 Option Explicit
+Option Compare Text
+
+Public dragNode As Node, dropNode As Node
+Private iPro_Index As Integer
+Private iDev_Index As Integer
+Private iSys_Index As Integer
+
+
 
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Form
@@ -506,7 +513,7 @@ End Sub
 Public Sub cmdRefresh_Click()
 On Error GoTo Err_Handler
 
-cmp_Trigger_tree_refresh trvBrowser, CBool(chkSystem)
+cmp_Trigger_tree_refresh trvBrowser, CBool(chkSystem), iPro_Index, iSys_Index, iDev_Index
 
 cmdCopyDevToPro.Visible = DevMode
 cmdCopyProToDev.Visible = DevMode
@@ -523,13 +530,7 @@ End Sub
 Public Sub CmdTriggerButton()
 On Error GoTo Err_Handler
 
-Dim iSelected As Integer
-Dim sz_key As String
-
-cmp_Trigger_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkSystem)
-
-'Check and uncheck buttons
-cmdButtonActivate sz_key, iSelected, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
+cmdButtonActivate trvBrowser, CBool(chkSystem), iPro_Index, iSys_Index, iDev_Index, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
 
 Exit Sub
 Err_Handler:

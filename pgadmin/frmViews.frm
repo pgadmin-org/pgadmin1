@@ -325,6 +325,10 @@ Option Compare Text
 
 Public dragNode As Node, dropNode As Node
 
+Private iPro_Index As Integer
+Private iDev_Index As Integer
+Private iSys_Index As Integer
+
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Form
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++s++++++++++++++++++++++++++
@@ -500,7 +504,7 @@ End Sub
 Public Sub cmdRefresh_Click()
 On Error GoTo Err_Handler
 
-cmp_view_tree_refresh trvBrowser, CBool(chkSystem)
+cmp_view_tree_refresh trvBrowser, CBool(chkSystem), iPro_Index, iSys_Index, iDev_Index
 
 cmdCopyDevToPro.Visible = DevMode
 cmdCopyProToDev.Visible = DevMode
@@ -515,13 +519,7 @@ End Sub
 Public Sub CmdViewButton()
 On Error GoTo Err_Handler
 
-Dim iSelected As Integer
-Dim sz_key As String
-
-cmp_view_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkSystem)
-
-'Check and uncheck buttons
-cmdButtonActivate sz_key, iSelected, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
+cmdButtonActivate trvBrowser, CBool(chkSystem), iPro_Index, iSys_Index, iDev_Index, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
 
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"

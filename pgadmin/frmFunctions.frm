@@ -366,6 +366,10 @@ Option Compare Text
 
 Public dragNode As Node, dropNode As Node
 
+Private iPro_Index As Integer
+Private iDev_Index As Integer
+Private iSys_Index As Integer
+
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Form
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -523,7 +527,7 @@ End Sub
 Public Sub cmdRefresh_Click()
 On Error GoTo Err_Handler
 
-cmp_function_tree_refresh trvBrowser, CBool(chkFunctions)
+cmp_function_tree_refresh trvBrowser, CBool(chkFunctions), iPro_Index, iSys_Index, iDev_Index
 
 cmdCopyDevToPro.Visible = DevMode
 cmdCopyProToDev.Visible = DevMode
@@ -540,13 +544,7 @@ End Sub
 Public Sub CmdFuncButton()
 On Error GoTo Err_Handler
 
-Dim iSelected As Integer
-Dim sz_key As String
-
-cmp_function_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkFunctions)
-
-'Check and uncheck buttons
-cmdButtonActivate sz_key, iSelected, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
+cmdButtonActivate trvBrowser, CBool(chkFunctions), iPro_Index, iSys_Index, iDev_Index, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
 
 Exit Sub
 Err_Handler:

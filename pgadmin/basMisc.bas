@@ -426,83 +426,86 @@ Public Sub MsgExportToFile(Obj As Object, szTextToExport As String, Optional ByV
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, MsgExportToFile"
 End Sub
 
-Public Sub cmdButtonActivate(szKey As String, intSelCount As Integer, Optional cmdObjCreate As CommandButton, Optional cmdObjModify As CommandButton, Optional cmdObjDrop As CommandButton, Optional cmdObjExport As CommandButton, Optional cmdObjEdit As CommandButton, Optional cmdObjRefresh As CommandButton, Optional cmdObjView As CommandButton)
+Public Sub cmdButtonActivate(Tree As TreeToy, bShowSystem As Boolean, iPro_Index As Integer, iSys_Index As Integer, iDev_Index As Integer, Optional cmdObjCreate As CommandButton, Optional cmdObjModify As CommandButton, Optional cmdObjDrop As CommandButton, Optional cmdObjExport As CommandButton, Optional cmdObjEdit As CommandButton, Optional cmdObjRefresh As CommandButton, Optional cmdObjView As CommandButton)
     On Error GoTo Err_Handler
-        Select Case intSelCount
-                Case 0
-                    Select Case szKey
-                        Case "Dev:"
-                            cmdObjCreate.Enabled = True
-                            cmdObjModify.Enabled = False
-                            cmdObjDrop.Enabled = False
-                            cmdObjExport.Enabled = False
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                        
-                        Case "Pro:"
-                            cmdObjCreate.Enabled = True
-                            cmdObjModify.Enabled = False
-                            cmdObjDrop.Enabled = False
-                            cmdObjExport.Enabled = False
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                        
-                        Case "Sys:"
-                            cmdObjCreate.Enabled = True
-                            cmdObjModify.Enabled = False
-                            cmdObjDrop.Enabled = False
-                            cmdObjExport.Enabled = False
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                        
-                        Case Else
-                            cmdObjCreate.Enabled = True
-                            cmdObjModify.Enabled = False
-                            cmdObjDrop.Enabled = False
-                            cmdObjExport.Enabled = False
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                    End Select
+    Dim sz_Key As String
+    Dim bSelected As Boolean
+    Dim iCountChecked As Integer
+    Dim nodX As Node
+    
+    '
+    ' ANALYSE
+    '
+    bSelected = False
+    iCountChecked = 0
+    If Tree.SelectedItem Is Nothing Then Exit Sub
+    
+    ' Find the mode of the selected item
+    sz_Key = ""
+    
+    If Tree.SelectedItem.Text <> "" Then
+        If Tree.SelectedItem.Parent Is Nothing Then
+            sz_Key = Tree.SelectedItem.Key
+        Else
+            sz_Key = Tree.SelectedItem.Parent.Key
+            bSelected = True
+        End If
         
-                Case Is > 0
-                    Select Case szKey
-                        Case "Dev:"
-                            cmdObjCreate.Enabled = True
-                            cmdObjModify.Enabled = True
-                            cmdObjDrop.Enabled = True
-                            cmdObjExport.Enabled = True
-                            cmdObjEdit.Enabled = True
-                            cmdObjRefresh.Enabled = True
-                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                        
-                        Case "Pro:"
-                            cmdObjCreate.Enabled = True
-                            cmdObjModify.Enabled = Not (DevMode)
-                            cmdObjDrop.Enabled = True
-                            cmdObjExport.Enabled = True
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                        
-                        Case "Sys:"
-                            cmdObjCreate.Enabled = False
-                            cmdObjModify.Enabled = False
-                            cmdObjDrop.Enabled = False
-                            cmdObjExport.Enabled = False
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                       
-                        Case Else
-                            cmdObjCreate.Enabled = False
-                            cmdObjModify.Enabled = False
-                            cmdObjDrop.Enabled = False
-                            cmdObjExport.Enabled = False
-                            cmdObjEdit.Enabled = False
-                            cmdObjRefresh.Enabled = True
-                    End Select
-               End Select
+        Select Case sz_Key
+            Case "Pro:"
+            If DevMode = True Then
+                Tree.TreeSetChildren Tree.Nodes.Item(iDev_Index), False
+            End If
+            If bShowSystem = True Then
+                Tree.TreeSetChildren Tree.Nodes.Item(iSys_Index), False
+            End If
+            
+            Case "Dev:"
+            Tree.TreeSetChildren Tree.Nodes.Item(iPro_Index), False
+            If bShowSystem = True Then
+                Tree.TreeSetChildren Tree.Nodes.Item(iSys_Index), False
+            End If
+            
+            Case "Sys:"
+            If DevMode = True Then
+                Tree.TreeSetChildren Tree.Nodes.Item(iDev_Index), False
+            End If
+            Tree.TreeSetChildren Tree.Nodes.Item(iPro_Index), False
+        End Select
+    End If
+  
+    iCountChecked = Tree.TreeCountChecked
+    
+    '
+    ' ENABLE /DISABLE
+    '
+    cmdObjDrop.Enabled = (iCountChecked > 0)
+    cmdObjExport.Enabled = (iCountChecked > 0)
+    cmdObjRefresh.Enabled = True
+    cmdObjCreate.Enabled = True
+    
+    If bSelected = False Then
+        cmdObjModify.Enabled = False
+        cmdObjEdit.Enabled = False
+    Else
+        Select Case sz_Key
+              Case "Dev:"
+                  cmdObjModify.Enabled = True
+                  cmdObjEdit.Enabled = True
+              
+              Case "Pro:"
+                  cmdObjModify.Enabled = Not (DevMode)
+                  cmdObjEdit.Enabled = False
+              
+              Case "Sys:"
+                  cmdObjModify.Enabled = False
+                  cmdObjEdit.Enabled = False
+             
+              Case Else
+                  cmdObjModify.Enabled = False
+                  cmdObjEdit.Enabled = False
+        End Select
+    End If
    Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, cmdButtonActivate"
 End Sub
