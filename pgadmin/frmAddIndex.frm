@@ -159,16 +159,16 @@ End Sub
 
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
 Dim ColumnList As String
 Dim ColumnCount As Integer
   ColumnCount = 0
-  For X = 0 To lstColumns.ListCount - 1
-    If lstColumns.Selected(X) = True Then
-      ColumnList = ColumnList & ", " & QUOTE & lstColumns.List(X) & QUOTE
+  For x = 0 To lstColumns.ListCount - 1
+    If lstColumns.Selected(x) = True Then
+      ColumnList = ColumnList & ", " & QUOTE & lstColumns.List(x) & QUOTE
       ColumnCount = ColumnCount + 1
     End If
-  Next X
+  Next x
   fMainForm.txtSQLPane.Text = "CREATE "
   If chkUnique.Value = 1 Then
     fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & "UNIQUE "
@@ -197,7 +197,7 @@ End Sub
 Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
 Dim CreateStr As String
-Dim X As Integer
+Dim x As Integer
 Dim ColumnList As String
 Dim ColumnCount As Integer
 
@@ -210,12 +210,12 @@ Dim ColumnCount As Integer
     Exit Sub
   End If
   ColumnCount = 0
-  For X = 0 To lstColumns.ListCount - 1
-    If lstColumns.Selected(X) = True Then
-      ColumnList = ColumnList & ", " & QUOTE & lstColumns.List(X) & QUOTE
+  For x = 0 To lstColumns.ListCount - 1
+    If lstColumns.Selected(x) = True Then
+      ColumnList = ColumnList & ", " & QUOTE & lstColumns.List(x) & QUOTE
       ColumnCount = ColumnCount + 1
     End If
-  Next X
+  Next x
   If ColumnCount = 0 Then
     MsgBox "You must select at least one column to index!", vbExclamation, "Error"
     Exit Sub

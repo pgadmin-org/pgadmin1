@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddTrigger 
    Caption         =   "Trigger"
    ClientHeight    =   5535
@@ -31,7 +31,6 @@ Begin VB.Form frmAddTrigger
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "Comments"
-      AutoColour      =   -1  'True
    End
    Begin VB.Frame Frame3 
       Caption         =   "For Each"
