@@ -23,9 +23,13 @@ Private szPro_Text As String
 Private szDev_Text As String
 Private szSys_Text As String
 
-Private iPro_Index As Integer
-Private iDev_Index As Integer
-Private iSys_Index As Integer
+Private iPro_Index As Long
+Private iDev_Index As Long
+Private iSys_Index As Long
+
+Private iPro_Count As Long
+Private iDev_Count As Long
+Private iSys_Count As Long
 
 '****
 '**** Triggers
@@ -597,31 +601,33 @@ On Error GoTo Err_Handler
   Dim szTrigger_Comments As String
   
   Dim szTrigger_iscompiled As Boolean
-  
   Dim rsTrigger As New Recordset
   
   StartMsg "Retrieving Trigger Names..."
   
   Tree.Nodes.Clear
-  
+  iPro_Count = 0
+  iDev_Count = 0
+  iSys_Count = 0
+
   If DevMode = False Then
     szPro_Text = "User Triggers"
   Else
-    szPro_Text = "2 - Production Triggers"
+    szPro_Text = "Production Triggers"
   End If
   
   Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
   iPro_Index = NodeX.Index
   NodeX.Expanded = False
   
-  szDev_Text = "1 - Development Triggers"
+  szDev_Text = "Development Triggers"
   If DevMode = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Dev:", szDev_Text, 1)
     iDev_Index = NodeX.Index
     NodeX.Expanded = False
   End If
   
-  szSys_Text = "3 - System Triggers"
+  szSys_Text = "System Triggers"
   If bShowSystem = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Sys:", szSys_Text, 1)
     iSys_Index = NodeX.Index
@@ -661,6 +667,7 @@ On Error GoTo Err_Handler
             Else
                 Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szTrigger_Name, szTrigger_Name, 2)
             End If
+            iSys_Count = iSys_Count + 1
           Else
          ' ---------------------------------------------------------------------
          ' Else it is a user Trigger, add it to "P:" Production node
@@ -670,11 +677,16 @@ On Error GoTo Err_Handler
             Else
                 Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szTrigger_Name, szTrigger_Name, 4)
              End If
+            iPro_Count = iPro_Count + 1
           End If
           NodeX.Tag = cmp_Trigger_CreateSQL(szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event)
           NodeX.Image = 4
     Next iLoop
   End If
+  
+  Tree.Nodes.Item(iPro_Index).Text = Tree.Nodes.Item(iPro_Index).Text & " (" & CStr(iPro_Count) & ")"
+  If iSys_Count > 0 Then Tree.Nodes.Item(iSys_Index).Text = Tree.Nodes.Item(iSys_Index).Text & " (" & CStr(iSys_Count) & ")"
+
   Erase szTrigger
   
  ' ---------------------------------------------------------------------
@@ -689,6 +701,7 @@ On Error GoTo Err_Handler
       If Not (rsTrigger.EOF) Then
         szTrigger = rsTrigger.GetRows
         iUbound = UBound(szTrigger, 2)
+        iDev_Count = iUbound + 1
         For iLoop = 0 To iUbound
             szTrigger_Name = szTrigger(0, iLoop) & ""
             szTrigger_Table = szTrigger(1, iLoop) & ""
@@ -708,8 +721,7 @@ On Error GoTo Err_Handler
                 Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szTrigger_Name, szTrigger_Name, 2)
             End If
             NodeX.Tag = cmp_Trigger_CreateSQL(szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event)
-            
-            
+                       
             If szTrigger_iscompiled = False Then
                 NodeX.Image = 3
             Else
@@ -718,6 +730,7 @@ On Error GoTo Err_Handler
         Next iLoop
       End If
       Erase szTrigger
+  Tree.Nodes.Item(iDev_Index).Text = Tree.Nodes.Item(iDev_Index).Text & " (" & CStr(iDev_Count) & ")"
   End If
   
   Set rsTrigger = Nothing

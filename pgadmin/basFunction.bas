@@ -23,9 +23,9 @@ Private szPro_Text As String
 Private szDev_Text As String
 Private szSys_Text As String
 
-Private iPro_Index As Integer
-Private iDev_Index As Integer
-Private iSys_Index As Integer
+Private iPro_Index As Long
+Private iDev_Index As Long
+Private iSys_Index As Long
 
 Private iPro_Count As Long
 Private iDev_Count As Long
