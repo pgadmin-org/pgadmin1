@@ -85,9 +85,6 @@ End Sub
 Public Function cmp_Project_FindNextFunctionToCompile() As String
 On Error GoTo Err_Handler
     Dim szQueryStr As String
-    Dim szFunc() As Variant
-    Dim iLoop As Long
-    Dim iUbound As Long
     Dim rsFunc As New Recordset
     Dim szFunction_name As String
     Dim szFunction_arguments As String
@@ -111,16 +108,12 @@ On Error GoTo Err_Handler
     
     cmp_Project_FindNextFunctionToCompile = ""
     If Not (rsFunc.EOF) Then
-      szFunc = rsFunc.GetRows(1)
-      rsFunc.Close
-      iUbound = UBound(szFunc, 2)
-      
-      szFunction_name = szFunc(0, iLoop)
-      szFunction_arguments = szFunc(1, iLoop)
+      szFunction_name = rsFunc(0) & ""
+      szFunction_arguments = rsFunc(1) & ""
       cmp_Project_FindNextFunctionToCompile = szFunction_name & "(" & szFunction_arguments & ")"
-      Erase szFunc
     End If
    
+    rsFunc.Close
     Exit Function
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_FindNextFunctionToCompile"
@@ -221,9 +214,6 @@ End Sub
 Public Function cmp_Project_FindNextViewToCompile() As String
 On Error GoTo Err_Handler
     Dim szQueryStr As String
-    Dim szFunc() As Variant
-    Dim iLoop As Long
-    Dim iUbound As Long
     Dim rsFunc As New Recordset
     Dim szView_name As String
     
@@ -246,20 +236,15 @@ On Error GoTo Err_Handler
     
     cmp_Project_FindNextViewToCompile = ""
     If Not (rsFunc.EOF) Then
-      szFunc = rsFunc.GetRows(1)
-      rsFunc.Close
-      iUbound = UBound(szFunc, 2)
-
-      szView_name = szFunc(0, iLoop)
+      szView_name = rsFunc(0) & ""
       cmp_Project_FindNextViewToCompile = szView_name
       LogMsg "Next vailable View to compile is " & cmp_Project_FindNextViewToCompile & "..."
-
-      Erase szFunc
     End If
-   
-    Exit Function
+    rsFunc.Close
+
+Exit Function
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_FindNextViewToCompile"
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_FindNextViewToCompile"
 End Function
 
 Public Sub cmp_Project_Move_Views(szView_source_table As String, szView_source_clause As String, szView_target_table As String)
