@@ -192,10 +192,10 @@ Sub cmp_Trigger_GetInfo(ByVal lngTrigger_OID As Long, Optional szTrigger_name As
     rsComp.Open szQueryStr, gConnection
     
     If Not rsComp.EOF Then
-        If Not (IsMissing(szTrigger_name)) Then szTrigger_name = rsComp!trigger_name
-        If Not (IsMissing(szTrigger_table)) Then szTrigger_table = rsComp!trigger_table
-        If Not (IsMissing(szTrigger_function)) Then szTrigger_function = rsComp!trigger_function
-        If Not (IsMissing(szTrigger_arguments)) Then szTrigger_arguments = rsComp!trigger_arguments
+        If Not (IsMissing(szTrigger_name)) Then szTrigger_name = rsComp!trigger_name & ""
+        If Not (IsMissing(szTrigger_table)) Then szTrigger_table = rsComp!trigger_table & ""
+        If Not (IsMissing(szTrigger_function)) Then szTrigger_function = rsComp!trigger_function & ""
+        If Not (IsMissing(szTrigger_arguments)) Then szTrigger_arguments = rsComp!trigger_arguments & ""
         iTrigger_type = rsComp!trigger_type
         If iTrigger_type <> 0 Then
             If Not (IsMissing(szTrigger_ForEach)) Then
