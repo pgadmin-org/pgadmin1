@@ -2,18 +2,28 @@ VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmViews 
    Caption         =   "Views"
-   ClientHeight    =   4050
+   ClientHeight    =   4440
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8205
    Icon            =   "frmViews.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4050
+   ScaleHeight     =   4440
    ScaleWidth      =   8205
-   Begin VB.CommandButton cmdRebuild 
+   Begin VB.CommandButton cmdRebuildViews 
       BackColor       =   &H80000018&
-      Caption         =   "Rebuild &project"
+      Caption         =   "Rebuild Views"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   24
+      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
+      Top             =   3915
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdRebuildProject 
+      BackColor       =   &H80000018&
+      Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
       TabIndex        =   23
@@ -60,7 +70,7 @@ Begin VB.Form frmViews
    End
    Begin VB.Frame fraDetails 
       Caption         =   "View Details"
-      Height          =   4020
+      Height          =   4425
       Left            =   4500
       TabIndex        =   12
       Top             =   0
@@ -114,7 +124,7 @@ Begin VB.Form frmViews
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   645
+         Height          =   1095
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
@@ -185,7 +195,7 @@ Begin VB.Form frmViews
       End
    End
    Begin VB.ListBox lstView 
-      Height          =   3960
+      Height          =   4350
       Left            =   1485
       MultiSelect     =   2  'Extended
       TabIndex        =   6
@@ -341,8 +351,22 @@ Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdModifyView_Click"
 End Sub
 
-Private Sub cmdRebuild_Click()
+Private Sub cmdRebuildProject_click()
+On Error GoTo Err_Handler
     cmp_Project_Rebuild
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildProject_Click"
+End Sub
+
+Private Sub cmdRebuildViews_Click()
+On Error GoTo Err_Handler
+    cmp_Project_RebuildViews
+        If bContinueRebuilding = True Then
+        cmp_View_CopyToDev
+    End If
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdRebuildViews_Click"
 End Sub
 
 Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -512,7 +536,7 @@ On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
-      If Me.Height < 4455 Then Me.Height = 4455
+      If Me.Height < 4845 Then Me.Height = 4845
     End If
     lstView.Height = Me.ScaleHeight
     lstView.Width = Me.ScaleWidth - lstView.Left - fraDetails.Width - 25
@@ -579,9 +603,11 @@ On Error GoTo Err_Handler
     cmdButtonActivate bSystem, lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
 
     If cmp_Project_IsRebuilt = True Then
-        cmdRebuild.Enabled = False
+        cmdRebuildProject.Enabled = False
+        cmdRebuildViews.Enabled = False
     Else
-       cmdRebuild.Enabled = True
+       cmdRebuildProject.Enabled = True
+       cmdRebuildViews.Enabled = True
     End If
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"
