@@ -1428,6 +1428,7 @@ Dim szGetRows() As Variant
     Dim szCheck_table_oid As String
     Dim szCheck_oid As String
     Dim szCheck_name As String
+    Dim szCheck_definition As String
     
     If rsChecks.State = adStateClosed Then
       szQuery = "SELECT check_oid, check_name, check_table_oid, check_table_name, check_definition, check_comments FROM pgadmin_checks ORDER BY check_table_name, check_name;"
@@ -1493,6 +1494,7 @@ Dim szGetRows() As Variant
     Dim szPrimary_index_table As String
     Dim szPrimary_index_oid As String
     Dim szPrimary_index_name As String
+    Dim szPrimary_column_name As String
     
     If rsPrimary.State = adStateClosed Then
       szQuery = "SELECT index_oid, index_name, index_table, column_name, index_comments FROM pgadmin_indexes WHERE index_is_primary = 'Yes'"
@@ -1531,6 +1533,7 @@ Dim szGetRows() As Variant
     Dim szUnique_index_table As String
     Dim szUnique_index_oid As String
     Dim szUnique_index_name As String
+    Dim szUnique_column_name As String
     
     If rsUnique.State = adStateClosed Then
       'Note, as Primary Keys are inherently unique, exclude them here.
@@ -1546,7 +1549,7 @@ Dim szGetRows() As Variant
                 szUnique_index_table = szGetRows(2, iLoop) & ""
                 szUnique_index_oid = szGetRows(0, iLoop) & ""
                 szUnique_index_name = szGetRows(1, iLoop) & ""
-                    
+                
                 'pgadmin_indexes only has the table name so we need to get the Node Key first
                 szKey = ""
                 For X = 1 To trvBrowser.Nodes.Count
@@ -1613,13 +1616,6 @@ Dim szGetRows() As Variant
             Erase szGetRows
             rsFields.MoveFirst
        End If
-    
-    
-    While Not rsFields.EOF
-    
-      rsFields.MoveNext
-    Wend
-    If rsFields.BOF <> True Then rsFields.MoveFirst
     fraColumn.Visible = True
     
   Case "C" 'Check
@@ -1631,15 +1627,23 @@ Dim szGetRows() As Variant
     fraForeign.Visible = False
     fraPrimary.Visible = False
     fraUnique.Visible = False
-    While Not rsChecks.EOF
-      If rsChecks!check_oid = CLng(Mid(Node.Key, 3)) Then
-        txtCheckOID.Text = rsChecks!check_oid & ""
-        txtCheckDefinition.Text = rsChecks!check_definition & ""
-        rsChecks.MoveLast
-      End If
-      rsChecks.MoveNext
-    Wend
-    If rsChecks.BOF <> True Then rsChecks.MoveFirst
+ 
+    If Not (rsChecks.EOF) Then
+         szGetRows = rsChecks.GetRows
+         iUbound = UBound(szGetRows, 2)
+         For iLoop = 0 To iUbound
+                szCheck_oid = szGetRows(0, iLoop) & ""
+                szCheck_definition = szGetRows(4, iLoop) & ""
+                
+                If CLng(szCheck_oid) = CLng(Mid(Node.Key, 3)) Then
+                    txtCheckOID.Text = szCheck_oid
+                    txtCheckDefinition.Text = szCheck_definition
+                    iLoop = iUbound
+                End If
+         Next iLoop
+         Erase szGetRows
+         rsChecks.MoveFirst
+    End If
     fraCheck.Visible = True
     
   Case "O" 'Foreign Key
@@ -1689,14 +1693,22 @@ Dim szGetRows() As Variant
     fraForeign.Visible = False
     fraUnique.Visible = False
     txtPrimaryColumns.Text = ""
-    While Not rsPrimary.EOF
-      If rsPrimary!index_oid = CLng(Mid(Node.Key, 3)) Then
-        txtPrimaryOID.Text = rsPrimary!index_oid & ""
-        txtPrimaryColumns.Text = txtPrimaryColumns.Text & rsPrimary!column_name & vbCrLf
-      End If
-      rsPrimary.MoveNext
-    Wend
-    If rsPrimary.BOF <> True Then rsPrimary.MoveFirst
+    
+    If Not (rsPrimary.EOF) Then
+         szGetRows = rsPrimary.GetRows
+         iUbound = UBound(szGetRows, 2)
+         For iLoop = 0 To iUbound
+            szPrimary_index_oid = szGetRows(0, iLoop) & ""
+            szPrimary_column_name = szGetRows(3, iLoop) & ""
+                
+            If CLng(szPrimary_index_oid) = CLng(Mid(Node.Key, 3)) Then
+              txtPrimaryOID.Text = szPrimary_index_oid
+              txtPrimaryColumns.Text = txtPrimaryColumns.Text & szPrimary_column_name & vbCrLf
+            End If
+         Next iLoop
+         Erase szGetRows
+         rsPrimary.MoveFirst
+    End If
     fraPrimary.Visible = True
     
   Case "U" 'Unique Constraint
@@ -1709,14 +1721,22 @@ Dim szGetRows() As Variant
     fraForeign.Visible = False
     fraPrimary.Visible = False
     txtUniqueColumns.Text = ""
-    While Not rsUnique.EOF
-      If rsUnique!index_oid = CLng(Mid(Node.Key, 3)) Then
-        txtUniqueOID.Text = rsUnique!index_oid & ""
-        txtUniqueColumns.Text = txtUniqueColumns.Text & rsUnique!column_name & vbCrLf
-      End If
-      rsUnique.MoveNext
-    Wend
-    If rsUnique.BOF <> True Then rsUnique.MoveFirst
+    
+    If Not (rsUnique.EOF) Then
+         szGetRows = rsUnique.GetRows
+         iUbound = UBound(szGetRows, 2)
+         For iLoop = 0 To iUbound
+            szUnique_index_oid = szGetRows(0, iLoop) & ""
+            szUnique_column_name = szGetRows(3, iLoop) & ""
+                
+            If CLng(szUnique_index_oid) = CLng(Mid(Node.Key, 3)) Then
+              txtUniqueOID.Text = szUnique_index_oid
+              txtUniqueColumns.Text = txtUniqueColumns.Text & szUnique_column_name & vbCrLf
+            End If
+         Next iLoop
+         Erase szGetRows
+         rsUnique.MoveFirst
+    End If
     fraUnique.Visible = True
     
   Case "D" 'Datasource
