@@ -17,6 +17,7 @@ Attribute VB_Name = "basCompiler"
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+Option Compare Text
 
 '****
 '**** Views
@@ -83,11 +84,11 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_View_DropIfExists"
 End Function
 
-Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_definition As String)
+Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_Definition As String)
 On Error GoTo Err_Handler
   Dim szCreateStr As String
 
-    szCreateStr = "CREATE VIEW " & szView_Name & " AS " & szView_definition
+    szCreateStr = "CREATE VIEW " & szView_Name & " AS " & szView_Definition
     LogMsg "Creating view " & szView_Name & "..."
     LogMsg "Executing: " & szCreateStr
     
@@ -102,7 +103,7 @@ Err_Handler:
   bContinueCompilation = False
 End Sub
 
-Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String, Optional szView_definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
+Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -126,7 +127,7 @@ Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String
         If Not (IsMissing(szView_Name)) Then szView_Name = rsComp!view_name & ""
         If Not (IsMissing(szView_Owner)) Then szView_Owner = rsComp!view_owner & ""
         If Not (IsMissing(szView_Acl)) Then szView_Acl = rsComp!view_acl & ""
-        If Not (IsMissing(szView_definition)) Then szView_definition = cmp_View_GetViewDef(szView_Name)
+        If Not (IsMissing(szView_Definition)) Then szView_Definition = cmp_View_GetViewDef(szView_Name)
         rsComp.Close
     End If
   Exit Sub
@@ -614,7 +615,7 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_na
             If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
             If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
             If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
-            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
+            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!function_source & ""
             If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
             If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
            
@@ -681,9 +682,10 @@ End Function
 '****
 '****
 
-Public Sub comp_Project_BackupViews()
+Public Sub comp_Project_BackupViews(Optional ByVal Function_OldName, Optional ByVal Function_NewName, Optional ByVal Table_OldName, Optional ByVal Table_NewName)
 'On Error GoTo Err_Handler
     Dim szQuery As String
+    Dim szView_Definition As String
     Dim rsComp As New Recordset
     
     ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
@@ -707,20 +709,116 @@ Public Sub comp_Project_BackupViews()
     rsComp.Open szQuery, gConnection, adOpenDynamic
     
     While Not rsComp.EOF
-        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''") & "' WHERE view_name = '" & rsComp!view_name & "'"
+        'Copy view definition
+        szView_Definition = Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''")
+        
+        ' Rename underlying functions if needed
+        If Not (IsMissing(Function_NewName)) And Not (IsMissing(Function_OldName)) Then
+            If (Function_OldName <> "") And (Function_NewName <> "") And (Function_NewName <> Function_OldName) Then
+                szView_Definition = Replace(szView_Definition, Function_OldName, Function_NewName)
+            End If
+        End If
+        
+        ' Rename underlying table if needed
+        If Not (IsMissing(Table_NewName)) And Not (IsMissing(Table_OldName)) Then
+            If (Table_OldName <> "") And (Table_NewName <> "") And (Table_NewName <> Table_OldName) Then
+                szView_Definition = Replace(szView_Definition, Table_OldName, Table_NewName)
+            End If
+        End If
+        
+        ' Update definition of view
+        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & szView_Definition & "' WHERE view_oid = '" & rsComp!view_oid & "'"
         gConnection.Execute szQuery
         rsComp.MoveNext
     Wend
+
     Exit Sub
-    
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, comp_View_DevBackup"
 End Sub
 
-Public Sub comp_Project_BackupFunctions()
+Public Sub comp_Project_BackupTriggers(Optional ByVal Function_OldName, Optional ByVal Function_NewName, Optional ByVal Table_OldName, Optional ByVal Table_NewName)
+'On Error GoTo Err_Handler
+    Dim szQuery As String
+    Dim szTrigger_function As String
+    Dim rsComp As New Recordset
+    
+    ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
+    ' We first copy pgadmin_functions, pgadmin_triggers, pgadmin_views into them
+    
+    szQuery = "TRUNCATE TABLE pgadmin_dev_triggers;" & _
+    "  INSERT INTO pgadmin_dev_triggers SELECT * " & _
+    "  FROM pgadmin_triggers " & _
+    "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
+    "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
+    "  AND trigger_name NOT LIKE 'pg_%' " & _
+    "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
+    "  ORDER BY trigger_name; " & _
+    "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
+    
+    LogMsg "Copying pgadmin_triggers into pgadmin_dev_triggers..."
+    LogMsg "Executing: " & szQuery
+    
+    gConnection.Execute szQuery
+    
+    ' Rename functions if needed
+    If Not (IsMissing(Function_NewName)) And Not (IsMissing(Function_OldName)) Then
+        If (Function_OldName <> "") And (Function_NewName <> "") And (Function_NewName <> Function_OldName) Then
+            ' Looking for triggers based on Function_OldName
+            szQuery = "SELECT pgadmin_dev_triggers WHERE trigger_function ILIKE '" & Function_OldName & "';"
+            LogMsg "Looking for triggers based on function " & Function_OldName & "..."
+            LogMsg "Executing: " & szQuery
+            
+            If rsComp.State <> adStateClosed Then rsComp.Close
+            rsComp.Open szQuery, gConnection
+            
+            ' If found, replace Function_OldName by Function_NewName
+            If Not rsComp.EOF Then
+                szQuery = "UPDATE pgadmin_dev_triggers " & _
+                " SET   trigger_function = '" & Function_NewName & "'" & _
+                " WHERE trigger_function ILIKE '" & Function_OldName & "';"
+                
+                LogMsg "Renaming trigger underlying function " & Function_OldName & " into " & Function_NewName & "..."
+                LogMsg "Executing: " & szQuery
+                gConnection.Execute szQuery
+            End If
+        End If
+   End If
+   
+    ' Rename tables if needed
+    If Not (IsMissing(Table_NewName)) And Not (IsMissing(Table_OldName)) Then
+        If (Table_OldName <> "") And (Table_NewName <> "") And (Table_NewName <> Table_OldName) Then
+            ' Looking for triggers based on Function_OldName
+            szQuery = "SELECT pgadmin_dev_tables WHERE trigger_table ILIKE '" & Table_OldName & "';"
+            LogMsg "Looking for triggers based on table " & Table_OldName & "..."
+            LogMsg "Executing: " & szQuery
+            
+            If rsComp.State <> adStateClosed Then rsComp.Close
+            rsComp.Open szQuery, gConnection
+            
+            ' If found, replace Function_OldName by Function_NewName
+            If Not rsComp.EOF Then
+                szQuery = "UPDATE pgadmin_dev_triggers " & _
+                " SET   trigger_table = '" & Table_NewName & "'" & _
+                " WHERE trigger_table ILIKE '" & Table_OldName & "';"
+                
+                LogMsg "Renaming trigger underlying table " & Table_OldName & " into " & Table_NewName & "..."
+                LogMsg "Executing: " & szQuery
+                gConnection.Execute szQuery
+            End If
+        End If
+    End If
+    
+    Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
+End Sub
+
+Public Sub comp_Project_BackupFunctions(Optional ByVal Function_OldName, Optional ByVal Function_NewName)
 'On Error GoTo Err_Handler
     Dim szQuery As String
     Dim rsComp As New Recordset
+    Dim szFunction_source As String
     
     ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
     ' We first copy pgadmin_functions, pgadmin_triggers, pgadmin_views into them
@@ -738,7 +836,7 @@ Public Sub comp_Project_BackupFunctions()
     LogMsg "Initializing pgadmin_dev_functions..."
     LogMsg "Executing: " & szQuery
     gConnection.Execute szQuery
-    
+        
     szQuery = "TRUNCATE TABLE pgadmin_dev_dependencies;"
     LogMsg "Initializing pgadmin_dev_dependencies..."
     LogMsg "Executing: " & szQuery
@@ -750,40 +848,64 @@ Public Sub comp_Project_BackupFunctions()
     rsComp.Open szQuery, gConnection, adOpenDynamic
     
     While Not rsComp.EOF
-        cmp_Function_Dependency_Initialize rsComp!function_OID, rsComp!Function_name
+        cmp_Function_Dependency_Initialize rsComp!function_oid, rsComp!Function_name
         rsComp.MoveNext
     Wend
     
+     ' Change function_name if needed
+    If Not (IsMissing(Function_NewName)) And Not (IsMissing(Function_OldName)) Then
+        If (Function_OldName <> "") And (Function_NewName <> "") And (Function_NewName <> Function_OldName) Then
+            ' Looking for triggers based on Function_OldName
+            szQuery = "SELECT pgadmin_dev_functions WHERE function_name ILIKE '" & Function_OldName & "';"
+            LogMsg "Looking for functions named " & Function_OldName & "..."
+            LogMsg "Executing: " & szQuery
+            
+            If rsComp.State <> adStateClosed Then rsComp.Close
+            rsComp.Open szQuery, gConnection
+            
+            ' If found, replace Function_OldName by Function_NewName
+            If Not rsComp.EOF Then
+                szQuery = "UPDATE pgadmin_dev_functions " & _
+                " SET   function_function = '" & Function_NewName & "'" & _
+                " WHERE function_function ILIKE '" & Function_OldName & "';"
+                
+                LogMsg "Updating function_name in " & Function_OldName & " with " & Function_NewName & "..."
+                LogMsg "Executing: " & szQuery
+                gConnection.Execute szQuery
+            End If
+        End If
+        
+         ' Change function_source if needed
+        If (Function_OldName <> "") And (Function_NewName <> "") And (Function_NewName <> Function_OldName) Then
+            ' Looking for triggers based on Function_OldName
+            szQuery = "SELECT pgadmin_dev_functions WHERE function_source ILIKE '%" & Function_OldName & "%';"
+            LogMsg "Looking for functions containing function_source " & Function_OldName & "..."
+            LogMsg "Executing: " & szQuery
+            
+            If rsComp.State <> adStateClosed Then rsComp.Close
+            rsComp.Open szQuery, gConnection
+            
+            ' If found, replace Function_OldName by Function_NewName
+            While Not rsComp.EOF
+                szFunction_source = Replace(rsComp!function_source, "'", "''")
+                szFunction_source = Replace(szFunction_source, Function_OldName, Function_NewName)
+                szQuery = "UPDATE pgadmin_dev_functions SET szFunction_source = '" & szFunction_source & "'"
+                szQuery = szQuery & " WHERE function_oid = " & Str(rsComp!function_oid)
+                
+                LogMsg "Updating function_source in " & Function_OldName & " with " & szFunction_source & "..."
+                LogMsg "Executing: " & szQuery
+                
+                gConnection.Execute szQuery
+                rsComp.MoveNext
+            Wend
+        End If
+    End If
+        
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
 End Sub
 
-Public Sub comp_Project_BackupTriggers()
-'On Error GoTo Err_Handler
-    Dim szQuery As String
-    Dim rsComp As New Recordset
-    
-    ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
-    ' We first copy pgadmin_functions, pgadmin_triggers, pgadmin_views into them
-    
-    szQuery = "TRUNCATE TABLE pgadmin_dev_triggers;" & _
-    "  INSERT INTO pgadmin_dev_triggers SELECT * " & _
-    "  FROM pgadmin_triggers " & _
-    "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
-    "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
-    "  AND trigger_name NOT LIKE 'pg_%' " & _
-    "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
-    "  ORDER BY trigger_name; " & _
-    "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
-    LogMsg "Initializing pgadmin_dev_triggers..."
-    LogMsg "Executing: " & szQuery
-    gConnection.Execute szQuery
-    
-    Exit Sub
-Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
-End Sub
 
 Public Sub comp_Project_Initialize()
 On Error GoTo Err_Handler
@@ -812,8 +934,8 @@ On Error GoTo Err_Handler
     
     comp_Project_FindNextFunctionToCompile = 0
     While Not rsComp.EOF
-        If cmp_Function_HasSatisfiedDependencies(rsComp!function_OID) = True Then
-            comp_Project_FindNextFunctionToCompile = rsComp!function_OID
+        If cmp_Function_HasSatisfiedDependencies(rsComp!function_oid) = True Then
+            comp_Project_FindNextFunctionToCompile = rsComp!function_oid
             LogMsg "Next vailable function to compile has OID = " & Str(comp_Project_FindNextFunctionToCompile) & "..."
             Exit Function
         End If
