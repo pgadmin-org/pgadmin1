@@ -126,7 +126,7 @@ Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String
         If Not (IsMissing(szView_Name)) Then szView_Name = rsComp!view_name & ""
         If Not (IsMissing(szView_Owner)) Then szView_Owner = rsComp!view_owner & ""
         If Not (IsMissing(szView_Acl)) Then szView_Acl = rsComp!view_acl & ""
-        If Not (IsMissing(szView_Definition)) Then szView_Definition = cmp_View_GetViewDef(lngView_OID)
+        If Not (IsMissing(szView_Definition)) Then szView_Definition = cmp_View_GetViewDef(szView_Name)
         rsComp.Close
     End If
   Exit Sub

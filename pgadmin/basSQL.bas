@@ -209,6 +209,7 @@ SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * from " & _
   "  AND view_name NOT LIKE 'pgadmin_%' " & _
   "  AND view_name NOT LIKE 'pg_%' " & _
   "  ORDER BY view_name; " & _
+  "  ALTER TABLE pgadmin_dev_views ADD view_description text;  " & _
   "  ALTER TABLE pgadmin_dev_views ADD view_iscompiled boolean DEFAULT 'f'  ;" & _
   "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
   
