@@ -44,7 +44,13 @@ Public Const DEVELOPMENT = True
 Public Const QUOTE = """"
 Public Const LAST_SYSTEM_OID = 18655
 Public Const MIN_PGSQL_VERSION = 7
-Public Const DEFAULT_TEXT_COLOURS = "create|0|0|0|16711808;select|0|0|0|16711808;insert|0|0|0|16711808;update|0|0|0|16711808;vacuum|0|0|0|16711808;alter|0|0|0|16711808;from|0|0|0|33023;to|0|0|0|33023;where|0|0|0|33023;order|0|0|0|33023;by|0|0|0|33023;"
+Public Const DEFAULT_TEXT_COLOURS = "alter|0|0|0|12615808;comment|0|0|0|12615808;create|0|0|0|12615808;delete|0|0|0|12615808;drop|0|0|0|12615808;explain|0|0|0|12615808;grant|0|0|0|12615808;insert|0|0|0|12615808;revoke|0|0|0|12615808;" & _
+                                    "select|0|0|0|12615808;update|0|0|0|12615808;vacuum|0|0|0|12615808;aggregate|0|0|0|4227327;constraint|0|0|0|4227327;database|0|0|0|4227327;function|0|0|0|4227327;group|0|0|0|4227327;index|0|0|0|4227327;" & _
+                                    "language|0|0|0|4227327;operator|0|0|0|4227327;rule|0|0|0|4227327;sequence|0|0|0|4227327;table|0|0|0|4227327;trigger|0|0|0|4227327;abort|0|0|0|50176;begin|0|0|0|50176;" & _
+                                    "checkpoint|0|0|0|50176;close|0|0|0|50176;cluster|0|0|0|50176;commit|0|0|0|50176;copy|0|0|0|50176;declare|0|0|0|50176;end|0|0|0|50176;fetch|0|0|0|50176;listen|0|0|0|50176;" & _
+                                    "load|0|0|0|50176;lock|0|0|0|50176;move|0|0|0|50176;notify|0|0|0|50176;reindex|0|0|0|50176;reset|0|0|0|50176;rollback|0|0|0|50176;set|0|0|0|50176;show|0|0|0|50176;truncate|0|0|0|50176;" & _
+                                    "unlisten|0|0|0|50176;asc|0|0|0|13382592;ascending|0|0|0|13382592;by|0|0|0|13382592;desc|0|0|0|1338259;descending|0|0|0|13382592;from|0|0|0|13382592;having|0|0|0|13382592;into|0|0|0|13382592;" & _
+                                    "on|0|0|0|13382592;order|0|0|0|13382592;using|0|0|0|13382592;where|0|0|0|13382592;"
 
 Public gConnection As New Connection
 Public ActionCancelled As Boolean
