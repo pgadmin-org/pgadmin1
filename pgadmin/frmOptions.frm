@@ -35,26 +35,21 @@ Begin VB.Form frmOptions
       _Version        =   393216
       Style           =   1
       Tabs            =   2
+      Tab             =   1
       TabHeight       =   520
       TabCaption(0)   =   "&Logging"
       TabPicture(0)   =   "frmOptions.frx":128A
-      Tab(0).ControlEnabled=   -1  'True
+      Tab(0).ControlEnabled=   0   'False
       Tab(0).Control(0)=   "Label1"
-      Tab(0).Control(0).Enabled=   0   'False
       Tab(0).Control(1)=   "chkEnableLogging"
-      Tab(0).Control(1).Enabled=   0   'False
       Tab(0).Control(2)=   "chkMaskPassword"
-      Tab(0).Control(2).Enabled=   0   'False
       Tab(0).Control(3)=   "txtLogfile"
-      Tab(0).Control(3).Enabled=   0   'False
       Tab(0).Control(4)=   "cmdBrowse"
-      Tab(0).Control(4).Enabled=   0   'False
       Tab(0).Control(5)=   "CommonDialog1"
-      Tab(0).Control(5).Enabled=   0   'False
       Tab(0).ControlCount=   6
       TabCaption(1)   =   "&Colours"
       TabPicture(1)   =   "frmOptions.frx":12A6
-      Tab(1).ControlEnabled=   0   'False
+      Tab(1).ControlEnabled=   -1  'True
       Tab(1).Control(0)=   "Label2"
       Tab(1).Control(0).Enabled=   0   'False
       Tab(1).Control(1)=   "lvWords"
@@ -63,38 +58,36 @@ Begin VB.Form frmOptions
       Tab(1).Control(2).Enabled=   0   'False
       Tab(1).Control(3)=   "chkBold"
       Tab(1).Control(3).Enabled=   0   'False
-      Tab(1).Control(4)=   "chkCase"
+      Tab(1).Control(4)=   "cmdChangeCol"
       Tab(1).Control(4).Enabled=   0   'False
-      Tab(1).Control(5)=   "cmdChangeCol"
+      Tab(1).Control(5)=   "cmdAddNew"
       Tab(1).Control(5).Enabled=   0   'False
-      Tab(1).Control(6)=   "cmdAddNew"
+      Tab(1).Control(6)=   "txtWord"
       Tab(1).Control(6).Enabled=   0   'False
-      Tab(1).Control(7)=   "txtWord"
+      Tab(1).Control(7)=   "cmdRemove"
       Tab(1).Control(7).Enabled=   0   'False
-      Tab(1).Control(8)=   "cmdRemove"
-      Tab(1).Control(8).Enabled=   0   'False
-      Tab(1).ControlCount=   9
+      Tab(1).ControlCount=   8
       Begin VB.CommandButton cmdRemove 
          Caption         =   "Remove"
          Height          =   345
-         Left            =   -71355
+         Left            =   3645
          TabIndex        =   9
          ToolTipText     =   "Remove the selected word."
-         Top             =   420
+         Top             =   848
          Width           =   900
       End
       Begin VB.TextBox txtWord 
          Height          =   285
-         Left            =   -74415
+         Left            =   585
          TabIndex        =   7
          ToolTipText     =   "Enter a word to highlight."
          Top             =   450
-         Width           =   2070
+         Width           =   2970
       End
       Begin VB.CommandButton cmdAddNew 
          Caption         =   "Add"
          Height          =   345
-         Left            =   -72300
+         Left            =   3645
          TabIndex        =   8
          ToolTipText     =   "Add the selected word."
          Top             =   420
@@ -103,42 +96,33 @@ Begin VB.Form frmOptions
       Begin VB.CommandButton cmdChangeCol 
          Caption         =   "Change Colour"
          Height          =   330
-         Left            =   -71895
+         Left            =   1755
          Style           =   1  'Graphical
-         TabIndex        =   13
+         TabIndex        =   12
          ToolTipText     =   "Select a colour for the word."
          Top             =   855
-         Width           =   1440
-      End
-      Begin VB.CheckBox chkCase 
-         Caption         =   "Case Sensitive"
-         Height          =   285
-         Left            =   -74910
-         TabIndex        =   10
-         ToolTipText     =   "Should the word be treated case sensitively."
-         Top             =   878
-         Width           =   1410
+         Width           =   1800
       End
       Begin VB.CheckBox chkBold 
          Caption         =   "Bold"
          Height          =   285
-         Left            =   -73470
-         TabIndex        =   11
+         Left            =   90
+         TabIndex        =   10
          ToolTipText     =   "Should the word be made bold?"
-         Top             =   878
+         Top             =   900
          Width           =   690
       End
       Begin VB.CheckBox chkItalic 
          Caption         =   "Italic"
          Height          =   285
-         Left            =   -72705
-         TabIndex        =   12
+         Left            =   945
+         TabIndex        =   11
          ToolTipText     =   "Should the word be made italic?"
-         Top             =   878
+         Top             =   900
          Width           =   675
       End
       Begin MSComDlg.CommonDialog CommonDialog1 
-         Left            =   45
+         Left            =   -74955
          Top             =   2160
          _ExtentX        =   847
          _ExtentY        =   847
@@ -147,14 +131,14 @@ Begin VB.Form frmOptions
       Begin VB.CommandButton cmdBrowse 
          Caption         =   "..."
          Height          =   330
-         Left            =   3690
+         Left            =   -71310
          TabIndex        =   3
          Top             =   1800
          Width           =   375
       End
       Begin VB.TextBox txtLogfile 
          Height          =   285
-         Left            =   495
+         Left            =   -74505
          TabIndex        =   2
          Top             =   1845
          Width           =   3165
@@ -162,7 +146,7 @@ Begin VB.Form frmOptions
       Begin VB.CheckBox chkMaskPassword 
          Caption         =   "&Mask password in logfile"
          Height          =   195
-         Left            =   495
+         Left            =   -74505
          TabIndex        =   1
          Top             =   1260
          Width           =   3435
@@ -170,15 +154,15 @@ Begin VB.Form frmOptions
       Begin VB.CheckBox chkEnableLogging 
          Caption         =   "&Enable advanced logging"
          Height          =   195
-         Left            =   495
+         Left            =   -74505
          TabIndex        =   0
          Top             =   810
          Width           =   3435
       End
       Begin MSComctlLib.ListView lvWords 
          Height          =   1365
-         Left            =   -74955
-         TabIndex        =   15
+         Left            =   45
+         TabIndex        =   14
          ToolTipText     =   "Displays the Text Formatting rules."
          Top             =   1260
          Width           =   4560
@@ -200,8 +184,8 @@ Begin VB.Form frmOptions
       Begin VB.Label Label2 
          Caption         =   "Word"
          Height          =   255
-         Left            =   -74910
-         TabIndex        =   14
+         Left            =   90
+         TabIndex        =   13
          Top             =   495
          Width           =   870
       End
@@ -209,7 +193,7 @@ Begin VB.Form frmOptions
          AutoSize        =   -1  'True
          Caption         =   "Logfile"
          Height          =   195
-         Left            =   495
+         Left            =   -74505
          TabIndex        =   5
          Top             =   1620
          Width           =   465
@@ -259,20 +243,15 @@ Dim itmX As ListItem
   'Add the new listitem
   Set itmX = lvWords.ListItems.Add(, , txtWord.Text)
   itmX.SubItems(1) = txtWord.ForeColor
-  If chkCase.Value = "1" Then
+  If chkBold = "1" Then
     itmX.SubItems(2) = "Y"
   Else
     itmX.SubItems(2) = "N"
   End If
-  If chkBold = "1" Then
+  If chkItalic.Value = "1" Then
     itmX.SubItems(3) = "Y"
   Else
     itmX.SubItems(3) = "N"
-  End If
-  If chkItalic.Value = "1" Then
-    itmX.SubItems(4) = "Y"
-  Else
-    itmX.SubItems(4) = "N"
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmOptions, cmdAdd_Click"
@@ -297,6 +276,7 @@ Private Sub cmdChangeCol_Click()
 On Error GoTo Err_Handler
   CommonDialog1.ShowColor
   txtWord.ForeColor = CommonDialog1.Color
+  cmdChangeCol.BackColor = CommonDialog1.Color
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmOptions, cmdChangeCol_Click"
 End Sub
@@ -325,11 +305,6 @@ Dim szTextColours As String
     Else
       szTextColours = szTextColours & "0|"
     End If
-    If itmX.SubItems(4) = "Y" Then
-      szTextColours = szTextColours & "1|"
-    Else
-      szTextColours = szTextColours & "0|"
-    End If
     szTextColours = szTextColours & itmX.SubItems(1) & ";"
   Next itmX
   TextColours = szTextColours
@@ -351,7 +326,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
-Dim X As Printer
+Dim x As Printer
 Dim iLoop As Integer
 Dim itmX As ListItem
 Dim szStrings() As String
@@ -361,7 +336,6 @@ Dim szValues() As String
   txtWord.ForeColor = RGB(0, 0, 0)
   lvWords.ColumnHeaders.Add , , "Wordlist", (lvWords.Width / 11) * 4
   lvWords.ColumnHeaders.Add , , "Colour", (lvWords.Width / 11) * 3
-  lvWords.ColumnHeaders.Add , , "C", (lvWords.Width / 11)
   lvWords.ColumnHeaders.Add , , "B", (lvWords.Width / 11)
   lvWords.ColumnHeaders.Add , , "I", (lvWords.Width / 11)
   chkEnableLogging.Value = RegRead(HKEY_CURRENT_USER, "Software\pgAdmin", "Logging", 0)
@@ -374,23 +348,28 @@ Dim szValues() As String
   For iLoop = 0 To UBound(szStrings) - 1
     szValues = Split(szStrings(iLoop), "|")
     Set itmX = lvWords.ListItems.Add(, , szValues(0))
-    itmX.SubItems(1) = szValues(4)
+    itmX.SubItems(1) = szValues(3)
     If szValues(2) = "1" Then
-      itmX.SubItems(2) = "Y"
-    Else
-      itmX.SubItems(2) = "N"
-    End If
-    If szValues(3) = "1" Then
-      itmX.SubItems(4) = "Y"
-    Else
-      itmX.SubItems(4) = "N"
-    End If
-    If szValues(1) = "1" Then
       itmX.SubItems(3) = "Y"
     Else
       itmX.SubItems(3) = "N"
     End If
+    If szValues(1) = "1" Then
+      itmX.SubItems(2) = "Y"
+    Else
+      itmX.SubItems(2) = "N"
+    End If
   Next iLoop
   Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmPrinter, Form_Load"
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmOptions, Form_Load"
 End Sub
+
+Private Sub lvWords_ItemClick(ByVal Item As MSComctlLib.ListItem)
+On Error GoTo Err_Handler
+  CommonDialog1.Color = Val(Item.SubItems(1))
+  cmdChangeCol.BackColor = CommonDialog1.Color
+  txtWord.ForeColor = CommonDialog1.Color
+  Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmOptions, lvWords_ItemClick"
+End Sub
+
