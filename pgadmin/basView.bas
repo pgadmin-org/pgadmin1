@@ -116,10 +116,12 @@ On Error GoTo Err_Handler
         szView_definition = Trim(Replace(szView_definition, "'", "''"))
         szView_comments = Trim(Replace(szView_comments, "'", "''"))
     
-        szQuery = "INSERT INTO " & szview_table & " (View_name, View_definition, View_comments) "
+        szQuery = "INSERT INTO " & szview_table & " (View_name, View_definition, View_owner, View_acl, View_comments) "
         szQuery = szQuery & "VALUES ("
         szQuery = szQuery & "'" & szView_name & "', "
         szQuery = szQuery & "'" & szView_definition & "', "
+        szQuery = szQuery & "'" & szView_owner & "', "
+        szQuery = szQuery & "'" & szView_acl & "', "
         szQuery = szQuery & "'" & szView_comments & "' "
         szQuery = szQuery & ");"
     End If
@@ -134,9 +136,20 @@ On Error GoTo Err_Handler
         LogQuery szQuery
     
         ' Write comments
-        szQuery = "COMMENT ON VIEW " & szView_name & " IS '" & szView_comments & "'"
-        LogQuery szQuery
-        gConnection.Execute szQuery
+        If szView_comments <> "" Then
+            szQuery = "COMMENT ON VIEW " & szView_name & " IS '" & szView_comments & "'"
+            LogQuery szQuery
+            gConnection.Execute szQuery
+            LogQuery szQuery
+        End If
+        
+        ' Write ACL
+        If szView_acl <> "" Then
+            szQuery = ParseACL(szView_name, szView_acl)
+            LogQuery szQuery
+            gConnection.Execute szQuery
+            LogQuery szQuery
+        End If
     End If
 
 Exit Sub

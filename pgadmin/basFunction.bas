@@ -134,13 +134,14 @@ On Error GoTo Err_Handler
         
         'szFunction_source = Replace(szFunction_source, vbCrLf, "\n")
         
-        szQuery = "INSERT INTO " & szFunction_table & " (function_name, Function_arguments, Function_returns, Function_source, Function_language, Function_comments)"
+        szQuery = "INSERT INTO " & szFunction_table & " (function_name, Function_arguments, Function_returns, Function_source, Function_language, Function_owner, Function_comments)"
         szQuery = szQuery & "VALUES ("
         szQuery = szQuery & "'" & szFunction_name & "', "
         szQuery = szQuery & "'" & szFunction_arguments & "', "
         szQuery = szQuery & "'" & szFunction_returns & "', "
         szQuery = szQuery & "'" & szFunction_source & "', "
         szQuery = szQuery & "'" & szFunction_language & "', "
+        szQuery = szQuery & "'" & szFunction_owner & "', "
         szQuery = szQuery & "'" & szFunction_comments & "' "
         szQuery = szQuery & ");"
     End If

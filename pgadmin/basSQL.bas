@@ -210,17 +210,13 @@ SQL_PGADMIN_SELECT_CLAUSE_VIEWS = "view_oid > " & LAST_SYSTEM_OID & _
   "  AND view_name NOT LIKE 'pg_%' " & _
   "  ORDER BY view_name; "
 
-SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT * FROM pgadmin_views WHERE " & SQL_PGADMIN_SELECT_CLAUSE_VIEWS & _
+SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT " & _
+  "  view_oid, view_name, view_owner, view_comments " & _
+  "  FROM pgadmin_views WHERE " & SQL_PGADMIN_SELECT_CLAUSE_VIEWS & _
   "  ALTER TABLE pgadmin_dev_views ADD view_definition text;  " & _
+  "  ALTER TABLE pgadmin_dev_views ADD view_acl text;  " & _
   "  ALTER TABLE pgadmin_dev_views ADD view_iscompiled boolean DEFAULT 'f'  ;" & _
   "  TRUNCATE TABLE pgadmin_dev_views ;"
-  
-'SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
-'  " dependency_project_oid int4," & _
-'  " dependency_parent_object varchar(30)," & _
-'  " dependency_parent_name   varchar(254)," & _
-'  " dependency_child_object  varchar(30)," & _
-'  " dependency_child_name    varchar(254));"
 
 SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
   " dependency_project_oid int4," & _

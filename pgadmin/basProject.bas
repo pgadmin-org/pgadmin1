@@ -364,7 +364,7 @@ End Function
 
 Public Sub cmp_Project_Rebuild()
 On Error GoTo Err_Handler
-    If MsgBox("Rebuilding feature does not keep ACL." & vbCrLf & "Please confirm you wish to continue.", vbYesNo + vbQuestion, _
+    If MsgBox("Please confirm you wish to continue.", vbYesNo + vbQuestion, _
             "Rebuild project") = vbYes Then
         cmp_Project_Initialize
         cmp_Project_Compile

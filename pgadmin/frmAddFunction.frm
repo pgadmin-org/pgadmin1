@@ -497,10 +497,10 @@ Dim szFunction_comments As String
                    cmdAdd_Click
               Next
               
-            If txtOwner = "" Then txtOwner = "N.S."
+            If txtOwner = "" Then txtOwner = "Not Applicable"
         Else
            Me.Caption = "Create function"
-           txtOwner = "N.S."
+           txtOwner = "Not Applicable"
         End If
     
         ' Write query
