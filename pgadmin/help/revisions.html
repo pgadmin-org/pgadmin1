@@ -18,45 +18,70 @@ KR - Kirk Roybal<br>
 JMP - Jean-Michel Poure</p>
 <h4>v7.1.1 Fixes/Updates</h4>
 <ul>
-  <li>(DP) ADO connection objects used by the Migration Wizard now have the UID/PWD
-    set directly *and* in the connection string to ensure they are picked up by
-    ODBC drivers that manage to ignore one or the other (appears to occur with
+  <li>(DP) ADO connection objects used by the Migration Wizard now have the UID/PWD 
+    set directly *and* in the connection string to ensure they are picked up by 
+    ODBC drivers that manage to ignore one or the other (appears to occur with 
     SQL Server and Oracle whilst PostgreSQL, Access and Informix seem OK).</li>
-  <li>(DP) Fixed a bug that caused the DataGrid to report all Boolean values in
+  <li>(DP) Fixed a bug that caused the DataGrid to report all Boolean values in 
     the first row as being False.</li>
-  <li>(DP) Added quotes around objects names in the SQL used to refresh the Sequence &amp; Table caches (Bug #196)</li>
-  <li>(KR) Added 'Serialize Column' option to table browser. This option allows
-    columns of suitable types (ie. int, float etc.) to be converted to
-    pseudo-serial columns.</li>
-  <li>(DP) The New DSN dialogue now clears the list of DSN in the Login Dialogue
+  <li>(DP) Added quotes around objects names in the SQL used to refresh the Sequence 
+    &amp; Table caches (Bug #196)</li>
+  <li>(KR) Added 'Serialize Column' option to table browser. This option allows 
+    columns of suitable types (ie. int, float etc.) to be converted to pseudo-serial 
+    columns.</li>
+  <li>(DP) The New DSN dialogue now clears the list of DSN in the Login Dialogue 
     correctly after creating a new DSN (Bug #193).</li>
-  <li>(DP) Added a Getting Started guide from francl with contributions from
-    Jean-Michel Poure.</li>
-  <li>(DP) Fixed DSN create failed bug
-    (pgAdmin incorrectly reported that the first DSN created on a machine
-    failed) (Bug #194).</li>
-  <li>(DP) Table and Index reports now show variable length columns as 'Variable' not
-    '0' (Bug #203).</li>
-  <li>(DP) Fixed a bug that prevented the display of column details for many
-    numeric columns.</li>
-  <li>(DP) Fixed a bug in the SQL wizard that caused an extra , to be included
+  <li>(DP) Added a Getting Started guide from francl with contributions from Jean-Michel 
+    Poure.</li>
+  <li>(DP) Fixed DSN create failed bug (pgAdmin incorrectly reported that the 
+    first DSN created on a machine failed) (Bug #194).</li>
+  <li>(DP) Table and Index reports now show variable length columns as 'Variable' 
+    not '0' (Bug #203).</li>
+  <li>(DP) Fixed a bug that prevented the display of column details for many numeric 
+    columns.</li>
+  <li>(DP) Fixed a bug in the SQL wizard that caused an extra , to be included 
     in the SQL if only only table was selected.</li>
   <li>(DP) Added a Custom Reports guide.</li>
-  <li>(DP) Fixed a bug where the Revision Tracking Version number could get
-    misinterpreted in some locales (Bug #241).</li>
-  <li>(DP) Fixed a bug in the Migration Wizard where the MDB file
-    username/password fields were used when the ODBC username/password fields
-    should have been (thanks to Ted Arnold).</li>
+  <li>(DP) Fixed a bug where the Revision Tracking Version number could get misinterpreted 
+    in some locales (Bug #241).</li>
+  <li>(DP) Fixed a bug in the Migration Wizard where the MDB file username/password 
+    fields were used when the ODBC username/password fields should have been (thanks 
+    to Ted Arnold).</li>
   <li>(JMP) Modified frmODBCLogon to allow use of the PostgreSQL ODBC+ Driver.</li>
-  <li>(DP) Added an Auto highlighting/colouring textbox control to various forms
+  <li>(DP) Added an Auto highlighting/colouring textbox control to various forms 
     (contributed by Mark Yeatman).</li>
-  <li>(JMP) Mods to the Migration Wizard for more reliable non-English language
+  <li>(JMP) Mods to the Migration Wizard for more reliable non-English language 
     use.</li>
   <li>(DP) Allow Migration from Views.</li>
   <li>(DP) Fixed bug where Inherited tables in Table Creator are referenced by 
-  OID, not name. (Bug #257).</li>
+    OID, not name. (Bug #257).</li>
   <li>(DP) Allow grant/revoke superuser and create database privilege on users.</li>
+  <li>(JMP) IDE (Integrated Development Environment) features:<br>
+    PgAdmin now allows edition, modification and saving of functions, triggers 
+    and views. To edit a function, trigger or view, click on the Modify button 
+    or simply double-click on the item you whish to modify. Be aware that modified/new 
+    functions, triggers and views are saved in PgAdmin new temporary tables (pgadmin_dev_functions, 
+    pgadmin_dev_triggers, pgadmin_dev_views). These temporarty tables are dropped 
+    at PgAdmin startup, therefore (1) several developer cannot work on the same 
+    database at the same time, (2) always rebuild the project before leaving the 
+    database or your changes will be lost (see next feature).</li>
+  <li>(JMP) Project rebuilding:<br>
+    This unique feature is comparable to a 'compilation' process, which checks 
+    function dependencies and rebuilds functions, triggers and views to ensure 
+    that the database is in a working state (Rebuild Project button). The rebuilding 
+    process is stopped when errors are detected. Always rebuild a project to save 
+    modifications of functions, triggers and views.</li>
+  <li>(JMP) Added Export feature of functions, triggers and views (multi-select 
+    click to choose the items and click on Export).</li>
+  <li>(JMP) Added automatic Enable/Disable buttons in function, trigger and view 
+    forms.</li>
+  <li>(JMP) User functions are not listed any longer in system functions. Same 
+    as for triggers and views.</li>
+  <li>(JMP) Fast retrieval of functions, triggers and views list in one query. 
+  </li>
 </ul>
+<p>WARNING : do not test the new IDE on a production database. Before testing, 
+  export functions, triggers and views using the new export feature.</p>
 <h4>v7.1.0 Fixes/Updates</h4>
 <ul>
   <li>(RC) Added 'Migrate Primary Keys' code to the Migration Wizard.</li>
