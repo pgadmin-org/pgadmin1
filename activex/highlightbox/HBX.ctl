@@ -19,7 +19,6 @@ Begin VB.UserControl HBX
       _ExtentY        =   661
       _Version        =   393217
       BorderStyle     =   0
-      Enabled         =   -1  'True
       ScrollBars      =   3
       Appearance      =   0
       AutoVerbMenu    =   -1  'True
@@ -224,7 +223,7 @@ fred:
     rtbString.SelColor = Val(WordCache(szTemp).szColour) 'RGB(0, 0, 255)
   End If
 
-  rtbString.SelStart = lWordend + 1 'Reset cursor position
+  rtbString.SelStart = lWordend 'Reset cursor position
   rtbString.SelBold = False
   rtbString.SelItalic = False
   rtbString.SelColor = RGB(0, 0, 0)
