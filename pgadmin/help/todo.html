@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>PostgreSQL TODO list</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 5.50.4611.1300" name=GENERATOR></HEAD>
+<BODY text=#000000 vLink=#a00000 aLink=#0000ff link=#ff0000 bgColor=#ffffff \>
+<META content="txt2html v1.25" name=generator>
+<H1><A name=section-1>TODO list for pgAdmin</A></H1>
+<P>The most recent version of this document can be viewed at<BR>
+  the pgAdmin web site, <A href="http://www.postgresql.org/">http://www.greatbridge.org/project/pgadmin/projdisplay.php</A>
+<P>A dash (-) marks changes that will appear in the upcoming release.
+<H2><A name=section-1.1>pgSchema</A></H2>
+<p>pgSchema is an object library that will represent an entire PostgreSQL framework,
+  not just a single database. It will provide collections of objects like</p>
+<ul>
+  <li>Projects</li>
+  <li>Repositories</li>
+  <li>Databases</li>
+  <li>Users</li>
+  <li>Types</li>
+  <li>Tables</li>
+  <li>Packages</li>
+  <li>Functions</li>
+  <li>Triggers</li>
+  <li>Views</li>
+  <li>Logs</li>
+</ul>
+<p>It is a hierarchical object model with methods and events in place to provide
+  a framework for any application (not just pgAdmin) for logging, query execution
+  and browsing/creating/deleting any database object (ACLs allowing of course).
+</p>
+<p>The intention is to replace the current Browsers in pgAdmin with a single Treeview
+  Browser similar (though superior :-)) to the one found in the MS SQL Server
+  Enterprise Manager.</p>
+<H2><A name=section-1.2>Full Development Environment</A></H2>
+<P>Our intention is to define PostgreSQL standard development framework. We plan
+  to implement it in pgAdmin with the help of the PostgreSQL community.</p>
+<h4>Repositories framework </h4>
+<p>A repository is a dedicated PostgreSQL database. Repositories organize information
+  horizontaly (on different machines) and vertically (development workfow from
+  design to implementation and backup). This answers the needs of organizations
+  running a complex framework of postgreSQL servers. </p>
+<ul>
+  <li> Central repository
+    <ul>
+      <li> source code</li>
+      <li>project information</li>
+      <li> loggin system<br>
+      </li>
+    </ul>
+  </li>
+  <li>Backup repositories
+    <ul>
+      <li> backup data, source code and logs</li>
+      <li>possibly with the use of one-way replication</li>
+    </ul>
+  </li>
+  <li>Log servers
+    <ul>
+      <li>pgAdmin user log</li>
+      <li>PostgreSQL log</li>
+      <li>Libraries to log information form other applications (at first Java,
+        PHP and VB).</li>
+    </ul>
+  </li>
+  <li>Development servers</li>
+  <li>Production servers</li>
+</ul>
+<h4>Teamwork and workflow</h4>
+<ul>
+  <li>Security
+    <ul>
+      <li>pgAdmin access rights (read, write, create, delete)</li>
+      <li>pgAdmin user roles (project manager, developer, backup operator)</li>
+    </ul>
+  </li>
+  <li>Code serialization
+    <ul>
+      <li>projects</li>
+      <li>packages</li>
+      <li>developement objects</li>
+      <li>production objects</li>
+      <li>data samples</li>
+    </ul>
+  </li>
+  <li>Code integrity
+    <ul>
+      <li>dependency checking</li>
+      <li>automatic retrieval of missing objects</li>
+      <li>compilation of projects</li>
+    </ul>
+  </li>
+</ul>
+<h4>Code abstraction</h4>
+<ul>
+  <li>Packages
+    <ul>
+      <li>Oracle style namining convention (function Myfunction in package MyPackage
+        is named MyPackage__MyFunction),</li>
+      <li>Import/export packages easilly.</li>
+    </ul>
+  </li>
+  <li>Object Templates
+    <ul>
+      <li>Name objects in XML style (ex: &lt;pgadmin&gt;table_name&lt;/pgadmin&gt;)</li>
+      <li>Store name/value pairs in project tables.</li>
+    </ul>
+  </li>
+  <li>Implementation of PostgreSQL missing features
+    <ul>
+      <li>Type promotion/demotion</li>
+      <li>Interactive table design</li>
+    </ul>
+  </li>
+</ul>
+<p>&nbsp;</p>
+</BODY></HTML>
