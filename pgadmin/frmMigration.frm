@@ -209,7 +209,6 @@ Begin VB.Form frmMigration
          TabIndex        =   38
          ToolTipText     =   "Select this to convert index names to lower case."
          Top             =   3420
-         Value           =   1  'Checked
          Width           =   4380
       End
       Begin VB.CheckBox chkLCaseTables 
@@ -219,7 +218,6 @@ Begin VB.Form frmMigration
          TabIndex        =   37
          ToolTipText     =   "Select this to convert table names to lower case."
          Top             =   2940
-         Value           =   1  'Checked
          Width           =   4380
       End
       Begin VB.CheckBox chkLCaseColumns 
@@ -229,7 +227,6 @@ Begin VB.Form frmMigration
          TabIndex        =   36
          ToolTipText     =   "Select this to convert column names to lower case."
          Top             =   3180
-         Value           =   1  'Checked
          Width           =   4380
       End
       Begin VB.CheckBox chkIndexes 
@@ -1093,107 +1090,110 @@ Dim fNum As Integer
       gConnection.Execute szQryStr
       LogQuery szQryStr
       gConnection.CommitTrans
-          
+      
+      '
       'Copy the data if required
-    
+      '
       If lstData.Selected(X) = True Then
+      
+        'Warn that BLOBS are being ignored.
         If loFlag = True Then
-          txtStatus.Text = txtStatus.Text & "  Data Copy Skipped - Large Binary Objects found" & vbCrLf
+          txtStatus.Text = txtStatus.Text & "  BLOB data was found and NOT copied." & vbCrLf
           txtStatus.SelStart = Len(txtStatus.Text)
-          LogMsg "Data Copy Skipped - Large Binary Objects found"
-          Me.Refresh
-        Else
-          Tuples = 0
-          txtStatus.Text = txtStatus.Text & "  Copying data..." & vbCrLf
-          txtStatus.SelStart = Len(txtStatus.Text)
-          Me.Refresh
-          LogMsg "Migrating Data from: " & lstData.List(X)
-          lTransLevel = gConnection.BeginTrans
-          LogMsg "Executing: SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar
-          rsTemp.Open "SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar, cnLocal, adOpenForwardOnly
-          While Not rsTemp.EOF
-            If chkLCaseTables.Value = 0 Then
-              szQryStr = "INSERT INTO " & QUOTE & lstData.List(X) & QUOTE
-            Else
-              szQryStr = "INSERT INTO " & QUOTE & LCase(lstData.List(X)) & QUOTE
-            End If
-          
-            For Z = 0 To rsTemp.Fields.Count - 1
-              If rsTemp.Fields(Z).Value & "" <> "" Then
-                              
-                If chkLCaseColumns.Value = 0 Then
-                  Fields = Fields & QUOTE & rsTemp.Fields(Z).Name & QUOTE & ", "
-                Else
-                  Fields = Fields & QUOTE & LCase(rsTemp.Fields(Z).Name) & QUOTE & ", "
-                End If
-              
-                Select Case rsTemp.Fields(Z).Type
-                   ' 04/24/2001 Jean-Michel POURE
-                   ' Useful tricks to avoid bugs in non-English systems :
-                   ' replace comma with dots in numerical values
-                   ' and get rid of money acronyms (like FF for example)
-                    Case adCurrency, adDouble, adSingle, adDecimal
-                        Values = Values & "'" & Str(Val(Replace(rsTemp.Fields(Z).Value, ",", "."))) & "', "
-                   
-                   ' Another useful trick to avoid bugs in non-English systems :
-                   ' Convert 'True' or 'Vrai' or 'T' into -1
-                   ' and 'False' or 'Faux' or 'F' into 0
-                   ' In PostgreSQL driver uncheck Bool as Char
-                    Case adBoolean
-                        Dim tempValue As String
-                        tempValue = rsTemp.Fields(Z).Value
-                        If (tempValue = "F") Then tempValue = "False"
-                        If (tempValue = "T") Then tempValue = "True"
-                        Values = Values & "'" & CBool(tempValue) * "-1" & "', "
-
-                    '1/20/2001 Rod Childers
-                    'See if this a date field that only contains a Time, if so add Old date to it
-                    'so postgress will accept it into a timestamp field
-                     Case adDate, adDBDate, adDBTimeStamp
-                         If Len(rsTemp.Fields(Z).Value) < 12 And Right(rsTemp.Fields(Z).Value, 1) = "M" Then
-                            'Only contains the time
-                            Values = Values & "'1899-12-30 " & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
-                         Else
-                            'Valid date,treat like any other field
-                            Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
-                         End If
-                       
-                      ' Text values and others
-                      Case Else
-                      Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
-                 End Select
-               End If
-            Next
-          
-            Fields = Mid(Fields, 1, Len(Fields) - 2)
-            Values = Mid(Values, 1, Len(Values) - 2)
-            
-            szQryStr = szQryStr & " (" & Fields & ") VALUES (" & Values & ")"
-          
-            If Logging = 1 Then
-              fNum = FreeFile
-              Open LogFile For Append As #fNum
-              Print #fNum, Now & vbTab & szQryStr
-              Close #fNum
-            End If
-            If Logging = 1 Then LogMsg "Executing: " & szQryStr
-            gConnection.Execute szQryStr
-            Tuples = Tuples + 1
-            Fields = ""
-            Values = ""
-            DoEvents
-            rsTemp.MoveNext
-          Wend
-          If rsTemp.State <> adStateClosed Then rsTemp.Close
-          gConnection.CommitTrans
-          txtStatus.Text = txtStatus.Text & "  Records Copied: " & Tuples & vbCrLf
-          LogMsg "Records Copied: " & Tuples
-          txtStatus.SelStart = Len(txtStatus.Text)
+          LogMsg "BLOB data was found and NOT copied."
           Me.Refresh
         End If
+        Tuples = 0
+        txtStatus.Text = txtStatus.Text & "  Copying data..." & vbCrLf
+        txtStatus.SelStart = Len(txtStatus.Text)
+        Me.Refresh
+        LogMsg "Migrating Data from: " & lstData.List(X)
+        lTransLevel = gConnection.BeginTrans
+        LogMsg "Executing: SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar
+        rsTemp.Open "SELECT * FROM " & szQuoteChar & lstData.List(X) & szQuoteChar, cnLocal, adOpenForwardOnly
+        While Not rsTemp.EOF
+          If chkLCaseTables.Value = 0 Then
+            szQryStr = "INSERT INTO " & QUOTE & lstData.List(X) & QUOTE
+          Else
+            szQryStr = "INSERT INTO " & QUOTE & LCase(lstData.List(X)) & QUOTE
+          End If
+        
+          For Z = 0 To rsTemp.Fields.Count - 1
+            If rsTemp.Fields(Z).Value & "" <> "" Then
+                            
+              If chkLCaseColumns.Value = 0 Then
+                Fields = Fields & QUOTE & rsTemp.Fields(Z).Name & QUOTE & ", "
+              Else
+                Fields = Fields & QUOTE & LCase(rsTemp.Fields(Z).Name) & QUOTE & ", "
+              End If
+            
+              Select Case rsTemp.Fields(Z).Type
+                 ' 04/24/2001 Jean-Michel POURE
+                 ' Useful tricks to avoid bugs in non-English systems :
+                 ' replace comma with dots in numerical values
+                 ' and get rid of money acronyms (like FF for example)
+                  Case adCurrency, adDouble, adSingle, adDecimal
+                      Values = Values & "'" & Str(Val(Replace(rsTemp.Fields(Z).Value, ",", "."))) & "', "
+                 
+                 ' Another useful trick to avoid bugs in non-English systems :
+                 ' Convert 'True' or 'Vrai' or 'T' into -1
+                 ' and 'False' or 'Faux' or 'F' into 0
+                 ' In PostgreSQL driver uncheck Bool as Char
+                  Case adBoolean
+                      Dim tempValue As String
+                      tempValue = rsTemp.Fields(Z).Value
+                      If (tempValue = "F") Then tempValue = "False"
+                      If (tempValue = "T") Then tempValue = "True"
+                      Values = Values & "'" & CBool(tempValue) * "-1" & "', "
+                  '1/20/2001 Rod Childers
+                  'See if this a date field that only contains a Time, if so add Old date to it
+                  'so postgress will accept it into a timestamp field
+                   Case adDate, adDBDate, adDBTimeStamp
+                       If Len(rsTemp.Fields(Z).Value) < 12 And Right(rsTemp.Fields(Z).Value, 1) = "M" Then
+                          'Only contains the time
+                          Values = Values & "'1899-12-30 " & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
+                       Else
+                          'Valid date,treat like any other field
+                          Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
+                       End If
+                     
+                    ' Text values and others
+                    Case Else
+                    Values = Values & "'" & Replace(Replace((rsTemp.Fields(Z).Value & ""), "\", "\\"), "'", "''") & "', "
+               End Select
+             End If
+          Next
+        
+          Fields = Mid(Fields, 1, Len(Fields) - 2)
+          Values = Mid(Values, 1, Len(Values) - 2)
+          
+          szQryStr = szQryStr & " (" & Fields & ") VALUES (" & Values & ")"
+        
+          If Logging = 1 Then
+            fNum = FreeFile
+            Open LogFile For Append As #fNum
+            Print #fNum, Now & vbTab & szQryStr
+            Close #fNum
+          End If
+          If Logging = 1 Then LogMsg "Executing: " & szQryStr
+          gConnection.Execute szQryStr
+          Tuples = Tuples + 1
+          Fields = ""
+          Values = ""
+          DoEvents
+          rsTemp.MoveNext
+        Wend
+        If rsTemp.State <> adStateClosed Then rsTemp.Close
+        gConnection.CommitTrans
+        txtStatus.Text = txtStatus.Text & "  Records Copied: " & Tuples & vbCrLf
+        LogMsg "Records Copied: " & Tuples
+        txtStatus.SelStart = Len(txtStatus.Text)
+        Me.Refresh
       End If
       
-              
+      '
+      'Copy indexes if required
+      '
       If chkIndexes.Value = 1 Then
              
         For Y = 0 To catLocal.Tables(lstData.List(X)).Indexes.Count - 1

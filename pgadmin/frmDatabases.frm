@@ -353,8 +353,8 @@ On Error GoTo Err_Handler
     LogMsg "Executing: SELECT * FROM pgadmin_databases ORDER BY database_name"
     rsDatabases.Open "SELECT * FROM pgadmin_databases ORDER BY database_name", gConnection, adOpenDynamic
   Else
-    LogMsg "Executing: SELECT * FROM pgadmin_databases WHERE database_name NOT LIKE 'pgadmin_%' AND database_name NOT LIKE 'pg_%' AND database_oid > " & LAST_SYSTEM_OID & " ORDER BY database_name"
-    rsDatabases.Open "SELECT * FROM pgadmin_databases WHERE database_name NOT LIKE 'pgadmin_%' AND database_name NOT LIKE 'pg_%' AND database_oid > " & LAST_SYSTEM_OID & " ORDER BY database_name", gConnection, adOpenDynamic
+    LogMsg "Executing: SELECT * FROM pgadmin_databases WHERE database_name NOT LIKE 'pgadmin_%' AND database_name NOT LIKE 'pg_%' AND database_oid > " & LAST_SYSTEM_OID & " AND database_name != 'template0' ORDER BY database_name"
+    rsDatabases.Open "SELECT * FROM pgadmin_databases WHERE database_name NOT LIKE 'pgadmin_%' AND database_name NOT LIKE 'pg_%' AND database_oid > " & LAST_SYSTEM_OID & " AND database_name != 'template0' ORDER BY database_name", gConnection, adOpenDynamic
   End If
   While Not rsDatabases.EOF
     lstDB.AddItem rsDatabases!database_name & ""

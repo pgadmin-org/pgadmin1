@@ -86,6 +86,10 @@ JMP - Jean-Michel Poure</p>
   <li>(DJP) The Migration Wizard now attempts to query the source database's 
   ODBC driver for the supported SQL quoting character. Normally this is &quot;, but 
   Access uses ' and MySQL apparently doesn't support quoting at all.</li>
+  <li>(DJP) The new template0 database in PostgreSQL 7.1.x is now hidden in the 
+  Database Browser unless 'Show System Databases' is checked (Bug #273).</li>
+  <li>(DJP) the Migration Wizard no longer skips an entire data copy that 
+  includes BLOB data, it now only skips the BLOB column.</li>
 </ul>
 <p>WARNING : do not test the new IDE on a production database. Before testing, 
   export functions, triggers and views using the new export feature.</p>
