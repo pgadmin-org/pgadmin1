@@ -19,7 +19,6 @@ Begin VB.UserControl HBX
       _ExtentY        =   661
       _Version        =   393217
       BorderStyle     =   0
-      Enabled         =   -1  'True
       ScrollBars      =   3
       Appearance      =   0
       AutoVerbMenu    =   -1  'True
@@ -142,7 +141,7 @@ End Type
 
 Private Declare Function ToAscii Lib "user32" (ByVal uVirtKey As Long, ByVal uScanCode As Long, lpbKeyState As Byte, lpwTransKey As Long, ByVal fuState As Long) As Long
 
-Public Function get_RGB(LColour As Long) As T_RGB
+Private Function get_RGB(LColour As Long) As T_RGB
 Dim szHEX As String
   szHEX = Hex(LColour)
   While Len(szHEX) < 6
@@ -510,6 +509,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
   UserControl.BorderStyle = PropBag.ReadProperty("BorderStyle", 0)
   m_ControlBarVisible = PropBag.ReadProperty("ControlBarVisible", m_def_ControlBarVisible)
   m_Wordlist = PropBag.ReadProperty("Wordlist", m_def_Wordlist)
+  BuildCache
 End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
