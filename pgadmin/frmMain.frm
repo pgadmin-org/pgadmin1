@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
 Object = "{001ECB85-1072-11D2-AD1C-C0924EC1BE27}#5.1#0"; "sbarvb.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.3#0"; "HighlightBox.ocx"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H80000010&
    Caption         =   "pgAdmin"
@@ -66,7 +66,7 @@ Begin VB.MDIForm frmMain
          Locked          =   -1  'True
          Caption         =   "SQL View"
          Wordlist        =   $"frmMain.frx":030A
-         AutoColour      =   -1  'True
+         RightMargin     =   1.00000e5
       End
       Begin HighlightBox.HBX txtLog 
          Height          =   1275
@@ -88,7 +88,7 @@ Begin VB.MDIForm frmMain
          Locked          =   -1  'True
          Caption         =   "Log View"
          Wordlist        =   $"frmMain.frx":03E4
-         AutoColour      =   -1  'True
+         RightMargin     =   1.00000e5
       End
       Begin VB.Label lblVersion 
          Alignment       =   1  'Right Justify
