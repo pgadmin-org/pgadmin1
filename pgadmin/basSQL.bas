@@ -117,6 +117,7 @@ SQL_PGADMIN_INDEXES = _
   "CREATE VIEW pgadmin_indexes AS SELECT " & _
   "  i.oid AS index_oid, i.relname AS index_name, c.relname AS index_table, pg_get_userbyid(i.relowner) AS index_owner, " & _
   "  CASE WHEN x.indislossy = TRUE THEN 'Yes'::text ELSE 'No'::text END AS index_is_lossy, CASE WHEN x.indisunique = TRUE THEN 'Yes'::text ELSE 'No'::text END AS index_is_unique, CASE WHEN x.indisprimary = TRUE THEN 'Yes'::text ELSE 'No'::text END AS index_is_primary, " & _
+  "  CASE WHEN (pg_get_indexdef(x.indexrelid) ~* '[[:<:]]btree[[:>:]]'::text) THEN 'btree'::text ELSE CASE WHEN (pg_get_indexdef(x.indexrelid) ~* '[[:<:]]hash[[:>:]]'::text) THEN 'hash'::text ELSE CASE WHEN (pg_get_indexdef(x.indexrelid) ~* '[[:<:]]rtree[[:>:]]'::text) THEN 'rtree'::text ELSE NULL::text END END END AS index_type, " & _
   "  pgadmin_get_desc(i.oid) AS index_comments, " & _
   "  pg_get_indexdef(x.indexrelid) AS index_definition, a.oid AS column_oid, a.attname AS column_name,  a.attnum AS column_position,  t.typname As column_type, " & _
   "  CASE WHEN ((a.attlen = -1) AND ((a.atttypmod)::int4 = (-1)::int4)) THEN (0)::int4 ELSE CASE WHEN a.attlen = -1 THEN CASE WHEN ((t.typname = 'bpchar') OR (t.typname = 'char') OR (t.typname = 'varchar')) THEN (a.atttypmod -4)::int4 ELSE (a.atttypmod)::int4 END ELSE (a.attlen)::int4 END END AS column_length, " & _
@@ -227,7 +228,7 @@ SQL_PGADMIN_DEV_VIEWS = "CREATE TABLE pgadmin_dev_views AS SELECT " & _
   "  TRUNCATE TABLE pgadmin_dev_views ;"
 
 SQL_PGADMIN_DEV_INDEXES = "CREATE TABLE pgadmin_dev_indexes AS SELECT " & _
-  "  index_oid,index_name, index_table, index_owner, index_comments, " & _
+  "  index_oid,index_name, index_table, index_owner, index_type, index_comments,  " & _
   "  column_name, column_position, column_length, column_comments" & _
   "  FROM pgadmin_indexes WHERE " & SQL_PGADMIN_SELECT_CLAUSE_INDEXES & _
   "  ALTER TABLE pgadmin_dev_indexes ADD index_definition text;  " & _
@@ -792,6 +793,8 @@ On Error Resume Next
   gConnection.Execute "DROP TABLE pgadmin_dev_triggers"
   LogMsg "Executing: DROP TABLE pgadmin_dev_views"
   gConnection.Execute "DROP TABLE pgadmin_dev_views"
+  LogMsg "Executing: DROP TABLE pgadmin_dev_indexes"
+  gConnection.Execute "DROP TABLE pgadmin_dev_indexes"
   LogMsg "Executing: DROP TABLE pgadmin_dev_dependencies"
   gConnection.Execute "DROP TABLE pgadmin_dev_dependencies"
   EndMsg
