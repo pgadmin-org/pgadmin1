@@ -298,7 +298,9 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsTrig As New Recordset
 Dim szTrigger_PostgreSqlTable As String
+
 Private Sub cmdExportTrig_Click()
+ On Error GoTo Err_Handler
     Dim iLoop As Long
     Dim iListCount As Long
     Dim szExport As String
@@ -350,6 +352,9 @@ Private Sub cmdExportTrig_Click()
         szExport = szHeader & szExport
         MsgExportToFile CommonDialog1, szExport, "sql", "Export triggers"
     End If
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdExportTrig_Click"
 End Sub
 
 Public Sub cmdModifyTrig_Click()
@@ -365,7 +370,7 @@ If txtOID <> "" Then
 End If
 
 Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_Click"
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdModifyFunc_Click"
 End Sub
 
 Private Sub cmdRebuild_Click()
@@ -581,7 +586,11 @@ Err_Handler:
 End Sub
 
 Public Sub CmdTrigButton()
+On Error GoTo Err_Handler
     Dim bSystem As Boolean
     bSystem = (chkSystem.Value = 1)
     cmdButtonActivate bSystem, lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
+
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmTriggers, CmdTrigButton"
 End Sub

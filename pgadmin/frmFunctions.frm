@@ -314,6 +314,8 @@ Dim rsFunc As New Recordset
 Dim szFunction_PostgreSqlTable As String
 
 Private Sub cmdExportFunc_Click()
+On Error GoTo Err_Handler
+
     Dim iLoop As Long
     Dim iListCount As Long
     Dim szExport As String
@@ -366,6 +368,9 @@ Private Sub cmdExportFunc_Click()
         szExport = szHeader & szExport
         MsgExportToFile CommonDialog1, szExport, "sql", "Export functions"
     End If
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdExportFunc_Click"
 End Sub
 
 Public Sub cmdModifyFunc_Click()
@@ -385,13 +390,21 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_
 End Sub
 
 Private Sub cmdRebuild_Click()
+On Error GoTo Err_Handler
+
     cmp_Project_Rebuild
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRebuild_Click"
 End Sub
 
 Private Sub lstFunc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-' On Error GoTo Err_Handler
+On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXFunctions
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_MouseUp"
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_MouseUp"
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -520,7 +533,8 @@ Private Sub Form_Load()
   Me.Height = 4455
   cmdRefresh_Click
   Exit Sub
-Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
@@ -600,8 +614,14 @@ Err_Handler:
 End Sub
 
 Public Sub CmdFuncButton()
+On Error GoTo Err_Handler
+
     Dim bSystem As Boolean
     bSystem = (chkFunctions.Value = 1)
     cmdButtonActivate bSystem, lstFunc.SelCount, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
+
+Exit Sub
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmFunctions, CmdFuncButton"
 End Sub
 

@@ -273,6 +273,8 @@ Dim rsView As New Recordset
 Dim szView_PostgreSqlTable As String
 
 Private Sub cmdExportView_Click()
+On Error GoTo Err_Handler
+
     Dim iLoop As Long
     Dim iListCount As Long
     Dim szExport As String
@@ -322,6 +324,9 @@ Private Sub cmdExportView_Click()
         szExport = szHeader & szExport
         MsgExportToFile CommonDialog1, szExport, "sql", "Export views"
     End If
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, cmdExportView_Click"
 End Sub
 
 Public Sub cmdModifyView_Click()
@@ -344,6 +349,8 @@ End Sub
 Private Sub lstView_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXViews
+  
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, lstViews_MouseUp"
 End Sub
 
@@ -567,7 +574,12 @@ Err_Handler:
 End Sub
 
 Public Sub CmdViewButton()
+On Error GoTo Err_Handler
+
     Dim bSystem As Boolean
     bSystem = (chkSystem.Value = 1)
     cmdButtonActivate bSystem, lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
+
+Err_Handler:
+If Err.Number <> 0 Then LogError Err, "frmViews, CmdViewButton"
 End Sub
