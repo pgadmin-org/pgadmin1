@@ -13,7 +13,7 @@ Begin VB.PropertyPage Properties
    Begin MSComctlLib.ListView lvWords 
       Height          =   1485
       Left            =   60
-      TabIndex        =   8
+      TabIndex        =   7
       Top             =   1140
       Width           =   4815
       _ExtentX        =   8493
@@ -35,7 +35,7 @@ Begin VB.PropertyPage Properties
       Caption         =   "Italic"
       Height          =   285
       Left            =   2460
-      TabIndex        =   7
+      TabIndex        =   6
       Top             =   840
       Width           =   675
    End
@@ -43,7 +43,7 @@ Begin VB.PropertyPage Properties
       Caption         =   "Bold"
       Height          =   285
       Left            =   1620
-      TabIndex        =   6
+      TabIndex        =   5
       Top             =   840
       Width           =   1635
    End
@@ -51,17 +51,9 @@ Begin VB.PropertyPage Properties
       Caption         =   "Add"
       Height          =   345
       Left            =   2580
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   180
       Width           =   1125
-   End
-   Begin VB.CheckBox chkCase 
-      Caption         =   "Case Sensitive"
-      Height          =   285
-      Left            =   60
-      TabIndex        =   3
-      Top             =   840
-      Width           =   1635
    End
    Begin VB.CommandButton cmdChangeCol 
       Caption         =   "Change Colour"
@@ -98,7 +90,7 @@ Begin VB.PropertyPage Properties
       Caption         =   "Word"
       Height          =   255
       Left            =   60
-      TabIndex        =   5
+      TabIndex        =   4
       Top             =   240
       Width           =   2715
    End
@@ -127,15 +119,8 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Public Type Wordlist
+Private Type WordStore
   szColour As String
-  iCase As Integer
-  szText As String
-End Type
-
-Public Type WordStore
-  szColour As String
-  iCase As Integer
   iItalic As Integer
   iBold As Integer
   szText As String
@@ -148,14 +133,14 @@ Private Sub txtWordlist_Change()
 End Sub
 Private Sub cmdAddNew_Click()
 If txtWord = "" Then
-  MsgBox "You must eneter something in the word box", vbCritical + vbOKOnly, "Error, No text"
+  MsgBox "You must enter something in the word box", vbCritical + vbOKOnly, "Error, No text"
   Exit Sub
 End If
 
 
 Dim iC
 For iC = 0 To UBound(Words)
-  If txtWord.Text = Words(iC).szText Then
+  If LCase(txtWord.Text) = LCase(Words(iC).szText) Then
     MsgBox "That word is already in the list. Please Re-enter or Remove the existing one.", vbOKOnly, "Word Exists"
     Exit Sub
   End If
@@ -165,7 +150,6 @@ Next iC
   With Words(UBound(Words))
     .szText = txtWord.Text
     .iBold = chkBold.Value
-    .iCase = chkCase.Value
     .iItalic = chkItalic.Value
     .szColour = txtWord.ForeColor
   End With
@@ -201,7 +185,7 @@ ctllist = ""
   
 ReDim Preserve Words(UBound(Words) - 1)
   For x = 0 To UBound(Words)
-    ctllist = ctllist & Words(x).szText & "|" & Words(x).iBold & "|" & Words(x).iCase & "|" & Words(x).iItalic & "|" & Words(x).szColour & ";"
+    ctllist = ctllist & Words(x).szText & "|" & Words(x).iBold & "|" & Words(x).iItalic & "|" & Words(x).szColour & ";"
   Next x
   
   For Each objControl In SelectedControls
@@ -215,7 +199,6 @@ txtWord.ForeColor = RGB(0, 0, 0)
 
    lvWords.ColumnHeaders.Add , , "Wordlist", (lvWords.Width / 11) * 4
    lvWords.ColumnHeaders.Add , , "Colour", (lvWords.Width / 11) * 3
-   lvWords.ColumnHeaders.Add , , "C", (lvWords.Width / 11)
    lvWords.ColumnHeaders.Add , , "B", (lvWords.Width / 11)
    lvWords.ColumnHeaders.Add , , "I", (lvWords.Width / 11)
    lvWords.View = lvwReport
@@ -228,14 +211,6 @@ Dim splitTmp() As String
 Dim iX As Integer
 Dim ixC As Integer
 
-'txtWord.ForeColor = RGB(0, 0, 0)
-
- '  lvWords.ColumnHeaders.Add , , "Wordlist", (lvWords.Width / 11) * 4
- '  lvWords.ColumnHeaders.Add , , "Colour", (lvWords.Width / 11) * 3
- '  lvWords.ColumnHeaders.Add , , "C", (lvWords.Width / 11)
- '  lvWords.ColumnHeaders.Add , , "B", (lvWords.Width / 11)
- '  lvWords.ColumnHeaders.Add , , "I", (lvWords.Width / 11)
- '  lvWords.View = lvwReport
 ctllist = SelectedControls(0).Wordlist
 ixC = 0
 ReDim Words(ixC)
@@ -245,12 +220,11 @@ splitCtllist = Split(ctllist, ";")
 
 For iX = 0 To UBound(splitCtllist)
   splitTmp = Split(splitCtllist(iX), "|")
-  If UBound(splitTmp) = 4 Then
+  If UBound(splitTmp) = 3 Then
     Words(ixC).szText = "" & splitTmp(0)
     Words(ixC).iBold = 0 + Val(splitTmp(1))
-    Words(ixC).iCase = 0 + Val(splitTmp(2))
-    Words(ixC).iItalic = 0 + Val(splitTmp(3))
-    Words(ixC).szColour = "" & splitTmp(4)
+    Words(ixC).iItalic = 0 + Val(splitTmp(2))
+    Words(ixC).szColour = "" & splitTmp(3)
     ixC = ixC + 1
     ReDim Preserve Words(ixC)
   End If
@@ -276,9 +250,8 @@ ClearStringSpace
 For iX = 0 To (UBound(Words) - 1)
   Set itmX = lvWords.ListItems.Add(, , Words(iX).szText)
   itmX.SubItems(1) = "" & Words(iX).szColour
-  itmX.SubItems(2) = "" & Words(iX).iCase
-  itmX.SubItems(3) = "" & Words(iX).iBold
-  itmX.SubItems(4) = "" & Words(iX).iItalic
+  itmX.SubItems(2) = "" & Words(iX).iBold
+  itmX.SubItems(3) = "" & Words(iX).iItalic
 Next iX
 End Sub
 

@@ -18,7 +18,6 @@ Begin VB.UserControl HBX
       _ExtentX        =   3413
       _ExtentY        =   1085
       _Version        =   393217
-      Enabled         =   -1  'True
       ScrollBars      =   2
       TextRTF         =   $"HBX.ctx":0113
    End
@@ -73,16 +72,14 @@ Attribute MouseMove.VB_Description = "Occurs when the user moves the mouse."
 Event MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single) 'MappingInfo=rtbString,rtbString,-1,MouseUp
 Attribute MouseUp.VB_Description = "Occurs when the user presses and releases a mouse button."
 
-Public Type WordListType
-szText As String
-szCaseSensitive As String
-szBold As String
-szItalic As String
-szColourString As String
+Public Type WordStyle
+  szColour As String
+  bBold As Boolean
+  bItalic As Boolean
 End Type
 
-Dim szSeeklist() As WordListType
-Dim iSelect As Integer
+Dim WordCache As Collection
+
 
 Private Sub rtbstring_KeyUp(KeyCode As Integer, Shift As Integer)
 If KeyCode = vbKeyTab Or _
@@ -91,108 +88,128 @@ If KeyCode = vbKeyTab Or _
   KeyCode = vbKeyUp Or _
   KeyCode = vbKeyDown Or _
   KeyCode = vbKeyLeft Or _
-  KeyCode = vbKeyRight Then ColourBox
-  
+  KeyCode = vbKeyRight Then ColourWord
 RaiseEvent KeyUp(KeyCode, Shift)
 
 End Sub
+Private Sub ColourWord()
+
+Dim lWordend As Long
+Dim lWordstart As Long
+Dim szColour As String
+Dim bBold As Boolean
+Dim bItalic As Boolean
+Dim szChar As String
+
+lWordend = rtbString.SelStart - 1
+If lWordend < 1 Then Exit Sub
+
+lWordstart = lWordend
+'search back for start of word
+
+'While Mid(rtbString.Text, lWordstart, 1) <> " "
+szChar = Mid(rtbString.Text, lWordstart, 1)
+While szChar <> " " And szChar <> ")" And _
+      szChar <> "(" And szChar <> "}" And _
+      szChar <> "{" And szChar <> "]" And _
+      szChar <> "[" And szChar <> ";" And _
+      szChar <> ":" And szChar <> Chr(10)
+  
+  lWordstart = lWordstart - 1
+  If lWordstart = 0 Then GoTo fred
+  szChar = Mid(rtbString.Text, lWordstart, 1)
+Wend
+
+fred:
+rtbString.SelStart = lWordstart
+rtbString.SelLength = lWordend - lWordstart
+
+CheckString Mid(rtbString.Text, rtbString.SelStart + 1, rtbString.SelLength), szColour, bBold, bItalic
+rtbString.SelBold = bBold
+rtbString.SelItalic = bItalic
+rtbString.SelColor = Val(szColour) 'RGB(0, 0, 255)
+      
+rtbString.SelStart = lWordend + 1 'Reset cursor position
+
+
+
+End Sub
+
+
 
 Private Sub ColourBox()
 
-Dim icount As Integer
-Dim istart As Integer
-Dim iEnd As Integer
-Dim iRestart As Integer
-Dim iWordlen As Integer
-Dim iCursorPos As Integer
-Dim iSelectedLength As Integer
+Dim lCount As Long
+Dim lRestart As Long
+Dim lWordlen As Long
+Dim lCursorPos As Long
+Dim lSelectedLength As Long
 Dim szMidString As String
 Dim szWordString As String
+
+Dim szColour As String
+Dim bBold As Boolean
+Dim bItalic As Boolean
+
+  lRestart = 1
+  lWordlen = 0
+  lCursorPos = rtbString.SelStart
+  lSelectedLength = rtbString.SelLength
   
-  iRestart = 1
-  iWordlen = 0
-  iCursorPos = rtbString.SelStart
-  iSelectedLength = rtbString.SelLength
-  rtbString.SelColor = RGB(0, 0, 0)
+  'Clear all to black
+  rtbString.SelStart = 1
+  rtbString.SelLength = Len(rtbString.Text)
+  'rtbString.SelColor = RGB(0, 0, 0)
+  'rtbString.SelBold = False
+  'rtbString.SelItalic = False
+  'rtbString.SelStart = 1
+  'rtbString.SelLength = 0
   
-  For icount = 1 To Len(rtbString.Text)
-    If Mid(rtbString.Text, icount, 1) = " " Or Mid(rtbString.Text, icount, 1) = ")" Or _
-      Mid(rtbString.Text, icount, 1) = "(" Or Mid(rtbString.Text, icount, 1) = "}" Or _
-      Mid(rtbString.Text, icount, 1) = "{" Or Mid(rtbString.Text, icount, 1) = "]" Or _
-      Mid(rtbString.Text, icount, 1) = "[" Or Mid(rtbString.Text, icount, 1) = ";" Or _
-      Mid(rtbString.Text, icount, 1) = ":" Or Mid(rtbString.Text, icount, 1) = Chr(10) Then
+  For lCount = 1 To Len(rtbString.Text)
+    If Mid(rtbString.Text, lCount, 1) = " " Or Mid(rtbString.Text, lCount, 1) = ")" Or _
+      Mid(rtbString.Text, lCount, 1) = "(" Or Mid(rtbString.Text, lCount, 1) = "}" Or _
+      Mid(rtbString.Text, lCount, 1) = "{" Or Mid(rtbString.Text, lCount, 1) = "]" Or _
+      Mid(rtbString.Text, lCount, 1) = "[" Or Mid(rtbString.Text, lCount, 1) = ";" Or _
+      Mid(rtbString.Text, lCount, 1) = ":" Or Mid(rtbString.Text, lCount, 1) = Chr(10) Then
+      szMidString = Mid(rtbString.Text, lRestart, lWordlen)
+      szMidString = Trim(szMidString)
+      DoEvents
+      CheckString szMidString, szColour, bBold, bItalic
+      rtbString.SelStart = lRestart - 1
+      rtbString.SelLength = lWordlen
+      rtbString.SelBold = bBold
+      rtbString.SelItalic = bItalic
+      rtbString.SelColor = Val(szColour) 'RGB(0, 0, 255)
+      'rtbString.SelStart = lCursorPos
+      'rtbString.SelLength = lSelectedLength
       
-      iSelect = 0
-      szMidString = Mid(rtbString.Text, iRestart, iWordlen)
-      szMidString = TrimString(szMidString)
-      If CheckString(szMidString) = True Then
-        rtbString.SelStart = iRestart - 1
-        rtbString.SelLength = iWordlen
-        
-        If szSeeklist(iSelect).szBold = "1" Then
-          rtbString.SelBold = True
-        Else
-          rtbString.SelBold = False
-        End If
-        
-        If szSeeklist(iSelect).szItalic = "1" Then
-          rtbString.SelItalic = True
-        Else
-          rtbString.SelItalic = False
-        End If
-                
-        rtbString.SelColor = Val(szSeeklist(iSelect).szColourString) 'RGB(0, 0, 255)
-        rtbString.SelStart = iCursorPos
-        rtbString.SelLength = iSelectedLength
-        
-      Else
-        rtbString.SelStart = iRestart - 1
-        rtbString.SelLength = iWordlen
-        rtbString.SelColor = RGB(0, 0, 0)
-        rtbString.SelBold = False
-        rtbString.SelItalic = False
-        rtbString.SelStart = iCursorPos
-        rtbString.SelLength = iSelectedLength
-      End If
-      
-      iRestart = icount + 1
-      szWordString = ""
-      iWordlen = 0
+      lRestart = lCount + 1
+      lWordlen = 0
     Else
-      szWordString = szWordString & Mid(rtbString.Text, icount, 1)
-      iWordlen = iWordlen + 1
+      lWordlen = lWordlen + 1
+      DoEvents
     End If
-  Next icount
+    
+  Next lCount
+  
+  rtbString.SelStart = lCursorPos
+  rtbString.SelLength = lSelectedLength
+End Sub
+Private Sub CheckString(szCheck As String, szColour As String, bBold As Boolean, bItalic As Boolean)
+  On Error Resume Next
+      
+  'lookup - if exists
+  szColour = 0
+  bBold = False
+  bItalic = False
+  
+   
+  'search WordCache
+  szColour = WordCache(szCheck).szColour
+  bBold = WordCache(szCheck).bBold
+  bItalic = WordCache(szCheck).bItalic
 
 End Sub
-Private Function CheckString(szCheck As String) As Boolean
-CheckString = False
-
-If UBound(szSeeklist) = -1 Then
-  CheckString = False
-  Exit Function
-End If
-
-Dim iZ As Integer
-For iZ = 0 To UBound(szSeeklist)
-  If Val(szSeeklist(iZ).szCaseSensitive) = 1 Then
-    If szCheck = szSeeklist(iZ).szText Then
-      CheckString = True
-      iSelect = iZ
-      Exit Function
-    End If
-  End If
-Next iZ
-
-For iZ = 0 To UBound(szSeeklist)
-  If Val(szSeeklist(iZ).szCaseSensitive) = 0 Then
-  If LCase(szCheck) = LCase(szSeeklist(iZ).szText) Then
-      CheckString = True
-      iSelect = iZ
-    End If
-  End If
-Next iZ
-End Function
 Private Sub UserControl_Resize()
 If UserControl.Height < 315 Then UserControl.Height = 315
 If UserControl.Width < 500 Then UserControl.Width = 500
@@ -238,11 +255,9 @@ Attribute Refresh.VB_Description = "Forces a complete repaint of a control."
   rtbString.Refresh
 End Sub
 Private Sub rtbString_Click()
-  ColourBox
   RaiseEvent Click
 End Sub
 Private Sub rtbString_DblClick()
-  ColourBox
   RaiseEvent DblClick
 End Sub
 Private Sub rtbString_KeyDown(KeyCode As Integer, Shift As Integer)
@@ -279,32 +294,45 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
   rtbString.RightMargin = PropBag.ReadProperty("RightMargin", 0)
   rtbString.ToolTipText = PropBag.ReadProperty("ToolTipText", "")
   rtbString.Locked = PropBag.ReadProperty("Locked", False)
+  BuildCache
 End Sub
-Private Sub UserControl_Show()
-  ReDim szSeeklist(0)
+Friend Sub BuildCache()
   
-  Dim szseeksplit() As String
-  Dim szSectionSplit() As String
   
-  Dim iY As Integer
+  Dim szStrings() As String
+  Dim szValues() As String
+  Dim iLoop As Integer
+  Dim WordDisplay As WordStyle
   
-  If Wordlist = "" Then Exit Sub
-  szSectionSplit = Split(Wordlist, ";")
-  If UBound(szSectionSplit) = 0 Then Exit Sub
+  Set WordCache = New Collection
   
-  For iY = 0 To UBound(szSectionSplit)
-    szseeksplit = Split(szSectionSplit(iY), "|")
-    If UBound(szseeksplit) = 4 Then
-      szSeeklist(UBound(szSeeklist)).szItalic = szseeksplit(3)
-      szSeeklist(UBound(szSeeklist)).szBold = szseeksplit(1)
-      szSeeklist(UBound(szSeeklist)).szCaseSensitive = szseeksplit(2)
-      szSeeklist(UBound(szSeeklist)).szColourString = szseeksplit(4)
-      szSeeklist(UBound(szSeeklist)).szText = szseeksplit(0)
-      ReDim Preserve szSeeklist(UBound(szSeeklist) + 1)
-      ReDim szseeksplit(0)
+  szStrings = Split(m_WordList, ";")
+  For iLoop = 0 To UBound(szStrings) - 1
+    szValues = Split(szStrings(iLoop), "|")
+    
+    If szValues(1) = "1" Then 'Bold
+      WordDisplay.bBold = True
+    Else
+      WordDisplay.bBold = False
     End If
-  Next iY
+       
+    If szValues(2) = "1" Then ' Italic
+      WordDisplay.bItalic = True
+    Else
+      WordDisplay.bItalic = False
+    End If
+    
+    WordDisplay.szColour = szValues(3)
+    
+    WordCache.Add WordDisplay, szValues(0)
+  Next iLoop
+  
+  
+  
+
 End Sub
+
+
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
   Call PropBag.WriteProperty("BackColor", rtbString.BackColor, &H80000005)
   Call PropBag.WriteProperty("Enabled", rtbString.Enabled, True)
@@ -327,6 +355,7 @@ Attribute Wordlist.VB_ProcData.VB_Invoke_Property = "Properties"
 End Property
 Public Property Let Wordlist(ByVal New_WordList As String)
   m_WordList = New_WordList
+  BuildCache
   PropertyChanged "WordList"
 End Property
 Public Property Get Text() As String
@@ -338,10 +367,10 @@ Public Property Let Text(ByVal New_Text As String)
   PropertyChanged "Text"
   rtbstring_KeyUp 32, 0
 End Property
-Public Function HUP() As Variant
+Public Sub HUP()
 Attribute HUP.VB_Description = "Causes the Control to refresh and search the string. "
 ColourBox
-End Function
+End Sub
 Public Property Get ForeColor() As Long
 Attribute ForeColor.VB_Description = "Returns/sets the foreground color used to display text and graphics in an object."
   ForeColor = m_ForeColor
@@ -383,19 +412,6 @@ Attribute ToolTipText.VB_Description = "Returns/sets the text displayed when the
   rtbString.ToolTipText() = New_ToolTipText
   PropertyChanged "ToolTipText"
 End Property
-Public Function TrimString(szString As String) As String
-Dim szOutput As String
-Dim iX As Integer
-
-szOutput = ""
-For iX = 1 To Len(szString)
-  If Asc(Mid(szString, iX, 1)) > 31 Then
-    szOutput = szOutput & Mid(szString, iX, 1)
-  End If
-Next iX
-
-TrimString = szOutput
-End Function
 Public Property Get Locked() As Boolean
 Attribute Locked.VB_Description = "Returns/sets a value indicating whether the contents in a RichTextBox control can be edited."
   Locked = rtbString.Locked
@@ -405,4 +421,3 @@ Public Property Let Locked(ByVal New_Locked As Boolean)
   rtbString.Locked() = New_Locked
   PropertyChanged "Locked"
 End Property
-
