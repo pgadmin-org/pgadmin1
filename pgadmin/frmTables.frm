@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmTables 
    Caption         =   "Tables"
@@ -1143,6 +1143,14 @@ Dim szQuery As String
   txtCompiler.Text = Mid(rsDesc!Version, InStr(1, rsDesc!Version, ", compiled by ") + 14, Len(rsDesc!Version))
   fraDatasource.Visible = True
   Set rsDesc = Nothing
+  
+  ' Retrieve table content
+  ' This can be done as we use GetRows
+  If trvBrowser.Nodes.Count > 1 Then
+    trvBrowser_NodeClick trvBrowser.Nodes.Item(2)
+    trvBrowser.Nodes.Item(2).Expanded = False
+  End If
+  
   EndMsg
   Exit Sub
 Err_Handler:
