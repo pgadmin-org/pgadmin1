@@ -661,11 +661,7 @@ SQL_PGADMIN_DEV_DEPENDENCIES = "CREATE TABLE pgadmin_dev_dependencies (" & _
     gConnection.Execute "GRANT all ON pgadmin_dev_dependencies TO public"
     EndMsg
   End If
-  
-  cmp_Function_CopyToDev
-  cmp_Trigger_CopyToDev
-  cmp_View_CopyToDev
-  
+    
   'Set the SSO Version on the server
   LogMsg "Executing: UPDATE pgadmin_param SET param_value = '" & Val(SSO_VERSION) & "' WHERE param_id = 1"
   gConnection.Execute "UPDATE pgadmin_param SET param_value = '" & Val(SSO_VERSION) & "' WHERE param_id = 1"
