@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmFunctions 
@@ -445,7 +445,7 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdExportFunc_
 End Sub
 
 Public Sub cmdModifyFunc_Click()
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
     If txtName <> "" Then
         ModifyFunc txtName.Text & "(" & txtArguments.Text & ")"
     End If
