@@ -328,22 +328,22 @@ Begin VB.MDIForm frmMain
             Key             =   "Psql"
          EndProperty
          BeginProperty ListImage21 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":56C8
+            Picture         =   "frmMain.frx":74E8
             Key             =   "Reports"
             Object.Tag             =   "Reports"
          EndProperty
          BeginProperty ListImage22 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":59E2
+            Picture         =   "frmMain.frx":7802
             Key             =   "Datasources"
             Object.Tag             =   "Datasources"
          EndProperty
          BeginProperty ListImage23 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":5CFC
+            Picture         =   "frmMain.frx":7B1C
             Key             =   "Manager"
             Object.Tag             =   "Manager"
          EndProperty
          BeginProperty ListImage24 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":6016
+            Picture         =   "frmMain.frx":7E36
             Key             =   "Exporters"
             Object.Tag             =   "Exporters"
          EndProperty

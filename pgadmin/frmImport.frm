@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
 Begin VB.Form frmImport 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Import Data"
@@ -108,13 +108,13 @@ Begin VB.Form frmImport
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmImport.frx":130F
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "lstOColumns"
-      Tab(1).Control(1)=   "cmdUp"
-      Tab(1).Control(2)=   "cmdDown"
+      Tab(1).Control(0)=   "Label3(1)"
+      Tab(1).Control(1)=   "Frame3"
+      Tab(1).Control(2)=   "Frame2"
       Tab(1).Control(3)=   "Frame1"
-      Tab(1).Control(4)=   "Frame2"
-      Tab(1).Control(5)=   "Frame3"
-      Tab(1).Control(6)=   "Label3(1)"
+      Tab(1).Control(4)=   "cmdDown"
+      Tab(1).Control(5)=   "cmdUp"
+      Tab(1).Control(6)=   "lstOColumns"
       Tab(1).ControlCount=   7
       Begin VB.ListBox lstOColumns 
          Height          =   3180

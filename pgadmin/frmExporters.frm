@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmExporters 
    Caption         =   "Exporter Manager"
    ClientHeight    =   4815
@@ -73,7 +73,6 @@ Begin VB.Form frmExporters
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Author"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtVersion 
          BackColor       =   &H8000000F&
