@@ -190,6 +190,8 @@ On Error GoTo Err_Handler
   If txtDefault.Text <> "" Then
     fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "ALTER TABLE " & QUOTE & frmTables.trvBrowser.SelectedItem.Text & QUOTE & " ALTER COLUMN " & QUOTE & txtName.Text & QUOTE & " SET DEFAULT " & txtDefault.Text
   End If
+  
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Gen_SQL"
 End Sub
 
@@ -199,7 +201,8 @@ On Error GoTo Err_Handler
     If Me.Width < 4155 Then Me.Width = 4155
     If Me.Height < 2325 Then Me.Height = 2325
   End If
-  Exit Sub
+
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Form_Resize"
 End Sub
 
@@ -272,6 +275,8 @@ Dim AlterStr As String
   End If
   frmTables.cmdRefresh_Click
   Unload Me
+
+Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, cmdAddColumn_Click"
 End Sub
 
