@@ -289,8 +289,8 @@ Dim szView_comments As String
     txtOwner.Text = szView_owner
   Else
     Me.Caption = "Create view"
-    txtOwner.Text = "N.S."
-    txtACL.Text = "N.S."
+    txtOwner.Text = "Not Applicable"
+    txtACL.Text = ""
   End If
    
   Gen_SQL
