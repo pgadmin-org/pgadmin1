@@ -105,10 +105,8 @@ Begin VB.Form frmAddFunction
          Width           =   3345
       End
       Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
          Height          =   2010
          Left            =   900
-         Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   2
@@ -304,7 +302,7 @@ Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
 Dim szCreateStr As String
 Dim ArgList As String
-Dim X As Integer
+Dim x As Integer
 
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the function!", vbExclamation, "Error"
@@ -334,9 +332,9 @@ Dim X As Integer
   
   ' Build function arguments
   ArgList = ""
-  For X = 0 To lstArguments.ListCount - 1
-    ArgList = ArgList & lstArguments.List(X) & ", "
-  Next X
+  For x = 0 To lstArguments.ListCount - 1
+    ArgList = ArgList & lstArguments.List(x) & ", "
+  Next x
   If ArgList <> "" Then ArgList = Left(ArgList, Len(ArgList) - 2)
   
  ' In case of a creation, test existence of function with same arguments
@@ -351,7 +349,7 @@ Dim X As Integer
     If szFunction_name_old <> "" Then cmp_Function_DropIfExists "pgadmin_dev_functions", 0, szFunction_name_old, szFunction_arguments_old
     
     ' Create function
-    cmp_Function_Create "pgadmin_dev_functions", txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
+    cmp_Function_Create "pgadmin_dev_functions", txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text, "", txtComments.Text
     
     
     ' Refresh function list
@@ -446,7 +444,7 @@ On Error GoTo Err_Handler
     Dim szFunction_source As String
     Dim szFunction_language As String
     Dim szFunction_owner As String
-    
+    Dim szFunction_comments As String
     
     ' Remember initial values of function_name and function_arguments
     szFunction_name_old = gFunction_Name
@@ -494,7 +492,7 @@ On Error GoTo Err_Handler
               
               ' get function values
               lngFunction_oid = 0
-              cmp_Function_GetValues "pgadmin_dev_functions", lngFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+              cmp_Function_GetValues "pgadmin_dev_functions", lngFunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
               
               ' Initialize form
               txtName = szFunction_name
@@ -503,7 +501,8 @@ On Error GoTo Err_Handler
               cboReturnType.Text = szFunction_returns
               txtOID = lngFunction_oid
               txtOwner = szFunction_owner
-                
+              txtComments = szFunction_comments
+              
               temp_arg_list = Split(szFunction_arguments, ",")
               For Each temp_arg_item In temp_arg_list
                    cboArguments.Text = Trim(temp_arg_item)

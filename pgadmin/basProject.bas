@@ -133,9 +133,12 @@ Public Sub cmp_Project_RebuildViews()
 'On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
-    Dim szViewDefinition As String
+    Dim szView As Variant
+    Dim szView_name As String
+    Dim iUbound As Long
+    Dim iLoop As Long
     
-    szQueryStr = "SELECT * From pgadmin_dev_views"
+    szQueryStr = "SELECT view_name FROM pgadmin_dev_views"
     
     LogMsg "Now relinking views..."
     LogMsg "Executing: " & szQueryStr
@@ -143,15 +146,19 @@ Public Sub cmp_Project_RebuildViews()
     If rsViews.State <> adStateClosed Then rsViews.Close
     rsViews.Open szQueryStr, gConnection, adOpenDynamic
     
-    While Not rsViews.EOF
-        cmp_View_DropIfExists "", 0, rsViews!view_name
-        cmp_View_Create "", rsViews!view_name, rsViews!view_definition
-        rsViews.MoveNext
-    Wend
-
-    Exit Sub
+    If Not (rsViews.EOF) Then
+        szView = rsViews.GetRows
+        iUbound = UBound(szView, 2)
+        rsViews.Close
+        For iLoop = 0 To iUbound
+            szView_name = szView(0, iLoop) & ""
+            cmp_View_Move gDevPostgresqlTables & "_views", "pgadmin_views", szView_name, False
+        Next
+    End If
+    
+Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildViews"
+If Err.Number <> 0 Then LogError Err, "basProject, cmp_Project_RebuildViews"
 End Sub
 
 Public Sub cmp_Project_Compile()
@@ -165,7 +172,7 @@ Public Sub cmp_Project_Compile()
     cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
     
     While (szFunction_name <> "") And (bContinueRebuilding = True)
-        cmp_Function_Compile "pgadmin_dev_functions", szFunction_name, szFunction_arguments
+        cmp_Function_Move "pgadmin_dev_functions", "pgadmin_functions", szFunction_name, szFunction_arguments, False
         szNextFunctionToCompile_name = cmp_Project_FindNextFunctionToCompile
         cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
     Wend

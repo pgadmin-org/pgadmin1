@@ -395,7 +395,6 @@ On Error GoTo Err_Handler
   Me.Height = 4455
   
   Set trvBrowser.ImageList = ilBrowser
-
   cmdRefresh_Click
 
 Exit Sub
@@ -637,7 +636,7 @@ On Error GoTo Err_Handler
     '----------------------------------------------------------------------------------
     StartMsg "Retrieving Function Info..."
     szfunction_oid = 0
-    cmp_Function_GetValues szFunction_table, szfunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    cmp_Function_GetValues szFunction_table, szfunction_oid, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
     
     txtOID.Text = Trim(Str(szfunction_oid))
     txtOwner.Text = szFunction_owner
