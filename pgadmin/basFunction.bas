@@ -286,31 +286,44 @@ End Sub
 ' Dependencies
 ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Public Sub cmp_Function_Dependency_Initialize(ByVal szDependency_table As String, ByVal szFunction_dev_table As String, ByVal szFunction_name As String)
+Public Sub cmp_Function_Dependency_Initialize(ByVal szDependency_table As String, ByVal szFunction_name As String)
 On Error GoTo Err_Handler
     Dim szDependencyStr As String
     Dim rsComp As New Recordset
     
-    ' Scan pgadmin_dev_functions for dependencies
-    szDependencyStr = "SELECT * FROM " & szFunction_dev_table & " WHERE "
+    ' Initialize function(child)->function(parent) dependencies
+    szDependencyStr = "SELECT * FROM pgadmin_dev_functions WHERE "
     szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
   
     If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szDependencyStr, gConnection, adOpenDynamic
+    rsComp.Open szDependencyStr, gConnection, adOpenForwardOnly, adLockReadOnly
   
-    ' Write dependencies in pgadmin_dev_dependencies
     If Not rsComp.EOF Then
-        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_parent_name, dependency_child_name) "
-        szDependencyStr = szDependencyStr & " SELECT '" & szFunction_name & "' AS dependency_parent_name, function_name as dependency_child_name "
-        szDependencyStr = szDependencyStr & " FROM " & szFunction_dev_table & " WHERE "
+        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_parent_object, dependency_parent_name, dependency_child_object, dependency_child_name) "
+        szDependencyStr = szDependencyStr & " SELECT 'function' AS dependency_parent_object, '" & szFunction_name & "' AS dependency_parent_name, 'function' AS dependency_child_object, function_name as dependency_child_name "
+        szDependencyStr = szDependencyStr & " FROM pgadmin_dev_functions WHERE "
         szDependencyStr = szDependencyStr & " function_source ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
         
-        ' Log
         LogMsg "Executing: " & szDependencyStr
-        
         gConnection.Execute szDependencyStr
     End If
     
+    ' Initialize view(child)->function(parent) dependencies
+    szDependencyStr = "SELECT * FROM pgadmin_dev_views WHERE "
+    szDependencyStr = szDependencyStr & " view_definition ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
+  
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szDependencyStr, gConnection, adOpenForwardOnly, adLockReadOnly
+  
+    If Not rsComp.EOF Then
+        szDependencyStr = "INSERT INTO " & szDependency_table & " (dependency_parent_object, dependency_parent_name, dependency_child_object, dependency_child_name) "
+        szDependencyStr = szDependencyStr & " SELECT 'function' AS dependency_parent_object, '" & szFunction_name & "' AS dependency_parent_name, 'view' AS dependency_child_object, view_name as dependency_child_name "
+        szDependencyStr = szDependencyStr & " FROM pgadmin_dev_views WHERE "
+        szDependencyStr = szDependencyStr & " view_definition ~* '[[:<:]]" & szFunction_name & "[[:>:]]'; "
+        
+        LogMsg "Executing: " & szDependencyStr
+        gConnection.Execute szDependencyStr
+    End If
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basFunction, cmp_Function_Dependency_Initialize"
@@ -346,7 +359,10 @@ Public Function cmp_Function_HasSatisfiedDependencies(ByVal szFunction_dev_table
     szQueryStr = szQueryStr & "    ON " & szFunction_dev_table & ".Function_name = " & szDependency_table & ".dependency_child_name"
     szQueryStr = szQueryStr & "    INNER JOIN " & szFunction_dev_table & " AS " & szFunction_dev_table & "_1"
     szQueryStr = szQueryStr & "    ON " & szDependency_table & ".dependency_parent_name =  " & szFunction_dev_table & "_1.Function_name"
-    szQueryStr = szQueryStr & "    WHERE ((" & szFunction_dev_table & ".Function_name = '" & szFunction_name & "') AND (" & szFunction_dev_table & "_1.function_iscompiled = 'f'));"
+    szQueryStr = szQueryStr & "    WHERE (" & szFunction_dev_table & ".Function_name = '" & szFunction_name & "') "
+    szQueryStr = szQueryStr & "    AND (" & szDependency_table & ".dependency_child_object = 'function')"
+    szQueryStr = szQueryStr & "    AND (" & szFunction_dev_table & "_1.function_iscompiled = 'f')"
+    szQueryStr = szQueryStr & ";"
     
     LogMsg "Executing: " & szQueryStr
   
