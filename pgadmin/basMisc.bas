@@ -74,7 +74,7 @@ End Sub
 
 Public Sub StartMsg(Msg As String)
 Dim fNum As Integer
-Dim X As Long
+Dim x As Long
   If Logging = 1 Then
     fNum = FreeFile
     Open LogFile For Append As #fNum
@@ -84,9 +84,9 @@ Dim X As Long
   If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
     fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
   End If
-  X = Len(fMainForm.txtLog.Text)
+  x = Len(fMainForm.txtLog.Text)
   fMainForm.txtLog.Text = fMainForm.txtLog.Text & vbCrLf & Now & " - " & Msg
-  fMainForm.txtLog.SelStart = X + 2
+  fMainForm.txtLog.SelStart = x + 2
   fMainForm.MousePointer = vbHourglass
   fMainForm.StatusBar1.Panels("Status").Text = Msg
   fMainForm.StatusBar1.Refresh
@@ -95,13 +95,13 @@ End Sub
 
 Public Sub LogMsg(Msg As String)
 Dim fNum As Integer
-Dim X As Long
+Dim x As Long
   If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
     fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
   End If
-  X = Len(fMainForm.txtLog.Text)
+  x = Len(fMainForm.txtLog.Text)
   fMainForm.txtLog.Text = fMainForm.txtLog.Text & vbCrLf & Now & " - " & Msg
-  fMainForm.txtLog.SelStart = X + 2
+  fMainForm.txtLog.SelStart = x + 2
   If Logging <> 1 Then Exit Sub
   fNum = FreeFile
   Open LogFile For Append As #fNum
@@ -136,7 +136,7 @@ End Sub
 Public Sub EndMsg()
 Dim fNum As Integer
 Dim Msg As String
-Dim X As Long
+Dim x As Long
   Msg = "Done - " & Fix((Timer - QryTimer) * 100) / 100 & " Secs."
   If Mid(fMainForm.StatusBar1.Panels("Status").Text, Len(fMainForm.StatusBar1.Panels("Status").Text) - 4, 5) <> "Done." Then
     If Logging = 1 Then
@@ -148,9 +148,9 @@ Dim X As Long
     If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
       fMainForm.txtLog.Text = Mid(fMainForm.txtLog.Text, InStr(Len(Msg), fMainForm.txtLog.Text, vbCrLf) + 2, Len(fMainForm.txtLog.Text))
     End If
-    X = Len(fMainForm.txtLog.Text)
+    x = Len(fMainForm.txtLog.Text)
     fMainForm.txtLog.Text = fMainForm.txtLog.Text & vbCrLf & Now & " - " & Msg
-    fMainForm.txtLog.SelStart = X + 2
+    fMainForm.txtLog.SelStart = x + 2
     fMainForm.StatusBar1.Panels("Timer").Text = Fix((Timer - QryTimer) * 100) / 100 & " Secs."
     fMainForm.StatusBar1.Panels("Status").Text = fMainForm.StatusBar1.Panels("Status").Text & " Done."
     fMainForm.StatusBar1.Refresh
@@ -160,13 +160,13 @@ End Sub
 
 Public Function CountChar(OrigString As String, FindChar As Integer)
 On Error GoTo Err_Handler
-Dim X As Integer
-Dim Y As Integer
-  Y = 0
-  For X = 1 To Len(OrigString)
-    If Mid(OrigString, X, 1) = Chr(FindChar) Then Y = Y + 1
+Dim x As Integer
+Dim y As Integer
+  y = 0
+  For x = 1 To Len(OrigString)
+    If Mid(OrigString, x, 1) = Chr(FindChar) Then y = y + 1
   Next
-  CountChar = Y
+  CountChar = y
   Exit Function
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, CountChar"
 End Function
@@ -189,7 +189,7 @@ End Sub
 
 Public Sub LogError(Error As ErrObject, Optional SubOrFunc As String)
 Dim fNum As Integer
-Dim X As Variant
+Dim x As Variant
   fNum = FreeFile
   Open LogFile For Append As #fNum
   Print #fNum, "*******************************************************"
@@ -244,17 +244,17 @@ End Function
 
 Public Function MoveRS(rs As Recordset, Records As Long) As Long
 On Error GoTo Err_Handler
-Dim X As Long
+Dim x As Long
   If Records < 1 Then Exit Function
   If rs Is Nothing Then Exit Function
-  For X = 1 To Records
+  For x = 1 To Records
     If rs.EOF <> True Then
       rs.MoveNext
     Else
       Exit For
     End If
   Next
-  MoveRS = X
+  MoveRS = x
   Exit Function
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, MoveRS"
 End Function
@@ -372,18 +372,18 @@ End Function
 
 Public Function DSNServer() As String
 On Error GoTo Err_Handler
-Dim X As Integer
-  X = InStr(1, gConnection.ConnectionString, "SERVER=")
-  If X <> 0 Then DSNServer = Mid(gConnection.ConnectionString, X + 7, InStr(X + 7, gConnection.ConnectionString, ";") - (X + 7))
+Dim x As Integer
+  x = InStr(1, gConnection.ConnectionString, "SERVER=")
+  If x <> 0 Then DSNServer = Mid(gConnection.ConnectionString, x + 7, InStr(x + 7, gConnection.ConnectionString, ";") - (x + 7))
   Exit Function
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, DSNServer"
 End Function
 
 Public Function DSNPort() As String
 On Error GoTo Err_Handler
-Dim X As Integer
-  X = InStr(1, gConnection.ConnectionString, "PORT=")
-  If X <> 0 Then DSNPort = Mid(gConnection.ConnectionString, X + 5, InStr(X + 5, gConnection.ConnectionString, ";") - (X + 5))
+Dim x As Integer
+  x = InStr(1, gConnection.ConnectionString, "PORT=")
+  If x <> 0 Then DSNPort = Mid(gConnection.ConnectionString, x + 5, InStr(x + 5, gConnection.ConnectionString, ";") - (x + 5))
   Exit Function
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, DSNPort"
 End Function
@@ -426,66 +426,83 @@ Public Sub MsgExportToFile(Obj As Object, szTextToExport As String, Optional ByV
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, MsgExportToFile"
 End Sub
 
-Public Sub cmdButtonActivate(bSystem As Boolean, intSelCount As Integer, Optional cmdObjCreate As Object, Optional cmdObjModify As Object, Optional cmdObjDrop As Object, Optional cmdObjExport As Object, Optional cmdObjEdit As Object, Optional cmdObjRefresh As Object, Optional cmdObjView As Object)
+Public Sub cmdButtonActivate(szKey As String, intSelCount As Integer, Optional cmdObjCreate As CommandButton, Optional cmdObjModify As CommandButton, Optional cmdObjDrop As CommandButton, Optional cmdObjExport As CommandButton, Optional cmdObjEdit As CommandButton, Optional cmdObjRefresh As CommandButton, Optional cmdObjView As CommandButton)
     On Error GoTo Err_Handler
         Select Case intSelCount
                 Case 0
-                     If bSystem = False Then
-                        cmdObjCreate.Enabled = True
-                        cmdObjModify.Enabled = False
-                        cmdObjDrop.Enabled = False
-                        cmdObjExport.Enabled = False
-                        cmdObjEdit.Enabled = False
-                        cmdObjRefresh.Enabled = True
-                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                    Else
-                        cmdObjCreate.Enabled = False
-                        cmdObjModify.Enabled = False
-                        cmdObjDrop.Enabled = False
-                        cmdObjExport.Enabled = False
-                        cmdObjEdit.Enabled = False
-                        cmdObjRefresh.Enabled = True
-                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                    End If
+                    Select Case szKey
+                        Case "Dev:"
+                            cmdObjCreate.Enabled = True
+                            cmdObjModify.Enabled = False
+                            cmdObjDrop.Enabled = False
+                            cmdObjExport.Enabled = False
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        
+                        Case "Pro:"
+                            cmdObjCreate.Enabled = True
+                            cmdObjModify.Enabled = False
+                            cmdObjDrop.Enabled = False
+                            cmdObjExport.Enabled = False
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        
+                        Case "Sys:"
+                            cmdObjCreate.Enabled = False
+                            cmdObjModify.Enabled = False
+                            cmdObjDrop.Enabled = False
+                            cmdObjExport.Enabled = False
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                        
+                        Case Else
+                            cmdObjCreate.Enabled = False
+                            cmdObjModify.Enabled = False
+                            cmdObjDrop.Enabled = False
+                            cmdObjExport.Enabled = False
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                    End Select
         
-                Case 1
-                    If bSystem = False Then
-                        cmdObjCreate.Enabled = True
-                        cmdObjModify.Enabled = True
-                        cmdObjDrop.Enabled = True
-                        cmdObjExport.Enabled = True
-                        cmdObjEdit.Enabled = True
-                        cmdObjRefresh.Enabled = True
-                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
-                    Else
-                        cmdObjCreate.Enabled = False
-                        cmdObjModify.Enabled = False
-                        cmdObjDrop.Enabled = False
-                        cmdObjExport.Enabled = False
-                        cmdObjEdit.Enabled = False
-                        cmdObjRefresh.Enabled = True
-                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
-                    End If
-                    
-                Case Is > 1
-                    If bSystem = False Then
-                        cmdObjCreate.Enabled = True
-                        cmdObjModify.Enabled = False
-                        cmdObjDrop.Enabled = True
-                        cmdObjExport.Enabled = True
-                        cmdObjEdit.Enabled = False
-                        cmdObjRefresh.Enabled = True
-                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
-                    Else
-                        cmdObjCreate.Enabled = False
-                        cmdObjModify.Enabled = False
-                        cmdObjDrop.Enabled = False
-                        cmdObjExport.Enabled = False
-                        cmdObjEdit.Enabled = False
-                        cmdObjRefresh.Enabled = True
-                        'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = True
-                    End If
-        End Select
+                Case Is > 0
+                    Select Case szKey
+                        Case "Dev:"
+                            cmdObjCreate.Enabled = True
+                            cmdObjModify.Enabled = True
+                            cmdObjDrop.Enabled = True
+                            cmdObjExport.Enabled = True
+                            cmdObjEdit.Enabled = True
+                            cmdObjRefresh.Enabled = True
+                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        
+                        Case "Pro:"
+                            cmdObjCreate.Enabled = True
+                            cmdObjModify.Enabled = Not (DevMode)
+                            cmdObjDrop.Enabled = True
+                            cmdObjExport.Enabled = True
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                            'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
+                        
+                        Case "Sys:"
+                            cmdObjCreate.Enabled = False
+                            cmdObjModify.Enabled = False
+                            cmdObjDrop.Enabled = False
+                            cmdObjExport.Enabled = False
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                       
+                        Case Else
+                            cmdObjCreate.Enabled = False
+                            cmdObjModify.Enabled = False
+                            cmdObjDrop.Enabled = False
+                            cmdObjExport.Enabled = False
+                            cmdObjEdit.Enabled = False
+                            cmdObjRefresh.Enabled = True
+                    End Select
+               End Select
    Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, cmdButtonActivate"
 End Sub
