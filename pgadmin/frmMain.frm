@@ -1616,6 +1616,19 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmMain, mnuWindowTileVertic
 End Sub
 
 Private Sub mnuFileExit_Click()
+Dim szMessage As String
+Dim szAnswer As Variant
+
+If cmp_Project_IsRebuilt = False Then
+   szMessage = "Your project needs to be rebuilt to apply changes in " & vbCrLf & _
+   "functions, triggers and views. Apply changes ?"
+   szAnswer = MsgBox(szMessage, vbYesNo, "Rebuild project")
+   If szAnswer = vbYes Then
+        cmp_Project_Rebuild
+        If bContinueRebuilding = False Then Exit Sub
+   End If
+End If
+
 On Error GoTo Err_Handler
   Unload Me
   Exit Sub
