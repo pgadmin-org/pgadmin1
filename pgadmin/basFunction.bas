@@ -577,6 +577,9 @@ On Error GoTo Err_Handler
   StartMsg "Retrieving Function Names..."
   
   Tree.Nodes.Clear
+  iDev_Count = 0
+  iPro_Count = 0
+  iSys_Count = 0
   
   ' Development functions
   szDev_Text = "Development functions"
@@ -619,8 +622,6 @@ On Error GoTo Err_Handler
   If Not (rsFunc.EOF) Then
     szFunc = rsFunc.GetRows
     iUbound = UBound(szFunc, 2)
-    iPro_Count = 0
-    iSys_Count = 0
     For iLoop = 0 To iUbound
          szFunction_oid = szFunc(0, iLoop) & ""
          szFunction_name = szFunc(1, iLoop) & ""
@@ -670,7 +671,7 @@ On Error GoTo Err_Handler
       If Not (rsFunc.EOF) Then
         szFunc = rsFunc.GetRows
         iUbound = UBound(szFunc, 2)
-        iDev_Count = iUbound
+        iDev_Count = iUbound + 1
         For iLoop = 0 To iUbound
              szFunction_oid = szFunc(0, iLoop) & ""
              szFunction_name = szFunc(1, iLoop) & ""
