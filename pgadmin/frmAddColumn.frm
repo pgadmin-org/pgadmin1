@@ -173,10 +173,11 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+Dim sz_trvBrowser_SelectedItem As String
 
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
-  fMainForm.txtSQLPane.Text = "ALTER TABLE " & QUOTE & frmTables.trvBrowser.SelectedItem.Text & QUOTE & vbCrLf
+  fMainForm.txtSQLPane.Text = "ALTER TABLE " & QUOTE & sz_trvBrowser_SelectedItem & QUOTE & vbCrLf
   
   If txtLength2.Visible = True And txtLength2.Text <> "" Then
     fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & " ADD COLUMN " & QUOTE & txtName.Text & QUOTE & " " & cboColumnType.Text
@@ -188,7 +189,7 @@ On Error GoTo Err_Handler
     fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & "  ADD COLUMN " & QUOTE & txtName.Text & QUOTE & " " & QUOTE & cboColumnType.Text & QUOTE
   End If
   If txtDefault.Text <> "" Then
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "ALTER TABLE " & QUOTE & frmTables.trvBrowser.SelectedItem.Text & QUOTE & " ALTER COLUMN " & QUOTE & txtName.Text & QUOTE & " SET DEFAULT " & txtDefault.Text
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "ALTER TABLE " & QUOTE & sz_trvBrowser_SelectedItem & QUOTE & " ALTER COLUMN " & QUOTE & txtName.Text & QUOTE & " SET DEFAULT " & txtDefault.Text
   End If
   
 Exit Sub
@@ -253,7 +254,8 @@ Dim AlterStr As String
     MsgBox "You must select a data type!", vbExclamation, "Error"
     Exit Sub
   End If
-  AlterStr = "ALTER TABLE " & QUOTE & frmTables.trvBrowser.SelectedItem.Text & QUOTE
+
+  AlterStr = "ALTER TABLE " & QUOTE & sz_trvBrowser_SelectedItem & QUOTE
 
   If txtLength2.Visible = True And txtLength2.Text <> "" Then
     AlterStr = AlterStr & " ADD COLUMN " & QUOTE & txtName.Text & QUOTE & " " & cboColumnType.Text
@@ -268,7 +270,7 @@ Dim AlterStr As String
   gConnection.Execute AlterStr
   LogQuery AlterStr
   If txtDefault.Text <> "" Then
-    AlterStr = "ALTER TABLE " & QUOTE & frmTables.trvBrowser.SelectedItem.Text & QUOTE & " ALTER COLUMN " & QUOTE & txtName.Text & QUOTE & " SET DEFAULT " & txtDefault.Text
+    AlterStr = "ALTER TABLE " & QUOTE & sz_trvBrowser_SelectedItem & QUOTE & " ALTER COLUMN " & QUOTE & txtName.Text & QUOTE & " SET DEFAULT " & txtDefault.Text
     LogMsg "Executing: " & AlterStr
     gConnection.Execute AlterStr
     LogQuery AlterStr
@@ -287,6 +289,9 @@ Dim rsTypes As New Recordset
   Me.Width = 4155
   Me.Height = 2325
   StartMsg "Retrieving Data Types..."
+  
+  sz_trvBrowser_SelectedItem = frmTables.trvBrowser.SelectedItem.Text
+  
   If rsTypes.State <> adStateClosed Then rsTypes.Close
   LogMsg "Executing: SELECT typname, typname FROM pg_type WHERE typrelid = 0"
   rsTypes.Open "SELECT typname, typname FROM pg_type WHERE typrelid = 0", gConnection, adOpenForwardOnly
