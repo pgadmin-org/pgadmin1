@@ -188,7 +188,7 @@ Begin VB.MDIForm frmMain
          NumPanels       =   4
          BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   1
-            Object.Width           =   10478
+            Object.Width           =   10557
             Text            =   "Status"
             TextSave        =   "Status"
          EndProperty
@@ -858,7 +858,7 @@ Dim X As Printer
       If rs.State <> adStateClosed Then rs.Close
       LogMsg "Executing: SELECT param_value FROM pgadmin_param WHERE param_id = 3"
       rs.Open "SELECT param_value FROM pgadmin_param WHERE param_id = 3", gConnection, adOpenForwardOnly
-      TrackVer = rs!param_value
+      TrackVer = Val(rs!param_value)
     Else
       Tracking = False
     End If
