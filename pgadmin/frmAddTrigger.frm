@@ -302,8 +302,8 @@ iLoop = 0
  
   StartMsg "Creating Trigger..."
 
-   ' Make backup of trigger if exists
-  If lng_OpenTrig_OID <> 0 Then cmp_Trigger_GetValues lng_OpenTrig_OID, szTriggerName_backup, szTriggerTable_backup, szTriggerFunction_backup, szTriggerArguments_backup, szTriggerForEach_backup, szTriggerExecutes_backup, szTriggerEvent_backup
+   ' Backup trigger if exists
+  If lng_OpenTrig_OID <> 0 Then cmp_Trigger_GetValues lng_OpenTrig_OID, "", szTriggerName_backup, szTriggerTable_backup, szTriggerFunction_backup, szTriggerArguments_backup, szTriggerForEach_backup, szTriggerExecutes_backup, szTriggerEvent_backup
   
   ' Drop trigger if exists
   If lng_OpenTrig_OID <> 0 Then cmp_Trigger_DropIfExists lng_OpenTrig_OID
@@ -454,7 +454,7 @@ On Error GoTo Err_Handler
     Dim szTriggerEvent As String
     
     StartMsg "Retrieving trigger information..."
-    cmp_Trigger_GetValues lng_OpenTrig_OID, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
+    cmp_Trigger_GetValues lng_OpenTrig_OID, "", szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForEach, szTriggerExecutes, szTriggerEvent
     
     ' Loading trigger name
     txtName = szTriggerName

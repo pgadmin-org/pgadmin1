@@ -271,7 +271,7 @@ On Error GoTo Err_Handler
       Me.Caption = "Modify view"
       
       ' Load View data
-      cmp_View_GetValues lng_OpenView_OID, szView_Name, szView_Definition, szView_Owner, szView_Acl
+      cmp_View_GetValues lng_OpenView_OID, "", szView_Name, szView_Definition, szView_Owner, szView_Acl
       
       txtName = szView_Name
       txtSQL.Text = szView_Definition

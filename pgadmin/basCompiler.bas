@@ -30,7 +30,7 @@ Sub cmp_View_DropIfExists(ByVal lngView_OID As Long, Optional ByVal szView_Name 
     ' Test existence of view
     If cmp_View_Exists(lngView_OID, szView_Name & "") = True Then
     
-        If szView_Name = "" Then cmp_View_GetValues lngView_OID, szView_Name
+        If szView_Name = "" Then cmp_View_GetValues lngView_OID, "", szView_Name
     
         ' create drop query
         szDropStr = "DROP VIEW " & QUOTE & szView_Name & QUOTE
@@ -103,13 +103,19 @@ Err_Handler:
   bContinueCompilation = False
 End Sub
 
-Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
+Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_PostgreSQLtable As String, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
+    ' Where should we get the values ?
+    If IsMissing(szView_PostgreSQLtable) Or (szView_PostgreSQLtable = "") Then
+        szView_PostgreSQLtable = "pgadmin_views"
+    End If
+        
+    ' Select query
     If lngView_OID <> 0 Then
-        szQueryStr = "SELECT * from pgadmin_views"
+        szQueryStr = "SELECT * from " & szView_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE view_OID = " & lngView_OID
         LogMsg "Retrieving values from view OID =" & lngView_OID & "..."
     Else
@@ -224,7 +230,7 @@ Sub cmp_Trigger_DropIfExists(ByVal lngTrigger_OID As Long, Optional ByVal szTrig
     ' Test existence of trigger
     If cmp_Trigger_Exists(lngTrigger_OID, szTrigger_name & "", szTrigger_table & "") Then
         ' Retrieve name and table is we only know the OID
-        If lngTrigger_OID <> 0 And ((szTrigger_name = "") Or (szTrigger_table = "")) Then cmp_Trigger_GetValues lngTrigger_OID, szTrigger_name, szTrigger_table
+        If lngTrigger_OID <> 0 And ((szTrigger_name = "") Or (szTrigger_table = "")) Then cmp_Trigger_GetValues lngTrigger_OID, "", szTrigger_name, szTrigger_table
         
         ' Create drop query
         szDropStr = "DROP TRIGGER " & QUOTE & szTrigger_name & QUOTE & " ON " & szTrigger_table
@@ -242,14 +248,21 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_DropIfExists"
 End Sub
 
-Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_event As String)
+Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_PostgreSQLtable As String, Optional szTrigger_name As String, Optional szTrigger_table As String, Optional szTrigger_function As String, Optional szTrigger_arguments As String, Optional szTrigger_ForEach As String, Optional szTrigger_Executes As String, Optional szTrigger_event As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     Dim iTrigger_type As Integer
     
+    ' Where should we get the values ?
+    If IsMissing(szTrigger_PostgreSQLtable) Or (szTrigger_PostgreSQLtable = "") Then
+        szTrigger_PostgreSQLtable = "pgadmin_triggers"
+    End If
+        
+    ' Select query
     If lngTrigger_OID <> 0 Then
-        szQueryStr = "SELECT * from pgadmin_triggers"
+        
+        szQueryStr = "SELECT * from " & szTrigger_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE trigger_OID = " & lngTrigger_OID
         LogMsg "Retrieving name and table from trigger OID =" & lngTrigger_OID & "..."
     Else
@@ -399,7 +412,7 @@ On Error GoTo Err_Handler
     'Drop function if exists
     If cmp_Function_Exists(szFunction_OID, szFunction_name & "", szFunction_arguments & "") = True Then
         ' Retrieve function name and arguments if we only know the OID
-        If szFunction_OID <> 0 Then cmp_Function_GetValues szFunction_OID, szFunction_name, szFunction_arguments
+        If szFunction_OID <> 0 Then cmp_Function_GetValues szFunction_OID, "", szFunction_name, szFunction_arguments
         
         ' create drop query
         szDropStr = "DROP FUNCTION " & QUOTE & szFunction_name & QUOTE & " (" & szFunction_arguments & ");"
@@ -452,7 +465,7 @@ On Error GoTo Err_Handler
     Dim szFunction_source As String
 
     ' Retrieve function
-    cmp_Function_GetValues lngFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
+    cmp_Function_GetValues lngFunction_OID, "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
  
     ' Compile function if exists
     If szFunction_name <> "" Then
@@ -464,7 +477,7 @@ On Error GoTo Err_Handler
     
        If bContinueCompilation = True Then
             ' If it does, compile the real function
-            cmp_Function_DropIfExists 0, szFunction_name, szFunction_arguments
+            cmp_Function_DropIfExists lngFunction_OID
             cmp_Function_Create szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
         
            ' Tell PgAdmin that the function was compiled
@@ -593,18 +606,23 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_HasSatisfiedDependencies"
 End Function
 
-Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String)
+Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_PostgreSQLtable As String, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
+    ' Where should we get the values ?
+        If IsMissing(szFunction_PostgreSQLtable) Or (szFunction_PostgreSQLtable = "") Then
+            szFunction_PostgreSQLtable = "pgadmin_functions"
+        End If
+
+    ' Select query
     If lngFunction_OID <> 0 Then
-            ' create drop query
-        szQueryStr = "SELECT * from pgadmin_functions"
+        szQueryStr = "SELECT * from " & szFunction_PostgreSQLtable
         szQueryStr = szQueryStr & " WHERE function_OID = " & lngFunction_OID
                
         ' Log information
-        LogMsg "Retrieving information from function OID =" & lngFunction_OID & "..."
+        LogMsg "Retrieving information from function OID =" & lngFunction_OID & " in table " & szFunction_PostgreSQLtable & "..."
         LogMsg "Executing: " & szQueryStr
         
         ' open
@@ -615,7 +633,7 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_na
             If Not (IsMissing(szFunction_name)) Then szFunction_name = rsComp!Function_name & ""
             If Not (IsMissing(szFunction_arguments)) Then szFunction_arguments = rsComp!Function_arguments & ""
             If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
-            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!function_source & ""
+            If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
             If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
             If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
            
@@ -628,6 +646,23 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_na
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_GetValues"
 End Sub
+
+Sub cmp_Function_GetCurrentValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String)
+ On Error GoTo Err_Handler
+    cmp_Function_GetValues lngFunction_OID, "pgadmin_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_GetCurrentValues"
+End Sub
+
+Sub cmp_Function_GetDevValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String)
+ On Error GoTo Err_Handler
+    cmp_Function_GetValues lngFunction_OID, "pgadmin_dev_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_GetCurrentValues"
+End Sub
+
 '****
 '**** Table
 '****
@@ -848,7 +883,7 @@ Public Sub comp_Project_BackupFunctions(Optional ByVal Function_OldName, Optiona
     rsComp.Open szQuery, gConnection, adOpenDynamic
     
     While Not rsComp.EOF
-        cmp_Function_Dependency_Initialize rsComp!function_oid, rsComp!Function_name
+        cmp_Function_Dependency_Initialize rsComp!function_OID, rsComp!Function_name
         rsComp.MoveNext
     Wend
     
@@ -887,10 +922,10 @@ Public Sub comp_Project_BackupFunctions(Optional ByVal Function_OldName, Optiona
             
             ' If found, replace Function_OldName by Function_NewName
             While Not rsComp.EOF
-                szFunction_source = Replace(rsComp!function_source, "'", "''")
+                szFunction_source = Replace(rsComp!Function_source, "'", "''")
                 szFunction_source = Replace(szFunction_source, Function_OldName, Function_NewName)
                 szQuery = "UPDATE pgadmin_dev_functions SET szFunction_source = '" & szFunction_source & "'"
-                szQuery = szQuery & " WHERE function_oid = " & Str(rsComp!function_oid)
+                szQuery = szQuery & " WHERE function_oid = " & Str(rsComp!function_OID)
                 
                 LogMsg "Updating function_source in " & Function_OldName & " with " & szFunction_source & "..."
                 LogMsg "Executing: " & szQuery
@@ -934,8 +969,8 @@ On Error GoTo Err_Handler
     
     comp_Project_FindNextFunctionToCompile = 0
     While Not rsComp.EOF
-        If cmp_Function_HasSatisfiedDependencies(rsComp!function_oid) = True Then
-            comp_Project_FindNextFunctionToCompile = rsComp!function_oid
+        If cmp_Function_HasSatisfiedDependencies(rsComp!function_OID) = True Then
+            comp_Project_FindNextFunctionToCompile = rsComp!function_OID
             LogMsg "Next vailable function to compile has OID = " & Str(comp_Project_FindNextFunctionToCompile) & "..."
             Exit Function
         End If

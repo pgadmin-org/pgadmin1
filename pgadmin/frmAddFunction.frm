@@ -492,7 +492,7 @@ Dim szFunction_owner As String
     txtName.Locked = True
     txtName.BackColor = -2147483633
     ' get function values
-    cmp_Function_GetValues lng_OpenFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    cmp_Function_GetValues lng_OpenFunction_OID, "", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
     
     ' Initialize form
     txtName = szFunction_name
