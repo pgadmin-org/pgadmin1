@@ -236,18 +236,16 @@ Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtSQL.Minimise
   txtComments.Minimise
-  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
+  If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
       If Me.Height < 4455 Then Me.Height = 4455
     End If
-    
-    
-        txtSQL.Height = Me.ScaleHeight
-        txtSQL.Width = Me.ScaleWidth - txtSQL.Left - fraDetails.Width - 25
-        fraDetails.Left = txtSQL.Left + txtSQL.Width + 25
-        fraDetails.Height = Me.ScaleHeight
-
+    txtSQL.Height = Me.ScaleHeight
+    txtSQL.Width = Me.ScaleWidth - txtSQL.Left - fraDetails.Width - 25
+    fraDetails.Left = txtSQL.Left + txtSQL.Width + 25
+    fraDetails.Height = Me.ScaleHeight
+    txtComments.Height = fraDetails.Height - txtComments.Top - 100
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddViews, Form_Resize"

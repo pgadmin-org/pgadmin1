@@ -397,18 +397,17 @@ Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtPath.Minimise
   txtComments.Minimise
-  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
+  If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 9000 Then Me.Width = 9000
       If Me.Height < 6000 Then Me.Height = 6000
     End If
-    
-      txtPath.Height = Me.ScaleHeight
-      txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
-      fraDetails.Left = txtPath.Left + txtPath.Width + 25
-      fraDetails.Height = Me.ScaleHeight
-      txtPath.Height = fraDetails.Height - txtPath.Top - 100
-      txtComments.Height = fraDetails.Height - txtComments.Top - 100
+    txtPath.Height = Me.ScaleHeight
+    txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
+    fraDetails.Left = txtPath.Left + txtPath.Width + 25
+    fraDetails.Height = Me.ScaleHeight
+    txtPath.Height = fraDetails.Height - txtPath.Top - 100
+    txtComments.Height = fraDetails.Height - txtComments.Top - 100
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Form_Resize"
