@@ -447,7 +447,7 @@ End Sub
 Public Sub cmdModifyFunc_Click()
 On Error GoTo Err_Handler
     If txtName <> "" Then
-        ModifyFunc txtName & "(" & txtArguments & ")"
+        ModifyFunc txtName.Text & "(" & txtArguments.Text & ")"
     End If
     
 Exit Sub
