@@ -19,6 +19,24 @@ Begin VB.Form frmAddFunction
       TabIndex        =   1
       Top             =   0
       Width           =   4335
+      Begin VB.TextBox txtOwner 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   19
+         Top             =   540
+         Width           =   3345
+      End
+      Begin VB.TextBox txtOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   18
+         Top             =   225
+         Width           =   3345
+      End
       Begin VB.ListBox lstArguments 
          Height          =   1230
          Left            =   900
@@ -116,6 +134,26 @@ Begin VB.Form frmAddFunction
          EndProperty
          SQL             =   "SELECT ""lanname"", ""lanname"" FROM ""pg_language"" WHERE ""lanname"" <> 'Internal'"
       End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Owner"
+         Height          =   195
+         Index           =   1
+         Left            =   90
+         TabIndex        =   21
+         Top             =   585
+         Width           =   465
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "OID"
+         Height          =   195
+         Index           =   0
+         Left            =   90
+         TabIndex        =   20
+         Top             =   270
+         Width           =   285
+      End
       Begin VB.Label lblReturnType 
          AutoSize        =   -1  'True
          Caption         =   "Returns"
@@ -160,7 +198,7 @@ Begin VB.Form frmAddFunction
          Index           =   2
          Left            =   90
          TabIndex        =   3
-         Top             =   1890
+         Top             =   1845
          Width           =   780
       End
    End
@@ -256,6 +294,9 @@ On Error GoTo Err_Handler
 Dim szCreateStr As String
 Dim ArgList As String
 Dim X As Integer
+
+bContinueCompilation = True
+
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the function!", vbExclamation, "Error"
     Exit Sub
@@ -289,17 +330,24 @@ Dim X As Integer
   Next X
   If ArgList <> "" Then ArgList = Left(ArgList, Len(ArgList) - 2)
   
-   ' Drop function if exists
-  If lng_OpenFunction_OID <> 0 Then cmp_Function_DropIfExists lng_OpenFunction_OID
+  ' Create fake function for testing purposes
+  cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15), ArgList
+  cmp_Function_Create "pgadmin_fake__" & Left(txtName.Text, 15), ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
+  cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15), ArgList
   
-  ' Create function
-  cmp_Function_Create txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
-  
-  ' Refresh function list
-  frmFunctions.cmdRefresh_Click
+  If bContinueCompilation = True Then
+    ' Drop function if exists
+    If lng_OpenFunction_OID <> 0 Then cmp_Function_DropIfExists lng_OpenFunction_OID
+    
+    ' Create function
+    cmp_Function_Create txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
+    
+    ' Refresh function list
+    frmFunctions.cmdRefresh_Click
+    Unload Me
+  End If
   
   EndMsg
-  Unload Me
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddFunction, cmdAdd_Click"
 End Sub
@@ -374,6 +422,17 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo Err_Handler
 Dim rsTypes As New Recordset
+
+Dim temp_arg_list As Variant
+Dim temp_arg_item As Variant
+
+Dim szFunction_name As String
+Dim szFunction_arguments As String
+Dim szFunction_returns As String
+Dim szFunction_source As String
+Dim szFunction_language As String
+Dim szFunction_owner As String
+
   LogMsg "Loading Form: " & Me.Name
   Me.Height = 4110
   Me.Width = 4275
@@ -395,7 +454,7 @@ Dim rsTypes As New Recordset
   Wend
   If rsTypes.BOF <> True Then rsTypes.MoveFirst
   
-    ' Retrieve languages
+  ' Retrieve languages
   vssLanguage.Connect = Connect
   vssLanguage.SQL = "SELECT language_name, language_name FROM pgadmin_languages ORDER BY language_name"
   LogMsg "Executing: " & vssLanguage.SQL
@@ -403,19 +462,38 @@ Dim rsTypes As New Recordset
   lstArguments.Clear
   EndMsg
    
-    ' Write query
-  Gen_SQL
-  Set rsTypes = Nothing
-  
-      ' Retrieve function if exists
+  ' Retrieve function if exists
   lng_OpenFunction_OID = gPostgresOBJ_OID
   gPostgresOBJ_OID = 0
-    If lng_OpenFunction_OID <> 0 Then
+  
+  If lng_OpenFunction_OID <> 0 Then
     Me.Caption = "Modify function"
-    Function_Load
-  Else
-    Me.Caption = "Create function"
-  End If
+    
+    ' get function values
+    cmp_Function_GetValues lng_OpenFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
+    
+    ' Initialize form
+    txtName = szFunction_name
+    txtPath.Text = szFunction_source
+    vssLanguage.Text = szFunction_language
+    cboReturnType.Text = szFunction_returns
+    txtOID = lng_OpenFunction_OID
+    txtOwner = szFunction_owner
+      
+    temp_arg_list = Split(szFunction_arguments, ",")
+    For Each temp_arg_item In temp_arg_list
+         cboArguments.Text = Trim(temp_arg_item)
+         cmdAdd_Click
+    Next
+   Else
+      Me.Caption = "Create function"
+      txtOID = "N.S."
+      txtOwner = "N.S."
+   End If
+  
+      ' Write query
+  Gen_SQL
+  Set rsTypes = Nothing
   
   Exit Sub
 Err_Handler:
@@ -443,38 +521,5 @@ On Error GoTo Err_Handler
   Gen_SQL
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddDatabase, vssLanguage_ItemSelected"
-End Sub
-
-Private Sub Function_Load()
-On Error GoTo Err_Handler
-    Dim temp_arg_list As Variant
-    Dim temp_arg_item As Variant
-    
-    Dim szFunction_name As String
-    Dim szFunction_arguments As String
-    Dim szFunction_returns As String
-    Dim szFunction_source As String
-    Dim szFunction_language As String
-    
-    StartMsg "Retrieving Function information..."
-    cmp_Function_GetValues lng_OpenFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
-    
-    ' Initialize form
-    txtName = szFunction_name
-    txtPath.Text = szFunction_source
-    vssLanguage.Text = szFunction_language
-    cboReturnType.Text = szFunction_returns
-
-    temp_arg_list = Split(szFunction_arguments, ",")
-    For Each temp_arg_item In temp_arg_list
-         cboArguments.Text = Trim(temp_arg_item)
-         cmdAdd_Click
-    Next
-    
-    EndMsg
-  Exit Sub
-Err_Handler:
-  EndMsg
-  If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRefresh_Click"
 End Sub
 
