@@ -1421,7 +1421,11 @@ Dim X As Integer
     End If
   Next
   If Len(szJoins) > 7 Then szJoins = Mid(szJoins, 1, Len(szJoins) - 1)
-  szFrom = szJoins & "," & vbCrLf & szTables
+  If szJoins <> "" Then
+    szFrom = szJoins & "," & vbCrLf & szTables
+  Else
+    szFrom = szTables
+  End If
   If Len(szFrom) > 4 Then szFrom = Mid(szFrom, 1, Len(szFrom) - 4)
   
   'Criteria
