@@ -18,6 +18,7 @@ Begin VB.UserControl HBX
       _ExtentX        =   3413
       _ExtentY        =   1085
       _Version        =   393217
+      Enabled         =   -1  'True
       ScrollBars      =   2
       TextRTF         =   $"HBX.ctx":0113
    End
@@ -103,15 +104,24 @@ Dim istart As Integer
 Dim iEnd As Integer
 Dim iRestart As Integer
 Dim iWordlen As Integer
+Dim iCursorPos As Integer
+Dim iSelectedLength As Integer
 Dim szMidString As String
 Dim szWordString As String
   
   iRestart = 1
   iWordlen = 0
+  iCursorPos = rtbString.SelStart
+  iSelectedLength = rtbString.SelLength
   rtbString.SelColor = RGB(0, 0, 0)
   
   For icount = 1 To Len(rtbString.Text)
-    If Mid(rtbString.Text, icount, 1) = " " Or Mid(rtbString.Text, icount, 1) = Chr(10) Then
+    If Mid(rtbString.Text, icount, 1) = " " Or Mid(rtbString.Text, icount, 1) = ")" Or _
+      Mid(rtbString.Text, icount, 1) = "(" Or Mid(rtbString.Text, icount, 1) = "}" Or _
+      Mid(rtbString.Text, icount, 1) = "{" Or Mid(rtbString.Text, icount, 1) = "]" Or _
+      Mid(rtbString.Text, icount, 1) = "[" Or Mid(rtbString.Text, icount, 1) = ";" Or _
+      Mid(rtbString.Text, icount, 1) = ":" Or Mid(rtbString.Text, icount, 1) = Chr(10) Then
+      
       iSelect = 0
       szMidString = Mid(rtbString.Text, iRestart, iWordlen)
       szMidString = TrimString(szMidString)
@@ -132,15 +142,17 @@ Dim szWordString As String
         End If
                 
         rtbString.SelColor = Val(szSeeklist(iSelect).szColourString) 'RGB(0, 0, 255)
-        rtbString.SelStart = Len(rtbString.Text)
+        rtbString.SelStart = iCursorPos
+        rtbString.SelLength = iSelectedLength
+        
       Else
         rtbString.SelStart = iRestart - 1
         rtbString.SelLength = iWordlen
         rtbString.SelColor = RGB(0, 0, 0)
         rtbString.SelBold = False
         rtbString.SelItalic = False
-        rtbString.SelStart = Len(rtbString.Text)
-        
+        rtbString.SelStart = iCursorPos
+        rtbString.SelLength = iSelectedLength
       End If
       
       iRestart = icount + 1
@@ -263,10 +275,10 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
   rtbString.Text = PropBag.ReadProperty("Text", "HBX")
   m_ForeColor = PropBag.ReadProperty("ForeColor", m_def_ForeColor)
   m_BackStyle = PropBag.ReadProperty("BackStyle", m_def_BackStyle)
-  'rtbString.ScrollBars = PropBag.ReadProperty("ScrollBars", 0)
   m_MultiLine = PropBag.ReadProperty("MultiLine", m_def_MultiLine)
   rtbString.RightMargin = PropBag.ReadProperty("RightMargin", 0)
   rtbString.ToolTipText = PropBag.ReadProperty("ToolTipText", "")
+  rtbString.Locked = PropBag.ReadProperty("Locked", False)
 End Sub
 Private Sub UserControl_Show()
   ReDim szSeeklist(0)
@@ -292,7 +304,6 @@ Private Sub UserControl_Show()
       ReDim szseeksplit(0)
     End If
   Next iY
-'  ReDim Preserve szSeeklist(UBound(szSeeklist) - 1)
 End Sub
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
   Call PropBag.WriteProperty("BackColor", rtbString.BackColor, &H80000005)
@@ -307,6 +318,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
   Call PropBag.WriteProperty("MultiLine", m_MultiLine, m_def_MultiLine)
   Call PropBag.WriteProperty("RightMargin", rtbString.RightMargin, 0)
   Call PropBag.WriteProperty("ToolTipText", rtbString.ToolTipText, "")
+  Call PropBag.WriteProperty("Locked", rtbString.Locked, False)
 End Sub
 Public Property Get Wordlist() As String
 Attribute Wordlist.VB_Description = "Pipe Sectioned, Semicolon Delimited array list of words"
@@ -328,7 +340,7 @@ Public Property Let Text(ByVal New_Text As String)
 End Property
 Public Function HUP() As Variant
 Attribute HUP.VB_Description = "Causes the Control to refresh and search the string. "
-rtbstring_KeyUp 32, 0
+ColourBox
 End Function
 Public Property Get ForeColor() As Long
 Attribute ForeColor.VB_Description = "Returns/sets the foreground color used to display text and graphics in an object."
@@ -384,4 +396,13 @@ Next iX
 
 TrimString = szOutput
 End Function
+Public Property Get Locked() As Boolean
+Attribute Locked.VB_Description = "Returns/sets a value indicating whether the contents in a RichTextBox control can be edited."
+  Locked = rtbString.Locked
+End Property
+
+Public Property Let Locked(ByVal New_Locked As Boolean)
+  rtbString.Locked() = New_Locked
+  PropertyChanged "Locked"
+End Property
 
