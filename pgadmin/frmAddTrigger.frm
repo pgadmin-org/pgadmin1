@@ -308,6 +308,8 @@ Private Sub Form_Load()
 On Error GoTo Err_Handler
 Dim rsFuncs As New Recordset
 Dim szQuery As String
+Dim szFunction_table As String
+
   szTriggerName_old = gTrigger_Name
   szTriggerTable_old = gTrigger_Table
   
@@ -323,9 +325,16 @@ Dim szQuery As String
   LogMsg "Executing: " & vssTable.SQL
   vssTable.LoadList
   
-  szQuery = "SELECT function_name, function_arguments FROM pgadmin_functions " & _
-  "WHERE function_returns = NULL AND function_name NOT LIKE 'pg_%' AND function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'RI_%'" & _
-  "ORDER BY function_name"
+  If DevMode = True Then
+    szQuery = "SELECT function_name, function_arguments FROM " & gDevPostgresqlTables & "_functions " & _
+    "WHERE function_returns = 'opaque' AND function_name NOT LIKE 'pg_%' AND function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'RI_%' " & _
+    "ORDER BY function_name"
+  Else
+    szQuery = "SELECT function_name, function_arguments FROM pgadmin_functions " & _
+    "WHERE function_returns = NULL AND function_name NOT LIKE 'pg_%' AND function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'RI_%' " & _
+    "ORDER BY function_name"
+  End If
+  
   LogMsg "Executing: " & szQuery
   rsFuncs.Open szQuery, gConnection, adOpenForwardOnly
   While Not rsFuncs.EOF
