@@ -1,5 +1,5 @@
 Attribute VB_Name = "basView"
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -172,7 +172,7 @@ Sub cmp_View_GetValues(szView_PostgreSqlTable As String, lngView_oid As Long, Op
         If (szView_PostgreSqlTable = "pgadmin_views") Then
             If Not (IsMissing(szView_definition)) Then szView_definition = cmp_View_GetViewDef(szView_name)
         Else
-            If Not (IsMissing(szView_definition)) Then szView_definition = rsComp!view_definition
+            If Not (IsMissing(szView_definition)) Then szView_definition = rsComp!view_definition & ""
         End If
         If Not (IsMissing(szView_comments)) Then szView_comments = rsComp!view_comments & ""
         rsComp.Close
@@ -203,8 +203,9 @@ Public Function cmp_View_GetViewDef(ByVal lngView_Name As String) As String
     If rsTemp.State <> adStateClosed Then rsTemp.Close
     rsTemp.Open szQueryStr, gConnection
     
+    cmp_View_GetViewDef = ""
     If Not rsTemp.EOF Then
-        cmp_View_GetViewDef = rsTemp!Result
+        cmp_View_GetViewDef = rsTemp!result & ""
     End If
     
     Exit Function
@@ -215,46 +216,38 @@ End Function
 Public Sub cmp_View_CopyToDev()
 On Error GoTo Err_Handler
     Dim szQuery As String
-    Dim szView() As Variant
-    Dim szView_definition As String
-    Dim szView_name As String
+    Dim rsTemp As New Recordset
+    Dim szView As Variant
     Dim iUbound As Long
     Dim iLoop As Long
-    Dim rsComp As New Recordset
     
+    Dim lView_oid As Long
+    Dim szView_name As String
+    Dim szView_definition As String
+    Dim szView_owner As String
+    Dim szView_acl As String
+    Dim szView_comments As String
+
+    LogMsg "Exporting pgadmin_views to pgadmin_dev_views..."
     
-    szQuery = "TRUNCATE TABLE pgadmin_dev_views;" & _
-    "  INSERT INTO pgadmin_dev_views SELECT * from " & _
-    "  pgadmin_views " & _
-    "  WHERE view_oid > " & LAST_SYSTEM_OID & _
-    "  AND view_name NOT LIKE 'pgadmin_%' " & _
-    "  AND view_name NOT LIKE 'pg_%' " & _
-    "  ORDER BY view_name; " & _
-    "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
-    LogMsg "Copying pgadmin_views to pgadmin_dev_views..."
+    szQuery = "SELECT view_name, pgadmin_get_viewdef(view_name) as view_definition FROM pgadmin_views WHERE view_name NOT LIKE 'pgadmin_%' AND view_name NOT LIKE 'pg_%' ORDER BY view_name"
     LogMsg "Executing: " & szQuery
-    gConnection.Execute szQuery
-       
-    ' initialize pgadmin_dev_view
-    szQuery = "SELECT view_name FROM pgadmin_dev_views ORDER BY view_oid"
-    If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szQuery, gConnection, adOpenDynamic
-    
-    If Not (rsComp.EOF) Then
-        szQuery = ""
-        szView = rsComp.GetRows
-        If rsComp.State <> adStateClosed Then rsComp.Close
-        iUbound = UBound(szView, 2)
-            For iLoop = 0 To iUbound
-                 'Get view definition
-                 szView_name = szView(0, iLoop)
-                 szView_definition = Replace(cmp_View_GetViewDef(szView_name), "'", "''")
-                
-                ' Update definition of view
-                szQuery = szQuery & "UPDATE pgadmin_dev_views SET view_definition = '" & szView_definition & "' WHERE view_name = '" & szView_name & "'; "
-            Next iLoop
-            LogMsg "Executing: " & szQuery
-            gConnection.Execute szQuery
+    rsTemp.Open szQuery, gConnection, adOpenDynamic
+   
+    If Not (rsTemp.EOF) Then
+      szView = rsTemp.GetRows
+      iUbound = UBound(szView, 2)
+      For iLoop = 0 To iUbound
+           szView_name = szView(0, iLoop)
+           szView_definition = szView(1, iLoop)
+           
+           lView_oid = 0
+           cmp_View_GetValues "pgadmin_views", lView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+           cmp_View_DropIfExists "pgadmin_dev_views", 0, szView_name
+           cmp_View_Create "pgadmin_dev_views", szView_name, szView_definition
+      Next iLoop
+      rsTemp.Close
+      Erase szView
     End If
     
     Exit Sub

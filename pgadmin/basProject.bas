@@ -1,5 +1,5 @@
 Attribute VB_Name = "basProject"
-' pgAdmin - PostgreSQL db Administration/Management for Win32
+' pgadmin - PostgreSQL db Administration/Management for Win32
 ' Copyright (C) 1998 - 2001, Dave Page
 
 ' This program is free software; you can redistribute it and/or
@@ -52,7 +52,7 @@ On Error GoTo Err_Handler
       iUbound = UBound(szFunc, 2)
       For iLoop = 0 To iUbound
           szFunction_name = szFunc(0, iLoop)
-          cmp_Function_Dependency_Initialize szFunction_name
+          cmp_Function_Dependency_Initialize "pgadmin_dev_dependencies", "pgadmin_dev_functions", szFunction_name
       Next iLoop
       Erase szFunc
     End If
@@ -92,7 +92,7 @@ On Error GoTo Err_Handler
       For iLoop = 0 To iUbound
            szFunction_name = szFunc(0, iLoop)
            szFunction_arguments = szFunc(1, iLoop)
-           If cmp_Function_HasSatisfiedDependencies(szFunction_name) = True Then
+           If cmp_Function_HasSatisfiedDependencies("pgadmin_dev_functions", "pgadmin_dev_dependencies", szFunction_name) = True Then
                 cmp_Project_FindNextFunctionToCompile = szFunction_name & "(" & szFunction_arguments & ")"
                 LogMsg "Next vailable function to compile is " & cmp_Project_FindNextFunctionToCompile & "..."
                 Exit Function
@@ -169,7 +169,7 @@ On Error GoTo Err_Handler
     cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
     
     While (szFunction_name <> "") And (bContinueRebuilding = True)
-        cmp_Function_Compile szFunction_name, szFunction_arguments
+        cmp_Function_Compile "pgadmin_dev_functions", szFunction_name, szFunction_arguments
         szNextFunctionToCompile_name = cmp_Project_FindNextFunctionToCompile
         cmp_Function_ParseName szNextFunctionToCompile_name, szFunction_name, szFunction_arguments
     Wend
@@ -180,10 +180,6 @@ On Error GoTo Err_Handler
     cmp_Project_RebuildViews
     
     If bContinueRebuilding = True Then
-        cmp_Function_CopyToDev
-        cmp_Trigger_CopyToDev
-        cmp_View_CopyToDev
-        
         MsgBox ("Rebuilding successfull")
     End If
     Exit Sub
