@@ -470,13 +470,12 @@ On Error GoTo Err_Handler
     Dim szParentKey As String
     Dim bRefresh As Boolean
     
-    Dim szfunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
       
     Dim szMsgboxMessage As String
     
-    If Tree.SelectedItem Is Nothing Then Exit Sub
+    If Tree.TreeCountChecked = 0 Then Exit Sub
     
     szMsgboxMessage = "WARNING!" & vbCrLf & vbCrLf & _
     "Compilation is intended for testing newly created function(s)." & vbCrLf & vbCrLf & _
@@ -516,11 +515,10 @@ On Error GoTo Err_Handler
     Dim szParentKey As String
     Dim bRefresh As Boolean
     
-    Dim szfunction_oid As Long
     Dim szFunction_name As String
     Dim szFunction_arguments As String
       
-    If Tree.SelectedItem Is Nothing Then Exit Sub
+    If Tree.TreeCountChecked = 0 Then Exit Sub
     
     bRefresh = False
     For Each nodX In Tree.Nodes
@@ -693,14 +691,14 @@ On Error GoTo Err_Handler
   If DevMode = False Then
     szPro_Text = "User functions"
   Else
-    szPro_Text = "2 - Production"
+    szPro_Text = "2 - Production functions"
   End If
   
   Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
   iPro_Index = NodeX.Index
   NodeX.Expanded = False
   
-  szDev_Text = "1 - Development"
+  szDev_Text = "1 - Development functions"
   If DevMode = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Dev:", szDev_Text, 1)
     iDev_Index = NodeX.Index
