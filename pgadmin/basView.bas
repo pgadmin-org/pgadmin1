@@ -23,16 +23,16 @@ Option Compare Text
 '**** Views
 '****
 
-Sub cmp_View_DropIfExists(szview_table As String, ByVal lngView_oid As Long, Optional ByVal szView_name As String)
+Sub cmp_View_DropIfExists(szView_table As String, ByVal lngView_oid As Long, Optional ByVal szView_name As String)
 On Error GoTo Err_Handler
     Dim szDropStr As String
     
     ' Where should we get the values ?
-    If (szview_table = "") Then szview_table = "pgadmin_views"
+    If (szView_table = "") Then szView_table = "pgadmin_views"
     
     ' Test existence of view
-    If cmp_View_Exists(szview_table, lngView_oid, szView_name) = True Then
-        cmp_View_Drop szview_table, 0, szView_name
+    If cmp_View_Exists(szView_table, lngView_oid, szView_name) = True Then
+        cmp_View_Drop szView_table, 0, szView_name
     End If
 
 Exit Sub
@@ -40,22 +40,22 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
 End Sub
 
-Sub cmp_View_Drop(szview_table As String, ByVal lngView_oid As Long, Optional ByVal szView_name As String)
+Sub cmp_View_Drop(szView_table As String, ByVal lngView_oid As Long, Optional ByVal szView_name As String)
 On Error GoTo Err_Handler
     Dim szDropStr As String
     
     ' Where should we get the values ?
-    If (szview_table = "") Then szview_table = "pgadmin_views"
+    If (szView_table = "") Then szView_table = "pgadmin_views"
     
     ' Test existence of view
 
-    If szView_name = "" Then cmp_View_GetValues szview_table, lngView_oid, szView_name
+    If szView_name = "" Then cmp_View_GetValues szView_table, lngView_oid, szView_name
 
     ' create drop query
-    If (szview_table = "pgadmin_views") Then
+    If (szView_table = "pgadmin_views") Then
         szDropStr = "DROP VIEW " & QUOTE & szView_name & QUOTE
     Else
-        szDropStr = "DELETE FROM " & szview_table & " WHERE view_name ='" & szView_name & "'"
+        szDropStr = "DELETE FROM " & szView_table & " WHERE view_name ='" & szView_name & "'"
     End If
 
     LogMsg "Executing: " & szDropStr
@@ -67,21 +67,21 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
 End Sub
 
-Function cmp_View_Exists(szview_table As String, ByVal lngView_oid As Long, ByVal szView_name As String) As Boolean
+Function cmp_View_Exists(szView_table As String, ByVal lngView_oid As Long, ByVal szView_name As String) As Boolean
 On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
   
     ' Where should we get the values ?
-    If (szview_table = "") Then szview_table = "pgadmin_views"
+    If (szView_table = "") Then szView_table = "pgadmin_views"
     
     cmp_View_Exists = False
     If lngView_oid <> 0 Then
-        szQueryStr = "SELECT * FROM " & szview_table
+        szQueryStr = "SELECT * FROM " & szView_table
         szQueryStr = szQueryStr & " WHERE view_OID = " & Str(lngView_oid)
     Else
         If szView_name <> "" Then
-            szQueryStr = "SELECT * FROM  " & szview_table
+            szQueryStr = "SELECT * FROM  " & szView_table
             szQueryStr = szQueryStr & " WHERE view_name = '" & szView_name & "' "
         Else
             Exit Function
@@ -89,7 +89,7 @@ On Error GoTo Err_Handler
     End If
     
       ' retrieve name and arguments of function to drop
-    LogMsg "Testing existence of view " & szView_name & " in " & szview_table & "..."
+    LogMsg "Testing existence of view " & szView_name & " in " & szView_table & "..."
     LogMsg "Executing: " & szQueryStr
 
     If rsComp.State <> adStateClosed Then rsComp.Close
@@ -106,31 +106,43 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basView, cmp_View_DropIfExists"
 End Function
 
-Sub cmp_View_Create(szview_table As String, ByVal szView_name As String, ByVal szview_definition As String)
+Sub cmp_View_Create(szView_table As String, ByVal szView_name As String, ByVal szView_definition As String, ByVal szView_owner As String, ByVal szView_acl As String, ByVal szView_comments As String)
 On Error GoTo Err_Handler
-    Dim szCreateStr As String
+    Dim szQuery As String
     Dim szview_oid As Long
     Dim szView_query_oid As Variant
   
     ' Where should we get the values ?
-    If (szview_table = "") Then szview_table = "pgadmin_views"
+    If (szView_table = "") Then szView_table = "pgadmin_views"
     
-    If (szview_table = "pgadmin_views") Then
-        szCreateStr = cmp_View_CreateSQL(szView_name, szview_definition)
+    If (szView_table = "pgadmin_views") Then
+        szQuery = cmp_View_CreateSQL(szView_name, szView_definition)
     Else
-        szCreateStr = "INSERT INTO " & szview_table & " (View_name, View_definition)"
-        szCreateStr = szCreateStr & "VALUES ("
-        szCreateStr = szCreateStr & "'" & szView_name & "', "
-        szCreateStr = szCreateStr & "'" & Trim(Replace(szview_definition, "'", "''")) & "' "
-        szCreateStr = szCreateStr & ");"
+        szView_definition = Trim(Replace(szView_definition, "'", "''"))
+        szView_comments = Trim(Replace(szView_comments, "'", "''"))
+    
+        szQuery = "INSERT INTO " & szView_table & " (View_name, View_definition, View_comments) "
+        szQuery = szQuery & "VALUES ("
+        szQuery = szQuery & "'" & szView_name & "', "
+        szQuery = szQuery & "'" & szView_definition & "', "
+        szQuery = szQuery & "'" & szView_comments & "' "
+        szQuery = szQuery & ");"
     End If
     
-    LogMsg "Creating view " & szView_name & " in " & szview_table & "..."
-    LogMsg "Executing: " & szCreateStr
+    LogMsg "Creating view " & szView_name & " in " & szView_table & "..."
+    LogMsg "Executing: " & szQuery
     
     ' Execute drop query and close log
-    gConnection.Execute szCreateStr
-    LogQuery szCreateStr
+    gConnection.Execute szQuery
+    
+    If (szView_table = "pgadmin_views") Then
+        LogQuery szQuery
+    
+        ' Write comments
+        szQuery = "COMMENT ON VIEW " & szView_name & " IS '" & szView_comments & "'"
+        LogQuery szQuery
+        gConnection.Execute szQuery
+    End If
 
 Exit Sub
 Err_Handler:
@@ -139,10 +151,10 @@ If Err.Number = -2147467259 Then MsgBox "View " & szView_name & " could not be c
 bContinueRebuilding = False
 End Sub
 
-Function cmp_View_CreateSQL(ByVal szView_name As String, ByVal szview_definition As String) As String
+Function cmp_View_CreateSQL(ByVal szView_name As String, ByVal szView_definition As String) As String
 On Error GoTo Err_Handler
   Dim szQuery As String
-    szQuery = Trim("CREATE VIEW " & QUOTE & szView_name & QUOTE & vbCrLf & " AS " & szview_definition)
+    szQuery = Trim("CREATE VIEW " & QUOTE & szView_name & QUOTE & vbCrLf & " AS " & szView_definition)
     If Right(szQuery, 1) <> ";" Then szQuery = szQuery & ";"
     cmp_View_CreateSQL = szQuery
 
@@ -151,21 +163,21 @@ Err_Handler:
 If Err.Number <> 0 Then LogError Err, "basView, cmp_Views_Create"
 End Function
 
-Sub cmp_View_GetValues(szview_table As String, lngView_oid As Long, Optional szView_name As String, Optional szview_definition As String, Optional szview_owner As String, Optional szView_acl As String, Optional szview_comments As String)
+Sub cmp_View_GetValues(szView_table As String, lngView_oid As Long, Optional szView_name As String, Optional szView_definition As String, Optional szView_owner As String, Optional szView_acl As String, Optional szView_comments As String)
 On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
     
     ' Where should we get the values ?
-    If (szview_table = "") Then szview_table = "pgadmin_views"
+    If (szView_table = "") Then szView_table = "pgadmin_views"
         
     ' Select query
     If lngView_oid <> 0 Then
-        szQueryStr = "SELECT * from " & szview_table
+        szQueryStr = "SELECT * from " & szView_table
         szQueryStr = szQueryStr & " WHERE view_OID = " & lngView_oid
     Else
         If IsMissing(szView_name) Then szView_name = ""
-        szQueryStr = "SELECT * from " & szview_table & " WHERE view_name = '" & szView_name & "'"
+        szQueryStr = "SELECT * from " & szView_table & " WHERE view_name = '" & szView_name & "'"
     End If
     
     LogMsg "Executing: " & szQueryStr
@@ -181,21 +193,21 @@ On Error GoTo Err_Handler
             lngView_oid = rsComp!view_oid
         End If
         If Not (IsMissing(szView_name)) Then szView_name = rsComp!view_name & ""
-        If Not (IsMissing(szview_owner)) Then szview_owner = rsComp!view_owner & ""
+        If Not (IsMissing(szView_owner)) Then szView_owner = rsComp!view_owner & ""
         If Not (IsMissing(szView_acl)) Then szView_acl = rsComp!view_acl & ""
-        If (szview_table = "pgadmin_views") Then
-            If Not (IsMissing(szview_definition)) Then szview_definition = cmp_View_GetViewDef(szView_name)
+        If (szView_table = "pgadmin_views") Then
+            If Not (IsMissing(szView_definition)) Then szView_definition = cmp_View_GetViewDef(szView_name)
         Else
-            If Not (IsMissing(szview_definition)) Then szview_definition = rsComp!view_definition & ""
+            If Not (IsMissing(szView_definition)) Then szView_definition = rsComp!view_definition & ""
         End If
-        If Not (IsMissing(szview_comments)) Then szview_comments = rsComp!view_comments & ""
+        If Not (IsMissing(szView_comments)) Then szView_comments = rsComp!view_comments & ""
         rsComp.Close
     Else
         If Not (IsMissing(szView_name)) Then szView_name = ""
-        If Not (IsMissing(szview_owner)) Then szview_owner = ""
+        If Not (IsMissing(szView_owner)) Then szView_owner = ""
         If Not (IsMissing(szView_acl)) Then szView_acl = ""
-        If Not (IsMissing(szview_definition)) Then szview_definition = ""
-        If Not (IsMissing(szview_comments)) Then szview_comments = ""
+        If Not (IsMissing(szView_definition)) Then szView_definition = ""
+        If Not (IsMissing(szView_comments)) Then szView_comments = ""
     End If
   Exit Sub
 Err_Handler:
@@ -229,7 +241,10 @@ End Function
 
 Public Sub cmp_View_Move(szView_source_table As String, szView_target_table As String, szView_name As String, Optional bPromptForReplace As Boolean)
 On Error GoTo Err_Handler
-    Dim szview_definition As String
+    Dim szView_definition As String
+    Dim szView_owner As String
+    Dim szView_acl As String
+    Dim szView_comments As String
     
     If IsMissing(bPromptForReplace) = True Then bPromptForReplace = True
     
@@ -238,19 +253,19 @@ On Error GoTo Err_Handler
     If szView_source_table = szView_target_table Then Exit Sub
     
     If cmp_View_Exists(szView_source_table, 0, szView_name) Then
-        cmp_View_GetValues szView_source_table, 0, szView_name, szview_definition
+        cmp_View_GetValues szView_source_table, 0, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
         If cmp_View_Exists(szView_target_table, 0, szView_name) Then
              If (bPromptForReplace = False) Then
                  cmp_View_Drop szView_target_table, 0, szView_name
-                 cmp_View_Create szView_target_table, szView_name, szview_definition
+                 cmp_View_Create szView_target_table, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
              Else
                 If MsgBox("Replace existing target view " & vbCrLf & szView_name & " ?", vbYesNo) = vbYes Then
                     cmp_View_Drop szView_target_table, 0, szView_name
-                    cmp_View_Create szView_target_table, szView_name, szview_definition
+                    cmp_View_Create szView_target_table, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
                 End If
              End If
         Else
-             cmp_View_Create szView_target_table, szView_name, szview_definition
+             cmp_View_Create szView_target_table, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
         End If
         If bContinueRebuilding = True And szView_target_table = "pgadmin_views" Then
             cmp_View_SetIsCompiled szView_source_table, szView_name
@@ -373,12 +388,12 @@ On Error GoTo Err_Handler
     Dim szParentKey As String
     
     Dim szView_name As String
-    Dim szview_owner As String
+    Dim szView_owner As String
     Dim szView_acl As String
-    Dim szview_comments As String
-    Dim szview_definition As String
+    Dim szView_comments As String
+    Dim szView_definition As String
     
-    Dim szview_table As String
+    Dim szView_table As String
     
     If Tree Is Nothing Then Exit Sub
     If Tree.TreeCountChecked = 0 Then Exit Sub
@@ -395,25 +410,25 @@ On Error GoTo Err_Handler
             End If
             
             If szParentKey = "Pro:" Or szParentKey = "Sys:" Then
-                    szview_table = "pgadmin_views"
+                    szView_table = "pgadmin_views"
             Else
-                    szview_table = gDevPostgresqlTables & "_views"
+                    szView_table = gDevPostgresqlTables & "_views"
             End If
 
             bExport = True
             szView_name = nodX.Text
-            cmp_View_GetValues szview_table, 0, szView_name, szview_definition, szview_owner, szView_acl, szview_comments
+            cmp_View_GetValues szView_table, 0, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
 
             ' Header
             szExport = szExport & "/*" & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
             szExport = szExport & "View " & szView_name & vbCrLf
-            If szview_comments <> "" Then szExport = szExport & szview_comments & vbCrLf
+            If szView_comments <> "" Then szExport = szExport & szView_comments & vbCrLf
             szExport = szExport & "-------------------------------------------------------------------" & vbCrLf
             szExport = szExport & "*/" & vbCrLf
             
             ' Function
-            szExport = szExport & cmp_View_CreateSQL(szView_name, szview_definition) & vbCrLf & vbCrLf
+            szExport = szExport & cmp_View_CreateSQL(szView_name, szView_definition) & vbCrLf & vbCrLf
         End If
     Next
             
@@ -434,7 +449,7 @@ End Sub
 
 Public Sub cmp_view_tree_drop(Tree As TreeToy)
 On Error GoTo Err_Handler
-    Dim szview_table As String
+    Dim szView_table As String
     Dim szView_name As String
     Dim szview_arguments As String
     Dim nodX As Node
@@ -458,17 +473,17 @@ On Error GoTo Err_Handler
     
                 Select Case szParentKey
                     Case "Pro:"
-                    szview_table = "pgadmin_views"
+                    szView_table = "pgadmin_views"
                     bDrop = True
                 
                     Case "Dev:"
-                    szview_table = gDevPostgresqlTables & "_views"
+                    szView_table = gDevPostgresqlTables & "_views"
                     bDrop = True
                 End Select
                      
                 If bDrop = True Then
                     szView_name = nodX.Text
-                    cmp_View_DropIfExists szview_table, 0, szView_name
+                    cmp_View_DropIfExists szView_table, 0, szView_name
                 End If
              End If
         Next
@@ -492,7 +507,7 @@ On Error GoTo Err_Handler
   
   Dim szview_oid As String
   Dim szView_name As String
-  Dim szview_definition As String
+  Dim szView_definition As String
   Dim szview_iscompiled As String
   
   Dim rsView As New Recordset
@@ -544,20 +559,20 @@ On Error GoTo Err_Handler
     For iLoop = 0 To iUbound
          szview_oid = szView(0, iLoop) & ""
          szView_name = szView(1, iLoop) & ""
-         szview_definition = cmp_View_GetViewDef(szView_name)
+         szView_definition = cmp_View_GetViewDef(szView_name)
          
          If CLng(szview_oid) < LAST_SYSTEM_OID Or Left(szView_name, 8) = "pgadmin_" Or Left(szView_name, 3) = "pg_" Then
          ' ---------------------------------------------------------------------
          ' If it is a system view, add it to "S:" System node
          ' ---------------------------------------------------------------------
             Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szView_name, szView_name, 2)
-            NodeX.Tag = cmp_View_CreateSQL(szView_name, szview_definition)
+            NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
         Else
          ' ---------------------------------------------------------------------
          ' Else it is a user view, add it to "P:" Production node
          ' ---------------------------------------------------------------------
             Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szView_name, szView_name, 4)
-            NodeX.Tag = cmp_View_CreateSQL(szView_name, szview_definition)
+            NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
         End If
         NodeX.Image = 4
     Next iLoop
@@ -579,11 +594,11 @@ On Error GoTo Err_Handler
         For iLoop = 0 To iUbound
             szview_oid = szView(0, iLoop) & ""
             szView_name = szView(1, iLoop) & ""
-            szview_definition = szView(2, iLoop) & ""
+            szView_definition = szView(2, iLoop) & ""
             szview_iscompiled = szView(3, iLoop) & ""
             
             Set NodeX = Tree.Nodes.Add("Dev:", tvwChild, "D:" & szView_name, szView_name, 2)
-            NodeX.Tag = cmp_View_CreateSQL(szView_name, szview_definition)
+            NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
             
             If szview_iscompiled = "" Then
                 NodeX.Image = 3

@@ -19,6 +19,15 @@ Begin VB.Form frmAddView
       TabIndex        =   3
       Top             =   0
       Width           =   3660
+      Begin VB.TextBox txtComments 
+         Height          =   2220
+         Left            =   90
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   12
+         Top             =   1755
+         Width           =   3480
+      End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
          Height          =   285
@@ -52,6 +61,16 @@ Begin VB.Form frmAddView
          TabIndex        =   4
          Top             =   225
          Width           =   2670
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Comments"
+         Height          =   195
+         Index           =   8
+         Left            =   90
+         TabIndex        =   13
+         Top             =   1530
+         Width           =   735
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -183,7 +202,7 @@ On Error GoTo Err_Handler
     If szView_name_old <> "" Then cmp_View_DropIfExists "pgadmin_dev_views", 0, szView_name_old
     
     ' Create view
-    cmp_View_Create "pgadmin_dev_views", txtName.Text, txtSQL.Text
+    cmp_View_Create "pgadmin_dev_views", txtName.Text, txtSQL.Text, txtOwner.Text, txtACL.Text, txtComments.Text
     
     If bContinueRebuilding = True Then
         frmViews.cmdRefresh_Click
@@ -253,6 +272,7 @@ On Error GoTo Err_Handler
     Dim szView_definition As String
     Dim szView_owner As String
     Dim szView_acl As String
+    Dim szView_comments As String
     
     szView_name_old = gView_Name
     szView_name = gView_Name
@@ -270,10 +290,11 @@ On Error GoTo Err_Handler
       
       ' Load View data
       lngView_oid = 0
-      cmp_View_GetValues "pgadmin_dev_views", lngView_oid, szView_name, szView_definition, szView_owner, szView_acl
+      cmp_View_GetValues "pgadmin_dev_views", lngView_oid, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
       
-      txtName = szView_name
+      txtName.Text = szView_name
       txtSQL.Text = szView_definition
+      txtComments.Text = szView_comments
       
       If (lngView_oid = 0) Then
             txtOID.Text = "N.S."
