@@ -801,6 +801,7 @@ Dim sTableName As String
 Dim sFieldName As String
 Dim sSQL As String
 Dim szDefaultValue As String
+Dim szInputValue As String
 Dim szLocalQuote As String
 
 
@@ -817,7 +818,8 @@ Dim szLocalQuote As String
   szLocalQuote = "'"
   If Left(txtType.Text, 3) = "int" Or _
      Left(txtType.Text, 5) = "float" Or _
-     Left(txtType.Text, 7) = "numeric" Then
+     Left(txtType.Text, 7) = "numeric" Or _
+     Left(txtType.Text, 9) = "timestamp" Then
      szLocalQuote = ""
   End If
   
@@ -827,16 +829,16 @@ Dim szLocalQuote As String
   'DJP - Confirm action.
   If MsgBox("Are you sure you wish to set default value of " & sFieldName & "?", vbYesNo + vbQuestion, "Confirm set default value") = vbNo Then Exit Sub
   
+  szInputValue = InputBox("Enter Default Value" & vbCrLf & "Enter 'NULL' to reset default value to nothing: ", "Default value", "")
+  If szInputValue = "" Then Exit Sub
 
-  
-  szDefaultValue = InputBox("Enter Default Value: ", "Default value", "")
-  If szDefaultValue = "" Then Exit Sub
-  
   StartMsg "Creating Default value..."
-
+  szDefaultValue = szLocalQuote & szInputValue & szLocalQuote
+  If szInputValue = "NULL" Then szDefaultValue = "NULL"
+  
   sSQL = "ALTER TABLE " & QUOTE & sTableName & QUOTE
   sSQL = sSQL & " ALTER COLUMN " & QUOTE & sFieldName & QUOTE
-  sSQL = sSQL & " SET DEFAULT " & szLocalQuote & szDefaultValue & szLocalQuote & ";"
+  sSQL = sSQL & " SET DEFAULT " & szDefaultValue & ";"
   LogMsg "Executing: " & sSQL
   gConnection.Execute sSQL, , adCmdText
   LogQuery sSQL
