@@ -72,7 +72,7 @@ Err_Handler:
   End If
 End Sub
 
-Public Sub StartMsg(Msg As String)
+Public Sub StartMsg(ByVal Msg As String)
 Dim fNum As Integer
 Dim x As Long
   If Logging = 1 Then
@@ -93,7 +93,7 @@ Dim x As Long
   QryTimer = Timer
 End Sub
 
-Public Sub LogMsg(Msg As String)
+Public Sub LogMsg(ByVal Msg As String)
 Dim fNum As Integer
 Dim x As Long
   If Len(fMainForm.txtLog.Text) + Len(Now & " - " & Msg) > 32000 Then
@@ -171,7 +171,7 @@ Dim y As Integer
 Err_Handler: If Err.Number <> 0 Then LogError Err, "basMisc, CountChar"
 End Function
 
-Public Sub LogQuery(Query As String)
+Public Sub LogQuery(ByVal Query As String)
 On Error GoTo Err_Handler
   If Tracking <> True Then Exit Sub
   If Mid(UCase(Query), 1, 6) = "VACUUM" Then Exit Sub
