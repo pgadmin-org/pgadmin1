@@ -450,7 +450,7 @@ Public Sub cmdButtonActivate(szKey As String, intSelCount As Integer, Optional c
                             'If Not (IsMissing(cmdObjView)) Then cmdObjView.Enabled = False
                         
                         Case "Sys:"
-                            cmdObjCreate.Enabled = False
+                            cmdObjCreate.Enabled = True
                             cmdObjModify.Enabled = False
                             cmdObjDrop.Enabled = False
                             cmdObjExport.Enabled = False
@@ -458,7 +458,7 @@ Public Sub cmdButtonActivate(szKey As String, intSelCount As Integer, Optional c
                             cmdObjRefresh.Enabled = True
                         
                         Case Else
-                            cmdObjCreate.Enabled = False
+                            cmdObjCreate.Enabled = True
                             cmdObjModify.Enabled = False
                             cmdObjDrop.Enabled = False
                             cmdObjExport.Enabled = False
