@@ -591,7 +591,7 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_na
             If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
             If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
             If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
-            If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!Function_owner & ""
+            If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!function_owner & ""
            
             If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
             szFunction_source = Replace(szFunction_source, "'", "''")
@@ -792,17 +792,9 @@ On Error GoTo Err_Handler
     If rsViews.State <> adStateClosed Then rsViews.Close
     rsViews.Open szQueryStr, gConnection, adOpenDynamic
     
-    While Not rsViews.EOF And bContinueCompilation
-        ' Create fake view for testing purposes
-        cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(rsViews!view_name, 15)
-        cmp_View_Create "pgadmin_fake__" & Left(rsViews!view_name, 15), rsViews!view_definition
-        cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(rsViews!view_name, 15)
-        
-        ' If OK, create real view
-        If bContinueCompilation = True Then
-            cmp_View_DropIfExists rsViews!view_oid, rsViews!view_name
-            cmp_View_Create rsViews!view_name, rsViews!view_definition
-        End If
+    While Not rsViews.EOF
+        cmp_View_DropIfExists rsViews!view_oid, rsViews!view_name
+        cmp_View_Create rsViews!view_name, rsViews!view_definition
         rsViews.MoveNext
     Wend
 
@@ -822,8 +814,10 @@ On Error GoTo Err_Handler
         lngNextFunctionToCompile_OID = comp_Project_FindNextFunctionToCompile
     Wend
       
-    If bContinueCompilation = True Then comp_Project_RelinkTriggers
-    If bContinueCompilation = True Then comp_Project_RelinkViews
+    ' We must always relink triggers and views
+    ' even if function compilation was aborted
+    comp_Project_RelinkTriggers
+    comp_Project_RelinkViews
     
     If bContinueCompilation = True Then MsgBox ("Rebuilding successfull")
     Exit Sub
