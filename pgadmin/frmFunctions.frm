@@ -1,8 +1,8 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
-Object = "{690E42C6-5198-11D5-834A-0050BACE7D99}#1.0#0"; "TreeToys.ocx"
+Object = "{07C43A57-5336-11D5-A885-0001020F24EF}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
    ClientHeight    =   5595
@@ -26,7 +26,7 @@ Begin VB.Form frmFunctions
       BorderStyle     =   1
       Checkboxes      =   -1  'True
       FullRowSelect   =   -1  'True
-      Indentation     =   99.78
+      Indentation     =   99,78
       LabelEdit       =   1
       LineStyle       =   1
       Sorted          =   -1  'True
