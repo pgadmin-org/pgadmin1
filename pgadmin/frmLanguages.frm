@@ -259,15 +259,17 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
       If Me.Height < 4455 Then Me.Height = 4455
     End If
+    
     lstLang.Height = Me.ScaleHeight
     lstLang.Width = Me.ScaleWidth - lstLang.Left - fraDetails.Width - 25
     fraDetails.Left = lstLang.Left + lstLang.Width + 25
     fraDetails.Height = Me.ScaleHeight
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmLanguages, Form_Resize"

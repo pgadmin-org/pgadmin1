@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmIndexes 
    Caption         =   "Indexes"
    ClientHeight    =   4050
@@ -137,7 +137,6 @@ Begin VB.Form frmIndexes
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtLossy 
          BackColor       =   &H8000000F&
@@ -575,11 +574,12 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtComments.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If frmIndexes.Width < 8325 Then frmIndexes.Width = 8325
       If frmIndexes.Height < 4455 Then frmIndexes.Height = 4455
     End If
+    
     trvBrowser.Height = frmIndexes.ScaleHeight
     trvBrowser.Width = frmIndexes.ScaleWidth - trvBrowser.Left - fraDatasource.Width - 25
     fraDatasource.Left = trvBrowser.Left + trvBrowser.Width + 25
@@ -589,6 +589,7 @@ On Error GoTo Err_Handler
     fraIndex.Height = fraDatasource.Height
     fraColumn.Left = fraDatasource.Left
     fraColumn.Height = fraDatasource.Height
+
   End If
   Exit Sub
 Err_Handler:

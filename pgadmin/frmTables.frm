@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmTables 
    Caption         =   "Tables"
    ClientHeight    =   4050
@@ -207,7 +207,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Columns"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtUniqueOID 
          BackColor       =   &H8000000F&
@@ -265,7 +264,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Columns"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -323,7 +321,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Local Columns"
-         AutoColour      =   -1  'True
       End
       Begin HighlightBox.HBX txtForeignColumns 
          Height          =   1455
@@ -345,7 +342,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Foreign Columns"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -404,7 +400,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Definition"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -498,7 +493,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -772,7 +766,6 @@ Begin VB.Form frmTables
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -1272,11 +1265,12 @@ On Error GoTo Err_Handler
   txtLocalColumns.Minimise
   txtForeignColumns.Minimise
   txtCheckDefinition.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If frmTables.Width < 8325 Then frmTables.Width = 8325
       If frmTables.Height < 4455 Then frmTables.Height = 4455
     End If
+    
     trvBrowser.Height = frmTables.ScaleHeight
     trvBrowser.Width = frmTables.ScaleWidth - trvBrowser.Left - fraDatasource.Width - 25
     fraDatasource.Left = trvBrowser.Left + trvBrowser.Width + 25
@@ -1299,6 +1293,7 @@ On Error GoTo Err_Handler
     fraPrimary.Height = fraDatasource.Height
     fraUnique.Left = fraDatasource.Left
     fraUnique.Height = fraDatasource.Height
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Resize"

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adoDataGrid.ocx"
+Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adodatagrid.ocx"
 Begin VB.Form frmUsers 
    Caption         =   "Users"
    ClientHeight    =   3315
@@ -87,7 +87,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsUsers As New Recordset
 
-Private Sub dgUsers_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub dgUsers_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXUsers
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmUsers, grdUsers_MouseUp"
@@ -179,16 +179,18 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 5145 Then Me.Width = 5145
       If Me.Height < 3000 Then Me.Height = 3000
     End If
+    
     dgUsers.Height = Me.ScaleHeight - cmdRefresh.Height - 50
     cmdRefresh.Top = Me.ScaleHeight - cmdRefresh.Height
     cmdDrop.Top = Me.ScaleHeight - cmdRefresh.Height
     cmdCreate.Top = Me.ScaleHeight - cmdRefresh.Height
     cmdModify.Top = Me.ScaleHeight - cmdRefresh.Height
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmUsers, Form_Resize"

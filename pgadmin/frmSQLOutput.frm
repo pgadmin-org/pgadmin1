@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmSQLOutput 
    Caption         =   "SQL Output"
    ClientHeight    =   3195
@@ -732,11 +732,12 @@ End Sub
 
 Private Sub Form_Resize()
 'On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 5820 Then Me.Width = 5820
       If Me.Height < 3600 Then Me.Height = 3600
     End If
+    
     picTools.Visible = True
     picTools.Width = Me.ScaleWidth
     picTools.Top = Me.ScaleHeight - picTools.Height
@@ -747,6 +748,7 @@ Private Sub Form_Resize()
     picScroll.Width = picEdit.ScaleWidth - scScroll.Width
     scScroll.Left = picScroll.Width
     scScroll.Height = picEdit.ScaleHeight
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQLOutput, Form_Resize"

@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmViews 
    Caption         =   "Views"
@@ -218,7 +218,6 @@ Begin VB.Form frmViews
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Definition"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtName 
          BackColor       =   &H8000000F&
@@ -267,7 +266,6 @@ Begin VB.Form frmViews
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -353,16 +351,19 @@ Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtDefinition.Minimise
   txtComments.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
       If Me.Height < 4980 Then Me.Height = 4980
     End If
-    trvBrowser.Height = Me.ScaleHeight
-    trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
-    fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
-    fraDetails.Height = Me.ScaleHeight
-    txtComments.Height = fraDetails.Height - txtComments.Top - 100
+    
+    
+        trvBrowser.Height = Me.ScaleHeight
+        trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
+        fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
+        fraDetails.Height = Me.ScaleHeight
+        txtComments.Height = fraDetails.Height - txtComments.Top - 100
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmViews, Form_Resize"

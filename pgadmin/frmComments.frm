@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmComments 
    Caption         =   "Comments"
    ClientHeight    =   2820
@@ -30,7 +30,6 @@ Begin VB.Form frmComments
          Strikethrough   =   0   'False
       EndProperty
       ControlBarVisible=   0   'False
-      AutoColour      =   -1  'True
    End
    Begin VB.CommandButton cmdSave 
       Caption         =   "&Save"
@@ -149,13 +148,15 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.Width < 2000 Then Me.Width = 2000
     If Me.Height < 2000 Then Me.Height = 2000
+    
     txtComments.Width = Me.ScaleWidth
     txtComments.Height = Me.ScaleHeight - cmdSave.Height - 100
     cmdSave.Top = txtComments.Top + txtComments.Height + 50
     cmdSave.Left = Me.ScaleWidth - cmdSave.Width
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmComments, Form_Resize"

@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{0006467F-5D0B-11D2-AD1C-0060978DBC90}#1.0#0"; "vsrexec.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmRexec 
    Caption         =   "Remote Execute"
    ClientHeight    =   3210
@@ -189,8 +189,11 @@ On Error GoTo Err_Handler
     If Me.Width < 4365 Then Me.Width = 4365
     If Me.Height < 3075 Then Me.Height = 3075
   End If
-  txtOP.Width = Me.ScaleWidth
-  txtOP.Height = Me.ScaleHeight - txtOP.Top
+  
+  
+    txtOP.Width = Me.ScaleWidth
+    txtOP.Height = Me.ScaleHeight - txtOP.Top
+
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmRexec, Form_Resize"
 End Sub

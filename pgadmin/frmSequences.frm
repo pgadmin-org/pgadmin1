@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmSequences 
    Caption         =   "Sequences"
    ClientHeight    =   4050
@@ -64,7 +64,6 @@ Begin VB.Form frmSequences
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtACL 
          BackColor       =   &H8000000F&
@@ -401,16 +400,18 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtComments.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
       If Me.Height < 4455 Then Me.Height = 4455
     End If
+    
     lstSeq.Height = Me.ScaleHeight
     lstSeq.Width = Me.ScaleWidth - lstSeq.Left - fraDetails.Width - 25
     fraDetails.Left = lstSeq.Left + lstSeq.Width + 25
     fraDetails.Height = Me.ScaleHeight
     txtComments.Height = fraDetails.Height - txtComments.Top - 100
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSequences, Form_Resize"

@@ -78,7 +78,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     crViewer.Height = Me.ScaleHeight
     crViewer.Width = Me.ScaleWidth
   End If

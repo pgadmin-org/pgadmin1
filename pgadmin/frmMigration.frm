@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
 Begin VB.Form frmMigration 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Database Migration Wizard"
@@ -126,33 +126,33 @@ Begin VB.Form frmMigration
       TabCaption(1)   =   " "
       TabPicture(1)   =   "frmMigration.frx":130E
       Tab(1).ControlEnabled=   0   'False
-      Tab(1).Control(0)=   "lstTables"
-      Tab(1).Control(1)=   "cmdSelect(0)"
-      Tab(1).Control(2)=   "cmdDeselect(0)"
-      Tab(1).Control(3)=   "Label1(1)"
+      Tab(1).Control(0)=   "Label1(1)"
+      Tab(1).Control(1)=   "cmdDeselect(0)"
+      Tab(1).Control(2)=   "cmdSelect(0)"
+      Tab(1).Control(3)=   "lstTables"
       Tab(1).ControlCount=   4
       TabCaption(2)   =   " "
       TabPicture(2)   =   "frmMigration.frx":132A
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "lstData"
-      Tab(2).Control(1)=   "cmdSelect(1)"
-      Tab(2).Control(2)=   "cmdDeselect(1)"
-      Tab(2).Control(3)=   "Label1(9)"
+      Tab(2).Control(0)=   "Label1(9)"
+      Tab(2).Control(1)=   "cmdDeselect(1)"
+      Tab(2).Control(2)=   "cmdSelect(1)"
+      Tab(2).Control(3)=   "lstData"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   " "
       TabPicture(3)   =   "frmMigration.frx":1346
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "lstForeignKeys"
-      Tab(3).Control(1)=   "cmdSelect(2)"
+      Tab(3).Control(0)=   "Label1(8)"
+      Tab(3).Control(1)=   "Label1(10)"
       Tab(3).Control(2)=   "cmdDeselect(2)"
-      Tab(3).Control(3)=   "Label1(10)"
-      Tab(3).Control(4)=   "Label1(8)"
+      Tab(3).Control(3)=   "cmdSelect(2)"
+      Tab(3).Control(4)=   "lstForeignKeys"
       Tab(3).ControlCount=   5
       TabCaption(4)   =   " "
       TabPicture(4)   =   "frmMigration.frx":1362
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "txtStatus"
-      Tab(4).Control(1)=   "pbStatus"
+      Tab(4).Control(0)=   "pbStatus"
+      Tab(4).Control(1)=   "txtStatus"
       Tab(4).ControlCount=   2
       Begin VB.TextBox txtStatus 
          Height          =   3480
@@ -721,7 +721,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 6930 Then Me.Width = 6930
       If Me.Height < 4680 Then Me.Height = 4680

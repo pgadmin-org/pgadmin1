@@ -1,7 +1,6 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
-
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddFunction 
    Caption         =   "Function"
    ClientHeight    =   5595
@@ -39,7 +38,6 @@ Begin VB.Form frmAddFunction
             Strikethrough   =   0   'False
          EndProperty
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtOwner 
          BackColor       =   &H8000000F&
@@ -211,7 +209,6 @@ Begin VB.Form frmAddFunction
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "Function Definition"
-      AutoColour      =   -1  'True
    End
 End
 Attribute VB_Name = "frmAddFunction"
@@ -400,16 +397,19 @@ Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtPath.Minimise
   txtComments.Minimise
-  If Me.WindowState = 0 Then
-    If Me.Width < 9000 Then Me.Width = 9000
-    If Me.Height < 6000 Then Me.Height = 6000
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
+    If Me.WindowState = 0 Then
+      If Me.Width < 9000 Then Me.Width = 9000
+      If Me.Height < 6000 Then Me.Height = 6000
+    End If
+    
+      txtPath.Height = Me.ScaleHeight
+      txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
+      fraDetails.Left = txtPath.Left + txtPath.Width + 25
+      fraDetails.Height = Me.ScaleHeight
+      txtPath.Height = fraDetails.Height - txtPath.Top - 100
+      txtComments.Height = fraDetails.Height - txtComments.Top - 100
   End If
-  txtPath.Height = Me.ScaleHeight
-  txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
-  fraDetails.Left = txtPath.Left + txtPath.Width + 25
-  fraDetails.Height = Me.ScaleHeight
-  txtPath.Height = fraDetails.Height - txtPath.Top - 100
-  txtComments.Height = fraDetails.Height - txtComments.Top - 100
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Form_Resize"
 End Sub

@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.3#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmSQL 
    Caption         =   "SQL"
    ClientHeight    =   3195
@@ -263,11 +263,12 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 6705 Then Me.Width = 6705
       If Me.Height < 3600 Then Me.Height = 3600
     End If
+    
     txtSQL.Width = Me.ScaleWidth
     txtSQL.Height = Me.ScaleHeight - cmdExecute.Height - 50
     cmdExecute.Top = Me.ScaleHeight - cmdExecute.Height
@@ -278,6 +279,7 @@ On Error GoTo Err_Handler
     vssExporters.Left = Me.ScaleWidth - vssExporters.Width
     cmdExecute.Left = vssExporters.Left - cmdExecute.Width - 50
     vssExporters.Left = Me.ScaleWidth - vssExporters.Width
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmSQL, Form_Resize"

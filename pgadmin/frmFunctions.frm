@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
@@ -197,7 +197,6 @@ Begin VB.Form frmFunctions
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Function/Path to Object Code"
-         AutoColour      =   -1  'True
       End
       Begin HighlightBox.HBX txtComments 
          Height          =   1275
@@ -219,7 +218,6 @@ Begin VB.Form frmFunctions
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin HighlightBox.HBX txtArguments 
          Height          =   1275
@@ -241,7 +239,6 @@ Begin VB.Form frmFunctions
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Arguments"
-         AutoColour      =   -1  'True
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -388,16 +385,18 @@ On Error GoTo Err_Handler
   txtArguments.Minimise
   txtComments.Minimise
   txtFunction.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 9000 Then Me.Width = 9000
       If Me.Height < 6000 Then Me.Height = 6000
     End If
+
     trvBrowser.Height = Me.ScaleHeight
     trvBrowser.Width = Me.ScaleWidth - trvBrowser.Left - fraDetails.Width - 25
     fraDetails.Left = trvBrowser.Left + trvBrowser.Width + 25
     fraDetails.Height = Me.ScaleHeight
     txtComments.Height = fraDetails.Height - txtComments.Top - 100
+
   End If
 
 Exit Sub

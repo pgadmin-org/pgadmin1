@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmDatabases 
    Caption         =   "Databases"
    ClientHeight    =   4050
@@ -82,7 +82,6 @@ Begin VB.Form frmDatabases
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Comments"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtPath 
          BackColor       =   &H8000000F&
@@ -373,7 +372,7 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtComments.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.Width < 8325 Then Me.Width = 8325
     If Me.Height < 4455 Then Me.Height = 4455
     lstDB.Height = Me.ScaleHeight

@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportAdd 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Add Report"
@@ -35,7 +35,6 @@ Begin VB.Form frmReportAdd
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "SQL"
-      AutoColour      =   -1  'True
    End
    Begin VB.TextBox txtAuthor 
       Height          =   285
@@ -141,7 +140,6 @@ Begin VB.Form frmReportAdd
          Strikethrough   =   0   'False
       EndProperty
       Caption         =   "Description"
-      AutoColour      =   -1  'True
    End
    Begin VB.Label Label1 
       AutoSize        =   -1  'True
@@ -326,12 +324,15 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  txtDescription.Minimise
-  txtSQL.Minimise
-  If Me.WindowState <> 1 Then
+
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.Width < 4530 Then Me.Width = 4530
     If Me.Height < 5445 Then Me.Height = 5445
+  
+    txtDescription.Minimise
+    txtSQL.Minimise
   End If
+  
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmReportAdd, Form_Resize"
 End Sub

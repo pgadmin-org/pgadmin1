@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
-Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adoDataGrid.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adodatagrid.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmGroups 
    Caption         =   "Groups"
    ClientHeight    =   4815
@@ -34,7 +34,6 @@ Begin VB.Form frmGroups
       EndProperty
       Locked          =   -1  'True
       Caption         =   "Group Members"
-      AutoColour      =   -1  'True
    End
    Begin vsAdoSelector.VS_AdoSelector vssUsers 
       Height          =   315
@@ -220,21 +219,24 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtUsers.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 5850 Then Me.Width = 5850
       If Me.Height < 4845 Then Me.Height = 4845
     End If
-    txtUsers.Width = Me.ScaleWidth
-    dgGroups.Height = ((Me.ScaleHeight - ((cmdRefresh.Height + 50) * 2)) / 3) * 2
-    txtUsers.Height = dgGroups.Height / 2
-    txtUsers.Top = dgGroups.Top + dgGroups.Height
-    cmdRefresh.Top = Me.ScaleHeight - cmdRefresh.Height
-    cmdDrop.Top = Me.ScaleHeight - (cmdRefresh.Height * 2) - 50
-    cmdCreate.Top = cmdDrop.Top
-    cmdAddUser.Top = cmdDrop.Top
-    cmdRemoveUser.Top = cmdDrop.Top
-    vssUsers.Top = cmdRefresh.Top
+    
+    
+        txtUsers.Width = Me.ScaleWidth
+        dgGroups.Height = ((Me.ScaleHeight - ((cmdRefresh.Height + 50) * 2)) / 3) * 2
+        txtUsers.Height = dgGroups.Height / 2
+        txtUsers.Top = dgGroups.Top + dgGroups.Height
+        cmdRefresh.Top = Me.ScaleHeight - cmdRefresh.Height
+        cmdDrop.Top = Me.ScaleHeight - (cmdRefresh.Height * 2) - 50
+        cmdCreate.Top = cmdDrop.Top
+        cmdAddUser.Top = cmdDrop.Top
+        cmdRemoveUser.Top = cmdDrop.Top
+        vssUsers.Top = cmdRefresh.Top
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmGroups, Form_Resize"

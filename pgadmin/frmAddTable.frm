@@ -475,35 +475,35 @@ End Sub
 Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
 Dim CreateStr As String
-Dim X As Integer
+Dim x As Integer
   If txtTable.Text = "" Then
     MsgBox "You must enter a table name!", vbExclamation, "Error"
     Exit Sub
   End If
   CreateStr = "CREATE TABLE " & QUOTE & txtTable.Text & QUOTE & " ("
-  X = 0
-  Do While X <> lstColumns.ListCount - 1
-    CreateStr = CreateStr & lstColumns.List(X) & ", "
-    X = X + 1
+  x = 0
+  Do While x <> lstColumns.ListCount - 1
+    CreateStr = CreateStr & lstColumns.List(x) & ", "
+    x = x + 1
   Loop
-  CreateStr = CreateStr & lstColumns.List(X)
-  X = 0
+  CreateStr = CreateStr & lstColumns.List(x)
+  x = 0
   If lstConstraints.ListCount > 0 Then
     CreateStr = CreateStr & ", "
-    Do While X <> lstConstraints.ListCount - 1
-      CreateStr = CreateStr & lstConstraints.List(X) & ", "
-      X = X + 1
+    Do While x <> lstConstraints.ListCount - 1
+      CreateStr = CreateStr & lstConstraints.List(x) & ", "
+      x = x + 1
     Loop
-    CreateStr = CreateStr & lstConstraints.List(X)
+    CreateStr = CreateStr & lstConstraints.List(x)
   End If
   If lstInherits.ListCount > 0 Then
     CreateStr = CreateStr & ") INHERITS ("
-    X = 0
-    Do While X <> lstInherits.ListCount - 1
-      CreateStr = CreateStr & lstInherits.List(X) & ", "
-      X = X + 1
+    x = 0
+    Do While x <> lstInherits.ListCount - 1
+      CreateStr = CreateStr & lstInherits.List(x) & ", "
+      x = x + 1
     Loop
-    CreateStr = CreateStr & lstInherits.List(X)
+    CreateStr = CreateStr & lstInherits.List(x)
   End If
   StartMsg "Creating Table..."
   CreateStr = CreateStr & ")"
@@ -529,33 +529,33 @@ End Sub
 
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   fMainForm.txtSQLPane.Text = "CREATE TABLE " & QUOTE & txtTable.Text & QUOTE & " ("
-  X = 0
+  x = 0
   If lstColumns.ListCount > 0 Then
-    Do While X <> lstColumns.ListCount - 1
-      fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstColumns.List(X) & ", "
-      X = X + 1
+    Do While x <> lstColumns.ListCount - 1
+      fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstColumns.List(x) & ", "
+      x = x + 1
     Loop
   End If
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstColumns.List(X)
-  X = 0
+  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstColumns.List(x)
+  x = 0
   If lstConstraints.ListCount > 0 Then
     fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & ", "
-    Do While X <> lstConstraints.ListCount - 1
-      fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstConstraints.List(X) & ", "
-      X = X + 1
+    Do While x <> lstConstraints.ListCount - 1
+      fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstConstraints.List(x) & ", "
+      x = x + 1
     Loop
   End If
-  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstConstraints.List(X)
+  fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstConstraints.List(x)
   If lstInherits.ListCount > 0 Then
     fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & ")" & vbCrLf & "  INHERITS ("
-    X = 0
-    Do While X <> lstInherits.ListCount - 1
-      fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstInherits.List(X) & ", "
-      X = X + 1
+    x = 0
+    Do While x <> lstInherits.ListCount - 1
+      fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstInherits.List(x) & ", "
+      x = x + 1
     Loop
-    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstInherits.List(X)
+    fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & vbCrLf & "    " & lstInherits.List(x)
   End If
   fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & ")"
   Exit Sub
@@ -759,15 +759,17 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       Me.Height = 5625
       If Me.Width < 7140 Then Me.Width = 7140
     End If
+    
     lstColumns.Width = Me.ScaleWidth - lstColumns.Left
     lstConstraints.Width = lstColumns.Width
     lstInherits.Width = lstColumns.Width
     cmdCreate.Left = lstColumns.Left + lstColumns.Width - cmdCreate.Width
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddTable, Form_Resize"

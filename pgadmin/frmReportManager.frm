@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.2#0"; "HighlightBox.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmReportManager 
    Caption         =   "Report Manager"
    ClientHeight    =   4050
@@ -39,7 +39,6 @@ Begin VB.Form frmReportManager
          EndProperty
          Locked          =   -1  'True
          Caption         =   "Description"
-         AutoColour      =   -1  'True
       End
       Begin VB.TextBox txtAuthor 
          BackColor       =   &H8000000F&
@@ -334,14 +333,16 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   txtDescription.Minimise
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.Width < 8325 Then Me.Width = 8325
     If Me.Height < 4455 Then Me.Height = 4455
+    
     trvReports.Height = Me.ScaleHeight
     trvReports.Width = Me.ScaleWidth - trvReports.Left - fraReport.Width - 25
     fraReport.Left = trvReports.Left + trvReports.Width + 25
     fraReport.Height = Me.ScaleHeight
     txtDescription.Height = fraReport.Height - txtDescription.Top - 100
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmReportManager, Form_Resize"

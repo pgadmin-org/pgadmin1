@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "VSAdoSelector.ocx"
+Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Begin VB.Form frmAddLanguage 
    Caption         =   "Create Language"
    ClientHeight    =   1755
@@ -147,16 +147,19 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 4275 Then Me.Width = 4275
       If Me.Height < 2160 Then Me.Height = 2160
     End If
-    cmdCreate.Left = Me.ScaleWidth - cmdCreate.Width - 50
-    cmdCreate.Top = Me.ScaleHeight - cmdCreate.Height - 50
-    txtName.Width = Me.ScaleWidth - txtName.Left - 50
-    vssHandler.Width = txtName.Width
-    txtCompiler.Width = txtName.Width
+    
+    
+        cmdCreate.Left = Me.ScaleWidth - cmdCreate.Width - 50
+        cmdCreate.Top = Me.ScaleHeight - cmdCreate.Height - 50
+        txtName.Width = Me.ScaleWidth - txtName.Left - 50
+        vssHandler.Width = txtName.Width
+        txtCompiler.Width = txtName.Width
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmLanguage, Form_Resize"

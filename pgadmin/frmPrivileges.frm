@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmPrivileges 
    Caption         =   "Privileges"
    ClientHeight    =   5640
@@ -297,10 +297,10 @@ Option Explicit
 
 Private Sub chkAll_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
+Dim x As Integer
   If chkAll.Value = 1 Then
-    For X = 1 To lvClass.ListItems.Count
-      lvClass.ListItems(X).Checked = True
+    For x = 1 To lvClass.ListItems.Count
+      lvClass.ListItems(x).Checked = True
     Next
     lvClass.Enabled = False
   Else
@@ -315,16 +315,16 @@ Private Sub Gen_SQL()
 On Error GoTo Err_Handler
 Dim SecString As String
 Dim ClassList As String
-Dim X As Integer
-Dim Y As Integer
+Dim x As Integer
+Dim y As Integer
   fMainForm.txtSQLPane.Text = ""
   If optAction(0).Value = True Then
     SecString = "GRANT *#-privilege-#* ON "
   Else
     SecString = "REVOKE *#-privilege-#* ON "
   End If
-  For X = 1 To lvClass.ListItems.Count
-    If lvClass.ListItems(X).Checked = True Then ClassList = ClassList & QUOTE & lvClass.ListItems(X).Text & QUOTE & ", "
+  For x = 1 To lvClass.ListItems.Count
+    If lvClass.ListItems(x).Checked = True Then ClassList = ClassList & QUOTE & lvClass.ListItems(x).Text & QUOTE & ", "
   Next
   If ClassList <> "" Then
     ClassList = Mid(ClassList, 1, Len(ClassList) - 2)   'Remove last ", "
@@ -340,29 +340,29 @@ Dim Y As Integer
       fMainForm.txtSQLPane.Text = Replace(SecString, "*#-privilege-#*", "ALL") & "public"
     Else
       fMainForm.txtSQLPane.Text = ""
-      For X = 1 To 5
-        If chkPrivilege(X).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(X).Caption)) & "public" & vbCrLf
+      For x = 1 To 5
+        If chkPrivilege(x).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(x).Caption)) & "public" & vbCrLf
       Next
     End If
   Else
-    For X = 0 To lstUsers.ListCount - 1
-      If lstUsers.Selected(X) = True Then
+    For x = 0 To lstUsers.ListCount - 1
+      If lstUsers.Selected(x) = True Then
         If chkPrivilege(0).Value = 1 Then
-          fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", "ALL") & QUOTE & lstUsers.List(X) & QUOTE & vbCrLf
+          fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", "ALL") & QUOTE & lstUsers.List(x) & QUOTE & vbCrLf
         Else
-          For Y = 1 To 5
-            If chkPrivilege(Y).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(Y).Caption)) & QUOTE & lstUsers.List(X) & QUOTE & vbCrLf
+          For y = 1 To 5
+            If chkPrivilege(y).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(y).Caption)) & QUOTE & lstUsers.List(x) & QUOTE & vbCrLf
           Next
         End If
       End If
     Next
-    For X = 0 To lstGroups.ListCount - 1
-      If lstGroups.Selected(X) = True Then
+    For x = 0 To lstGroups.ListCount - 1
+      If lstGroups.Selected(x) = True Then
         If chkPrivilege(0).Value = 1 Then
-          fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", "ALL") & "GROUP " & QUOTE & lstGroups.List(X) & QUOTE & vbCrLf
+          fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", "ALL") & "GROUP " & QUOTE & lstGroups.List(x) & QUOTE & vbCrLf
         Else
-          For Y = 1 To 5
-            If chkPrivilege(Y).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(Y).Caption)) & "GROUP " & QUOTE & lstGroups.List(X) & QUOTE & vbCrLf
+          For y = 1 To 5
+            If chkPrivilege(y).Value = 1 Then fMainForm.txtSQLPane.Text = fMainForm.txtSQLPane.Text & Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(y).Caption)) & "GROUP " & QUOTE & lstGroups.List(x) & QUOTE & vbCrLf
           Next
         End If
       End If
@@ -419,9 +419,9 @@ End Sub
 
 Private Sub cmdAllUsers_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To lstUsers.ListCount - 1
-    lstUsers.Selected(X) = True
+Dim x As Integer
+  For x = 0 To lstUsers.ListCount - 1
+    lstUsers.Selected(x) = True
   Next
   Gen_SQL
   Exit Sub
@@ -430,9 +430,9 @@ End Sub
 
 Private Sub cmdAllGroups_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To lstGroups.ListCount - 1
-    lstGroups.Selected(X) = True
+Dim x As Integer
+  For x = 0 To lstGroups.ListCount - 1
+    lstGroups.Selected(x) = True
   Next
   Gen_SQL
   Exit Sub
@@ -441,9 +441,9 @@ End Sub
 
 Private Sub cmdNoUsers_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To lstUsers.ListCount - 1
-    lstUsers.Selected(X) = False
+Dim x As Integer
+  For x = 0 To lstUsers.ListCount - 1
+    lstUsers.Selected(x) = False
   Next
   Gen_SQL
   Exit Sub
@@ -452,9 +452,9 @@ End Sub
 
 Private Sub cmdNoGroups_Click()
 On Error GoTo Err_Handler
-Dim X As Integer
-  For X = 0 To lstGroups.ListCount - 1
-    lstGroups.Selected(X) = False
+Dim x As Integer
+  For x = 0 To lstGroups.ListCount - 1
+    lstGroups.Selected(x) = False
   Next
   Gen_SQL
   Exit Sub
@@ -467,12 +467,12 @@ Dim SecString As String
 Dim ClassList As String
 Dim szSQL As String
 Dim bFlag As Boolean
-Dim X As Integer
-Dim Y As Integer
+Dim x As Integer
+Dim y As Integer
   bFlag = False
   If chkAll.Value = 1 Then bFlag = True
-  For X = 1 To lvClass.ListItems.Count
-    If lvClass.ListItems(X).Checked = True Then bFlag = True
+  For x = 1 To lvClass.ListItems.Count
+    If lvClass.ListItems(x).Checked = True Then bFlag = True
   Next
   If bFlag = False Then
     MsgBox "You must select at least one class!", vbExclamation, "Error"
@@ -481,11 +481,11 @@ Dim Y As Integer
   End If
   bFlag = False
   If chkPublic.Value = 1 Then bFlag = True
-  For X = 0 To lstUsers.ListCount - 1
-    If lstUsers.Selected(X) = True Then bFlag = True
+  For x = 0 To lstUsers.ListCount - 1
+    If lstUsers.Selected(x) = True Then bFlag = True
   Next
-  For X = 0 To lstGroups.ListCount - 1
-    If lstGroups.Selected(X) = True Then bFlag = True
+  For x = 0 To lstGroups.ListCount - 1
+    If lstGroups.Selected(x) = True Then bFlag = True
   Next
   If bFlag = False Then
     MsgBox "You must select at least one user or group!", vbExclamation, "Error"
@@ -493,8 +493,8 @@ Dim Y As Integer
     Exit Sub
   End If
   bFlag = False
-  For X = 0 To 5
-    If chkPrivilege(X).Value = 1 Then bFlag = True
+  For x = 0 To 5
+    If chkPrivilege(x).Value = 1 Then bFlag = True
   Next
   If bFlag = False Then
     MsgBox "You must select at least one privilege!", vbExclamation, "Error"
@@ -507,8 +507,8 @@ Dim Y As Integer
   Else
     SecString = "REVOKE *#-privilege-#* ON "
   End If
-  For X = 1 To lvClass.ListItems.Count
-    If lvClass.ListItems(X).Checked = True Then ClassList = ClassList & QUOTE & lvClass.ListItems(X).Text & QUOTE & ", "
+  For x = 1 To lvClass.ListItems.Count
+    If lvClass.ListItems(x).Checked = True Then ClassList = ClassList & QUOTE & lvClass.ListItems(x).Text & QUOTE & ", "
   Next
   If ClassList <> "" Then
     ClassList = Mid(ClassList, 1, Len(ClassList) - 2)   'Remove last ", "
@@ -525,9 +525,9 @@ Dim Y As Integer
       gConnection.Execute szSQL
       LogQuery szSQL
     Else
-      For X = 1 To 5
-        If chkPrivilege(X).Value = 1 Then
-          szSQL = Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(X).Caption)) & "public"
+      For x = 1 To 5
+        If chkPrivilege(x).Value = 1 Then
+          szSQL = Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(x).Caption)) & "public"
           LogMsg "Executing: " & szSQL
           gConnection.Execute szSQL
           LogQuery szSQL
@@ -535,17 +535,17 @@ Dim Y As Integer
       Next
     End If
   Else
-    For X = 0 To lstUsers.ListCount - 1
-      If lstUsers.Selected(X) = True Then
+    For x = 0 To lstUsers.ListCount - 1
+      If lstUsers.Selected(x) = True Then
         If chkPrivilege(0).Value = 1 Then
-          szSQL = Replace(SecString, "*#-privilege-#*", "ALL") & QUOTE & lstUsers.List(X) & QUOTE
+          szSQL = Replace(SecString, "*#-privilege-#*", "ALL") & QUOTE & lstUsers.List(x) & QUOTE
           LogMsg "Executing: " & szSQL
           gConnection.Execute szSQL
           LogQuery szSQL
         Else
-          For Y = 1 To 5
-            If chkPrivilege(Y).Value = 1 Then
-              szSQL = Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(Y).Caption)) & QUOTE & lstUsers.List(X) & QUOTE
+          For y = 1 To 5
+            If chkPrivilege(y).Value = 1 Then
+              szSQL = Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(y).Caption)) & QUOTE & lstUsers.List(x) & QUOTE
               LogMsg "Executing: " & szSQL
               gConnection.Execute szSQL
               LogQuery szSQL
@@ -554,17 +554,17 @@ Dim Y As Integer
         End If
       End If
     Next
-    For X = 0 To lstGroups.ListCount - 1
-      If lstGroups.Selected(X) = True Then
+    For x = 0 To lstGroups.ListCount - 1
+      If lstGroups.Selected(x) = True Then
         If chkPrivilege(0).Value = 1 Then
-          szSQL = Replace(SecString, "*#-privilege-#*", "ALL") & "GROUP " & QUOTE & lstGroups.List(X) & QUOTE
+          szSQL = Replace(SecString, "*#-privilege-#*", "ALL") & "GROUP " & QUOTE & lstGroups.List(x) & QUOTE
           LogMsg "Executing: " & szSQL
           gConnection.Execute szSQL
           LogQuery szSQL
         Else
-          For Y = 1 To 5
-            If chkPrivilege(Y).Value = 1 Then
-              szSQL = Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(Y).Caption)) & "GROUP " & QUOTE & lstGroups.List(X) & QUOTE
+          For y = 1 To 5
+            If chkPrivilege(y).Value = 1 Then
+              szSQL = Replace(SecString, "*#-privilege-#*", UCase(chkPrivilege(y).Caption)) & "GROUP " & QUOTE & lstGroups.List(x) & QUOTE
               LogMsg "Executing: " & szSQL
               gConnection.Execute szSQL
               LogQuery szSQL
@@ -588,12 +588,16 @@ On Error GoTo Err_Handler
     If Me.Width < 6360 Then Me.Width = 6360
     If Me.Height < 5970 Then Me.Height = 5970
   End If
-  lvClass.Width = Me.ScaleWidth - lvClass.Left
-  lstUsers.Width = Me.ScaleWidth - lstUsers.Left
-  lstGroups.Width = Me.ScaleWidth - lstGroups.Left
-  lvClass.Height = Me.ScaleHeight - lvClass.Top - picControls.Height
-  picControls.Top = lvClass.Top + lvClass.Height
-  cmdApply.Left = picControls.Width - cmdApply.Width
+  
+  
+    lvClass.Width = Me.ScaleWidth - lvClass.Left
+    lstUsers.Width = Me.ScaleWidth - lstUsers.Left
+    lstGroups.Width = Me.ScaleWidth - lstGroups.Left
+    lvClass.Height = Me.ScaleHeight - lvClass.Top - picControls.Height
+    picControls.Top = lvClass.Top + lvClass.Height
+    cmdApply.Left = picControls.Width - cmdApply.Width
+
+  
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmPrinter, Form_Load"
 End Sub
@@ -612,8 +616,8 @@ End Sub
 Private Sub Refresh_Lists()
 On Error GoTo Err_Handler
 Dim rs As New Recordset
-Dim ItmX As ListItem
-Dim X As Integer
+Dim itmX As ListItem
+Dim x As Integer
   lvClass.ListItems.Clear
   lstUsers.Clear
   lstGroups.Clear
@@ -645,9 +649,9 @@ Dim X As Integer
   LogMsg "Executing: SELECT DISTINCT ON (table_name) table_name, table_acl FROM pgadmin_tables WHERE table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' AND table_oid > " & LAST_SYSTEM_OID
   rs.Open "SELECT DISTINCT ON (table_name) table_name, table_acl FROM pgadmin_tables WHERE table_name NOT LIKE 'pgadmin_%' AND table_name NOT LIKE 'pg_%' AND table_oid > " & LAST_SYSTEM_OID, gConnection, adOpenForwardOnly
   While Not rs.EOF
-    Set ItmX = lvClass.ListItems.Add(, , rs!table_name)
-    ItmX.SubItems(1) = "Table"
-    ItmX.SubItems(2) = rs!table_acl & ""
+    Set itmX = lvClass.ListItems.Add(, , rs!table_name)
+    itmX.SubItems(1) = "Table"
+    itmX.SubItems(2) = rs!table_acl & ""
     rs.MoveNext
   Wend
   If rs.State <> adStateClosed Then rs.Close
@@ -656,9 +660,9 @@ Dim X As Integer
   LogMsg "Executing: SELECT relname, relacl FROM pg_class WHERE relname NOT LIKE 'pgadmin_%' AND oid > " & LAST_SYSTEM_OID & " AND relkind = 'S'"
   rs.Open "SELECT relname, relacl FROM pg_class WHERE relname NOT LIKE 'pgadmin_%' AND oid > " & LAST_SYSTEM_OID & " AND relkind = 'S'", gConnection, adOpenForwardOnly
   While Not rs.EOF
-    Set ItmX = lvClass.ListItems.Add(, , rs!relname)
-    ItmX.SubItems(1) = "Sequence"
-    ItmX.SubItems(2) = rs!relacl & ""
+    Set itmX = lvClass.ListItems.Add(, , rs!relname)
+    itmX.SubItems(1) = "Sequence"
+    itmX.SubItems(2) = rs!relacl & ""
     rs.MoveNext
   Wend
   If rs.State <> adStateClosed Then rs.Close
@@ -667,9 +671,9 @@ Dim X As Integer
   LogMsg "Executing: SELECT view_name, view_acl FROM pgadmin_views WHERE view_name NOT LIKE 'pgadmin_%' AND view_oid > " & LAST_SYSTEM_OID
   rs.Open "SELECT view_name, view_acl FROM pgadmin_views WHERE view_name NOT LIKE 'pgadmin_%' AND view_oid > " & LAST_SYSTEM_OID, gConnection, adOpenForwardOnly
   While Not rs.EOF
-    Set ItmX = lvClass.ListItems.Add(, , rs!view_name)
-    ItmX.SubItems(1) = "View"
-    ItmX.SubItems(2) = rs!view_acl & ""
+    Set itmX = lvClass.ListItems.Add(, , rs!view_name)
+    itmX.SubItems(1) = "View"
+    itmX.SubItems(2) = rs!view_acl & ""
     rs.MoveNext
   Wend
   If rs.State <> adStateClosed Then rs.Close

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adoDataGrid.ocx"
+Object = "{65BD1FDD-C469-464B-98C7-8C7683B4AEE1}#17.1#0"; "adodatagrid.ocx"
 Begin VB.Form frmTracking 
    Caption         =   "Revision Tracking"
    ClientHeight    =   4725
@@ -124,14 +124,16 @@ End Sub
 
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
-  If Me.WindowState <> 1 Then
+  If Me.WindowState <> 1 And Me.ScaleHeight > 0 Then
     If Me.WindowState = 0 Then
       If Me.Width < 6650 Then Me.Width = 6650
       If Me.Height < 2500 Then Me.Height = 2500
     End If
+    
     cmdGenerate.Top = Me.ScaleHeight - cmdGenerate.Height - 50
     cmdClearLog.Top = cmdGenerate.Top
     grdLog.Height = cmdGenerate.Top - 100
+
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTracking, Form_Resize"
