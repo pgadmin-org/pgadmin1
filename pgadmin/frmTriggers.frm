@@ -5,17 +5,25 @@ Begin VB.Form frmTriggers
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8205
-   Icon            =   "frmTriggers.frx":0000
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
    ScaleHeight     =   4050
    ScaleWidth      =   8205
+   Begin VB.CommandButton cmdModifyTrig 
+      Caption         =   "&Modify Trigger"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   22
+      ToolTipText     =   "Modify the selected trigger."
+      Top             =   405
+      Width           =   1410
+   End
    Begin VB.Frame Frame1 
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
       TabIndex        =   21
-      Top             =   1485
+      Top             =   2115
       Width           =   1380
       Begin VB.CheckBox chkSystem 
          Caption         =   "Triggers"
@@ -33,7 +41,7 @@ Begin VB.Form frmTriggers
       Left            =   45
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected Trigger."
-      Top             =   765
+      Top             =   1125
       Width           =   1410
    End
    Begin VB.Frame fraDetails 
@@ -192,7 +200,7 @@ Begin VB.Form frmTriggers
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Refresh the list of Triggers."
-      Top             =   1125
+      Top             =   1485
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropTrig 
@@ -201,7 +209,7 @@ Begin VB.Form frmTriggers
       Left            =   45
       TabIndex        =   1
       ToolTipText     =   "Delete the selected Trigger."
-      Top             =   405
+      Top             =   765
       Width           =   1410
    End
    Begin VB.CommandButton cmdCreateTrig 
@@ -238,6 +246,22 @@ Attribute VB_Exposed = False
 
 Option Explicit
 Dim rsTrig As New Recordset
+
+Private Sub cmdModifyTrig_Click()
+' On Error GoTo Err_Handler
+
+If txtOID <> "" Then
+    ' This means we can open the function
+    gPostgresOBJ_OID = Val(txtOID)
+    
+    ' Load form
+    Load frmAddTrigger
+    frmAddTrigger.Show
+End If
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_Click"
+End Sub
 
 Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 On Error GoTo Err_Handler
@@ -281,7 +305,7 @@ End Sub
 
 Public Sub cmdDropTrig_Click()
 On Error GoTo Err_Handler
-Dim DropStr As String
+Dim szDropStr As String
   If lstTrig.Text = "" Then
     MsgBox "You must select a Trigger to delete!", vbExclamation, "Error"
     Exit Sub
@@ -289,11 +313,11 @@ Dim DropStr As String
   If MsgBox("Are you sure you wish to delete this Trigger?", vbYesNo + vbQuestion, _
             "Confirm Trigger Delete") = vbYes Then
     StartMsg "Dropping Trigger..."
-    DropStr = "DROP TRIGGER " & QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
-    fMainForm.txtSQLPane.Text = DropStr
+    szDropStr = "DROP TRIGGER " & QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
+    fMainForm.txtSQLPane.Text = szDropStr
     LogMsg "Executing: DROP TRIGGER " & QUOTE & lstTrig.Text & QUOTE & " ON " & QUOTE & txtTable.Text & QUOTE
-    gConnection.Execute DropStr
-    LogQuery DropStr
+    gConnection.Execute szDropStr
+    LogQuery szDropStr
     cmdRefresh_Click
     EndMsg
   End If
@@ -362,7 +386,7 @@ End Sub
 
 Public Sub lstTrig_Click()
 On Error GoTo Err_Handler
-Dim iType As Integer
+Dim iTrigger_type As Integer
 Dim iTemp As Integer
   If lstTrig.Text <> "" Then
     StartMsg "Retrieving trigger info..."
@@ -372,20 +396,20 @@ Dim iTemp As Integer
     txtOID.Text = rsTrig!trigger_oid & ""
     txtTable.Text = rsTrig!trigger_table & ""
     txtFunction.Text = rsTrig!trigger_function & ""
-    iType = CInt(rsTrig!trigger_type)
-    If (iType And 1) = 1 Then
+    iTrigger_type = CInt(rsTrig!trigger_type)
+    If (iTrigger_type And 1) = 1 Then
       txtForEach.Text = "Row"
     Else
       txtForEach.Text = "Statement"
     End If
-    If (iType And 2) = 2 Then
+    If (iTrigger_type And 2) = 2 Then
       txtExecutes.Text = "Before"
     Else
       txtExecutes.Text = "After"
     End If
-    If (iType And 4) = 4 Then txtEvent.Text = txtEvent.Text & "Insert "
-    If (iType And 8) = 8 Then txtEvent.Text = txtEvent.Text & "Delete "
-    If (iType And 16) = 16 Then txtEvent.Text = txtEvent.Text & "Update "
+    If (iTrigger_type And 4) = 4 Then txtEvent.Text = txtEvent.Text & "Insert "
+    If (iTrigger_type And 8) = 8 Then txtEvent.Text = txtEvent.Text & "Delete "
+    If (iTrigger_type And 16) = 16 Then txtEvent.Text = txtEvent.Text & "Update "
     txtComments.Text = rsTrig!trigger_comments & ""
     If rsTrig.BOF <> True Then rsTrig.MoveFirst
     EndMsg

@@ -2,21 +2,38 @@ VERSION 5.00
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
-   ClientHeight    =   4050
+   ClientHeight    =   5595
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   8205
-   Icon            =   "frmFunctions.frx":0000
+   ClientWidth     =   8880
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4050
-   ScaleWidth      =   8205
+   ScaleHeight     =   5595
+   ScaleWidth      =   8880
+   Begin VB.CommandButton cmdRebuild 
+      Caption         =   "&Rebuild project"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   22
+      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
+      Top             =   1485
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdModifyFunc 
+      Caption         =   "&Modify Function"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   21
+      ToolTipText     =   "Create a new function."
+      Top             =   405
+      Width           =   1410
+   End
    Begin VB.Frame Frame1 
       Caption         =   "Show System:"
       Height          =   525
       Left            =   45
-      TabIndex        =   21
-      Top             =   1485
+      TabIndex        =   20
+      Top             =   2445
       Width           =   1380
       Begin VB.CheckBox chkFunctions 
          Caption         =   "Functions"
@@ -34,170 +51,11 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   2
       ToolTipText     =   "Edit the comment for the selected function."
-      Top             =   765
+      Top             =   1125
       Width           =   1410
    End
-   Begin VB.Frame fraDetails 
-      Caption         =   "Function Details"
-      Height          =   4020
-      Left            =   4500
-      TabIndex        =   13
-      Top             =   0
-      Width           =   3660
-      Begin HighlightBox.HBX txtFunction 
-         Height          =   870
-         Left            =   900
-         TabIndex        =   10
-         Top             =   1755
-         Width           =   2670
-         _ExtentX        =   4710
-         _ExtentY        =   1535
-         BackColor       =   -2147483633
-         Enabled         =   -1  'True
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Text            =   ""
-         ScrollBars      =   2
-         MultiLine       =   -1  'True
-      End
-      Begin VB.TextBox txtLanguage 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   11
-         Top             =   2655
-         Width           =   2670
-      End
-      Begin VB.TextBox txtReturns 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   9
-         Top             =   1440
-         Width           =   2670
-      End
-      Begin VB.TextBox txtOID 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   6
-         Top             =   225
-         Width           =   2670
-      End
-      Begin VB.TextBox txtOwner 
-         BackColor       =   &H8000000F&
-         Height          =   285
-         Left            =   900
-         Locked          =   -1  'True
-         TabIndex        =   7
-         Top             =   540
-         Width           =   2670
-      End
-      Begin VB.TextBox txtArguments 
-         BackColor       =   &H8000000F&
-         Height          =   555
-         Left            =   900
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   8
-         Top             =   855
-         Width           =   2670
-      End
-      Begin VB.TextBox txtComments 
-         BackColor       =   &H8000000F&
-         Height          =   735
-         Left            =   90
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   12
-         Top             =   3195
-         Width           =   3480
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "OID"
-         Height          =   195
-         Index           =   0
-         Left            =   90
-         TabIndex        =   20
-         Top             =   270
-         Width           =   285
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Owner"
-         Height          =   195
-         Index           =   1
-         Left            =   90
-         TabIndex        =   19
-         Top             =   585
-         Width           =   465
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Arguments"
-         Height          =   195
-         Index           =   2
-         Left            =   90
-         TabIndex        =   18
-         Top             =   900
-         Width           =   750
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Returns"
-         Height          =   195
-         Index           =   3
-         Left            =   90
-         TabIndex        =   17
-         Top             =   1530
-         Width           =   555
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Function"
-         Height          =   195
-         Index           =   4
-         Left            =   90
-         TabIndex        =   16
-         Top             =   1800
-         Width           =   615
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Language"
-         Height          =   195
-         Index           =   5
-         Left            =   90
-         TabIndex        =   15
-         Top             =   2700
-         Width           =   720
-      End
-      Begin VB.Label Label1 
-         AutoSize        =   -1  'True
-         Caption         =   "Comments"
-         Height          =   195
-         Index           =   8
-         Left            =   90
-         TabIndex        =   14
-         Top             =   2970
-         Width           =   735
-      End
-   End
    Begin VB.ListBox lstFunc 
-      Height          =   3960
+      Height          =   5520
       Left            =   1485
       TabIndex        =   5
       Top             =   45
@@ -209,7 +67,7 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   3
       ToolTipText     =   "Refresh the list of function."
-      Top             =   1125
+      Top             =   1845
       Width           =   1410
    End
    Begin VB.CommandButton cmdDropFunc 
@@ -218,8 +76,183 @@ Begin VB.Form frmFunctions
       Left            =   45
       TabIndex        =   1
       ToolTipText     =   "Delete the selected function."
-      Top             =   405
+      Top             =   765
       Width           =   1410
+   End
+   Begin VB.Frame fraDetails 
+      Caption         =   "Function Details"
+      Height          =   5595
+      Left            =   4500
+      TabIndex        =   12
+      Top             =   0
+      Width           =   4335
+      Begin VB.TextBox txtName 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   24
+         Top             =   1170
+         Width           =   3345
+      End
+      Begin VB.TextBox txtLanguage 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   10
+         Top             =   855
+         Width           =   3345
+      End
+      Begin VB.TextBox txtReturns 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   9
+         Top             =   1500
+         Width           =   3345
+      End
+      Begin VB.TextBox txtOID 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   6
+         Top             =   225
+         Width           =   3345
+      End
+      Begin VB.TextBox txtOwner 
+         BackColor       =   &H8000000F&
+         Height          =   285
+         Left            =   900
+         Locked          =   -1  'True
+         TabIndex        =   7
+         Top             =   540
+         Width           =   3345
+      End
+      Begin VB.TextBox txtArguments 
+         BackColor       =   &H8000000F&
+         Height          =   1635
+         Left            =   900
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   8
+         Top             =   1845
+         Width           =   3345
+      End
+      Begin VB.TextBox txtComments 
+         BackColor       =   &H8000000F&
+         Height          =   795
+         Left            =   900
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   11
+         Top             =   3525
+         Width           =   3345
+      End
+      Begin HighlightBox.HBX txtFunction 
+         Height          =   1095
+         Left            =   45
+         TabIndex        =   25
+         Top             =   4500
+         Width           =   4245
+         _ExtentX        =   7488
+         _ExtentY        =   1931
+         Enabled         =   -1  'True
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ScrollBars      =   2
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Name"
+         Height          =   195
+         Index           =   7
+         Left            =   90
+         TabIndex        =   23
+         Top             =   1215
+         Width           =   780
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "OID"
+         Height          =   195
+         Index           =   0
+         Left            =   90
+         TabIndex        =   19
+         Top             =   270
+         Width           =   285
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Owner"
+         Height          =   195
+         Index           =   1
+         Left            =   90
+         TabIndex        =   18
+         Top             =   585
+         Width           =   465
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Arguments"
+         Height          =   195
+         Index           =   2
+         Left            =   90
+         TabIndex        =   17
+         Top             =   1845
+         Width           =   780
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Returns"
+         Height          =   195
+         Index           =   3
+         Left            =   90
+         TabIndex        =   16
+         Top             =   1530
+         Width           =   645
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Function"
+         Height          =   195
+         Index           =   4
+         Left            =   90
+         TabIndex        =   15
+         Top             =   4275
+         Width           =   870
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Language"
+         Height          =   285
+         Index           =   5
+         Left            =   90
+         TabIndex        =   14
+         Top             =   900
+         Width           =   735
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Comments"
+         Height          =   195
+         Index           =   8
+         Left            =   90
+         TabIndex        =   13
+         Top             =   3510
+         Width           =   735
+      End
    End
    Begin VB.CommandButton cmdCreateFunc 
       Caption         =   "&Create Function"
@@ -256,8 +289,29 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim rsFunc As New Recordset
 
+Private Sub cmdModifyFunc_Click()
+' On Error GoTo Err_Handler
+
+If txtOID <> "" Then
+    ' This means we can open the function
+    gPostgresOBJ_OID = Val(txtOID)
+    
+    ' Load form
+    Load frmAddFunction
+    frmAddFunction.Show
+End If
+
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdModifyFunc_Click"
+End Sub
+
+Private Sub cmdRebuild_Click()
+    comp_Project_Initialize
+    comp_Project_Compile
+End Sub
+
 Private Sub lstFunc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   If Button = 2 Then PopupMenu fMainForm.mnuCTXFunctions
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_MouseUp"
 End Sub
@@ -268,14 +322,14 @@ On Error Resume Next
 End Sub
 
 Private Sub chkFunctions_Click()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, chkFunctions_Click"
 End Sub
 
 Public Sub cmdComment_Click()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   If txtOID.Text = "" Then
     MsgBox "You must select a function to edit the comment for.", vbExclamation, "Error"
     Exit Sub
@@ -289,7 +343,11 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdComment_Cli
 End Sub
 
 Public Sub cmdCreateFunc_Click()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
+  ' This means we will create the function
+  gPostgresOBJ_OID = 0
+  
+  ' Load form
   Load frmAddFunction
   frmAddFunction.Show
   Exit Sub
@@ -297,20 +355,20 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdCreateFunc_
 End Sub
 
 Public Sub cmdDropFunc_Click()
-On Error GoTo Err_Handler
-Dim DropStr As String
+' On Error GoTo Err_Handler
+Dim szDropStr As String
   If lstFunc.Text = "" Then
     MsgBox "You must select a function to delete!", vbExclamation, "Error"
     Exit Sub
   End If
   If MsgBox("Are you sure you wish to delete this Function?", vbYesNo + vbQuestion, _
             "Confirm Function Delete") = vbYes Then
-    DropStr = "DROP FUNCTION " & QUOTE & lstFunc.Text & QUOTE & " (" & txtArguments.Text & ")"
-    fMainForm.txtSQLPane.Text = DropStr
+    szDropStr = "DROP FUNCTION " & QUOTE & lstFunc.Text & QUOTE & " (" & txtArguments.Text & ")"
+    fMainForm.txtSQLPane.Text = szDropStr
     StartMsg "Dropping Function..."
-    LogMsg "Executing: " & DropStr
-    gConnection.Execute DropStr
-    LogQuery DropStr
+    LogMsg "Executing: " & szDropStr
+    gConnection.Execute szDropStr
+    LogQuery szDropStr
     cmdRefresh_Click
     EndMsg
   End If
@@ -321,7 +379,7 @@ Err_Handler:
 End Sub
 
 Public Sub cmdRefresh_Click()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   StartMsg "Retrieving Function Names..."
   lstFunc.Clear
   txtOID.Text = ""
@@ -340,9 +398,10 @@ On Error GoTo Err_Handler
     rsFunc.Open "SELECT * FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
   End If
   While Not rsFunc.EOF
-    lstFunc.AddItem rsFunc!function_name & ""
+    lstFunc.AddItem rsFunc!Function_name & ""
     rsFunc.MoveNext
   Wend
+  txtName.Text = lstFunc
   EndMsg
   Exit Sub
 Err_Handler:
@@ -351,46 +410,47 @@ Err_Handler:
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   Me.Width = 8325
   Me.Height = 4455
-  txtFunction.Wordlist = TextColours
   cmdRefresh_Click
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Load"
 End Sub
 
 Private Sub Form_Resize()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
-      If Me.Width < 8325 Then Me.Width = 8325
-      If Me.Height < 4455 Then Me.Height = 4455
+      If Me.Width < 9000 Then Me.Width = 9000
+      If Me.Height < 6000 Then Me.Height = 6000
     End If
     lstFunc.Height = Me.ScaleHeight
     lstFunc.Width = Me.ScaleWidth - lstFunc.Left - fraDetails.Width - 25
     fraDetails.Left = lstFunc.Left + lstFunc.Width + 25
     fraDetails.Height = Me.ScaleHeight
-    txtComments.Height = fraDetails.Height - txtComments.Top - 100
+    txtFunction.Height = fraDetails.Height - txtFunction.Top - 100
   End If
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmFunctions, Form_Resize"
 End Sub
 
 Public Sub lstFunc_Click()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
   If lstFunc.Text <> "" Then
     StartMsg "Retrieving Function Info..."
     If rsFunc.BOF <> True Then rsFunc.MoveFirst
     MoveRS rsFunc, lstFunc.ListIndex
-    txtOID.Text = rsFunc!function_oid & ""
+    txtOID.Text = rsFunc!function_OID & ""
     txtOwner.Text = rsFunc!function_owner & ""
-    txtReturns.Text = rsFunc!function_returns & ""
-    txtArguments.Text = rsFunc!function_arguments & ""
-    txtFunction.Text = rsFunc!function_source & ""
-    txtLanguage.Text = rsFunc!function_language & ""
+    txtReturns.Text = rsFunc!Function_returns & ""
+    If txtReturns.Text = "" Then txtReturns.Text = "opaque" ' Strange
+    txtArguments.Text = rsFunc!Function_arguments & ""
+    txtFunction.Text = rsFunc!Function_source & ""
+    txtLanguage.Text = rsFunc!Function_language & ""
     txtComments.Text = rsFunc!function_comments & ""
+    txtName.Text = lstFunc
     If rsFunc.BOF <> True Then rsFunc.MoveFirst
     EndMsg
   End If
@@ -399,3 +459,4 @@ Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmFunctions, lstFunc_Click"
 End Sub
+

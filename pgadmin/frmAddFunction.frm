@@ -2,26 +2,185 @@ VERSION 5.00
 Object = "{D4E5B983-69B8-11D3-9975-009027427025}#1.4#0"; "vsadoselector.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
 Begin VB.Form frmAddFunction 
-   Caption         =   "Create Function"
-   ClientHeight    =   3705
+   Caption         =   "Function"
+   ClientHeight    =   5595
    ClientLeft      =   60
    ClientTop       =   345
-   ClientWidth     =   4155
-   Icon            =   "frmAddFunction.frx":0000
+   ClientWidth     =   8880
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   3705
-   ScaleWidth      =   4155
+   ScaleHeight     =   5595
+   ScaleMode       =   0  'User
+   ScaleWidth      =   8931.034
+   Begin VB.Frame fraDetails 
+      Caption         =   "Function Details"
+      Height          =   5595
+      Left            =   4500
+      TabIndex        =   1
+      Top             =   0
+      Width           =   4335
+      Begin VB.ListBox lstArguments 
+         Height          =   1230
+         Left            =   900
+         TabIndex        =   16
+         ToolTipText     =   "List of input arguments."
+         Top             =   2205
+         Width           =   2355
+      End
+      Begin VB.CommandButton cmdAdd 
+         Caption         =   "&Add"
+         Height          =   330
+         Left            =   3330
+         TabIndex        =   15
+         Top             =   1845
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdUp 
+         Caption         =   "&Up"
+         Height          =   330
+         Left            =   3330
+         TabIndex        =   14
+         Top             =   2205
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdRemove 
+         Caption         =   "&Remove"
+         Height          =   330
+         Left            =   3330
+         TabIndex        =   13
+         Top             =   3105
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdDown 
+         Caption         =   "&Down"
+         Height          =   330
+         Left            =   3330
+         TabIndex        =   12
+         Top             =   2565
+         Width           =   915
+      End
+      Begin VB.ComboBox cboArguments 
+         Height          =   315
+         Left            =   900
+         Sorted          =   -1  'True
+         Style           =   2  'Dropdown List
+         TabIndex        =   11
+         ToolTipText     =   "Input arguments of your function."
+         Top             =   1845
+         Width           =   2310
+      End
+      Begin VB.ComboBox cboReturnType 
+         Height          =   315
+         Left            =   900
+         Sorted          =   -1  'True
+         Style           =   2  'Dropdown List
+         TabIndex        =   9
+         Top             =   1485
+         Width           =   3345
+      End
+      Begin VB.TextBox txtName 
+         Height          =   285
+         Left            =   900
+         MaxLength       =   31
+         TabIndex        =   7
+         Top             =   1170
+         Width           =   3345
+      End
+      Begin VB.TextBox txtComments 
+         BackColor       =   &H8000000F&
+         Height          =   2010
+         Left            =   900
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   2
+         Top             =   3525
+         Width           =   3345
+      End
+      Begin vsAdoSelector.VS_AdoSelector vssLanguage 
+         Height          =   315
+         Left            =   900
+         TabIndex        =   5
+         Top             =   855
+         Width           =   3345
+         _ExtentX        =   5900
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         SQL             =   "SELECT ""lanname"", ""lanname"" FROM ""pg_language"" WHERE ""lanname"" <> 'Internal'"
+      End
+      Begin VB.Label lblReturnType 
+         AutoSize        =   -1  'True
+         Caption         =   "Returns"
+         Height          =   195
+         Left            =   90
+         TabIndex        =   10
+         Top             =   1530
+         Width           =   510
+      End
+      Begin VB.Label lblName 
+         AutoSize        =   -1  'True
+         Caption         =   "Name"
+         Height          =   195
+         Left            =   90
+         TabIndex        =   8
+         Top             =   1215
+         Width           =   420
+      End
+      Begin VB.Label lblLanguage 
+         AutoSize        =   -1  'True
+         Caption         =   "Language"
+         Height          =   195
+         Left            =   90
+         TabIndex        =   6
+         Top             =   900
+         Width           =   810
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Comments"
+         Height          =   195
+         Index           =   8
+         Left            =   90
+         TabIndex        =   4
+         Top             =   3510
+         Width           =   735
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         Caption         =   "Arguments"
+         Height          =   195
+         Index           =   2
+         Left            =   90
+         TabIndex        =   3
+         Top             =   1890
+         Width           =   780
+      End
+   End
+   Begin VB.CommandButton cmdCreate 
+      Caption         =   "&Save function"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   0
+      Top             =   45
+      Width           =   1402
+   End
    Begin HighlightBox.HBX txtPath 
-      Height          =   735
-      Left            =   1080
-      TabIndex        =   15
+      Height          =   5445
+      Left            =   1575
+      TabIndex        =   17
       ToolTipText     =   "Enter the function code or Library Path."
-      Top             =   2475
-      Width           =   3030
-      _ExtentX        =   5345
-      _ExtentY        =   1296
-      Enabled         =   -1  'True
+      Top             =   90
+      Width           =   2895
+      _ExtentX        =   5106
+      _ExtentY        =   9604
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -34,145 +193,6 @@ Begin VB.Form frmAddFunction
       Text            =   ""
       ScrollBars      =   2
       MultiLine       =   -1  'True
-   End
-   Begin vsAdoSelector.VS_AdoSelector vssLanguage 
-      Height          =   315
-      Left            =   1080
-      TabIndex        =   14
-      ToolTipText     =   "Select the the language that the function is written in."
-      Top             =   2115
-      Width           =   3030
-      _ExtentX        =   5345
-      _ExtentY        =   556
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      SQL             =   "SELECT ""lanname"", ""lanname"" FROM ""pg_language"" WHERE ""lanname"" <> 'Internal'"
-   End
-   Begin VB.ComboBox cboArguments 
-      Height          =   315
-      Left            =   1080
-      Sorted          =   -1  'True
-      Style           =   2  'Dropdown List
-      TabIndex        =   13
-      Top             =   675
-      Width           =   2085
-   End
-   Begin VB.ComboBox cboReturnType 
-      Height          =   315
-      Left            =   1080
-      Sorted          =   -1  'True
-      Style           =   2  'Dropdown List
-      TabIndex        =   12
-      Top             =   360
-      Width           =   2085
-   End
-   Begin VB.CommandButton cmdDown 
-      Caption         =   "&Down"
-      Height          =   285
-      Left            =   3195
-      TabIndex        =   11
-      Top             =   1410
-      Width           =   915
-   End
-   Begin VB.CommandButton cmdRemove 
-      Caption         =   "&Remove"
-      Height          =   285
-      Left            =   3195
-      TabIndex        =   10
-      Top             =   1755
-      Width           =   915
-   End
-   Begin VB.CommandButton cmdUp 
-      Caption         =   "&Up"
-      Height          =   285
-      Left            =   3195
-      TabIndex        =   9
-      Top             =   1080
-      Width           =   915
-   End
-   Begin VB.CommandButton cmdAdd 
-      Caption         =   "&Add"
-      Height          =   285
-      Left            =   3195
-      TabIndex        =   8
-      Top             =   720
-      Width           =   915
-   End
-   Begin VB.CommandButton cmdCreate 
-      Caption         =   "&Create Function"
-      Height          =   375
-      Left            =   2655
-      TabIndex        =   7
-      ToolTipText     =   "Create the new function."
-      Top             =   3285
-      Width           =   1455
-   End
-   Begin VB.ListBox lstArguments 
-      Height          =   1035
-      Left            =   1080
-      TabIndex        =   4
-      Top             =   1035
-      Width           =   2085
-   End
-   Begin VB.TextBox txtName 
-      Height          =   285
-      Left            =   1080
-      TabIndex        =   1
-      Top             =   45
-      Width           =   3030
-   End
-   Begin VB.Label lblPath 
-      AutoSize        =   -1  'True
-      Caption         =   "Function or Library Path"
-      Height          =   390
-      Left            =   90
-      TabIndex        =   6
-      Top             =   2565
-      Width           =   930
-      WordWrap        =   -1  'True
-   End
-   Begin VB.Label lblLanguage 
-      AutoSize        =   -1  'True
-      Caption         =   "Language"
-      Height          =   195
-      Left            =   90
-      TabIndex        =   5
-      Top             =   2160
-      Width           =   720
-   End
-   Begin VB.Label lblArguments 
-      AutoSize        =   -1  'True
-      Caption         =   "Arguments"
-      Height          =   195
-      Left            =   90
-      TabIndex        =   3
-      Top             =   765
-      Width           =   750
-   End
-   Begin VB.Label lblReturnType 
-      AutoSize        =   -1  'True
-      Caption         =   "Return Type"
-      Height          =   195
-      Left            =   90
-      TabIndex        =   2
-      Top             =   405
-      Width           =   885
-   End
-   Begin VB.Label lblName 
-      AutoSize        =   -1  'True
-      Caption         =   "Name:"
-      Height          =   195
-      Left            =   90
-      TabIndex        =   0
-      Top             =   90
-      Width           =   465
    End
 End
 Attribute VB_Name = "frmAddFunction"
@@ -198,6 +218,7 @@ Attribute VB_Exposed = False
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
+Dim lng_OpenFunction_OID As Long
 
 Private Sub cboReturnType_Click()
 On Error GoTo Err_Handler
@@ -216,7 +237,7 @@ End Sub
 
 Private Sub Gen_SQL()
 On Error GoTo Err_Handler
-Dim CreateStr As String
+Dim szCreateStr As String
 Dim X As Integer
   fMainForm.txtSQLPane.Text = "CREATE FUNCTION " & QUOTE & txtName.Text & QUOTE & vbCrLf & "  ("
   For X = 0 To lstArguments.ListCount - 2
@@ -232,7 +253,8 @@ End Sub
 
 Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
-Dim CreateStr As String
+Dim szCreateStr As String
+Dim ArgList As String
 Dim X As Integer
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the function!", vbExclamation, "Error"
@@ -257,18 +279,26 @@ Dim X As Integer
       Exit Sub
     End If
   End If
-  CreateStr = "CREATE FUNCTION " & QUOTE & txtName.Text & QUOTE & " ("
-  For X = 0 To lstArguments.ListCount - 2
-    CreateStr = CreateStr & lstArguments.List(X) & ", "
+  
+  StartMsg "Saving function..."
+  
+  ' Build function arguments
+  ArgList = ""
+  For X = 0 To lstArguments.ListCount - 1
+    ArgList = ArgList & lstArguments.List(X) & ", "
   Next X
-  CreateStr = CreateStr & lstArguments.List(X) & ") "
-  CreateStr = CreateStr & "RETURNS " & cboReturnType.Text & " "
-  CreateStr = CreateStr & "AS '" & txtPath.Text & "' "
-  CreateStr = CreateStr & "LANGUAGE '" & vssLanguage.Text & "'"
-  LogMsg "Executing: " & CreateStr
-  gConnection.Execute CreateStr
-  LogQuery CreateStr
+  If ArgList <> "" Then ArgList = Left(ArgList, Len(ArgList) - 2)
+  
+   ' Drop function if exists
+  If lng_OpenFunction_OID <> 0 Then cmp_Function_DropIfExists lng_OpenFunction_OID
+  
+  ' Create function
+  cmp_Function_Create txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
+  
+  ' Refresh function list
   frmFunctions.cmdRefresh_Click
+  
+  EndMsg
   Unload Me
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddFunction, cmdAdd_Click"
@@ -329,20 +359,26 @@ End Sub
 Private Sub Form_Resize()
 On Error GoTo Err_Handler
   If Me.WindowState = 0 Then
-    If Me.Width < 4275 Then Me.Width = 4275
-    If Me.Height < 4110 Then Me.Height = 4110
+    If Me.Width < 9000 Then Me.Width = 9000
+    If Me.Height < 6000 Then Me.Height = 6000
   End If
+    txtPath.Height = Me.ScaleHeight
+    txtPath.Width = Me.ScaleWidth - txtPath.Left - fraDetails.Width - 25
+    fraDetails.Left = txtPath.Left + txtPath.Width + 25
+    fraDetails.Height = Me.ScaleHeight
+    txtPath.Height = fraDetails.Height - txtPath.Top - 100
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddColumn, Form_Resize"
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo Err_Handler
+' On Error GoTo Err_Handler
 Dim rsTypes As New Recordset
   LogMsg "Loading Form: " & Me.Name
   Me.Height = 4110
   Me.Width = 4275
-  txtPath.Wordlist = TextColours
+  
+  ' Retrieve data types
   StartMsg "Retrieving data types and languages..."
   If rsTypes.State <> adStateClosed Then rsTypes.Close
   LogMsg "Executing: SELECT typname FROM pg_type WHERE typrelid = 0 ORDER BY typname"
@@ -358,14 +394,29 @@ Dim rsTypes As New Recordset
     rsTypes.MoveNext
   Wend
   If rsTypes.BOF <> True Then rsTypes.MoveFirst
+  
+    ' Retrieve languages
   vssLanguage.Connect = Connect
   vssLanguage.SQL = "SELECT language_name, language_name FROM pgadmin_languages ORDER BY language_name"
   LogMsg "Executing: " & vssLanguage.SQL
   vssLanguage.LoadList
   lstArguments.Clear
   EndMsg
+   
+    ' Write query
   Gen_SQL
   Set rsTypes = Nothing
+  
+      ' Retrieve function if exists
+  lng_OpenFunction_OID = gPostgresOBJ_OID
+  gPostgresOBJ_OID = 0
+    If lng_OpenFunction_OID <> 0 Then
+    Me.Caption = "Modify function"
+    Function_Load
+  Else
+    Me.Caption = "Create function"
+  End If
+  
   Exit Sub
 Err_Handler:
   Set rsTypes = Nothing
@@ -393,3 +444,43 @@ On Error GoTo Err_Handler
   Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmAddDatabase, vssLanguage_ItemSelected"
 End Sub
+
+Private Sub Function_Load()
+'On Error GoTo Err_Handler
+    Dim temp_arg_list As Variant
+    Dim temp_arg_item As Variant
+    Dim rsFunc As New Recordset
+    Dim szPath As String
+    StartMsg "Retrieving Function information..."
+
+    If rsFunc.State <> adStateClosed Then rsFunc.Close
+          LogMsg "Executing: SELECT * FROM pgadmin_functions WHERE Function_OID = " & lng_OpenFunction_OID
+          rsFunc.Open "SELECT * FROM pgadmin_functions WHERE function_OID = " & lng_OpenFunction_OID, gConnection, adOpenDynamic
+    
+    ' Initialize form with values from pgadmin_function
+    txtName = rsFunc!Function_name & ""
+    szPath = Replace(rsFunc!Function_source & "", "'", "''")
+    txtPath.Text = szPath
+    vssLanguage.Text = rsFunc!Function_language & ""
+    
+    If (rsFunc!Function_returns & "" <> "") Then
+        cboReturnType.Text = rsFunc!Function_returns & ""
+    Else
+        cboReturnType.Text = "opaque" ' Review if we could not put it in pgadmin_functions
+    End If
+    
+    temp_arg_list = Split(rsFunc!Function_arguments, ",")
+    For Each temp_arg_item In temp_arg_list
+         cboArguments.Text = Trim(temp_arg_item)
+         cmdAdd_Click
+    Next
+    
+    rsFunc.Close
+    EndMsg
+    
+  Exit Sub
+Err_Handler:
+  EndMsg
+  If Err.Number <> 0 Then LogError Err, "frmFunctions, cmdRefresh_Click"
+End Sub
+
