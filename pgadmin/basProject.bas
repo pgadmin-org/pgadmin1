@@ -114,7 +114,7 @@ On Error GoTo Err_Handler
     
     If ObjectExists(szFunction_source_table, tTable) = 0 Then Exit Sub
     
-    If ObjectExists(szFunction_target_table, tTable) = 0 Then
+    If ObjectExists(szFunction_target_table, tTable) = 0 And ObjectExists(szFunction_target_table, tView) = 0 Then
         szQuery = "CREATE TABLE " & szFunction_target_table & " AS SELECT * FROM " & szFunction_source_table & " LIMIT 1 ; TRUNCATE TABLE " & szFunction_target_table
         If Not SuperuserChk Then Exit Sub
         LogMsg "Executing: " & szQuery
@@ -161,7 +161,7 @@ On Error GoTo Err_Handler
  
     If ObjectExists(szTrigger_source_table, tTable) = 0 Then Exit Sub
     
-     If ObjectExists(szTrigger_target_table, tTable) = 0 Then
+     If ObjectExists(szTrigger_target_table, tTable) = 0 And ObjectExists(szTrigger_target_table, tView) = 0 Then
         szQuery = "CREATE TABLE " & szTrigger_target_table & " AS SELECT * FROM " & szTrigger_source_table & " LIMIT 1 ; TRUNCATE TABLE " & szTrigger_target_table
         If Not SuperuserChk Then Exit Sub
         LogMsg "Executing: " & szQuery
@@ -206,7 +206,7 @@ On Error GoTo Err_Handler
     
     If ObjectExists(szView_source_table, tTable) = 0 Then Exit Sub
     
-    If ObjectExists(szView_target_table, tTable) = 0 Then
+    If ObjectExists(szView_target_table, tTable) = 0 And ObjectExists(szView_target_table, tView) = 0 Then
         szQuery = "CREATE TABLE " & szView_target_table & " AS SELECT * FROM " & szView_source_table & " LIMIT 1 ; TRUNCATE TABLE " & szView_target_table
         If Not SuperuserChk Then Exit Sub
         LogMsg "Executing: " & szQuery
