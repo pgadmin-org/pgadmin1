@@ -320,7 +320,7 @@ bContinueCompilation = True
       Exit Sub
     End If
   End If
-  
+   
   StartMsg "Saving function..."
   
   ' Build function arguments
@@ -329,6 +329,14 @@ bContinueCompilation = True
     ArgList = ArgList & lstArguments.List(X) & ", "
   Next X
   If ArgList <> "" Then ArgList = Left(ArgList, Len(ArgList) - 2)
+  
+ ' In case of a creation, test existence of function with same arguments
+  If lng_OpenFunction_OID = 0 Then
+    If cmp_Function_Exists(0, txtName.Text, ArgList) = True Then
+    MsgBox "Function " & txtName.Text & " (" & ArgList & ") already exists ", vbExclamation, "Error"
+    Exit Sub
+    End If
+  End If
   
   ' Create fake function for testing purposes
   cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15), ArgList
@@ -480,6 +488,9 @@ Dim szFunction_owner As String
   If lng_OpenFunction_OID <> 0 Then
     Me.Caption = "Modify function"
     
+    ' To rename a file, use the rename function
+    txtName.Locked = True
+    txtName.BackColor = -2147483633
     ' get function values
     cmp_Function_GetValues lng_OpenFunction_OID, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
     
@@ -498,6 +509,8 @@ Dim szFunction_owner As String
     Next
    Else
       Me.Caption = "Create function"
+      txtName.Locked = False
+      txtName.BackColor = -2147483643
       txtOID = "N.S."
       txtOwner = "N.S."
    End If
