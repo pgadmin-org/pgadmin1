@@ -1180,7 +1180,7 @@ Dim AlterStr As String
   LogMsg "Executing: " & AlterStr
   gConnection.Execute AlterStr
   LogQuery AlterStr
-  cmdRefresh_Click
+  trvBrowser.SelectedItem.Text = NewName
   EndMsg
   Exit Sub
 Err_Handler:
@@ -1208,7 +1208,7 @@ Dim AlterStr As String
   LogMsg "Executing: " & AlterStr
   gConnection.Execute AlterStr
   LogQuery AlterStr
-  cmdRefresh_Click
+  trvBrowser.SelectedItem.Text = NewName
   EndMsg
   Exit Sub
 Err_Handler:
