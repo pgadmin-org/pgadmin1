@@ -48,7 +48,7 @@ Begin VB.Form frmFunctions
             Key             =   ""
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmFunctions.frx":0A90
+            Picture         =   "frmFunctions.frx":0B8C
             Key             =   ""
          EndProperty
       EndProperty
