@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Object = "{44DFA8BA-326E-4D0F-8941-25E814743439}#1.0#0"; "TreeToys.ocx"
 Begin VB.Form frmViews 
@@ -582,6 +582,7 @@ On Error GoTo Err_Handler
     cmp_View_GetValues szview_table, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
     
     txtOwner.Text = szView_owner
+    txtACL.Text = szView_acl
     txtName.Text = szView_name
     txtDefinition.Text = szView_definition
     txtComments.Text = szView_comments
