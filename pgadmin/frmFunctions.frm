@@ -564,13 +564,6 @@ cmp_function_tree_activatebuttons trvBrowser, iSelected, sz_key, CBool(chkFuncti
 'Check and uncheck buttons
 cmdButtonActivate sz_key, iSelected, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
 
-
-If cmp_Project_IsRebuilt = True Then
-    cmdRebuild.Enabled = False
-Else
-   cmdRebuild.Enabled = True
-End If
-
 Exit Sub
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmFunctions, CmdFuncButton"
