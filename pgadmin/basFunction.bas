@@ -419,7 +419,7 @@ On Error GoTo Err_Handler
                 End If
     
                 If szParentKey = "Dev:" And bContinueRebuilding = True Then
-                    cmp_Function_ParseName Tree.SelectedItem.Text, szFunction_name, szFunction_arguments
+                    cmp_Function_ParseName nodX.Text, szFunction_name, szFunction_arguments
                     cmp_Function_Move gDevPostgresqlTables & "_functions", "pgadmin_functions", szFunction_name, szFunction_arguments, True
                     bRefresh = True
                 End If
