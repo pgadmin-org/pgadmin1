@@ -336,14 +336,25 @@ bContinueCompilation = True
   cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(txtName.Text, 15), ArgList
   
   If bContinueCompilation = True Then
+    'Backup triggers and views
+    comp_Project_BackupTriggers
+    comp_Project_BackupViews
+    
     ' Drop function if exists
     If lng_OpenFunction_OID <> 0 Then cmp_Function_DropIfExists lng_OpenFunction_OID
     
     ' Create function
     cmp_Function_Create txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text
     
+    'Rebuild triggers and views
+    comp_Project_RebuildTriggers
+    comp_Project_RebuildViews
+    
     ' Refresh function list
     frmFunctions.cmdRefresh_Click
+    frmTriggers.cmdRefresh_Click
+    frmViews.cmdRefresh_Click
+    
     Unload Me
   End If
   

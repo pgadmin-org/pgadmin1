@@ -681,7 +681,43 @@ End Function
 '****
 '****
 
-Public Sub comp_Project_Initialize()
+Public Sub comp_Project_BackupViews()
+'On Error GoTo Err_Handler
+    Dim szQuery As String
+    Dim rsComp As New Recordset
+    
+    ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
+    ' We first copy pgadmin_functions, pgadmin_triggers, pgadmin_views into them
+      
+    szQuery = "TRUNCATE TABLE pgadmin_dev_views;" & _
+    "  INSERT INTO pgadmin_dev_views SELECT * from " & _
+    "  pgadmin_views " & _
+    "  WHERE view_oid > " & LAST_SYSTEM_OID & _
+    "  AND view_name NOT LIKE 'pgadmin_%' " & _
+    "  AND view_name NOT LIKE 'pg_%' " & _
+    "  ORDER BY view_name; " & _
+    "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
+    LogMsg "Initializing pgadmin_dev_views..."
+    LogMsg "Executing: " & szQuery
+    gConnection.Execute szQuery
+       
+    ' initialize pgadmin_dev_view
+    szQuery = "SELECT * FROM pgadmin_dev_views ORDER BY view_oid"
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szQuery, gConnection, adOpenDynamic
+    
+    While Not rsComp.EOF
+        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''") & "' WHERE view_name = '" & rsComp!view_name & "'"
+        gConnection.Execute szQuery
+        rsComp.MoveNext
+    Wend
+    Exit Sub
+    
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_View_DevBackup"
+End Sub
+
+Public Sub comp_Project_BackupFunctions()
 'On Error GoTo Err_Handler
     Dim szQuery As String
     Dim rsComp As New Recordset
@@ -703,31 +739,6 @@ Public Sub comp_Project_Initialize()
     LogMsg "Executing: " & szQuery
     gConnection.Execute szQuery
     
-    szQuery = "TRUNCATE TABLE pgadmin_dev_triggers;" & _
-    "  INSERT INTO pgadmin_dev_triggers SELECT * " & _
-    "  FROM pgadmin_triggers " & _
-    "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
-    "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
-    "  AND trigger_name NOT LIKE 'pg_%' " & _
-    "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
-    "  ORDER BY trigger_name; " & _
-    "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
-    LogMsg "Initializing pgadmin_dev_triggers..."
-    LogMsg "Executing: " & szQuery
-    gConnection.Execute szQuery
-    
-    szQuery = "TRUNCATE TABLE pgadmin_dev_views;" & _
-    "  INSERT INTO pgadmin_dev_views SELECT * from " & _
-    "  pgadmin_views " & _
-    "  WHERE view_oid > " & LAST_SYSTEM_OID & _
-    "  AND view_name NOT LIKE 'pgadmin_%' " & _
-    "  AND view_name NOT LIKE 'pg_%' " & _
-    "  ORDER BY view_name; " & _
-    "  UPDATE pgadmin_dev_views SET view_iscompiled = 'f';"
-    LogMsg "Initializing pgadmin_dev_views..."
-    LogMsg "Executing: " & szQuery
-    gConnection.Execute szQuery
-    
     szQuery = "TRUNCATE TABLE pgadmin_dev_dependencies;"
     LogMsg "Initializing pgadmin_dev_dependencies..."
     LogMsg "Executing: " & szQuery
@@ -743,16 +754,43 @@ Public Sub comp_Project_Initialize()
         rsComp.MoveNext
     Wend
     
-    ' initialize pgadmin_dev_view
-    szQuery = "SELECT * FROM pgadmin_dev_views ORDER BY view_oid"
-    If rsComp.State <> adStateClosed Then rsComp.Close
-    rsComp.Open szQuery, gConnection, adOpenDynamic
+    Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
+End Sub
+
+Public Sub comp_Project_BackupTriggers()
+'On Error GoTo Err_Handler
+    Dim szQuery As String
+    Dim rsComp As New Recordset
     
-    While Not rsComp.EOF
-        szQuery = "UPDATE pgadmin_dev_views SET view_definition = '" & Replace(cmp_View_GetViewDef(rsComp!view_name), "'", "''") & "' WHERE view_name = '" & rsComp!view_name & "'"
-        gConnection.Execute szQuery
-        rsComp.MoveNext
-    Wend
+    ' pgadmin_dev_functions, pgadmin_dev_triggers, pgadmin_dev_views are temporary tables.
+    ' We first copy pgadmin_functions, pgadmin_triggers, pgadmin_views into them
+    
+    szQuery = "TRUNCATE TABLE pgadmin_dev_triggers;" & _
+    "  INSERT INTO pgadmin_dev_triggers SELECT * " & _
+    "  FROM pgadmin_triggers " & _
+    "  WHERE trigger_oid > " & LAST_SYSTEM_OID & _
+    "  AND trigger_name NOT LIKE 'pgadmin_%' " & _
+    "  AND trigger_name NOT LIKE 'pg_%' " & _
+    "  AND trigger_name NOT LIKE 'RI_ConstraintTrigger_%' " & _
+    "  ORDER BY trigger_name; " & _
+    "  UPDATE pgadmin_dev_triggers SET trigger_iscompiled = 'f';"
+    LogMsg "Initializing pgadmin_dev_triggers..."
+    LogMsg "Executing: " & szQuery
+    gConnection.Execute szQuery
+    
+    Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
+End Sub
+
+Public Sub comp_Project_Initialize()
+On Error GoTo Err_Handler
+   comp_Project_BackupFunctions
+   comp_Project_BackupViews
+   comp_Project_BackupTriggers
+   
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_Initialize"
@@ -787,7 +825,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_FindNextFunctionToCompile"
 End Function
 
-Public Sub comp_Project_RelinkTriggers()
+Public Sub comp_Project_RebuildTriggers()
 On Error GoTo Err_Handler
     Dim rsTrigger As New Recordset
     Dim szQueryStr As String
@@ -811,10 +849,10 @@ On Error GoTo Err_Handler
 
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_RelinkTriggers"
+  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_RebuildTriggers"
 End Sub
 
-Public Sub comp_Project_RelinkViews()
+Public Sub comp_Project_RebuildViews()
 On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
@@ -836,7 +874,7 @@ On Error GoTo Err_Handler
 
     Exit Sub
 Err_Handler:
-  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_RelinkTriggers"
+  If Err.Number <> 0 Then LogError Err, "basCompiler, comp_Project_RebuildTriggers"
 End Sub
 
 Public Sub comp_Project_Compile()
@@ -852,8 +890,8 @@ On Error GoTo Err_Handler
       
     ' We must always relink triggers and views
     ' even if function compilation was aborted
-    comp_Project_RelinkTriggers
-    comp_Project_RelinkViews
+    comp_Project_RebuildTriggers
+    comp_Project_RebuildViews
     
     If bContinueCompilation = True Then MsgBox ("Rebuilding successfull")
     Exit Sub
