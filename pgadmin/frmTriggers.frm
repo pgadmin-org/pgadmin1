@@ -2,17 +2,27 @@ VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmTriggers 
    Caption         =   "Triggers"
-   ClientHeight    =   4050
+   ClientHeight    =   4425
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   8205
    LinkTopic       =   "Form1"
    MDIChild        =   -1  'True
-   ScaleHeight     =   4050
+   ScaleHeight     =   4425
    ScaleWidth      =   8205
-   Begin VB.CommandButton cmdRebuild 
+   Begin VB.CommandButton cmdRebuildTriggers 
       BackColor       =   &H80000018&
-      Caption         =   "Rebuild &project"
+      Caption         =   "Rebuild Triggers"
+      Height          =   330
+      Left            =   45
+      TabIndex        =   27
+      ToolTipText     =   "Checks and rebuilds dependencies on functions, triggers and views."
+      Top             =   3915
+      Width           =   1410
+   End
+   Begin VB.CommandButton cmdRebuildProject 
+      BackColor       =   &H80000018&
+      Caption         =   "Rebuild &Project"
       Height          =   330
       Left            =   45
       TabIndex        =   26
@@ -66,7 +76,7 @@ Begin VB.Form frmTriggers
    End
    Begin VB.Frame fraDetails 
       Caption         =   "Trigger Details"
-      Height          =   4020
+      Height          =   4380
       Left            =   4500
       TabIndex        =   13
       Top             =   0
@@ -136,7 +146,7 @@ Begin VB.Form frmTriggers
       End
       Begin VB.TextBox txtComments 
          BackColor       =   &H8000000F&
-         Height          =   1230
+         Height          =   1635
          Left            =   90
          Locked          =   -1  'True
          MultiLine       =   -1  'True
@@ -227,7 +237,7 @@ Begin VB.Form frmTriggers
       End
    End
    Begin VB.ListBox lstTrig 
-      Height          =   3960
+      Height          =   4350
       ItemData        =   "frmTriggers.frx":0000
       Left            =   1485
       List            =   "frmTriggers.frx":0002
@@ -373,8 +383,22 @@ Exit Sub
 Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdModifyFunc_Click"
 End Sub
 
-Private Sub cmdRebuild_Click()
+Private Sub cmdRebuildProject_click()
+On Error GoTo Err_Handler
     cmp_Project_Rebuild
+    
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuildProject"
+End Sub
+
+Private Sub cmdRebuildTriggers_Click()
+On Error GoTo Err_Handler
+    cmp_Project_RebuildTriggers
+    If bContinueRebuilding = True Then
+        cmp_Trigger_CopyToDev
+    End If
+Exit Sub
+Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTriggers, cmdRebuildTriggers_Click"
 End Sub
 
 Private Sub lstTrig_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -512,7 +536,7 @@ On Error GoTo Err_Handler
   If Me.WindowState <> 1 Then
     If Me.WindowState = 0 Then
       If Me.Width < 8325 Then Me.Width = 8325
-      If Me.Height < 4455 Then Me.Height = 4455
+      If Me.Height < 4830 Then Me.Height = 4830
     End If
     lstTrig.Height = Me.ScaleHeight
     lstTrig.Width = Me.ScaleWidth - lstTrig.Left - fraDetails.Width - 25
@@ -591,9 +615,11 @@ On Error GoTo Err_Handler
     cmdButtonActivate bSystem, lstTrig.SelCount, cmdCreateTrig, cmdModifyTrig, cmdDropTrig, cmdExportTrig, cmdComment, cmdRefresh
 
     If cmp_Project_IsRebuilt = True Then
-        cmdRebuild.Enabled = False
+        cmdRebuildProject.Enabled = False
+        cmdRebuildTriggers.Enabled = False
     Else
-       cmdRebuild.Enabled = True
+        cmdRebuildProject.Enabled = True
+        cmdRebuildTriggers.Enabled = True
     End If
 Err_Handler:
 If Err.Number <> 0 Then LogError Err, "frmTriggers, CmdTrigButton"
