@@ -121,7 +121,6 @@ Begin VB.Form frmAddView
       Height          =   3960
       Left            =   1485
       TabIndex        =   0
-      ToolTipText     =   "Enter the SQL Query for the View."
       Top             =   45
       Width           =   2985
       _ExtentX        =   5265
