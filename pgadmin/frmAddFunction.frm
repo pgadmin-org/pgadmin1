@@ -173,14 +173,14 @@ Begin VB.Form frmAddFunction
       Width           =   1402
    End
    Begin HighlightBox.HBX txtPath 
-      Height          =   5445
-      Left            =   1575
+      Height          =   5520
+      Left            =   1477
       TabIndex        =   17
       ToolTipText     =   "Enter the function code or Library Path."
-      Top             =   90
-      Width           =   2895
-      _ExtentX        =   5106
-      _ExtentY        =   9604
+      Top             =   45
+      Width           =   2968
+      _ExtentX        =   5239
+      _ExtentY        =   9737
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25
