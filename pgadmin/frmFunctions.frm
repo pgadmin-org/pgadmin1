@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{44F33AC4-8757-4330-B063-18608617F23E}#4.1#0"; "HighlightBox.ocx"
+Object = "{44F33AC4-8757-4330-B063-18608617F23E}#5.0#0"; "HighlightBox.ocx"
 Begin VB.Form frmFunctions 
    Caption         =   "Functions"
    ClientHeight    =   5595
@@ -161,7 +161,6 @@ Begin VB.Form frmFunctions
          Width           =   4245
          _ExtentX        =   7488
          _ExtentY        =   1931
-         Enabled         =   -1  'True
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
             Size            =   8.25

@@ -17,23 +17,25 @@ Attribute VB_Name = "basCompiler"
 ' Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Option Explicit
-Dim bContinueCompilation As Boolean
 
 '****
 '**** Views
 '****
 
-Sub cmp_View_DropIfExists(ByVal szView_name As String)
+Sub cmp_View_DropIfExists(ByVal lngView_OID As Long, Optional ByVal szView_Name As String)
  On Error GoTo Err_Handler
     Dim szDropStr As String
   
     ' Test existence of view
-    If cmp_View_Exists(szView_name) = True Then
+    If cmp_View_Exists(lngView_OID, szView_Name & "") = True Then
+    
+        If szView_Name = "" Then cmp_View_GetValues lngView_OID, szView_Name
+    
         ' create drop query
-        szDropStr = "DROP VIEW " & QUOTE & szView_name & QUOTE
+        szDropStr = "DROP VIEW " & QUOTE & szView_Name & QUOTE
                
         ' Log information
-        LogMsg "Dropping view " & szView_name & "..."
+        LogMsg "Dropping view " & szView_Name & "..."
         LogMsg "Executing: " & szDropStr
         
         ' Execute drop query and close log
@@ -45,22 +47,32 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_View_DropIfExists"
 End Sub
 
-Function cmp_View_Exists(ByVal szView_name As String) As Boolean
+Function cmp_View_Exists(ByVal lngView_OID As Long, ByVal szView_Name As String) As Boolean
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
   
-    szQueryStr = "SELECT * FROM pgadmin_dev_views "
-    szQueryStr = szQueryStr & "WHERE view_name = '" & szView_name & "' "
+    cmp_View_Exists = False
+    If lngView_OID <> 0 Then
+        szQueryStr = "SELECT * FROM pgadmin_views "
+        szQueryStr = szQueryStr & "WHERE view_OID = " & Str(lngView_OID)
+    Else
+        If szView_Name <> "" Then
+            szQueryStr = "SELECT * FROM pgadmin_views "
+            szQueryStr = szQueryStr & "WHERE view_name = '" & szView_Name & "' "
+        Else
+            Exit Function
+        End If
+    End If
     
       ' retrieve name and arguments of function to drop
-    LogMsg "Testing existence of view " & szView_name & "..."
+    LogMsg "Testing existence of view " & szView_Name & "..."
     LogMsg "Executing: " & szQueryStr
 
     If rsComp.State <> adStateClosed Then rsComp.Close
     rsComp.Open szQueryStr, gConnection
     
-    cmp_View_Exists = False
+
     If Not rsComp.EOF Then
         cmp_View_Exists = True
         rsComp.Close
@@ -71,22 +83,55 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_View_DropIfExists"
 End Function
 
-Sub cmp_View_Create(ByVal szView_name As String, ByVal szView_definition As String)
+Sub cmp_View_Create(ByVal szView_Name As String, ByVal szView_Definition As String)
 On Error GoTo Err_Handler
-    Dim szCreateStr As String
+  Dim szCreateStr As String
 
-  szCreateStr = "CREATE VIEW " & szView_name & " AS " & szView_definition
-  
-      ' Log information
-  LogMsg "Creating view " & szView_name & "..."
-  LogMsg "Executing: " & szCreateStr
+    szCreateStr = "CREATE VIEW " & szView_Name & " AS " & szView_Definition
+    LogMsg "Creating view " & szView_Name & "..."
+    LogMsg "Executing: " & szCreateStr
     
     ' Execute drop query and close log
     gConnection.Execute szCreateStr
     LogQuery szCreateStr
+
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Views_Create"
+  If Err.Number = -2147467259 Then MsgBox "View " & szView_Name & " could not be compiled." & vbCrLf & "Check source code and compile again."
+  bContinueCompilation = False
+End Sub
+
+Sub cmp_View_GetValues(ByVal lngView_OID As Long, Optional szView_Name As String, Optional szView_Definition As String, Optional szView_Owner As String, Optional szView_Acl As String)
+ On Error GoTo Err_Handler
+    Dim szQueryStr As String
+    Dim rsComp As New Recordset
+    
+    If lngView_OID <> 0 Then
+        szQueryStr = "SELECT * from pgadmin_views"
+        szQueryStr = szQueryStr & " WHERE view_OID = " & lngView_OID
+        LogMsg "Retrieving values from view OID =" & lngView_OID & "..."
+    Else
+        ' to be written
+        Exit Sub
+    End If
+    
+    LogMsg "Executing: " & szQueryStr
+    
+    ' open
+    If rsComp.State <> adStateClosed Then rsComp.Close
+    rsComp.Open szQueryStr, gConnection
+    
+    If Not rsComp.EOF Then
+        If Not (IsMissing(szView_Name)) Then szView_Name = rsComp!view_name & ""
+        If Not (IsMissing(szView_Definition)) Then szView_Definition = rsComp!view_definition & ""
+        If Not (IsMissing(szView_Owner)) Then szView_Owner = rsComp!view_owner & ""
+        If Not (IsMissing(szView_Acl)) Then szView_Acl = rsComp!view_acl & ""
+        rsComp.Close
+    End If
+  Exit Sub
+Err_Handler:
+  If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Views_GetValues"
 End Sub
 
 '****
@@ -125,7 +170,7 @@ On Error GoTo Err_Handler
             szTrigger_Event = Left(szTrigger_Event, Len(szTrigger_Event) - 3)
         End If
     End If
-  
+     
     szQueryStr = "CREATE TRIGGER " & QUOTE & szTrigger_name & QUOTE
     szQueryStr = szQueryStr & " " & szTrigger_Executes & " " & szTrigger_Event
     szQueryStr = szQueryStr & " ON " & QUOTE & szTrigger_table & QUOTE & " FOR EACH " & szTrigger_ForEach
@@ -142,6 +187,8 @@ On Error GoTo Err_Handler
     Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Trigger_SQL"
+  If Err.Number = -2147467259 Then MsgBox "Trigger " & szTrigger_name & " could not be compiled." & vbCrLf & "Check source code and compile again."
+  bContinueCompilation = False
 End Sub
 
 Sub cmp_Trigger_DropIfExists(ByVal lngTrigger_OID As Long, Optional ByVal szTrigger_name As String, Optional ByVal szTrigger_table As String)
@@ -176,7 +223,6 @@ Sub cmp_Trigger_GetValues(ByVal lngTrigger_OID As Long, Optional szTrigger_name 
     Dim iTrigger_type As Integer
     
     If lngTrigger_OID <> 0 Then
-        ' create drop query
         szQueryStr = "SELECT * from pgadmin_triggers"
         szQueryStr = szQueryStr & " WHERE trigger_OID = " & lngTrigger_OID
         LogMsg "Retrieving name and table from trigger OID =" & lngTrigger_OID & "..."
@@ -292,8 +338,11 @@ On Error GoTo Err_Handler
         If szFunction_name <> "" Then
             szQueryStr = "SELECT * FROM pgadmin_functions "
             szQueryStr = szQueryStr & "WHERE Function_name = '" & szFunction_name & "' "
-            szQueryStr = szQueryStr & "AND Function_arguments = '" & szFunction_arguments & "'"
-            
+            If szFunction_arguments <> "" Then
+                szQueryStr = szQueryStr & "AND Function_arguments = '" & szFunction_arguments & "'"
+            Else
+                szQueryStr = szQueryStr & "AND Function_arguments = '' "
+            End If
             'Log
             LogMsg "Testing existence of function " & szFunction_name & " (" & szFunction_arguments & ")..."
         Else
@@ -346,23 +395,22 @@ Public Sub cmp_Function_Create(ByVal szFunction_name As String, ByVal szFunction
 On Error GoTo Err_Handler
     Dim szCreateStr As String
 
-  szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
-  szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") "
-  szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " "
-  szCreateStr = szCreateStr & "AS '" & szFunction_source & "' "
-  szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
-  
-  'Log
-  LogMsg "Creating function " & szFunction_name & "(" & szFunction_argumentlist & ") ..."
-  LogMsg "Executing: " & szCreateStr
-  
-  'Execute
-  gConnection.Execute szCreateStr
-  LogQuery szCreateStr
+    szCreateStr = "CREATE FUNCTION " & QUOTE & szFunction_name & "" & QUOTE & " ("
+    szCreateStr = szCreateStr & szFunction_argumentlist & "" & ") "
+    szCreateStr = szCreateStr & "RETURNS " & szFunction_returns & " "
+    szCreateStr = szCreateStr & "AS '" & szFunction_source & "' "
+    szCreateStr = szCreateStr & "LANGUAGE '" & szFunction_language & "'"
+    'Log
+    LogMsg "Creating function " & szFunction_name & "(" & szFunction_argumentlist & ") ..."
+    LogMsg "Executing: " & szCreateStr
+    
+    'Execute
+    gConnection.Execute szCreateStr
+    LogQuery szCreateStr
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_Create"
-  MsgBox "Function " & szFunction_name & " (" & szFunction_argumentlist & ") could not be compiled. Check source code of the function and compile again."
+  If Err.Number = -2147467259 Then MsgBox "Function " & szFunction_name & " (" & szFunction_argumentlist & ") could not be compiled." & vbCrLf & "Check source code and compile again."
   bContinueCompilation = False
 End Sub
 
@@ -384,9 +432,9 @@ On Error GoTo Err_Handler
     If szFunction_name <> "" Then
         ' Attempt to create a temporary function to see if it compiles
         LogMsg "Checking if " & szFunction_name & " (" & szFunction_arguments & ") can be compiled ..."
-        cmp_Function_DropIfExists 0, "pgadmin_dev_temp_function", szFunction_arguments
-        cmp_Function_Create "pgadmin_dev_temp_function", szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
-        cmp_Function_DropIfExists 0, "pgadmin_dev_temp_function", szFunction_arguments
+        cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments
+        cmp_Function_Create "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language
+        cmp_Function_DropIfExists 0, "pgadmin_fake__" & Left(szFunction_name, 15), szFunction_arguments
     
        If bContinueCompilation = True Then
             ' If it does, compile the real function
@@ -401,8 +449,6 @@ On Error GoTo Err_Handler
   Exit Sub
 Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_Compile"
-  MsgBox "Function " & szFunction_name & " (" & szFunction_arguments & ") could not be compiled. Check source code of the function and compile again."
-  bContinueCompilation = False
 End Sub
 
 Public Sub cmp_Function_Dependency_Initialize(ByVal lngFunction_OID As Long, ByVal szFunction_name As String)
@@ -521,7 +567,7 @@ Err_Handler:
   If Err.Number <> 0 Then LogError Err, "basCompiler, cmp_Function_HasSatisfiedDependencies"
 End Function
 
-Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String)
+Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_name As String, Optional szFunction_arguments As String, Optional szFunction_returns As String, Optional szFunction_source As String, Optional szFunction_language As String, Optional szFunction_owner As String)
  On Error GoTo Err_Handler
     Dim szQueryStr As String
     Dim rsComp As New Recordset
@@ -545,7 +591,8 @@ Sub cmp_Function_GetValues(ByVal lngFunction_OID As Long, Optional szFunction_na
             If Not (IsMissing(szFunction_returns)) Then szFunction_returns = rsComp!Function_returns & ""
             If Not (IsMissing(szFunction_source)) Then szFunction_source = rsComp!Function_source & ""
             If Not (IsMissing(szFunction_language)) Then szFunction_language = rsComp!Function_language & ""
-            
+            If Not (IsMissing(szFunction_owner)) Then szFunction_owner = rsComp!Function_owner & ""
+           
             If (szFunction_name <> "") And (szFunction_returns = "") Then szFunction_returns = "opaque"
             szFunction_source = Replace(szFunction_source, "'", "''")
             rsComp.Close
@@ -719,9 +766,10 @@ On Error GoTo Err_Handler
     If rsTrigger.State <> adStateClosed Then rsTrigger.Close
     rsTrigger.Open szQueryStr, gConnection, adOpenDynamic
     
+    ' All triggers carry functions_OID that have been deleted
+    ' Therefore, we cannot stop and must compile all triggers
     While Not rsTrigger.EOF
-        ' Drop trigger if exists and then recreate it
-        cmp_Trigger_DropIfExists rsTrigger!trigger_OID, rsTrigger!trigger_name, rsTrigger!trigger_table
+        cmp_Trigger_DropIfExists rsTrigger!trigger_oid, rsTrigger!trigger_name, rsTrigger!trigger_table
         cmp_Trigger_Create rsTrigger!trigger_name, rsTrigger!trigger_table, rsTrigger!trigger_function & "", rsTrigger!trigger_arguments & "", "", "", "", rsTrigger!trigger_type
         rsTrigger.MoveNext
     Wend
@@ -735,8 +783,7 @@ Public Sub comp_Project_RelinkViews()
 On Error GoTo Err_Handler
     Dim rsViews As New Recordset
     Dim szQueryStr As String
-    ' Obviously this does not work
-    
+
     szQueryStr = "SELECT * From pgadmin_dev_views"
     
     LogMsg "Now relinking views..."
@@ -745,10 +792,17 @@ On Error GoTo Err_Handler
     If rsViews.State <> adStateClosed Then rsViews.Close
     rsViews.Open szQueryStr, gConnection, adOpenDynamic
     
-    While Not rsViews.EOF
-        ' Drop view if exists and then recreate it
-        cmp_View_DropIfExists rsViews!view_name
-        cmp_View_Create rsViews!view_name, rsViews!view_definition
+    While Not rsViews.EOF And bContinueCompilation
+        ' Create fake view for testing purposes
+        cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(rsViews!view_name, 15)
+        cmp_View_Create "pgadmin_fake__" & Left(rsViews!view_name, 15), rsViews!view_definition
+        cmp_View_DropIfExists 0, "pgadmin_fake__" & Left(rsViews!view_name, 15)
+        
+        ' If OK, create real view
+        If bContinueCompilation = True Then
+            cmp_View_DropIfExists rsViews!view_oid, rsViews!view_name
+            cmp_View_Create rsViews!view_name, rsViews!view_definition
+        End If
         rsViews.MoveNext
     Wend
 
@@ -767,9 +821,9 @@ On Error GoTo Err_Handler
         cmp_Function_Compile (lngNextFunctionToCompile_OID)
         lngNextFunctionToCompile_OID = comp_Project_FindNextFunctionToCompile
     Wend
-    
-    comp_Project_RelinkTriggers
-    comp_Project_RelinkViews
+      
+    If bContinueCompilation = True Then comp_Project_RelinkTriggers
+    If bContinueCompilation = True Then comp_Project_RelinkViews
     
     If bContinueCompilation = True Then MsgBox ("Rebuilding successfull")
     Exit Sub
