@@ -480,7 +480,7 @@ Public Sub cmdButtonActivate(Tree As TreeToy, bShowSystem As Boolean, iPro_Index
     '
     ' ENABLE /DISABLE
     '
-    cmdObjDrop.Enabled = (iCountChecked > 0)
+    cmdObjDrop.Enabled = (iCountChecked > 0) And (sz_Key <> "Sys:")
     cmdObjExport.Enabled = (iCountChecked > 0)
     cmdObjRefresh.Enabled = True
     cmdObjCreate.Enabled = True
