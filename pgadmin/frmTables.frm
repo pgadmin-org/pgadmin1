@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
 Object = "{44F33AC4-8757-4330-B063-18608617F23E}#12.4#0"; "HighlightBox.ocx"
 Begin VB.Form frmTables 
    Caption         =   "Tables"
@@ -960,7 +960,7 @@ On Error GoTo Err_Handler
     MsgBox "That is a system table!", vbExclamation, "Error"
     Exit Sub
   End If
-    If MsgBox("Are you sure you wish to delete " & trvBrowser.SelectedItem.Text & "?", vbYesNo + vbQuestion, _
+    If MsgBox("Are you sure you wish to delete " & trvBrowser.SelectedItem.Text & " table?", vbYesNo + vbQuestion, _
               "Confirm Table Delete") = vbYes Then
       StartMsg "Dropping Table..."
       fMainForm.txtSQLPane.Text = "DROP TABLE " & QUOTE & trvBrowser.SelectedItem.Text & QUOTE
