@@ -151,7 +151,6 @@ Begin VB.Form frmViews
       Indentation     =   299.906
       LabelEdit       =   1
       LineStyle       =   1
-      Sorted          =   -1  'True
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "MS Sans Serif"
          Size            =   8.25

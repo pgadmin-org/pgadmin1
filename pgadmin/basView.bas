@@ -23,6 +23,14 @@ Private szPro_Text As String
 Private szDev_Text As String
 Private szSys_Text As String
 
+Private iPro_Index As Integer
+Private iDev_Index As Integer
+Private iSys_Index As Integer
+
+Private iPro_Count As Long
+Private iDev_Count As Long
+Private iSys_Count As Long
+
 '****
 '**** Views
 '****
@@ -560,27 +568,33 @@ On Error GoTo Err_Handler
   Dim rsView As New Recordset
   
   StartMsg "Retrieving view Names..."
-  
+   
   Tree.Nodes.Clear
+  iDev_Count = 0
+  iPro_Count = 0
+  iSys_Count = 0
   
-  If DevMode = False Then
-    szPro_Text = "User views"
-  Else
-    szPro_Text = "2 - Production views"
-  End If
-  
-  Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
-  iPro_Index = NodeX.Index
-  NodeX.Expanded = False
-  
-  szDev_Text = "1 - Development views"
+  ' Developement views
+  szDev_Text = "Development views"
   If DevMode = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Dev:", szDev_Text, 1)
     iDev_Index = NodeX.Index
     NodeX.Expanded = False
   End If
   
-  szSys_Text = "3 - System views"
+  ' Production views
+  If DevMode = False Then
+    szPro_Text = "User views"
+  Else
+    szPro_Text = "Production views"
+  End If
+  
+  Set NodeX = Tree.Nodes.Add(, tvwChild, "Pro:", szPro_Text, 1)
+  iPro_Index = NodeX.Index
+  NodeX.Expanded = False
+  
+  ' System views
+  szSys_Text = "System views"
   If bShowSystem = True Then
     Set NodeX = Tree.Nodes.Add(, tvwChild, "Sys:", szSys_Text, 1)
     iSys_Index = NodeX.Index
@@ -613,16 +627,23 @@ On Error GoTo Err_Handler
          ' If it is a system view, add it to "S:" System node
          ' ---------------------------------------------------------------------
             Set NodeX = Tree.Nodes.Add("Sys:", tvwChild, "S:" & szView_name, szView_name, 2)
+            iSys_Count = iSys_Count + 1
         Else
          ' ---------------------------------------------------------------------
          ' Else it is a user view, add it to "P:" Production node
          ' ---------------------------------------------------------------------
             Set NodeX = Tree.Nodes.Add("Pro:", tvwChild, "P:" & szView_name, szView_name, 4)
+            iPro_Count = iPro_Count + 1
         End If
         NodeX.Tag = cmp_View_CreateSQL(szView_name, szView_definition)
         NodeX.Image = 4
     Next iLoop
   End If
+  
+  ' Show total number of views
+  Tree.Nodes.Item(iPro_Index).Text = Tree.Nodes.Item(iPro_Index).Text & " (" & CStr(iPro_Count) & ")"
+  If iSys_Count > 0 Then Tree.Nodes.Item(iSys_Index).Text = Tree.Nodes.Item(iSys_Index).Text & " (" & CStr(iSys_Count) & ")"
+
   Erase szView
   
  ' ---------------------------------------------------------------------
@@ -637,6 +658,7 @@ On Error GoTo Err_Handler
       If Not (rsView.EOF) Then
         szView = rsView.GetRows
         iUbound = UBound(szView, 2)
+        iDev_Count = iUbound + 1
         For iLoop = 0 To iUbound
             szview_oid = szView(0, iLoop) & ""
             szView_name = szView(1, iLoop) & ""
@@ -658,6 +680,9 @@ On Error GoTo Err_Handler
         Next iLoop
       End If
       Erase szView
+      
+  ' Show Dev view number
+  Tree.Nodes.Item(iDev_Index).Text = Tree.Nodes.Item(iDev_Index).Text & " (" & CStr(iDev_Count) & ")"
   End If
   
   Set rsView = Nothing
