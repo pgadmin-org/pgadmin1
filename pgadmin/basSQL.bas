@@ -38,6 +38,8 @@ Dim SQL_PGADMIN_GET_HANDLER As String
 Dim SQL_PGADMIN_GET_TYPE As String
 Dim SQL_PGADMIN_GET_ROWS As String
 Dim SQL_PGADMIN_GET_SEQUENCE As String
+Dim SQL_PGADMIN_GET_FUNCTION_NAME As String
+Dim SQL_PGADMIN_GET_FUNCTION_ARGUMENTS As String
 Dim SQL_PGADMIN_CHECKS As String
 Dim SQL_PGADMIN_DATABASES As String
 Dim SQL_PGADMIN_FUNCTIONS As String
@@ -65,6 +67,9 @@ SQL_PGADMIN_GET_HANDLER = "CREATE FUNCTION pgadmin_get_handler(oid) RETURNS text
 SQL_PGADMIN_GET_TYPE = "CREATE FUNCTION pgadmin_get_type(oid) RETURNS text AS 'SELECT typname::text FROM pg_type WHERE oid = $1' LANGUAGE 'sql'"
 SQL_PGADMIN_GET_ROWS = "CREATE FUNCTION pgadmin_get_rows(oid) RETURNS pgadmin_table_cache AS 'SELECT DISTINCT ON(table_oid) * FROM pgadmin_table_cache WHERE table_oid = $1 ORDER BY table_oid, table_timestamp DESC' LANGUAGE 'sql'"
 SQL_PGADMIN_GET_SEQUENCE = "CREATE FUNCTION pgadmin_get_sequence(oid) RETURNS pgadmin_seq_cache AS 'SELECT DISTINCT ON(sequence_oid) * FROM pgadmin_seq_cache WHERE sequence_oid = $1 ORDER BY sequence_oid, sequence_timestamp DESC' LANGUAGE 'sql'"
+SQL_PGADMIN_GET_FUNCTION_NAME = "CREATE FUNCTION pgadmin_get_function_name(oid) RETURNS name AS 'SELECT function_name FROM pgadmin_functions WHERE function_oid = $1' LANGUAGE 'sql'"
+SQL_PGADMIN_GET_FUNCTION_ARGUMENTS = "CREATE FUNCTION pgadmin_get_function_arguments(oid) RETURNS text AS 'SELECT function_arguments FROM pgadmin_functions WHERE function_oid = $1' LANGUAGE 'sql'"
+
 
 SQL_PGADMIN_CHECKS = _
   "CREATE VIEW pgadmin_checks AS SELECT " & _
@@ -151,14 +156,14 @@ SQL_PGADMIN_USERS = _
   "  CASE WHEN usesuper = TRUE THEN 'Yes'::text ELSE 'No'::text END AS user_superuser, " & _
   "  valuntil As user_expires " & _
   "FROM pg_shadow"
-  
+
 SQL_PGADMIN_TRIGGERS = _
   "CREATE VIEW pgadmin_triggers AS SELECT " & _
-  "  t.oid AS trigger_oid, t.tgname AS trigger_name, c.relname AS trigger_table, p.proname AS trigger_function, " & _
-  "  t.tgtype AS trigger_type, " & _
-  "  CASE WHEN t.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(t.oid) ELSE pgadmin_get_desc(t.oid) END AS trigger_comments " & _
-  "FROM pg_trigger t, pg_class c, pg_proc p " & _
-  "WHERE c.oid = t.tgrelid AND p.oid = tgfoid"
+  " t.oid AS trigger_oid, t.tgname AS trigger_name, c.relname AS trigger_table, " & _
+  " pgadmin_get_function_name (tgfoid) AS trigger_function, pgadmin_get_function_arguments (tgfoid) AS trigger_arguments, t.tgtype AS trigger_type, " & _
+  " CASE WHEN t.oid <= " & LAST_SYSTEM_OID & " THEN pgadmin_get_pgdesc(t.oid) ELSE pgadmin_get_desc(t.oid) END AS trigger_comments " & _
+  "FROM pg_trigger t, pg_class c " & _
+  "WHERE c.oid = t.tgrelid"
 
 SQL_PGADMIN_VIEWS = _
   "CREATE VIEW pgadmin_views AS SELECT " & _
@@ -393,6 +398,25 @@ SQL_PGADMIN_VIEWS = _
     gConnection.Execute "GRANT all ON pgadmin_functions TO public"
     EndMsg
   End If
+  
+   ' <Jean-Michel POURE>
+   ' Needed in pgadmin_triggers
+  If ObjectExists("pgadmin_get_function_name", tFunction) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin Function Name Lookup Function..."
+    LogMsg "Executing: " & SQL_PGADMIN_GET_FUNCTION_NAME
+    gConnection.Execute SQL_PGADMIN_GET_FUNCTION_NAME
+    EndMsg
+  End If
+  If ObjectExists("pgadmin_get_function_arguments", tFunction) = 0 Then
+    If Not SuperuserChk Then Exit Sub
+    StartMsg "Creating pgAdmin Sequence Lookup Function..."
+    LogMsg "Executing: " & SQL_PGADMIN_GET_FUNCTION_ARGUMENTS
+    gConnection.Execute SQL_PGADMIN_GET_FUNCTION_ARGUMENTS
+    EndMsg
+  End If
+  '</jean-Michel POURE>
+  
   If ObjectExists("pgadmin_groups", tTable) <> 0 Then
     If Not SuperuserChk Then Exit Sub
     StartMsg "Dropping corrupted pgAdmin Groups View..."
@@ -565,7 +589,10 @@ On Error Resume Next
   gConnection.Execute "DROP FUNCTION pgadmin_get_rows(oid)"
   LogMsg "Executing: DROP FUNCTION pgadmin_get_sequence(oid)"
   gConnection.Execute "DROP FUNCTION pgadmin_get_sequence(oid)"
-  
+  LogMsg "Executing: DROP FUNCTION pgadmin_get_function_name(oid)"
+  gConnection.Execute "DROP FUNCTION pgadmin_get_function_name(oid)"
+  LogMsg "Executing: DROP FUNCTION pgadmin_get_function_arguments(oid)"
+  gConnection.Execute "DROP FUNCTION pgadmin_get_function_arguments(oid)"
   'Drop views
   LogMsg "Executing: DROP VIEW pgadmin_checks"
   gConnection.Execute "DROP VIEW pgadmin_checks"
