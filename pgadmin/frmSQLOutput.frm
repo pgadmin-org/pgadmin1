@@ -219,6 +219,8 @@ Dim bFlag As Boolean
             szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
           Case adDBDate
             szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
+            Case adDBTimeStamp
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd hh:mm:ss") & "' AND "
           Case Else
             szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.Text) & "' AND "
         End Select
@@ -230,6 +232,8 @@ Dim bFlag As Boolean
             szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
           Case adDBDate
             szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
+          Case adDBTimeStamp
+            szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd hh:mm:ss") & "' AND "
           Case Else
             szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.SubItems(x)) & "' AND "
         End Select
@@ -336,6 +340,8 @@ Dim rsCount As New Recordset
             szValues = szValues & "'" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
           Case adDBDate
             szValues = szValues & "'" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
+          Case adDBTimeStamp
+            szValues = szValues & "'" & Format(txtField(x).Text, "yyyy-MM-dd hh:mm:ss") & "', "
           Case Else
             szValues = szValues & "'" & dbSZ(txtField(x).Text) & "', "
         End Select
@@ -373,6 +379,8 @@ Dim rsCount As New Recordset
             szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
           Case adDBDate
             szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & Format(txtField(x).Text, "yyyy-MM-dd") & "', "
+          Case adDBTimeStamp
+            szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & Format(txtField(x).Text, "yyyy-MM-dd hh:mm:ss") & "', "
           Case Else
             szValues = szValues & QUOTE & lblField(x).Caption & QUOTE & " = '" & dbSZ(txtField(x).Text) & "', "
         End Select
@@ -389,6 +397,8 @@ Dim rsCount As New Recordset
               szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
             Case adDBDate
               szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd") & "' AND "
+            Case adDBTimeStamp
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.Text, "yyyy-MM-dd hh:mm:ss") & "' AND "
             Case Else
               szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.Text) & "' AND "
           End Select
@@ -400,6 +410,8 @@ Dim rsCount As New Recordset
               szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
             Case adDBDate
               szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd") & "' AND "
+            Case adDBTimeStamp
+              szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & Format(lvData.SelectedItem.SubItems(x), "yyyy-MM-dd hh:mm:ss") & "' AND "
             Case Else
               szCriteria = szCriteria & QUOTE & lvData.ColumnHeaders(x + 1).Text & QUOTE & " = '" & dbSZ(lvData.SelectedItem.SubItems(x)) & "' AND "
           End Select
