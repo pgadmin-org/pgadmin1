@@ -241,6 +241,7 @@ End Sub
 
 Private Sub cmdCreate_Click()
 'On Error GoTo Err_Handler
+Dim szTrigger_pgTable As String
 Dim szTrigger_Name As String
 Dim szTrigger_Table As String
 Dim szTrigger_Function As String
@@ -251,22 +252,17 @@ Dim szTrigger_Event As String
 Dim szTrigger_Comments As String
 
 If (Form_txtSave(True, szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event, szTrigger_Comments) = False) Then Exit Sub
-    
-  ' In case of a creation, test existence of a trigger with same name & table
-  If szTriggerName_old = "" Then
-    If cmp_Trigger_Exists("pgadmin_dev_triggers", szTrigger_Name, szTrigger_Table) = True Then
-    MsgBox "Trigger " & szTrigger_Name & " already exists on table " & szTrigger_Table, vbExclamation, "Error"
-    Exit Sub
-    End If
-  End If
- 
   StartMsg "Creating Trigger..."
  
-  ' Drop trigger if exists
-  If szTriggerName_old <> "" Then cmp_Trigger_DropIfExists "pgadmin_dev_triggers", szTriggerName_old, szTriggerTable_old
-
-  ' Create trigger
-  cmp_Trigger_Create "pgadmin_dev_triggers", szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event, szTrigger_Comments
+  If DevMode = True Then
+      szTrigger_pgTable = gDevPostgresqlTables & "_triggers"
+  Else
+      szTrigger_pgTable = "pgadmin_triggers"
+  End If
+    
+  If szTriggerName_old <> "" Then cmp_Trigger_DropIfExists szTrigger_pgTable, szTriggerName_old, szTriggerTable_old
+  cmp_Trigger_DropIfExists szTrigger_pgTable, szTrigger_Name, szTrigger_Table
+  cmp_Trigger_Create szTrigger_pgTable, szTrigger_Name, szTrigger_Table, szTrigger_Function, szTrigger_Arguments, szTrigger_Foreach, szTrigger_Executes, szTrigger_Event, szTrigger_Comments
   
   EndMsg
   frmTriggers.cmdRefresh_Click
@@ -387,7 +383,7 @@ On Error GoTo Err_Handler
     Dim temp_arg_list As Variant
     Dim temp_arg_item As Variant
     
-    Dim lngTriggeroid As Long
+    Dim szTriggerpgTable As String
     Dim szTriggerName As String
     Dim szTriggerTable As String
     Dim szTriggerFunction As String
@@ -399,10 +395,16 @@ On Error GoTo Err_Handler
     
     szTriggerName = szTriggerName_old
     szTriggerTable = szTriggerTable_old
-    
+
+    If DevMode = True Then
+      szTriggerpgTable = gDevPostgresqlTables & "_triggers"
+    Else
+      szTriggerpgTable = "pgadmin_triggers"
+    End If
+              
     StartMsg "Retrieving trigger information..."
-    lngTriggeroid = 0
-    cmp_Trigger_GetValues "pgadmin_dev_triggers", szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent, szTriggerComments
+    
+    cmp_Trigger_GetValues szTriggerpgTable, szTriggerName, szTriggerTable, szTriggerFunction, szTriggerArguments, szTriggerForeach, szTriggerExecutes, szTriggerEvent, szTriggerComments
     
     ' Loading trigger name
     txtName = szTriggerName

@@ -284,6 +284,7 @@ On Error GoTo Err_Handler
 Dim szCreateStr As String
 Dim ArgList As String
 Dim x As Integer
+Dim szFunction_pgTable As String
 
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the function!", vbExclamation, "Error"
@@ -318,19 +319,15 @@ Dim x As Integer
   Next x
   If ArgList <> "" Then ArgList = Left(ArgList, Len(ArgList) - 2)
   
- ' In case of a creation, test existence of function with same arguments
-  If szFunction_name_old = "" Then
-    If cmp_Function_Exists("pgadmin_dev_functions", txtName.Text, ArgList) = True Then
-        MsgBox "Function " & txtName.Text & " (" & ArgList & ") already exists ", vbExclamation, "Error"
-    Exit Sub
+    If DevMode = True Then
+          szFunction_pgTable = gDevPostgresqlTables & "_functions"
+      Else
+          szFunction_pgTable = "pgadmin_functions"
     End If
-  End If
     
-    ' Drop function if exists
-    If szFunction_name_old <> "" Then cmp_Function_DropIfExists "pgadmin_dev_functions", szFunction_name_old, szFunction_arguments_old
-    
-    ' Create function
-    cmp_Function_Create "pgadmin_dev_functions", txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text, "", txtComments.Text
+    If szFunction_name_old <> "" Then cmp_Function_DropIfExists szFunction_pgTable, szFunction_name_old, szFunction_arguments_old
+    cmp_Function_DropIfExists szFunction_pgTable, txtName.Text, ArgList
+    cmp_Function_Create szFunction_pgTable, txtName.Text, ArgList, cboReturnType.Text, txtPath.Text, vssLanguage.Text, "", txtComments.Text
     
     
     ' Refresh function list
@@ -418,6 +415,7 @@ On Error GoTo Err_Handler
     Dim temp_arg_list As Variant
     Dim temp_arg_item As Variant
     
+    Dim szFunction_pgTable As String
     Dim szFunction_name As String
     Dim szFunction_arguments As String
     Dim szFunction_returns As String
@@ -471,7 +469,13 @@ On Error GoTo Err_Handler
               Me.Caption = "Modify function"
               
               ' get function values
-              cmp_Function_GetValues "pgadmin_dev_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
+              If DevMode = True Then
+                szFunction_pgTable = gDevPostgresqlTables & "_functions"
+              Else
+                szFunction_pgTable = "pgadmin_functions"
+              End If
+              
+              cmp_Function_GetValues szFunction_pgTable, szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner, szFunction_comments
               
               ' Initialize form
               txtName = szFunction_name

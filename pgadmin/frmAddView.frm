@@ -167,6 +167,7 @@ Dim szView_name_old As String
 Private Sub cmdCreate_Click()
 On Error GoTo Err_Handler
   bContinueRebuilding = True
+  Dim szView_pgTable As String
   
   If txtName.Text = "" Then
     MsgBox "You must enter a name for the View!", vbExclamation, "Error"
@@ -178,11 +179,15 @@ On Error GoTo Err_Handler
   End If
   StartMsg "Creating View..."
     
-
-    If szView_name_old <> "" Then cmp_View_DropIfExists "pgadmin_dev_views", szView_name_old
+    If DevMode = True Then
+          szView_pgTable = gDevPostgresqlTables & "_views"
+      Else
+          szView_pgTable = "pgadmin_views"
+    End If
     
-    ' Create view
-    cmp_View_Create "pgadmin_dev_views", txtName.Text, txtSQL.Text, txtOwner.Text, txtACL.Text, txtComments.Text
+    If szView_name_old <> "" Then cmp_View_DropIfExists szView_pgTable, szView_name_old
+    cmp_View_DropIfExists szView_pgTable, txtName.Text
+    cmp_View_Create szView_pgTable, txtName.Text, txtSQL.Text, txtOwner.Text, txtACL.Text, txtComments.Text
     
     If bContinueRebuilding = True Then
         frmViews.cmdRefresh_Click
@@ -247,6 +252,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo Err_Handler
+    Dim szView_pgTable As String
     Dim szView_name As String
     Dim szView_definition As String
     Dim szView_owner As String
@@ -268,7 +274,12 @@ On Error GoTo Err_Handler
       Me.Caption = "Modify view"
       
       ' Load View data
-      cmp_View_GetValues "pgadmin_dev_views", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+      If DevMode = True Then
+          szView_pgTable = gDevPostgresqlTables & "_views"
+      Else
+          szView_pgTable = "pgadmin_views"
+      End If
+      cmp_View_GetValues szView_pgTable, szView_name, szView_definition, szView_owner, szView_acl, szView_comments
       
       txtName.Text = szView_name
       txtSQL.Text = szView_definition
