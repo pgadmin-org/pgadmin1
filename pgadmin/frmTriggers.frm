@@ -221,6 +221,7 @@ Begin VB.Form frmTriggers
       ItemData        =   "frmTriggers.frx":0000
       Left            =   1485
       List            =   "frmTriggers.frx":0002
+      MultiSelect     =   2  'Extended
       TabIndex        =   5
       Top             =   45
       Width           =   2985
@@ -369,14 +370,8 @@ On Error GoTo Err_Handler
   LogMsg "Loading Form: " & Me.Name
   StartMsg "Retrieving Trigger Names..."
   lstTrig.Clear
-  txtOID.Text = ""
-  txtName.Text = ""
-  txtTable.Text = ""
-  txtComments.Text = ""
-  txtFunction.Text = ""
-  txtForEach.Text = ""
-  txtEvent.Text = ""
-  txtExecutes.Text = ""
+  lstTrig = 0
+  
   If rsTrig.State <> adStateClosed Then rsTrig.Close
   If chkSystem.Value = 1 Then
     LogMsg "Executing: SELECT trigger_name, trigger_table FROM pgadmin_triggers ORDER BY trigger_name"
@@ -397,6 +392,7 @@ On Error GoTo Err_Handler
   End If
   
   Erase szTrigger
+  lstTrig_Click
   
   EndMsg
   Exit Sub
@@ -454,23 +450,28 @@ Dim iInstr As Integer
     '----------------------------------------------------------------------------------
     ' Parse trigger name and arguments from List
     '----------------------------------------------------------------------------------
-    iInstr = InStr(lstTrig.Text, "ON")
-    If iInstr > 0 Then
-        szTrigger_name = Left(lstTrig.Text, iInstr - 2)
-        szTrigger_table = Mid(lstTrig.Text, iInstr + 3, Len(lstTrig.Text) - iInstr - 2)
+    If lstTrig.SelCount > 0 Then
+        iInstr = InStr(lstTrig.Text, "ON")
+        If iInstr > 0 Then
+            szTrigger_name = Left(lstTrig.Text, iInstr - 2)
+            szTrigger_table = Mid(lstTrig.Text, iInstr + 3, Len(lstTrig.Text) - iInstr - 2)
+        Else
+            szTrigger_name = lstTrig.Text
+            szTrigger_table = ""
+        End If
     Else
-        szTrigger_name = lstTrig.Text
+        szTrigger_name = ""
         szTrigger_table = ""
     End If
-    
     '----------------------------------------------------------------------------------
     ' Lookup database
     '----------------------------------------------------------------------------------
-  If szTrigger_name <> "" Then
+
     StartMsg "Retrieving trigger info..."
     szTrigger_oid = 0
     cmp_Trigger_GetValues szTrigger_oid, "pgadmin_triggers", szTrigger_name, szTrigger_table, szTrigger_function, szTrigger_arguments, szTrigger_foreach, szTrigger_Executes, szTrigger_event, szTrigger_Comments
     txtOID.Text = Trim(Str(szTrigger_oid))
+    If txtOID.Text = "0" Then txtOID.Text = ""
     txtName.Text = szTrigger_name
     txtTable.Text = szTrigger_table
     txtFunction.Text = szTrigger_function
@@ -479,7 +480,7 @@ Dim iInstr As Integer
     txtEvent.Text = szTrigger_event
     txtComments.Text = szTrigger_Comments
     EndMsg
-  End If
+
   Exit Sub
 Err_Handler:
   EndMsg

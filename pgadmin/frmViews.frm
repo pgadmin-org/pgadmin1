@@ -176,6 +176,7 @@ Begin VB.Form frmViews
    Begin VB.ListBox lstView 
       Height          =   3960
       Left            =   1485
+      MultiSelect     =   2  'Extended
       TabIndex        =   6
       Top             =   45
       Width           =   2985
@@ -394,6 +395,7 @@ On Error GoTo Err_Handler
   End If
   
   Erase szView
+  CmdViewButton
   
   EndMsg
   Exit Sub
@@ -442,22 +444,31 @@ On Error GoTo Err_Handler
     Dim szView_comments As String
     Dim szView_definition As String
     
-    szView_name = lstView.Text
-    
-    If szView_name <> "" Then
-      StartMsg "Retrieving View Info..."
-      lngView_oid = 0
-      cmp_View_GetValues lngView_oid, "pgadmin_views", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
-      txtOID.Text = Trim(Str(lngView_oid))
-      txtName.Text = szView_name
-      txtOwner.Text = szView_owner
-      txtACL.Text = szView_acl
-      txtComments.Text = szView_comments
-      txtDefinition.Text = szView_definition
-      EndMsg
+    If lstView.SelCount > 0 Then
+        szView_name = lstView.Text
+    Else
+        szView_name = ""
     End If
+    
+    StartMsg "Retrieving View Info..."
+    lngView_oid = 0
+    cmp_View_GetValues lngView_oid, "pgadmin_views", szView_name, szView_definition, szView_owner, szView_acl, szView_comments
+    txtOID.Text = Trim(Str(lngView_oid))
+    If txtOID.Text = 0 Then txtOID.Text = ""
+    txtName.Text = szView_name
+    txtOwner.Text = szView_owner
+    txtACL.Text = szView_acl
+    txtComments.Text = szView_comments
+    txtDefinition.Text = szView_definition
+    
+    CmdViewButton
+    EndMsg
   Exit Sub
 Err_Handler:
   EndMsg
   If Err.Number <> 0 Then LogError Err, "frmViews, lstView_Click"
+End Sub
+
+Public Sub CmdViewButton()
+    cmdButtonActivate lstView.SelCount, cmdCreateView, cmdModifyView, cmdDropView, cmdExportView, cmdComment, cmdRefresh, cmdViewData
 End Sub

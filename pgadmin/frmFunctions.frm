@@ -21,6 +21,7 @@ Begin VB.Form frmFunctions
       Width           =   1410
    End
    Begin VB.CommandButton cmdRebuild 
+      BackColor       =   &H80000018&
       Caption         =   "&Rebuild project"
       Height          =   330
       Left            =   45
@@ -439,19 +440,34 @@ End Sub
 
 Public Sub cmdDropFunc_Click()
 ' On Error GoTo Err_Handler
-Dim szDropStr As String
-  If lstFunc.Text = "" Then
-    MsgBox "You must select a function to delete!", vbExclamation, "Error"
-    Exit Sub
-  End If
-  If MsgBox("Are you sure you wish to drop this Function?", vbYesNo + vbQuestion, _
+    Dim szDropStr As String
+    Dim iLoop As Long
+    Dim iListCount As Long
+    Dim iSelCount As Long
+    Dim szFunction_name As String
+    Dim szFunction_arguments As String
+   
+  If MsgBox("Are you sure you wish to drop Function(s)?", vbYesNo + vbQuestion, _
             "Confirm Function Deletion") = vbYes Then
-    szDropStr = "DROP FUNCTION " & QUOTE & txtName.Text & QUOTE & " (" & txtArguments.Text & ")"
-    fMainForm.txtSQLPane.Text = szDropStr
-    StartMsg "Dropping Function..."
-    LogMsg "Executing: " & szDropStr
-    gConnection.Execute szDropStr
-    LogQuery szDropStr
+            
+    iSelCount = lstFunc.SelCount
+    If iSelCount = 0 Then Exit Sub
+    iListCount = lstFunc.ListCount
+        
+    For iLoop = 0 To iListCount - 1
+        If lstFunc.Selected(iLoop) = True Then
+            ParseFunction lstFunc.List(iLoop), szFunction_name, szFunction_arguments
+            cmp_Function_GetValues 0, "", szFunction_name, szFunction_arguments
+            
+            szDropStr = "DROP FUNCTION " & QUOTE & szFunction_name & QUOTE & " (" & szFunction_arguments & ")"
+            fMainForm.txtSQLPane.Text = szDropStr
+            StartMsg "Dropping Function..."
+            LogMsg "Executing: " & szDropStr
+            gConnection.Execute szDropStr
+            LogQuery szDropStr
+         End If
+    Next iLoop
+    
     cmdRefresh_Click
     EndMsg
   End If
@@ -471,13 +487,7 @@ Public Sub cmdRefresh_Click()
   
   StartMsg "Retrieving Function Names..."
   lstFunc.Clear
-  txtOID.Text = ""
-  txtArguments.Text = ""
-  txtComments.Text = ""
-  txtReturns.Text = ""
-  txtFunction.Text = ""
-  txtLanguage.Text = ""
-  txtOwner.Text = ""
+  
   If rsFunc.State <> adStateClosed Then rsFunc.Close
   If chkFunctions.Value = 1 Then
     LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions ORDER BY function_name"
@@ -486,6 +496,7 @@ Public Sub cmdRefresh_Click()
     LogMsg "Executing: SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name"
     rsFunc.Open "SELECT function_name, function_arguments FROM pgadmin_functions WHERE function_name NOT LIKE 'pgadmin_%' AND function_name NOT LIKE 'pg_%' AND function_oid > " & LAST_SYSTEM_OID & " ORDER BY function_name", gConnection, adOpenDynamic
   End If
+  
   If Not (rsFunc.EOF) Then
     szFunc = rsFunc.GetRows
     iUbound = UBound(szFunc, 2)
@@ -501,6 +512,8 @@ Public Sub cmdRefresh_Click()
   End If
   Erase szFunc
   txtName.Text = lstFunc
+  lstFunc_Click
+  CmdFuncButton
   EndMsg
   Exit Sub
 Err_Handler:
@@ -555,16 +568,20 @@ On Error GoTo Err_Handler
     '----------------------------------------------------------------------------------
     ' Retrieve function name and arguments from List
     '----------------------------------------------------------------------------------
-    ParseFunction lstFunc.Text, szFunction_name, szFunction_arguments
-
+    If lstFunc.SelCount > 0 Then
+        ParseFunction lstFunc.Text, szFunction_name, szFunction_arguments
+    Else
+        szFunction_name = ""
+        szFunction_arguments = ""
+    End If
     '----------------------------------------------------------------------------------
     ' Lookup database
     '----------------------------------------------------------------------------------
-  If szFunction_name <> "" Then
     StartMsg "Retrieving Function Info..."
     szFunction_OID = 0
     cmp_Function_GetValues szFunction_OID, "pgadmin_functions", szFunction_name, szFunction_arguments, szFunction_returns, szFunction_source, szFunction_language, szFunction_owner
     txtOID.Text = Trim(Str(szFunction_OID))
+    If txtOID.Text = 0 Then txtOID.Text = ""
     txtOwner.Text = szFunction_owner
     txtReturns.Text = szFunction_returns
     txtArguments.Text = szFunction_arguments
@@ -572,8 +589,9 @@ On Error GoTo Err_Handler
     txtLanguage.Text = szFunction_language
     txtComments.Text = szFunction_comments
     txtName.Text = szFunction_name
+    
+    CmdFuncButton
     EndMsg
-  End If
   Exit Sub
 Err_Handler:
   EndMsg
@@ -590,5 +608,9 @@ Private Sub ParseFunction(szInput As String, szFunction_name As String, szFuncti
         szFunction_name = szInput
         szFunction_arguments = ""
     End If
+End Sub
+
+Public Sub CmdFuncButton()
+    cmdButtonActivate lstFunc.SelCount, cmdCreateFunc, cmdModifyFunc, cmdDropFunc, cmdExportFunc, cmdComment, cmdRefresh
 End Sub
 
