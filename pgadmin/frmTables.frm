@@ -1378,12 +1378,13 @@ Err_Handler: If Err.Number <> 0 Then LogError Err, "frmTables, Form_Resize"
 End Sub
 
 Private Sub trvBrowser_NodeClick(ByVal Node As MSComctlLib.Node)
-On Error GoTo Err_Handler
+'On Error GoTo Err_Handler
 Dim NodeX As Node
 Dim lOID As Long
 Dim rsTemp As New Recordset
-Dim X As Integer
-Dim Y As Integer
+Dim X As Long
+Dim Y As Long
+Dim szHex As String
 Dim szKey As String
 Dim szArgString As String
 Dim szArgs() As String
@@ -1546,8 +1547,8 @@ Dim szArgs() As String
         txtColOID.Text = rsFields!column_oid & ""
         txtNumber.Text = rsFields!column_position & ""
         If rsFields!column_type & "" = "numeric" Then
-          X = Hex((rsFields!column_length - 4) And &HFFFF)
-          txtLength.Text = CLng("&H" & Mid(X, 1, Len(X) - 4)) & "," & CLng("&H" & Mid(X, Len(X) - 3, Len(X)))
+          szHex = Hex((rsFields!column_length - 4) And &HFFFF)
+          txtLength.Text = CLng("&H" & Mid(szHex, 1, Len(szHex) - 4)) & "," & CLng("&H" & Mid(szHex, Len(szHex) - 3, Len(szHex)))
         Else
           txtLength.Text = rsFields!column_length & ""
         End If
